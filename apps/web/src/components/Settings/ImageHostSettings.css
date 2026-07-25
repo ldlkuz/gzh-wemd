@@ -1,0 +1,447 @@
+.image-host-settings {
+  padding: 0;
+  width: 100%;
+  max-width: 580px;
+  margin: 0 auto;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* 顶部选项卡 - Segmented Control 风格 */
+.host-tabs {
+  display: flex;
+  padding: 4px;
+  margin-bottom: 24px;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  /* 使用稍大的圆角 */
+  border: 1px solid var(--border-light);
+}
+
+.host-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 6px;
+  /* 略小于容器圆角 */
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  margin: 0;
+}
+
+.host-tab:hover {
+  color: var(--text-primary);
+}
+
+.host-tab.active {
+  background: var(--bg-primary);
+  color: var(--accent-primary);
+  font-weight: 600;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(0, 0, 0, 0.02);
+}
+
+/* 优化表单面板样式 */
+.host-config {
+  padding: 24px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  min-height: 0;
+  flex: 1;
+  overflow-y: auto;
+  /* 确保内容不贴边 */
+  padding: 24px;
+}
+
+/* 配置面板 */
+.host-config-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  padding: 2px;
+  overflow: hidden;
+}
+
+/* 空状态卡片 */
+.config-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  min-height: 0;
+  flex: 1;
+}
+
+.config-empty p {
+  margin: 0;
+  font-size: 15px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* 配置分组 */
+.config-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.config-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+/* 双栏布局 */
+.config-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.config-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  /* 增加内部间距 */
+  margin-bottom: 8px;
+}
+
+.config-field label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.config-field input,
+.config-field select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.config-field input:focus,
+.config-field select:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px
+    color-mix(in srgb, var(--accent-primary) 25%, transparent);
+}
+
+.config-field small {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+.config-field small a {
+  color: var(--accent-primary);
+  text-decoration: none;
+}
+
+.config-field small a:hover {
+  text-decoration: underline;
+}
+
+/* 底部操作栏 */
+.config-footer {
+  display: flex;
+  justify-content: flex-end;
+  /* 默认右对齐 */
+  align-items: center;
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--border-light);
+  gap: 12px;
+}
+
+.config-footer small {
+  margin-right: auto;
+  /* 将左侧内容推到最左边 */
+}
+
+.host-config button {
+  padding: 8px 16px;
+  background: var(--accent-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  /* 移除 align-self，布局由 footer 控制 */
+}
+
+.host-config button:hover {
+  background: color-mix(in srgb, var(--accent-primary) 85%, #000000);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.host-config button:active {
+  transform: translateY(0);
+}
+
+.test-result {
+  padding: 12px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+}
+
+/* Checkbox 样式 */
+.config-checkbox {
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 12px;
+  background: var(--bg-primary);
+  border-radius: var(--radius-md);
+}
+
+.config-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--accent-primary);
+}
+
+.config-checkbox .checkbox-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.config-checkbox .checkbox-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.config-checkbox small {
+  margin: 0;
+}
+
+/* 官方图床介绍页 */
+.official-host-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  padding: 32px;
+  background: var(--bg-primary);
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  text-align: center;
+  overflow-y: auto;
+  max-height: 100%;
+}
+
+.intro-header {
+  margin-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.intro-icon-wrapper {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent-primary) 10%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  color: var(--accent-primary);
+}
+
+.official-host-intro h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  color: var(--text-primary);
+}
+
+.official-host-intro p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.feature-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 360px;
+  margin-bottom: 32px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  text-align: left;
+}
+
+.feature-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.feature-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.feature-text strong {
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.feature-text span {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.active-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: color-mix(in srgb, #07c160 10%, transparent);
+  border-radius: 20px;
+  color: #07c160;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.pulsing-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #07c160;
+  border-radius: 50%;
+  position: relative;
+}
+
+.pulsing-dot::after {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  background-color: #07c160;
+  border-radius: 50%;
+  opacity: 0.4;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* 标签页激活徽章 */
+.tab-active-badge {
+  margin-left: 8px;
+  font-size: 11px;
+  color: #07c160;
+  background: rgba(7, 193, 96, 0.1);
+  padding: 2px 8px;
+  border-radius: 10px;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1.2;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* 配置区激活状态 */
+.active-status,
+.host-active-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  margin-bottom: 20px;
+  background: rgba(7, 193, 96, 0.1);
+  border-radius: 20px;
+  color: #07c160;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* 启用按钮 */
+.btn-activate {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  padding: 14px 20px;
+  background: var(--accent-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-activate:hover {
+  background: color-mix(in srgb, var(--accent-primary) 85%, #000000);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-activate:active {
+  transform: translateY(0);
+}

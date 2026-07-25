@@ -1,0 +1,720 @@
+.markdown-editor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-primary);
+  /* 移除右边框，因为现在是悬浮卡片布局 */
+  border-right: none;
+}
+
+.editor-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border-light);
+  background: rgba(255, 255, 255, 0.5);
+  /* 半透明背景 */
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.editor-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.editor-title::before {
+  content: "";
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+  box-shadow: 0 0 0 2px rgba(7, 193, 96, 0.2);
+}
+
+.editor-container {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+.editor-body-wrapper {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  /* Critical for flex scrolling */
+}
+
+.editor-meta-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(128px, 0.55fr);
+  gap: 14px;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--border-light);
+  background: rgba(255, 255, 255, 0.68);
+  backdrop-filter: blur(8px);
+  position: relative;
+  z-index: 8;
+  isolation: isolate;
+  overflow: visible;
+}
+
+.editor-meta-field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  position: relative;
+}
+
+.editor-meta-field-author {
+  z-index: 2;
+}
+
+.editor-meta-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.editor-meta-label-row label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  letter-spacing: 0.3px;
+}
+
+.editor-meta-toggle {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  min-width: 20px;
+}
+
+.editor-meta-toggle input {
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  accent-color: var(--accent-primary);
+}
+
+.editor-meta-input-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.editor-meta-input {
+  width: 100%;
+  height: 40px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 0 14px;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--text-primary);
+  font-size: 13px;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.editor-meta-input:focus {
+  outline: none;
+  border-color: rgba(7, 193, 96, 0.45);
+  box-shadow: 0 0 0 4px rgba(7, 193, 96, 0.12);
+  background: #fff;
+}
+
+.editor-meta-input:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  background: rgba(148, 163, 184, 0.08);
+}
+
+.editor-meta-counter {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  font-size: 11px;
+  color: var(--text-tertiary);
+  pointer-events: none;
+}
+
+.editor-meta-icon-button {
+  position: absolute;
+  top: 50%;
+  right: 60px;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(7, 193, 96, 0.1);
+  color: var(--accent-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.editor-meta-icon-button:hover {
+  background: rgba(7, 193, 96, 0.16);
+}
+
+.editor-meta-icon-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.editor-meta-field-title .editor-meta-input {
+  padding-right: 96px;
+}
+
+.editor-meta-suggestions {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 32px;
+  right: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+  backdrop-filter: blur(8px);
+}
+
+.editor-meta-suggestion {
+  border: none;
+  background: transparent;
+  height: 32px;
+  border-radius: 8px;
+  padding: 0 10px;
+  text-align: left;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.editor-meta-suggestion:hover {
+  background: rgba(7, 193, 96, 0.08);
+}
+
+.editor-meta-suggestion-empty {
+  height: 32px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.editor-container.guarded {
+  filter: blur(1px);
+  pointer-events: none;
+}
+
+.workspace-guard {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.75),
+    rgba(255, 255, 255, 0.9)
+  );
+  z-index: 2;
+  backdrop-filter: blur(6px);
+}
+
+.workspace-guard-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px 24px;
+  box-shadow: 0 12px 40px -18px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  text-align: center;
+  max-width: 320px;
+}
+
+.guard-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: #1a1a1a;
+}
+
+.guard-subtitle {
+  font-size: 13px;
+  color: #4a5568;
+  margin-bottom: 12px;
+}
+
+/* CodeMirror 自定义样式 */
+.editor-container .cm-editor {
+  height: 100%;
+}
+
+.editor-container .cm-scroller {
+  overflow: auto;
+  padding-bottom: 40px;
+  /* 底部留白 */
+}
+
+/* 优雅的滚动条 */
+.editor-container .cm-scroller::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.editor-container .cm-scroller::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.editor-container .cm-scroller::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  transition: background 0.2s ease;
+}
+
+.editor-container .cm-scroller::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.editor-container .cm-content {
+  padding: 24px 32px !important;
+  /* 增加内边距 */
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.editor-container .cm-line {
+  padding: 0;
+}
+
+/* === Markdown 标记符号淡化 === */
+/* 标题标记 # ## ### */
+.editor-container .cm-formatting-header {
+  color: #cbd5e1 !important;
+  font-weight: 400 !important;
+  opacity: 0.6;
+}
+
+/* 强调标记 * ** *** */
+.editor-container .cm-formatting-em,
+.editor-container .cm-formatting-strong {
+  color: #cbd5e1 !important;
+  opacity: 0.6;
+}
+
+/* 链接标记 [] () */
+.editor-container .cm-formatting-link,
+.editor-container .cm-formatting-link-string {
+  color: #cbd5e1 !important;
+  opacity: 0.6;
+}
+
+/* 代码标记 ` */
+.editor-container .cm-formatting-code {
+  color: #cbd5e1 !important;
+  opacity: 0.6;
+}
+
+/* 引用标记 > */
+.editor-container .cm-formatting-quote {
+  color: #cbd5e1 !important;
+  opacity: 0.6;
+}
+
+/* 列表标记 - * 1. */
+.editor-container .cm-formatting-list {
+  color: var(--accent-primary) !important;
+  font-weight: 600 !important;
+}
+
+/* === 内容样式优化 === */
+/* 标题 */
+.editor-container .cm-header {
+  line-height: 1.5;
+  margin-top: 1.2em;
+  margin-bottom: 0.6em;
+  color: var(--text-primary);
+}
+
+/* 粗体 */
+.editor-container .cm-strong {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* 斜体 */
+.editor-container .cm-em {
+  font-style: italic;
+  color: var(--text-secondary);
+}
+
+/* 链接 */
+.editor-container .cm-link {
+  color: var(--accent-primary);
+  font-weight: 500;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(7, 193, 96, 0.3);
+  transition: all 0.15s ease;
+  padding-bottom: 1px;
+}
+
+.editor-container .cm-link:hover {
+  border-bottom-color: var(--accent-primary);
+  background-color: rgba(7, 193, 96, 0.08);
+  border-radius: 2px;
+}
+
+/* URL */
+.editor-container .cm-url {
+  color: #38b2ac;
+  font-size: 0.9em;
+  opacity: 0.8;
+}
+
+/* 行内代码 - 使用半透明背景让选中效果可透过 */
+.editor-container .cm-inline-code {
+  background-color: rgba(247, 250, 252, 0.7);
+  color: #e53e3e;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  font-family: var(--font-mono);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* 行内代码选中状态 - 确保选中时显示选中背景色 */
+.editor-container .cm-line .cm-inline-code::selection,
+.editor-container .cm-line .cm-inline-code *::selection {
+  background-color: rgba(7, 193, 96, 0.35) !important;
+  color: inherit;
+}
+
+/* 引用块 */
+.editor-container .cm-quote {
+  color: var(--text-secondary);
+  border-left: 3px solid var(--border-color);
+  padding-left: 16px;
+  margin-left: 0;
+  font-style: italic;
+}
+
+/* 列表 */
+.editor-container .cm-list {
+  color: var(--text-primary);
+}
+
+/* === 编辑器交互优化 === */
+/* 选中文本 */
+.editor-container .cm-selectionBackground {
+  background-color: rgba(7, 193, 96, 0.15) !important;
+}
+
+/* 光标 */
+.editor-container .cm-cursor {
+  border-left: 2px solid var(--accent-primary);
+}
+
+/* 活动行 */
+.editor-container .cm-activeLine {
+  background-color: rgba(7, 193, 96, 0.03);
+  border-radius: 4px;
+}
+
+/* 行号区域 */
+.editor-container .cm-gutters {
+  background-color: transparent;
+  /* 透明背景 */
+  border-right: 1px solid transparent;
+  color: var(--text-tertiary);
+}
+
+.editor-container .cm-gutterElement {
+  padding-right: 12px !important;
+}
+
+/* === 整体优化 === */
+/* 提升可读性 */
+.editor-container .cm-content {
+  line-height: 1.75;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  /* 使用等宽字体 */
+  font-size: 14px;
+  /* 稍微调小字号以适应等宽字体 */
+  letter-spacing: 0;
+}
+
+/* 代码块背景 */
+.editor-container .cm-line.cm-code-block {
+  background-color: var(--bg-hover);
+  padding: 2px 0;
+}
+
+/* === 编辑器底部状态栏 === */
+.editor-footer {
+  padding: 8px 24px;
+  border-top: 1px solid var(--border-light);
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.editor-stats {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.editor-stat {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+/* 保存状态指示器 */
+.save-indicator {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  transition: all 0.2s ease;
+}
+
+.save-indicator.saved {
+  color: var(--text-tertiary);
+}
+
+.save-indicator.saving {
+  color: var(--accent-primary);
+  background: rgba(7, 193, 96, 0.1);
+}
+
+.save-indicator.unsaved {
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.1);
+}
+
+.save-indicator.ready {
+  color: var(--text-tertiary);
+}
+
+/* ========================================
+   深色模式 - 编辑器样式覆盖
+   ======================================== */
+[data-ui-theme="dark"] .editor-header {
+  background: rgba(37, 37, 38, 0.8);
+}
+
+[data-ui-theme="dark"] .editor-footer {
+  background: rgba(37, 37, 38, 0.8);
+}
+
+[data-ui-theme="dark"] .editor-meta-bar {
+  background: rgba(37, 37, 38, 0.82);
+}
+
+[data-ui-theme="dark"] .editor-meta-input {
+  background: rgba(30, 30, 30, 0.88);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #d4d4d4;
+}
+
+[data-ui-theme="dark"] .editor-meta-input:focus {
+  background: rgba(30, 30, 30, 0.98);
+  border-color: rgba(7, 193, 96, 0.45);
+}
+
+[data-ui-theme="dark"] .editor-meta-counter,
+[data-ui-theme="dark"] .editor-meta-label-row label {
+  color: #9ca3af;
+}
+
+[data-ui-theme="dark"] .editor-meta-icon-button {
+  background: rgba(74, 222, 128, 0.12);
+  color: #4ade80;
+}
+
+[data-ui-theme="dark"] .editor-meta-suggestions {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(37, 37, 38, 0.96);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+}
+
+[data-ui-theme="dark"] .editor-meta-suggestion {
+  color: #d4d4d4;
+}
+
+[data-ui-theme="dark"] .editor-meta-suggestion:hover {
+  background: rgba(74, 222, 128, 0.12);
+}
+
+[data-ui-theme="dark"] .editor-meta-suggestion-empty {
+  color: #9ca3af;
+}
+
+[data-ui-theme="dark"] .workspace-guard {
+  background: linear-gradient(
+    180deg,
+    rgba(30, 30, 30, 0.75),
+    rgba(30, 30, 30, 0.9)
+  );
+}
+
+[data-ui-theme="dark"] .workspace-guard-card {
+  background: #2d2d30;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-ui-theme="dark"] .guard-title {
+  color: #d4d4d4;
+}
+
+[data-ui-theme="dark"] .guard-subtitle {
+  color: #9d9d9d;
+}
+
+/* 编辑器内容区域 - 深色背景 */
+[data-ui-theme="dark"] .editor-container .cm-editor {
+  background: #1e1e1e;
+}
+
+/* 编辑器内容文字 - 深色模式 */
+[data-ui-theme="dark"] .editor-container .cm-content {
+  color: #d4d4d4;
+}
+
+/* 标题 - 深色模式 */
+[data-ui-theme="dark"] .editor-container .cm-header {
+  color: #e2e8f0;
+}
+
+/* 粗体 - 深色模式 */
+[data-ui-theme="dark"] .editor-container .cm-strong {
+  color: #f1f5f9;
+}
+
+/* 斜体 - 深色模式 */
+[data-ui-theme="dark"] .editor-container .cm-em {
+  color: #94a3b8;
+}
+
+/* 列表 - 深色模式 */
+[data-ui-theme="dark"] .editor-container .cm-list {
+  color: #d4d4d4;
+}
+
+/* URL - 深色模式 */
+[data-ui-theme="dark"] .editor-container .cm-url {
+  color: #4ec9b0;
+}
+
+/* 滚动条 - 深色模式 */
+[data-ui-theme="dark"] .editor-container .cm-scroller::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+[data-ui-theme="dark"]
+  .editor-container
+  .cm-scroller::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Markdown 标记符号 - 深色模式 */
+[data-ui-theme="dark"] .editor-container .cm-formatting-header,
+[data-ui-theme="dark"] .editor-container .cm-formatting-em,
+[data-ui-theme="dark"] .editor-container .cm-formatting-strong,
+[data-ui-theme="dark"] .editor-container .cm-formatting-link,
+[data-ui-theme="dark"] .editor-container .cm-formatting-link-string,
+[data-ui-theme="dark"] .editor-container .cm-formatting-code,
+[data-ui-theme="dark"] .editor-container .cm-formatting-quote {
+  color: #5a5a5a !important;
+}
+
+/* 行内代码 - 深色模式 */
+[data-ui-theme="dark"] .editor-container .cm-inline-code {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #ce9178;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 引用块边框 - 深色模式 */
+[data-ui-theme="dark"] .editor-container .cm-quote {
+  border-left-color: #4a4a4a;
+}
+
+/* 活动行 - 深色模式 */
+[data-ui-theme="dark"] .editor-container .cm-activeLine {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+/* 选中文本 - 深色模式 */
+[data-ui-theme="dark"] .editor-container .cm-selectionBackground {
+  background-color: rgba(7, 193, 96, 0.25) !important;
+}
+
+/* 代码块背景 - 深色模式 */
+[data-ui-theme="dark"] .editor-container .cm-line.cm-code-block {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* 通用回退 - 确保所有文本可见 */
+[data-ui-theme="dark"] .editor-container .cm-line {
+  color: #d4d4d4;
+}
+
+@media (max-width: 900px) {
+  .editor-meta-bar {
+    grid-template-columns: 1fr;
+  }
+
+  .editor-meta-field {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .editor-meta-toggle {
+    min-width: 0;
+  }
+
+  .editor-meta-suggestions {
+    left: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .editor-meta-bar {
+    grid-template-columns: 1fr;
+  }
+}

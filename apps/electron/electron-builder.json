@@ -1,0 +1,44 @@
+{
+  "appId": "com.wemd.app",
+  "productName": "WeMD",
+  "directories": {
+    "output": "release"
+  },
+  "files": ["dist/**/*", "assets/**/*", "package.json", "!**/.DS_Store"],
+  "extraResources": [
+    {
+      "from": "../web/dist",
+      "to": "web-dist",
+      "filter": ["**/*", "!**/.DS_Store"]
+    },
+    {
+      "from": "../../wechat-plugin",
+      "to": "wechat-plugin",
+      "filter": ["**/*", "!**/.DS_Store"]
+    }
+  ],
+  "electronLanguages": ["zh-CN", "en-US"],
+  "mac": {
+    "category": "public.app-category.productivity",
+    "target": ["zip"],
+    "icon": "assets/icon.icns"
+  },
+  "win": {
+    "target": ["nsis", "zip"],
+    "icon": "assets/icon.ico"
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true,
+    "perMachine": false,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true,
+    "differentialPackage": false
+  },
+  "linux": {
+    "target": ["AppImage", "deb"],
+    "category": "Office",
+    "icon": "assets/icon.png",
+    "maintainer": "WeMD Team"
+  }
+}

@@ -1,0 +1,799 @@
+.file-sidebar {
+  height: 100%;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  user-select: none;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+}
+
+.fs-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: var(--border-width) solid var(--border-light);
+}
+
+.fs-workspace-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: var(--radius-pill);
+  transition: all 0.2s ease;
+  max-width: 180px;
+  background-color: transparent;
+  opacity: 0.9;
+}
+
+.fs-workspace-info:hover {
+  background-color: var(--bg-hover);
+  opacity: 1;
+}
+
+.fs-workspace-info span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fs-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fs-btn-secondary {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  border-radius: var(--radius-pill);
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fs-tooltip {
+  position: fixed;
+  transform: translateX(-50%);
+  padding: 4px 8px;
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 10000;
+}
+
+.fs-btn-icon-only {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+}
+
+.fs-btn-secondary:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.fs-search {
+  padding: 12px 24px 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fs-search-wrapper {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.fs-sort-wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.fs-sort-btn {
+  color: var(--text-tertiary);
+}
+
+.fs-sort-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 130px;
+  background: var(--bg-primary);
+  border: var(--border-width) solid var(--border-light);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  z-index: 100;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+}
+
+.fs-sort-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all 0.15s ease;
+  text-align: left;
+  width: 100%;
+}
+
+.fs-sort-option:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.fs-sort-option.active {
+  color: var(--accent-primary);
+  font-weight: 500;
+}
+
+.fs-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-tertiary);
+  pointer-events: none;
+}
+
+.fs-search-wrapper input {
+  width: 100%;
+  border: var(--border-width) solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 10px 16px 10px 36px;
+  font-size: 13px;
+  background: color-mix(in srgb, var(--bg-primary) 85%, transparent);
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+  outline: none;
+  color: var(--text-primary);
+}
+
+.fs-search-wrapper input:focus {
+  background: var(--bg-primary);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px
+    color-mix(in srgb, var(--accent-primary) 25%, transparent);
+}
+
+.fs-body {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.fs-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: transparent;
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+}
+
+.fs-item {
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--bg-primary) 80%, transparent);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.fs-item:hover {
+  background: var(--bg-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.fs-item.active {
+  background: var(--bg-primary);
+  border: var(--border-width) solid
+    color-mix(in srgb, var(--accent-primary) 35%, transparent);
+  box-shadow: var(--shadow-md);
+}
+
+.fs-item.dragging {
+  opacity: 0.6;
+}
+
+.fs-folder.dragging {
+  opacity: 0.6;
+}
+
+.fs-item-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.fs-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.fs-time {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.fs-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  flex-shrink: 0;
+}
+
+.fs-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.fs-meta-separator {
+  color: var(--text-tertiary);
+  font-size: 10px;
+}
+
+.fs-theme-info {
+  font-size: 10px;
+  color: var(--accent-primary);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+/* Rename UI - Web Style */
+.fs-rename {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.fs-rename input {
+  border: var(--border-width) solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 6px 12px;
+  font-size: 14px;
+  background: var(--bg-primary);
+  width: 100%;
+  /* Take full width */
+  outline: none;
+  transition: all 0.2s;
+  color: var(--text-primary);
+}
+
+.fs-rename input:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px
+    color-mix(in srgb, var(--accent-primary) 25%, transparent);
+}
+
+.fs-rename button {
+  border: none;
+  background: var(--bg-secondary);
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-primary);
+  transition: background 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.fs-rename button:hover {
+  background: var(--bg-hover);
+  color: var(--accent-primary);
+}
+
+.fs-action-trigger {
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  margin-top: 4px;
+}
+
+.fs-item:hover .fs-action-trigger,
+.fs-item.active .fs-action-trigger,
+.fs-item:focus-within .fs-action-trigger,
+.fs-action-trigger:focus-visible {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.fs-action-trigger:hover {
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+  transform: scale(1.1);
+}
+
+.fs-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: var(--text-secondary);
+  padding: 24px;
+  text-align: center;
+}
+
+/* Context Menu */
+.fs-context-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+}
+
+.fs-context-menu {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  border-radius: var(--radius-md);
+  background: var(--bg-primary);
+  border: var(--border-width) solid var(--border-light);
+  box-shadow: var(--shadow-lg);
+  z-index: 1200;
+  min-width: 180px;
+  white-space: nowrap;
+  animation: fs-menu-fade 0.15s ease-out;
+}
+
+@keyframes fs-menu-fade {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.fs-context-menu button {
+  border: none;
+  background: transparent;
+  text-align: left;
+  font-size: 13px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.fs-context-menu button:hover {
+  background: var(--bg-hover);
+  color: var(--accent-primary);
+}
+
+.fs-context-menu button.danger {
+  color: var(--error);
+}
+
+.fs-context-menu button.danger:hover {
+  background: color-mix(in srgb, var(--error) 12%, transparent);
+}
+
+/* 无限滚动 - 加载更多 */
+.fs-load-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  color: var(--text-tertiary);
+  font-size: 13px;
+}
+
+/* 确认弹层 (复用 HistoryPanel 样式，改为 fs 前缀) */
+.fs-confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1300;
+}
+
+.fs-confirm-modal {
+  background: var(--bg-primary);
+  border: var(--border-width) solid var(--border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 20px 24px;
+  width: min(360px, 90vw);
+  color: var(--text-primary);
+  animation: fs-modal-zoom 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fs-modal-zoom {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.fs-confirm-modal h4 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.fs-confirm-modal p {
+  margin: 0 0 16px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.fs-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.fs-confirm-actions button {
+  min-width: 92px;
+  height: 36px;
+  border-radius: 18px;
+  border: 1px solid var(--border-light);
+  background: color-mix(in srgb, var(--bg-primary) 92%, transparent);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fs-confirm-actions button:hover {
+  background: var(--bg-hover);
+  border-color: color-mix(
+    in srgb,
+    var(--border-light) 60%,
+    var(--accent-primary) 40%
+  );
+}
+
+.fs-confirm-actions .btn-danger {
+  border-color: color-mix(in srgb, var(--error) 65%, transparent);
+  background: color-mix(in srgb, var(--error) 18%, var(--bg-primary) 82%);
+  color: var(--error);
+}
+
+.fs-confirm-actions .btn-danger:hover {
+  background: color-mix(in srgb, var(--error) 26%, var(--bg-primary) 74%);
+  border-color: var(--error);
+  box-shadow: 0 8px 16px color-mix(in srgb, var(--error) 24%, transparent);
+}
+
+/* ========================================
+   文件夹样式
+   ======================================== */
+.fs-folder-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.fs-folder {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background 0.15s ease;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.fs-folder.drop-target {
+  background: color-mix(in srgb, var(--accent-primary) 12%, transparent);
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, var(--accent-primary) 45%, transparent);
+  color: var(--accent-primary);
+}
+
+.fs-folder:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.fs-folder.active {
+  background: color-mix(in srgb, var(--accent-primary) 12%, transparent);
+  color: var(--accent-primary);
+}
+
+.fs-folder-icon {
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.fs-folder-icon.expanded {
+  transform: rotate(90deg);
+}
+
+.fs-folder-type-icon {
+  color: var(--accent-primary);
+  flex-shrink: 0;
+}
+
+.fs-folder-name {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fs-folder-count {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  background: var(--bg-tertiary);
+  padding: 2px 6px;
+  border-radius: var(--radius-pill);
+}
+
+/* ========================================
+   文件树结构线 (Tree View Guides)
+   ======================================== */
+.file-sidebar {
+  --tree-indent: 24px;
+  --tree-line-x: 10px;
+  --tree-line-color: color-mix(in srgb, var(--text-tertiary) 26%, transparent);
+  --tree-line-dot: color-mix(in srgb, var(--text-tertiary) 45%, transparent);
+  --tree-line-active: color-mix(
+    in srgb,
+    var(--accent-primary) 55%,
+    transparent
+  );
+}
+
+.fs-folder-children {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-left: var(--tree-indent);
+  padding-top: 6px;
+  margin: 0;
+  overflow: visible;
+}
+
+.fs-folder-children::before {
+  content: "";
+  position: absolute;
+  left: var(--tree-line-x);
+  top: 6px;
+  bottom: 6px;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--tree-line-color) 10px,
+    var(--tree-line-color) calc(100% - 10px),
+    transparent
+  );
+  border-radius: 999px;
+}
+
+.fs-folder-children .fs-item,
+.fs-folder-children .fs-folder {
+  position: relative;
+}
+
+.fs-folder-children .fs-item::before,
+.fs-folder-children .fs-folder::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--tree-line-x) - var(--tree-indent));
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background-color: var(--tree-line-dot);
+  transition:
+    background-color 0.2s,
+    box-shadow 0.2s,
+    transform 0.2s;
+  transform: translateX(-50%);
+}
+
+.fs-folder-children .fs-item::before {
+  top: 20px;
+  transform: translate(-50%, -50%);
+}
+
+.fs-folder-children .fs-folder::before {
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.fs-folder-children .fs-item:hover::before,
+.fs-folder-children .fs-folder:hover::before {
+  background-color: var(--tree-line-active);
+  box-shadow: 0 0 0 3px
+    color-mix(in srgb, var(--tree-line-active) 25%, transparent);
+}
+
+/* 修复 Item 样式，去除多余的 border/margin */
+.fs-item,
+.fs-folder {
+  border: 1px solid transparent;
+  /* 预留边框空间防止抖动 */
+}
+
+/* 为 Item 和 Folder Wrapper 增加间距 */
+.fs-item,
+.fs-folder-wrapper {
+  margin-bottom: 6px;
+}
+
+.fs-item {
+  padding: 10px 12px;
+  /* 稍微减小高度，配合 margin */
+}
+
+.fs-folder {
+  padding: 10px 12px;
+}
+
+/* 子菜单样式 - 保持不变 */
+.fs-context-menu .has-submenu {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ...rest of the file... */
+.submenu-arrow {
+  margin-left: auto;
+  opacity: 0.5;
+}
+
+.fs-submenu {
+  position: absolute;
+  left: 100%;
+  top: 0;
+  background: var(--bg-primary);
+  border: var(--border-width) solid var(--border-light);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  min-width: 160px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 300px;
+  overflow-y: auto;
+  animation: fs-menu-fade 0.15s ease-out;
+}
+
+.fs-submenu button {
+  border: none;
+  background: transparent;
+  text-align: left;
+  font-size: 13px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    color 0.2s;
+  white-space: nowrap;
+}
+
+.fs-submenu button:hover {
+  background: var(--bg-hover);
+  color: var(--accent-primary);
+}
+
+/* 新建文件夹输入框 */
+.fs-new-folder-input {
+  width: 100%;
+  border: var(--border-width) solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  font-size: 14px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  outline: none;
+  margin-bottom: 16px;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.fs-new-folder-input:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px
+    color-mix(in srgb, var(--accent-primary) 25%, transparent);
+}
+
+/* Primary 按钮样式 */
+.fs-confirm-actions .btn-primary {
+  border-color: var(--accent-primary);
+  background: var(--accent-primary);
+  color: white;
+}
+
+.fs-confirm-actions .btn-primary:hover {
+  background: color-mix(in srgb, var(--accent-primary) 85%, black);
+  border-color: color-mix(in srgb, var(--accent-primary) 85%, black);
+}
