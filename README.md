@@ -227,11 +227,9 @@ pnpm --filter wemd-electron run build:win
 WeMD/
 ├── apps/
 │   ├── web/        # React + Vite 前端
-│   ├── electron/   # Electron 桌面端
-│   └── server/     # 图片上传服务
+│   └── electron/   # Electron 桌面端
 ├── packages/
 │   └── core/       # Markdown 解析 / 主题 / 工具
-├── templates/      # 主题 CSS 模板
 ├── scripts/        # 开发与构建脚本
 └── wechat-plugin/  # 浏览器插件
 ```
