@@ -1,5 +1,16 @@
 export const customDefaultTheme = `/* 自定义样式,实时生效,浏览器实时缓存 */
 
+/* === 主题色变量（唯一数据源，主题和组件都引用这套变量） === */
+#wemd {
+  --wemd-primary: #07c160;
+  --wemd-primary-dark: #00a854;
+  --wemd-primary-light: #d1fae5;
+  --wemd-bg-soft: #f6f8fa;
+  --wemd-text-strong: #1a1a1a;
+  --wemd-text-soft: #475569;
+  --wemd-border: #e2e8f0;
+}
+
 /* 全局属性
  * 页边距 padding: 30px;
  * 全文字体 font-family: ptima-Regular;
@@ -40,7 +51,7 @@ export const customDefaultTheme = `/* 自定义样式,实时生效,浏览器实�
   margin: 10px 0 20px;
   text-align: center;
   padding-bottom: 12px;
-  border-bottom: 2px solid #07c160;
+  border-bottom: 2px solid var(--wemd-primary);
   letter-spacing: 1px;
 }
 
@@ -63,7 +74,7 @@ export const customDefaultTheme = `/* 自定义样式,实时生效,浏览器实�
   color: #2c3e50;
   margin: 20px 0 14px;
   padding-left: 12px;
-  border-left: 4px solid #07c160;
+  border-left: 4px solid var(--wemd-primary);
   line-height: 1.4;
   letter-spacing: 0.5px;
 }
@@ -87,7 +98,7 @@ export const customDefaultTheme = `/* 自定义样式,实时生效,浏览器实�
   color: #34495e;
   margin: 24px 0 12px;
   padding-left: 10px;
-  border-left: 3px solid #07c160;
+  border-left: 3px solid var(--wemd-primary);
   letter-spacing: 0.3px;
 }
 
@@ -107,7 +118,7 @@ export const customDefaultTheme = `/* 自定义样式,实时生效,浏览器实�
 #wemd h4 {
   font-size: 17px;
   font-weight: 600;
-  color: #07c160;
+  color: var(--wemd-primary);
   margin: 20px 0 10px;
   letter-spacing: 0.3px;
 }
@@ -151,7 +162,7 @@ export const customDefaultTheme = `/* 自定义样式,实时生效,浏览器实�
 
 #wemd ul li {
   padding-left: 4px;
-  color: #07c160;
+  color: var(--wemd-primary);
 }
 
 #wemd ul li section {
@@ -194,7 +205,7 @@ export const customDefaultTheme = `/* 自定义样式,实时生效,浏览器实�
  * 背景色 background: gray;
  */
 #wemd .multiquote-1 {
-  border-left: 4px solid #07c160;
+  border-left: 4px solid var(--wemd-primary);
   background: #f6f8fa;
   padding: 16px 20px;
   margin: 20px 0;
@@ -213,7 +224,7 @@ export const customDefaultTheme = `/* 自定义样式,实时生效,浏览器实�
 /* 二级引用
  */
 #wemd .multiquote-2 {
-  border-left: 3px solid #00a854;
+  border-left: 3px solid var(--wemd-primary-dark);
   background: #fafafa;
   padding: 14px 18px;
   margin: 16px 0;
@@ -231,7 +242,7 @@ export const customDefaultTheme = `/* 自定义样式,实时生效,浏览器实�
 /* 三级引用
  */
 #wemd .multiquote-3 {
-  border-left: 2px solid #07c160;
+  border-left: 2px solid var(--wemd-primary);
   background: #fafafa;
   padding: 12px 16px;
   margin: 14px 0;
@@ -249,23 +260,23 @@ export const customDefaultTheme = `/* 自定义样式,实时生效,浏览器实�
  * border-bottom: 1px solid #009688;
  */
 #wemd a {
-  color: #07c160;
+  color: var(--wemd-primary);
   text-decoration: none;
-  border-bottom: 1px solid #07c160;
+  border-bottom: 1px solid var(--wemd-primary);
   font-weight: 500;
 }
 
 /* 加粗 */
 #wemd strong {
   font-weight: 600;
-  color: #07c160;
+  color: var(--wemd-primary);
   letter-spacing: 0.2px;
 }
 
 /* 斜体 */
 #wemd em {
   font-style: italic;
-  color: #07c160;
+  color: var(--wemd-primary);
   font-weight: 500;
 }
 
@@ -273,7 +284,7 @@ export const customDefaultTheme = `/* 自定义样式,实时生效,浏览器实�
 #wemd em strong {
   font-weight: 700;
   font-style: italic;
-  color: #00a854;
+  color: var(--wemd-primary-dark);
 }
 
 /* 删除线 */
@@ -382,14 +393,14 @@ export const customDefaultTheme = `/* 自定义样式,实时生效,浏览器实�
 
 /* 脚注文字 */
 #wemd .footnote-word {
-  color: #07c160;
+  color: var(--wemd-primary);
   font-weight: 500;
-  border-bottom: 1px dashed #07c160;
+  border-bottom: 1px dashed var(--wemd-primary);
 }
 
 /* 脚注上标 */
 #wemd .footnote-ref {
-  color: #07c160;
+  color: var(--wemd-primary);
   font-weight: 600;
 }
 

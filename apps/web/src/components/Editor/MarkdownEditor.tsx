@@ -17,6 +17,12 @@ import { SearchPanel } from "./SearchPanel";
 import { SaveIndicator } from "./SaveIndicator";
 import { openAiSettings, isAiConfigured } from "../../services/ai/aiConfig";
 import { textToMarkdown } from "../../services/ai/aiService";
+import {
+  analyzeArticle,
+  type Insertion,
+} from "../../services/ai/analysisAgent";
+import { applyInsertions } from "../../services/ai/applyInsertions";
+import { AiLayoutPanel } from "./AiLayoutPanel";
 import toast from "react-hot-toast";
 import "./MarkdownEditor.css";
 import { customKeymap } from "./editorShortcuts";
@@ -62,6 +68,16 @@ export function MarkdownEditor({ onScrollSyncReady }: MarkdownEditorProps) {
   const [showSearch, setShowSearch] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
   const [showAuthorSuggestions, setShowAuthorSuggestions] = useState(false);
+  // AI 设计版式相关状态
+  const [showAiLayout, setShowAiLayout] = useState(false);
+  const [aiLayoutLoading, setAiLayoutLoading] = useState(false);
+  const [aiLayoutInsertions, setAiLayoutInsertions] = useState<Insertion[]>([]);
+  const [aiLayoutType, setAiLayoutType] = useState<string | undefined>(
+    undefined,
+  );
+  const [aiLayoutTypeReason, setAiLayoutTypeReason] = useState<
+    string | undefined
+  >(undefined);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -365,7 +381,9 @@ export function MarkdownEditor({ onScrollSyncReady }: MarkdownEditorProps) {
         setMarkdown(markdown);
       }
       toast.success(
-        mode === "selection" ? "选区已转换为 Markdown" : "整篇已转换为 Markdown",
+        mode === "selection"
+          ? "选区已转换为 Markdown"
+          : "整篇已转换为 Markdown",
         { id: toastId },
       );
       view.focus();
@@ -374,6 +392,135 @@ export function MarkdownEditor({ onScrollSyncReady }: MarkdownEditorProps) {
     } finally {
       setAiLoading(false);
     }
+  };
+
+  // AI 设计版式：分析文章并弹出方案面板
+  const handleAiLayout = async () => {
+    if (aiLayoutLoading) return;
+    const view = viewRef.current;
+    if (!view) return;
+
+    if (!isAiConfigured()) {
+      toast.error("请先在 AI 设置中完成服务配置");
+      openAiSettings();
+      return;
+    }
+
+    const text = view.state.doc.toString().trim();
+    if (!text) {
+      toast.error("编辑器没有内容可分析");
+      return;
+    }
+
+    setShowAiLayout(true);
+    setAiLayoutLoading(true);
+    setAiLayoutInsertions([]);
+    setAiLayoutType(undefined);
+    setAiLayoutTypeReason(undefined);
+    try {
+      const result = await analyzeArticle(text);
+      setAiLayoutInsertions(result.insertions);
+      setAiLayoutType(result.articleType);
+      setAiLayoutTypeReason(result.typeReason);
+    } catch (e) {
+      toast.error((e as Error).message || "AI 分析失败");
+      setShowAiLayout(false);
+    } finally {
+      setAiLayoutLoading(false);
+    }
+  };
+
+  // 应用插入建议到编辑器（批量采纳时调用）
+  const handleApplyInsertions = (insertions: Insertion[]) => {
+    const view = viewRef.current;
+    if (!view || insertions.length === 0) return;
+
+    const currentText = view.state.doc.toString();
+    const newText = applyInsertions(currentText, insertions);
+    view.dispatch({
+      changes: { from: 0, to: view.state.doc.length, insert: newText },
+    });
+    setMarkdown(newText);
+    toast.success(`已采纳 ${insertions.length} 条建议`);
+    setShowAiLayout(false);
+    view.focus();
+  };
+
+  // 预览单条建议：保存原文 → 临时插入 → 右侧预览框显示
+  const previewOriginalRef = useRef<string | null>(null);
+
+  /** 滚动右侧预览框到目标组件，并加临时高亮 */
+  const scrollPreviewToComponent = () => {
+    // 等待预览框重新渲染（setMarkdown 后异步触发）
+    setTimeout(() => {
+      const container = document.querySelector(".preview-container");
+      const target = document.querySelector(
+        "#wemd .wemd-component[data-wemd-preview-target]",
+      );
+      if (!container || !target) return;
+
+      // 滚动到组件位置（居中显示）
+      const containerEl = container as HTMLElement;
+      const targetEl = target as HTMLElement;
+      const containerRect = containerEl.getBoundingClientRect();
+      const targetRect = targetEl.getBoundingClientRect();
+      const offset =
+        targetRect.top -
+        containerRect.top +
+        containerEl.scrollTop -
+        containerRect.height / 2 +
+        targetRect.height / 2;
+      containerEl.scrollTo({ top: Math.max(0, offset), behavior: "smooth" });
+
+      // 加临时高亮边框（2 秒后消失）
+      targetEl.classList.add("wemd-preview-highlight");
+      setTimeout(() => {
+        targetEl.classList.remove("wemd-preview-highlight");
+        targetEl.removeAttribute("data-wemd-preview-target");
+      }, 2000);
+    }, 120);
+  };
+
+  const handlePreviewInsertion = (ins: Insertion) => {
+    const view = viewRef.current;
+    if (!view) return;
+
+    // 如果正在预览（previewOriginalRef 有值），先恢复原文，再插入新预览
+    // 这样 previewOriginalRef 始终保存"真原文"，切换预览不会污染
+    const baseText =
+      previewOriginalRef.current !== null
+        ? previewOriginalRef.current
+        : view.state.doc.toString();
+    previewOriginalRef.current = baseText;
+
+    // 给组件 body 加临时标记（用于渲染后定位）
+    const markedIns: Insertion = {
+      ...ins,
+      body: `${ins.body}\n\n<span data-wemd-preview-target></span>`,
+    };
+
+    // 插入单条建议
+    const newText = applyInsertions(baseText, [markedIns]);
+    view.dispatch({
+      changes: { from: 0, to: view.state.doc.length, insert: newText },
+    });
+    setMarkdown(newText);
+
+    // 滚动右侧预览框到组件位置
+    scrollPreviewToComponent();
+  };
+
+  // 撤销预览：恢复原文
+  const handleUndoPreview = () => {
+    const view = viewRef.current;
+    if (!view || previewOriginalRef.current === null) return;
+
+    const original = previewOriginalRef.current;
+    view.dispatch({
+      changes: { from: 0, to: view.state.doc.length, insert: original },
+    });
+    setMarkdown(original);
+    previewOriginalRef.current = null;
   };
 
   const handleUseHeadingTitle = () => {
@@ -403,10 +550,19 @@ export function MarkdownEditor({ onScrollSyncReady }: MarkdownEditorProps) {
       <div className="editor-header">
         <span className="editor-title">Markdown 编辑器</span>
       </div>
-      <Toolbar onInsert={handleInsert} onOpenAi={handleOpenAi} aiLoading={aiLoading} />
+      <Toolbar
+        onInsert={handleInsert}
+        onOpenAi={handleOpenAi}
+        aiLoading={aiLoading}
+        onOpenAiLayout={handleAiLayout}
+        aiLayoutLoading={aiLayoutLoading}
+      />
       <div className="editor-meta-bar">
         <div className="editor-meta-field editor-meta-field-title">
-          <label className="editor-meta-toggle" htmlFor="editor-use-publish-title">
+          <label
+            className="editor-meta-toggle"
+            htmlFor="editor-use-publish-title"
+          >
             <input
               id="editor-use-publish-title"
               type="checkbox"
@@ -450,7 +606,10 @@ export function MarkdownEditor({ onScrollSyncReady }: MarkdownEditorProps) {
           ref={authorFieldRef}
           className="editor-meta-field editor-meta-field-author"
         >
-          <label className="editor-meta-toggle" htmlFor="editor-use-publish-author">
+          <label
+            className="editor-meta-toggle"
+            htmlFor="editor-use-publish-author"
+          >
             <input
               id="editor-use-publish-author"
               type="checkbox"
@@ -464,12 +623,12 @@ export function MarkdownEditor({ onScrollSyncReady }: MarkdownEditorProps) {
             id="editor-publish-author"
             className="editor-meta-input"
             type="text"
-            placeholder={
+            placeholder={usePublishAuthor ? "作者名称" : "未启用作者同步"}
+            title={
               usePublishAuthor
-                ? "作者名称"
+                ? "作者名称，复制 HTML 后插件会优先填这个值"
                 : "未启用作者同步"
             }
-            title={usePublishAuthor ? "作者名称，复制 HTML 后插件会优先填这个值" : "未启用作者同步"}
             value={publishAuthor}
             onFocus={() => setShowAuthorSuggestions(usePublishAuthor)}
             onChange={(e) => {
@@ -520,6 +679,18 @@ export function MarkdownEditor({ onScrollSyncReady }: MarkdownEditorProps) {
         </div>
         <SaveIndicator />
       </div>
+      <AiLayoutPanel
+        open={showAiLayout}
+        loading={aiLayoutLoading}
+        insertions={aiLayoutInsertions}
+        onClose={() => setShowAiLayout(false)}
+        onApply={handleApplyInsertions}
+        onPreview={handlePreviewInsertion}
+        onUndoPreview={handleUndoPreview}
+        onRefresh={handleAiLayout}
+        articleType={aiLayoutType}
+        typeReason={aiLayoutTypeReason}
+      />
     </div>
   );
 }

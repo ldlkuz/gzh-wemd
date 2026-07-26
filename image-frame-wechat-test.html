@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>image-frame 微信兼容测试</title>
+<style>
+  body {
+    background: #f0f0f0;
+    padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+  .phone-frame {
+    max-width: 375px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  .demo-label {
+    font-size: 12px;
+    color: #999;
+    margin: 20px 0 12px;
+    letter-spacing: 1px;
+    text-align: center;
+  }
+  .copy-btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background: #07c160;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    margin: 8px 0;
+  }
+  .copy-btn:hover { background: #06ad56; }
+</style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <h3 style="text-align:center;color:#333;margin:10px 0 20px;">image-frame 微信兼容版测试</h3>
+
+  <!-- ========== 模板 1：卡片包裹（边框+挂角装饰+色块文字） ========== -->
+  <div class="demo-label">模板 1：CARD 卡片包裹</div>
+  <section style="box-sizing:border-box;border:1px solid rgba(88,163,72,0.5);background:#fff;padding:20px 16px 24px;position:relative;margin:16px 0;">
+    <section style="position:absolute;width:28px;height:28px;top:-14px;left:50%;transform:translateX(-50%);z-index:2;">
+      <img src="https://mmbiz.qpic.cn/sz_mmbiz_png/kCef7OBCXPnPXnWbx2ZmaOQkCaMMQU33HibdHyOB3XHsTrm3LPXP1SpPqJnGt3U6SDgfHs6448UHtH99UZOPaOSMQp7FcuCwuvF1rETl3u6s/0?from=appmsg" style="width:100%;height:auto;display:block;" alt="">
+    </section>
+    <section style="text-align:center;color:#58A348;font-size:18px;font-weight:600;margin-bottom:8px;letter-spacing:1px;">「七月」蝉鸣入夏</section>
+    <section style="text-align:center;color:#58A348;font-size:12px;letter-spacing:1.8px;margin-bottom:16px;opacity:0.8;">JULY ARRIVED AS PROMISED</section>
+    <section style="color:#598F4D;font-size:14px;line-height:1.8;text-align:center;letter-spacing:0.5px;">
+      七月如期而至，蝉鸣、晚风、西瓜与落日<br>
+      所有夏天的美好<span style="display:inline-block;background:#58a348;color:#fff;padding:2px 8px;margin:4px 0;font-size:14px;letter-spacing:0.5px;">都慢慢赶来</span><br>
+      <span style="border-bottom:1.5px dashed #58a348;padding-bottom:1px;">愿这个七月，烦恼清零</span><br>
+      快乐满仓，日子温柔闪光
+    </section>
+  </section>
+
+  <!-- ========== 模板 2：头图叠加（图片背景 + 文字居中） ========== -->
+  <div class="demo-label">模板 2：BANNER 头图叠加</div>
+  <section style="position:relative;width:100%;overflow:hidden;margin:16px 0;">
+    <img src="https://mmbiz.qpic.cn/sz_mmbiz_png/1IX4ExADu8murVPtEA8Ry9PKiawwhsOXnRWmvc261OPaSjRaC4j1X2fiaK14UUO6dSlUBPfqL3a6Rcar0AcDfR3aF7HTLic9E9npYqIfIhvecI/0?from=appmsg" style="width:100%;height:auto;display:block;" alt="">
+    <section style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:30px 20px;text-align:center;">
+      <section style="color:#fff;font-size:26px;font-weight:600;letter-spacing:2px;text-shadow:0 2px 8px rgba(0,0,0,0.3);margin-bottom:8px;">盛夏七月</section>
+      <section style="color:rgba(255,255,255,0.9);font-size:13px;letter-spacing:1.5px;text-shadow:0 1px 4px rgba(0,0,0,0.3);">蝉鸣入夏 · 如期而至</section>
+    </section>
+  </section>
+
+  <!-- ========== 模板 3：左图右字（头像+简介） ========== -->
+  <div class="demo-label">模板 3：LEFT-RIGHT 左图右字</div>
+  <section style="display:flex;gap:12px;padding:16px;background:#f9f9f9;border-radius:6px;margin:16px 0;box-sizing:border-box;">
+    <section style="flex:0 0 100px;width:100px;height:100px;border-radius:50%;overflow:hidden;background:#84B486;padding:4px;box-sizing:border-box;">
+      <img src="https://mmbiz.qpic.cn/sz_mmbiz_png/BAbiaVVv90bBOA4O0NVBnbJraiarZqRhO8jgdI6ZTiakQn6W8po7apZUy5xEenCIgK0GkgjnsiacphWiakwI3v50eic8dibmae7XnUaSSkZx0SL9ick/0?from=appmsg" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;" alt="">
+    </section>
+    <section style="flex:1;display:flex;flex-direction:column;justify-content:center;min-width:0;">
+      <section style="color:#429447;font-size:16px;font-weight:600;margin-bottom:6px;">七月盛夏</section>
+      <section style="color:#76A279;font-size:13px;line-height:1.6;">白昼晴空万里，云朵慵懒浮在天际，黄昏落日熔金。</section>
+    </section>
+  </section>
+
+  <!-- ========== 模板 4：上图下字（图片+渐变过渡+文字） ========== -->
+  <div class="demo-label">模板 4：TOP-BOTTOM 上图下字</div>
+  <section style="background:#E8F5E9;padding:0 0 16px;border-radius:6px;overflow:hidden;margin:16px 0;">
+    <section style="width:100%;height:140px;overflow:hidden;position:relative;">
+      <img src="https://mmbiz.qpic.cn/mmbiz_png/v1F8npocTw2Cfx2VL51js0J38fxYYJdHFbkMNqsvOygRdUwBB6844pDqIccY8F1sBBa9WbIFIIBMOUT6uGUcAcZQkRLfKbv8sia7JfzicPnMI/0?from=appmsg" style="width:100%;height:100%;object-fit:cover;display:block;" alt="">
+      <section style="position:absolute;bottom:0;left:0;right:0;height:40px;background:linear-gradient(to top,#E8F5E9,transparent);"></section>
+    </section>
+    <section style="padding:0 20px;text-align:center;">
+      <section style="color:#429447;font-size:16px;font-weight:600;margin:12px 0 8px;">七月序章</section>
+      <section style="color:#598F4D;font-size:13px;line-height:1.7;">七月是盛夏最完整的模样，白昼晴空万里，黄昏落日熔金。</section>
+      <section style="display:inline-block;background:#58a348;color:#fff;padding:2px 10px;border-radius:10px;font-size:11px;margin-top:8px;">#盛夏 #七月</section>
+    </section>
+  </section>
+
+  <!-- ========== 模板 5：装饰图环绕（四角装饰+金句） ========== -->
+  <div class="demo-label">模板 5：DECOR 装饰图环绕</div>
+  <section style="position:relative;padding:30px 24px;background:#fff;border:1px dashed #c5e0c5;margin:16px 0;box-sizing:border-box;">
+    <section style="position:absolute;width:36px;height:36px;top:-18px;left:-18px;z-index:2;">
+      <img src="https://mmbiz.qpic.cn/sz_mmbiz_png/da0SQ1e7RlVZSHWfp7qTf66Zd90P0GvcJeWoFbRQ7mBiaYIcwxDmxicZ2BSAR3gFObCtq9icyzL6Z8D4UMmibj8sxibolo8sfv5zeUYvTZ0HYODQ/0?from=appmsg" style="width:100%;height:auto;display:block;" alt="">
+    </section>
+    <section style="position:absolute;width:36px;height:36px;top:-18px;right:-18px;transform:rotate(90deg);z-index:2;">
+      <img src="https://mmbiz.qpic.cn/sz_mmbiz_png/da0SQ1e7RlVZSHWfp7qTf66Zd90P0GvcJeWoFbRQ7mBiaYIcwxDmxicZ2BSAR3gFObCtq9icyzL6Z8D4UMmibj8sxibolo8sfv5zeUYvTZ0HYODQ/0?from=appmsg" style="width:100%;height:auto;display:block;" alt="">
+    </section>
+    <section style="position:absolute;width:36px;height:36px;bottom:-18px;left:-18px;transform:rotate(-90deg);z-index:2;">
+      <img src="https://mmbiz.qpic.cn/sz_mmbiz_png/da0SQ1e7RlVZSHWfp7qTf66Zd90P0GvcJeWoFbRQ7mBiaYIcwxDmxicZ2BSAR3gFObCtq9icyzL6Z8D4UMmibj8sxibolo8sfv5zeUYvTZ0HYODQ/0?from=appmsg" style="width:100%;height:auto;display:block;" alt="">
+    </section>
+    <section style="position:absolute;width:36px;height:36px;bottom:-18px;right:-18px;transform:rotate(180deg);z-index:2;">
+      <img src="https://mmbiz.qpic.cn/sz_mmbiz_png/da0SQ1e7RlVZSHWfp7qTf66Zd90P0GvcJeWoFbRQ7mBiaYIcwxDmxicZ2BSAR3gFObCtq9icyzL6Z8D4UMmibj8sxibolo8sfv5zeUYvTZ0HYODQ/0?from=appmsg" style="width:100%;height:auto;display:block;" alt="">
+    </section>
+    <section style="text-align:center;color:#598F4D;">
+      <section style="font-size:40px;color:#84B486;line-height:1;margin-bottom:8px;font-family:Georgia,serif;">"</section>
+      <section style="font-size:15px;line-height:1.8;letter-spacing:0.5px;">于喧嚣蝉鸣中寻内心静谧<br>于滚烫岁月中守一份温柔</section>
+      <section style="margin-top:12px;font-size:12px;color:#999;">— 七月，自成一首夏日长诗</section>
+    </section>
+  </section>
+
+  <!-- ========== 模板 6：章节标题（背景图+描边文字） ========== -->
+  <div class="demo-label">模板 6：SECTION-TITLE 章节标题</div>
+  <section style="display:flex;flex-direction:column;align-items:center;margin:24px 0;">
+    <section>
+      <span style="color:#429447;font-size:16px;font-weight:600;letter-spacing:1px;">PART.</span><span style="color:#ffcb6d;font-size:20px;font-weight:600;margin-left:4px;">01</span>
+    </section>
+    <section style="margin-top:8px;padding:10px 24px;background-image:url('https://mmbiz.qpic.cn/mmbiz_png/ibKFJia1n2uxnru3TpjRTYUUdRqxgY5CoBKunMoB0LZWxBAlsEMJ4Hf6SP9I6TRsWq0xJj0kdObWdyqxUNq2Su1tbg2QcRCg75ozvX5TbIbdU/0?from=appmsg');background-size:100% 100%;background-repeat:no-repeat;">
+      <section style="color:#429447;font-size:16px;font-weight:600;letter-spacing:1px;text-shadow:1px 1px 0 #fff,-1px -1px 0 #fff,1px -1px 0 #fff,-1px 1px 0 #fff;">赴一场七月盛夏</section>
+    </section>
+  </section>
+
+  <div style="text-align:center;color:#999;font-size:12px;margin-top:20px;">
+    ↑ 全部 inline 样式，可直接复制到公众号测试
+  </div>
+</div>
+
+<script>
+  function copyAll() {
+    const content = document.querySelector('.phone-frame');
+    const range = document.createRange();
+    range.selectNodeContents(content);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    try {
+      document.execCommand('copy');
+      alert('已复制，可粘贴到微信公众号编辑器');
+    } catch(e) {
+      alert('复制失败，请手动选择复制');
+    }
+    selection.removeAllRanges();
+  }
+</script>
+
+</body>
+</html>

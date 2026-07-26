@@ -1,4 +1,8 @@
 export * from "./basic";
+export * from "./components-default";
+export * from "./components-extra";
+export * from "./components-faq";
+export * from "./theme-variables";
 
 export * from "./code-github";
 export * from "./code-github-dark";

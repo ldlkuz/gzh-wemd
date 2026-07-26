@@ -265,3 +265,22 @@
     transform: translate3d(0, -50%, 0);
   }
 }
+
+/* 组件菜单：稍宽，便于展示组件名 */
+.md-toolbar-component-menu {
+  min-width: 180px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.md-toolbar-component-item {
+  justify-content: flex-start;
+  gap: 0;
+}
+
+.md-toolbar-component-label {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

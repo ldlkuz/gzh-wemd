@@ -73,17 +73,10 @@ interface ElectronAPI {
   };
   shell?: {
     openExternal: (url: string) => Promise<void>;
-    openPath: (
-      targetPath: string,
-    ) => Promise<{ success: boolean; error?: string }>;
-    openPluginDirectory: () => Promise<{
-      success: boolean;
-      path?: string;
-      error?: string;
-    }>;
+    openPath: (targetPath: string) => Promise<void>;
+    openPluginDirectory: () => Promise<{ success: boolean; error?: string }>;
     openPluginInstructions: () => Promise<{
       success: boolean;
-      path?: string;
       error?: string;
     }>;
   };
