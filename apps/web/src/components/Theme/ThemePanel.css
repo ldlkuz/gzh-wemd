@@ -339,6 +339,7 @@
   border: var(--border-width) solid var(--border-light);
   border-radius: var(--radius-md);
   font-size: 14px;
+  font-family: inherit;
   transition: all 0.2s;
   background: var(--bg-primary);
   color: var(--text-primary);
@@ -726,7 +727,11 @@
 
 .mode-icon-ai {
   color: #8b5cf6;
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(236, 72, 153, 0.12));
+  background: linear-gradient(
+    135deg,
+    rgba(139, 92, 246, 0.12),
+    rgba(236, 72, 153, 0.12)
+  );
   width: 56px;
   height: 56px;
   border-radius: 50%;
