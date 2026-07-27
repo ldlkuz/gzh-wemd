@@ -384,6 +384,10 @@ export const processHtml = (
     return res;
   } catch (e) {
     console.error("Juice inline error:", e);
-    return wrappedHtml;
+    // juice 崩溃时，仍然手动注入样式到原始 HTML
+    let fallback = wrappedHtml;
+    fallback = injectComponentStylesManually(fallback, resolvedCss);
+    fallback = injectBaseThemeStylesManually(fallback, resolvedCss);
+    return fallback;
   }
 };
