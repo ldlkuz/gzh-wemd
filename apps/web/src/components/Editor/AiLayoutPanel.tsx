@@ -38,7 +38,7 @@ interface AiLayoutPanelProps {
 }
 
 /** 组件中文名映射 */
-const COMPONENT_LABELS: Record<string, string> = {
+export const COMPONENT_LABELS: Record<string, string> = {
   "quote-card": "金句卡片",
   "divider-fancy": "装饰分隔",
   "cta-card": "行动号召",
@@ -62,10 +62,17 @@ const COMPONENT_LABELS: Record<string, string> = {
   "copyright-notice": "转载声明",
   "styled-table": "美化表格",
   faq: "常见问题",
+  "magazine-cover": "杂志封面",
+  "section-divider": "章节分隔",
+  "image-card": "图片卡片",
+  "text-card": "正文卡片",
+  "full-quote": "整行引用",
+  "two-column-cards": "两栏卡片",
+  "end-card": "结尾致谢",
 };
 
 /** 文章类型中文名映射 */
-const ARTICLE_TYPE_LABELS: Record<string, string> = {
+export const ARTICLE_TYPE_LABELS: Record<string, string> = {
   tutorial: "教程类",
   story: "故事类",
   data: "数据报告类",

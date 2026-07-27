@@ -43,6 +43,10 @@ interface ToolbarProps {
   onOpenAiLayout?: () => void;
   /** AI 设计版式加载中 */
   aiLayoutLoading?: boolean;
+  /** 打开 AI 杂志级排版（Template 模式） */
+  onOpenTemplate?: () => void;
+  /** Template 模式加载中 */
+  templateLoading?: boolean;
 }
 
 export function Toolbar({
@@ -51,6 +55,8 @@ export function Toolbar({
   aiLoading,
   onOpenAiLayout,
   aiLayoutLoading,
+  onOpenTemplate,
+  templateLoading,
 }: ToolbarProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -490,6 +496,29 @@ export function Toolbar({
             <>
               <Workflow size={14} />
               <span className="md-toolbar-ai-text">设计版式</span>
+            </>
+          )}
+        </button>
+      )}
+
+      {/* AI 杂志级排版（Template 模式） */}
+      {onOpenTemplate && (
+        <button
+          className="md-toolbar-btn md-toolbar-ai-btn md-toolbar-template-btn"
+          onClick={onOpenTemplate}
+          disabled={templateLoading}
+          data-tooltip={
+            templateLoading
+              ? "AI 正在设计排版方案..."
+              : "AI 杂志级排版（一键生成完整排版模板）"
+          }
+        >
+          {templateLoading ? (
+            <Loader2 size={14} className="spinning" />
+          ) : (
+            <>
+              <LayoutTemplate size={14} />
+              <span className="md-toolbar-ai-text">杂志排版</span>
             </>
           )}
         </button>

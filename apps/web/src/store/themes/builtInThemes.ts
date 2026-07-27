@@ -26,6 +26,7 @@ import {
   componentStylesDefault,
   componentStylesExtra,
   componentStylesFaq,
+  componentStylesMagazine,
   getThemeVars,
   globalDefaultVars,
 } from "@wemd/core";
@@ -92,6 +93,7 @@ function buildThemeCss(
     componentStylesDefault,
     componentStylesExtra,
     componentStylesFaq,
+    componentStylesMagazine,
   ]
     .filter(Boolean)
     .join("\n");

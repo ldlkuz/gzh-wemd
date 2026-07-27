@@ -26,6 +26,8 @@ export interface ComponentSlot {
   repeatable: boolean;
   /** 内容提炼规则（指导 AI 阶段2 如何填充 body） */
   extractRule: string;
+  /** Template JSON 模式下的 content 字段 schema 说明（指导 AI 生成 content 对象） */
+  contentSchema?: string;
 }
 
 /** 设计模式：一种文章类型的版式配方 */
@@ -46,6 +48,10 @@ export interface DesignPattern {
   tail: ComponentSlot[];
   /** 节奏说明（给 AI 理解整体动线） */
   rhythm: string;
+  /** 杂志化等级：high=全卡片化 / medium=适度点缀 / low=基本不用杂志级组件 */
+  magazineLevel: "high" | "medium" | "low";
+  /** 杂志化理由（给 AI 理解为什么这个等级） */
+  magazineReason: string;
 }
 
 /** 4 种设计模式库 */
@@ -63,12 +69,16 @@ export const DESIGN_PATTERNS: DesignPattern[] = [
     ],
     rhythm:
       "开头建立预期（目录预览）→ 中段步骤清晰（序号+代码+提示）→ 结尾巩固行动（分享+推荐）",
+    magazineLevel: "medium",
+    magazineReason:
+      "教程类以信息传递为主，过度杂志化会干扰阅读。适度点缀（封面+章节标题+提示框）即可，正文保持纯文。",
     head: [
       {
         component: "follow-bar",
         required: false,
         repeatable: false,
         extractRule: "引导文字 + '关注'按钮文字，简洁一句",
+        contentSchema: '{ hint: "引导语", buttonText: "按钮文字" }',
       },
       {
         component: "toc-nav",
@@ -76,6 +86,7 @@ export const DESIGN_PATTERNS: DesignPattern[] = [
         repeatable: false,
         extractRule:
           "从文章提取所有章节标题，组织成有序列表。第一段写'目录'，列表项为各章节名",
+        contentSchema: '{ title: "目录", items: ["章节1", "章节2"] }',
       },
     ],
     body: [
@@ -104,9 +115,10 @@ export const DESIGN_PATTERNS: DesignPattern[] = [
     tail: [
       {
         component: "share-card",
-        required: true,
+        required: false,
         repeatable: false,
-        extractRule: "引导文字 + 三个按钮（分享/点赞/在看）",
+        extractRule:
+          "一句话情感收尾（如'如果这篇教程帮到了你，欢迎分享给需要的朋友 ❤️'），不加按钮",
       },
     ],
   },
@@ -123,6 +135,9 @@ export const DESIGN_PATTERNS: DesignPattern[] = [
     ],
     rhythm:
       "开头氛围营造（头图）→ 中段情感起伏（金句+图文）→ 结尾共鸣（作者+分享）",
+    magazineLevel: "medium",
+    magazineReason:
+      "故事类需要情感连贯性，全卡片化会打断节奏。封面+金句点缀+结尾即可，正文保持沉浸式纯文。",
     head: [
       {
         component: "hero-banner",
@@ -150,9 +165,10 @@ export const DESIGN_PATTERNS: DesignPattern[] = [
     tail: [
       {
         component: "share-card",
-        required: true,
+        required: false,
         repeatable: false,
-        extractRule: "引导文字（如'如果这个故事触动了你'）+ 三按钮",
+        extractRule:
+          "一句话情感收尾（如'如果这个故事触动了你，欢迎分享给更多人 ❤️'），不加按钮",
       },
     ],
   },
@@ -169,6 +185,9 @@ export const DESIGN_PATTERNS: DesignPattern[] = [
     ],
     rhythm:
       "开头总览（头图+目录）→ 中段数据论证（序号+数据块+表格+结论）→ 结尾结论+来源声明",
+    magazineLevel: "high",
+    magazineReason:
+      "数据报告类视觉化需求强，全卡片化（封面+章节分隔+数据块+图片+结尾）能显著提升专业感和可读性。",
     head: [
       {
         component: "hero-banner",
@@ -215,9 +234,10 @@ export const DESIGN_PATTERNS: DesignPattern[] = [
     tail: [
       {
         component: "share-card",
-        required: true,
+        required: false,
         repeatable: false,
-        extractRule: "引导文字（如'这份数据对你有帮助？'）+ 三按钮",
+        extractRule:
+          "一句话情感收尾（如'这份数据对你有帮助？欢迎分享 ❤️'），不加按钮",
       },
     ],
   },
@@ -235,6 +255,9 @@ export const DESIGN_PATTERNS: DesignPattern[] = [
     ],
     rhythm:
       "开头亮观点（金句前置）→ 中段论证（小标题+引用+强调）→ 结尾号召（分享+推荐）",
+    magazineLevel: "medium",
+    magazineReason:
+      "观点评论类核心是说理，过度包装反减说服力。金句+小标题+引用点缀即可，正文保持纯文。",
     head: [
       {
         component: "quote-card",
@@ -274,9 +297,10 @@ export const DESIGN_PATTERNS: DesignPattern[] = [
     tail: [
       {
         component: "share-card",
-        required: true,
+        required: false,
         repeatable: false,
-        extractRule: "引导文字（如'认同这个观点？'）+ 三按钮",
+        extractRule:
+          "一句话情感收尾（如'认同这个观点？欢迎分享你的看法 ❤️'），不加按钮",
       },
     ],
   },
@@ -294,6 +318,9 @@ export const DESIGN_PATTERNS: DesignPattern[] = [
     ],
     rhythm:
       "开头主题预告（头图+目录）→ 中段逐项展示（序号+图片+点评）→ 结尾分享+推荐",
+    magazineLevel: "high",
+    magazineReason:
+      "清单合集类是杂志排版的最佳场景，全卡片化（封面+目录+序号标题+图片卡片+两栏+结尾）效果最惊艳。",
     head: [
       {
         component: "hero-banner",
@@ -340,9 +367,10 @@ export const DESIGN_PATTERNS: DesignPattern[] = [
       },
       {
         component: "share-card",
-        required: true,
+        required: false,
         repeatable: false,
-        extractRule: "引导文字（如'收藏这份清单'）+ 三按钮",
+        extractRule:
+          "一句话情感收尾（如'收藏这份清单，分享给同好 📚'），不加按钮",
       },
     ],
   },
@@ -359,6 +387,9 @@ export const DESIGN_PATTERNS: DesignPattern[] = [
     ],
     rhythm:
       "开头主题+重点（头图+提示）→ 中段信息分块（小标题+表格）→ 结尾来源+分享",
+    magazineLevel: "low",
+    magazineReason:
+      "资讯通知类追求信息效率，杂志化反降低阅读速度。仅用头图+关键提示框点缀即可，正文保持简洁。",
     head: [
       {
         component: "hero-banner",
@@ -398,9 +429,9 @@ export const DESIGN_PATTERNS: DesignPattern[] = [
     tail: [
       {
         component: "share-card",
-        required: true,
+        required: false,
         repeatable: false,
-        extractRule: "引导文字（如'转发给需要的人'）+ 三按钮",
+        extractRule: "一句话情感收尾（如'转发给需要的人 📢'），不加按钮",
       },
     ],
   },
@@ -418,6 +449,9 @@ export const DESIGN_PATTERNS: DesignPattern[] = [
     ],
     rhythm:
       "开头吸引注意（头图）→ 中段卖点论证（小标题+数据+图文+评价）→ 结尾行动号召",
+    magazineLevel: "high",
+    magazineReason:
+      "产品营销类需要高级感和转化力，全卡片化（封面+卖点卡片+数据+对比+CTA+结尾）效果最佳。",
     head: [
       {
         component: "hero-banner",
@@ -462,6 +496,13 @@ export const DESIGN_PATTERNS: DesignPattern[] = [
         repeatable: false,
         extractRule:
           "行动号召。第一段为号召语，第二段为优惠说明，第三段为按钮文字（如'立即报名'）",
+      },
+      {
+        component: "share-card",
+        required: false,
+        repeatable: false,
+        extractRule:
+          "一句话情感收尾（如'觉得不错？分享给朋友看看 👀'），不加按钮",
       },
     ],
   },

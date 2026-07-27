@@ -23,6 +23,7 @@ import type MarkdownIt from "markdown-it";
 import type StateBlock from "markdown-it/lib/rules_block/state_block";
 import Token from "markdown-it/lib/token";
 import { parseComponentProps } from "./component/parseProps";
+import { MAGAZINE_RENDERERS } from "./component/magazineRenderers";
 
 const COMPONENT_MARKER = ":::";
 // 组件名允许：小写字母、数字、连字符
@@ -108,9 +109,28 @@ function componentRule(
   token.attrSet("data-component", info.name);
   token.map = [startLine, closeLine];
 
-  // 递归处理 body：markdown-it 会自动处理段落、列表等
-  // 参考 markdown-it-container 实现，不调整 blkIndent，直接 tokenize
-  state.md.block.tokenize(state, startLine + 1, closeLine);
+  // 检查是否有专用渲染器
+  const hasCustomRenderer = info.name in MAGAZINE_RENDERERS;
+
+  if (hasCustomRenderer) {
+    // 有专用渲染器：提取原始内容，存到 token.meta 中
+    // 不调用 markdown-it 的 tokenize，避免内部生成 p/ul/li 等标签
+    const rawLines: string[] = [];
+    for (let line = startLine + 1; line < closeLine; line++) {
+      const ls = state.bMarks[line] + state.tShift[line];
+      const le = state.eMarks[line];
+      rawLines.push(state.src.slice(ls, le));
+    }
+    const rawContent = rawLines.join("\n");
+
+    // 插入一个自定义 token，渲染时用专用渲染器处理
+    const bodyToken = state.push("component_body", "", 0);
+    bodyToken.content = rawContent;
+    bodyToken.meta = { componentName: info.name };
+  } else {
+    // 没有专用渲染器：走正常的 Markdown 渲染
+    state.md.block.tokenize(state, startLine + 1, closeLine);
+  }
 
   const closeToken = state.push("component_close", "section", -1);
   closeToken.markup = COMPONENT_MARKER;
@@ -160,12 +180,13 @@ export default function markdownItComponent(md: MarkdownIt): void {
     }
   });
 
-  // 自定义 component_open 渲染：输出 <section class="..."> + 内层 body 容器
+  // 自定义 component_open 渲染
   md.renderer.rules.component_open = (tokens: Token[], idx: number) => {
     const token = tokens[idx];
     const cls = token.attrGet("class") || "wemd-component";
     const dataComponent = token.attrGet("data-component") || "";
     const dataProps = token.attrGet("data-props") || "{}";
+    const componentName = dataComponent;
 
     const dataAttrs: string[] = [];
     if (token.attrs) {
@@ -181,12 +202,44 @@ export default function markdownItComponent(md: MarkdownIt): void {
     }
     const dataAttrsStr = dataAttrs.length ? " " + dataAttrs.join(" ") : "";
 
-    return `<section class="${cls}" data-component="${dataComponent}" data-props="${escapeHtmlAttr(dataProps)}">\n<section class="wemd-component-body"${dataAttrsStr}>\n`;
+    const hasCustomRenderer = componentName in MAGAZINE_RENDERERS;
+    if (hasCustomRenderer) {
+      // 杂志级组件：直接输出外层容器，不带 wemd-component-body
+      return `<section class="${cls}" data-component="${dataComponent}" data-props="${escapeHtmlAttr(dataProps)}">\n`;
+    } else {
+      // 普通组件：输出外层容器 + wemd-component-body
+      return `<section class="${cls}" data-component="${dataComponent}" data-props="${escapeHtmlAttr(dataProps)}">\n<section class="wemd-component-body"${dataAttrsStr}>\n`;
+    }
   };
 
-  // 自定义 component_close 渲染：关闭内层 body + 外层 section
-  md.renderer.rules.component_close = () => {
-    return `</section>\n</section>\n`;
+  // 自定义 component_body 渲染：调用专用渲染器
+  md.renderer.rules.component_body = (tokens: Token[], idx: number) => {
+    const token = tokens[idx];
+    const componentName = token.meta?.componentName as string;
+    const renderer = MAGAZINE_RENDERERS[componentName];
+    if (renderer) {
+      return renderer(token.content || "") + "\n";
+    }
+    return "";
+  };
+
+  // 自定义 component_close 渲染
+  md.renderer.rules.component_close = (tokens: Token[], idx: number) => {
+    // 找到对应的 open token，判断是否是杂志级组件
+    let componentName = "";
+    for (let i = idx - 1; i >= 0; i--) {
+      if (tokens[i].type === "component_open") {
+        componentName = tokens[i].attrGet("data-component") || "";
+        break;
+      }
+    }
+
+    const hasCustomRenderer = componentName in MAGAZINE_RENDERERS;
+    if (hasCustomRenderer) {
+      return `</section>\n`;
+    } else {
+      return `</section>\n</section>\n`;
+    }
   };
 }
 

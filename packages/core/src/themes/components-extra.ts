@@ -264,56 +264,39 @@ export const componentStylesExtra = `/* === WeMD 扩展组件样式（跟随主�
   margin: 0;
 }
 
-/* === share-card 引导分享点赞卡片 === */
+/* === share-card 引导分享（情感收尾，非按钮） === */
+/* 设计原则：公众号内不可点击，不做按钮伪装。顶部细线标记文章收尾，一行走心文字。 */
 #wemd .wemd-share-card {
-  margin: 32px 0;
-  padding: 20px 16px;
-  background: var(--wemd-bg-card, #fafafa);
-  border-radius: 12px;
+  margin: 40px 0 24px 0;
+  padding: 24px 16px 20px 16px;
   text-align: center;
-  border: 1px dashed var(--wemd-border, #d4d4d4);
+  border-top: 1px solid var(--wemd-border, #e2e8f0);
 }
 
 #wemd .wemd-share-card .wemd-component-body {
   text-align: center;
 }
 
-/* 第一段作为引导文字 */
-#wemd .wemd-share-card .wemd-component-body > p:first-child {
-  margin: 0 0 12px 0;
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--wemd-text-strong, #1a1a1a);
-}
-
-/* 列表作为三个按钮（分享/赞/在看） */
-#wemd .wemd-share-card .wemd-component-body ul,
-#wemd .wemd-share-card .wemd-component-body ol {
-  display: flex;
-  justify-content: center;
-  gap: 24px;
-  list-style: none;
-  padding: 0;
+/* 第一段作为收尾文字 */
+#wemd .wemd-share-card .wemd-component-body > p:first-child,
+#wemd .wemd-share-card .wemd-component-body > p.wemd-child-1 {
   margin: 0;
+  font-size: 14px;
+  color: var(--wemd-text-soft, #888888);
+  line-height: 1.6;
 }
 
-#wemd .wemd-share-card .wemd-component-body li {
-  list-style: none;
-  padding: 8px 16px;
-  background: var(--wemd-bg-soft, #ffffff);
-  border: 1px solid var(--wemd-border, #e2e8f0);
-  border-radius: 20px;
-  font-size: 13px;
-  color: var(--wemd-text-soft, #475569);
-  margin: 0;
-}
-
-#wemd .wemd-share-card .wemd-component-body li strong {
-  display: block;
+#wemd .wemd-share-card .wemd-component-body > p:first-child strong,
+#wemd .wemd-share-card .wemd-component-body > p.wemd-child-1 strong {
   color: var(--wemd-primary, #07c160);
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 2px;
+  font-weight: 500;
+}
+
+/* 隐藏旧版按钮结构（ul/ol/li 不再展示） */
+#wemd .wemd-share-card .wemd-component-body ul,
+#wemd .wemd-share-card .wemd-component-body ol,
+#wemd .wemd-share-card .wemd-component-body li {
+  display: none;
 }
 
 /* === related-posts 推荐阅读卡片 === */
@@ -380,7 +363,9 @@ export const componentStylesExtra = `/* === WeMD 扩展组件样式（跟随主�
   border-left: 3px solid var(--wemd-primary, #07c160);
 }
 
-#wemd .wemd-toc-nav .wemd-component-body > p:first-child {
+/* 第一段作为目录标题 */
+#wemd .wemd-toc-nav .wemd-component-body > p:first-child,
+#wemd .wemd-toc-nav .wemd-component-body > p.wemd-child-1 {
   margin: 0 0 12px 0;
   font-size: 14px;
   font-weight: 600;
@@ -394,29 +379,43 @@ export const componentStylesExtra = `/* === WeMD 扩展组件样式（跟随主�
   list-style: none;
   padding: 0;
   margin: 0;
-  counter-reset: toc;
 }
 
 #wemd .wemd-toc-nav .wemd-component-body li {
   list-style: none;
-  counter-increment: toc;
   padding: 6px 0;
   margin: 0;
   font-size: 14px;
   line-height: 1.6;
   color: var(--wemd-text-soft, #334155);
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
+  display: block;
 }
 
-#wemd .wemd-toc-nav .wemd-component-body li::before {
+/* 序号样式：用 span 包裹序号，兼容微信内联 */
+#wemd .wemd-toc-nav .wemd-component-body li span.toc-num {
+  color: var(--wemd-primary, #07c160);
+  font-weight: 600;
+  font-family: "SF Mono", Monaco, monospace;
+  font-size: 13px;
+  margin-right: 8px;
+}
+
+/* 兼容旧版（counter 方式，预览用） */
+#wemd .wemd-toc-nav .wemd-component-body ul {
+  counter-reset: toc;
+}
+
+#wemd .wemd-toc-nav .wemd-component-body ul li {
+  counter-increment: toc;
+}
+
+#wemd .wemd-toc-nav .wemd-component-body ul li::before {
   content: counter(toc, decimal-leading-zero);
   color: var(--wemd-primary, #07c160);
   font-weight: 600;
   font-family: "SF Mono", Monaco, monospace;
   font-size: 13px;
-  flex-shrink: 0;
+  margin-right: 8px;
 }
 
 #wemd .wemd-toc-nav .wemd-component-body li a {

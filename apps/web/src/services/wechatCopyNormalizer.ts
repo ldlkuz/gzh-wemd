@@ -446,6 +446,23 @@ const normalizeBlockBackgroundForWechat = (
   );
 
   blocks.forEach((node) => {
+    // 跳过 WeMD 组件容器及其内部元素
+    // 这些元素的背景色由主题 CSS 通过 var(--wemd-*) 控制，
+    // juice 可能无法正确内联 CSS 变量，但不应被强制透明化
+    if (
+      node.classList.contains("wemd-component") ||
+      node.className?.includes?.("wemd-mc-") ||
+      node.className?.includes?.("wemd-sd-") ||
+      node.className?.includes?.("wemd-tcc-") ||
+      node.className?.includes?.("wemd-fq-") ||
+      node.className?.includes?.("wemd-ic-") ||
+      node.className?.includes?.("wemd-ec-") ||
+      node.className?.includes?.("wemd-toc-") ||
+      node.closest(".wemd-component")
+    ) {
+      return;
+    }
+
     const background = node.style.getPropertyValue("background");
     const backgroundColor = node.style.getPropertyValue("background-color");
     const backgroundImage = node.style.getPropertyValue("background-image");

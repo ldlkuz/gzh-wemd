@@ -3,6 +3,79 @@ import juice from "juice";
 const DATA_TOOL = "WeMD编辑器";
 const SECTION_ID = "wemd";
 
+/**
+ * 为组件内部的直接子元素添加位置 class（wemd-child-1, wemd-child-2, ...）
+ * 解决 juice 无法内联 :nth-child 等伪类选择器的问题
+ */
+function addChildPositionClasses(html: string): string {
+  const componentBodyRegex =
+    /<section[^>]*class="[^"]*wemd-component-body[^"]*"[^>]*>([\s\S]*?)<\/section>/g;
+
+  return html.replace(componentBodyRegex, (match, innerContent: string) => {
+    let result = innerContent;
+
+    const tagRegex =
+      /<(p|h[1-6]|ul|ol|blockquote|table|pre|hr|div|section)(\s+[^>]*|)>/gi;
+
+    const matches: Array<{
+      fullMatch: string;
+      tag: string;
+      attrs: string;
+      index: number;
+    }> = [];
+    let m: RegExpExecArray | null;
+    while ((m = tagRegex.exec(innerContent)) !== null) {
+      matches.push({
+        fullMatch: m[0],
+        tag: m[1],
+        attrs: m[2],
+        index: m.index,
+      });
+    }
+
+    for (let i = matches.length - 1; i >= 0; i--) {
+      const item = matches[i];
+      const childNum = i + 1;
+      let newAttrs = item.attrs;
+
+      if (newAttrs.includes('class="')) {
+        newAttrs = newAttrs.replace(
+          'class="',
+          `class="wemd-child-${childNum} `,
+        );
+      } else {
+        newAttrs = ` class="wemd-child-${childNum}"${newAttrs}`;
+      }
+
+      const newTag = `<${item.tag}${newAttrs}>`;
+      result =
+        result.slice(0, item.index) +
+        newTag +
+        result.slice(item.index + item.fullMatch.length);
+    }
+
+    return match.replace(innerContent, result);
+  });
+}
+
+/**
+ * 为 toc-nav 目录组件的 li 添加序号 span（兼容微信内联）
+ * 微信不支持 ::before 伪元素和 counter 计数器，需要直接把序号写进 HTML
+ */
+function addTocNumbers(html: string): string {
+  const tocNavRegex =
+    /<section[^>]*class="[^"]*wemd-toc-nav[^"]*"[^>]*>[\s\S]*?<\/section>/g;
+
+  return html.replace(tocNavRegex, (match: string) => {
+    let liIndex = 0;
+    return match.replace(/<li([^>]*)>/gi, (liMatch: string, attrs: string) => {
+      liIndex++;
+      const num = liIndex.toString().padStart(2, "0");
+      return `<li${attrs}><span class="toc-num">${num}</span>`;
+    });
+  });
+}
+
 const BLOCK_TAGS = [
   "p",
   "h1",
@@ -20,6 +93,81 @@ const BLOCK_TAGS = [
   "pre",
   "hr",
 ] as const;
+
+/**
+ * 手动注入组件内联样式（绕过 juice 浏览器版本 bug）
+ *
+ * juice 在浏览器端处理大量 CSS 规则后会停止解析，导致组件样式丢失。
+ * 此函数从 CSS 中提取所有 .wemd-* 选择器的样式，通过浏览器原生
+ * querySelectorAll 精确匹配后代选择器/子选择器/伪类，直接注入到对应 HTML 元素上。
+ */
+const injectComponentStylesManually = (html: string, css: string): string => {
+  // 提取所有 .wemd-* 组件 CSS 规则
+  const rules: Array<{ selector: string; styles: string }> = [];
+  const ruleRegex = /([^{}]+)\{([^}]*)\}/g;
+  let match: RegExpExecArray | null;
+  while ((match = ruleRegex.exec(css)) !== null) {
+    const selector = match[1].trim();
+    const body = match[2].trim();
+    if (!selector.includes(".wemd-")) continue;
+    if (selector.includes("::") || selector.includes("@")) continue;
+    if (selector.trim() === "#wemd") continue;
+
+    const styleStr = body
+      .split(";")
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0 && s.indexOf(":") > 0)
+      .join("; ");
+
+    if (styleStr) {
+      rules.push({ selector, styles: styleStr });
+    }
+  }
+
+  if (rules.length === 0) return html;
+
+  // 创建临时 DOM，利用浏览器 querySelectorAll 精确匹配选择器
+  const container = document.createElement("div");
+  container.innerHTML = html;
+
+  for (const { selector, styles } of rules) {
+    try {
+      const elements = container.querySelectorAll(selector);
+      elements.forEach((el) => {
+        if (!(el instanceof HTMLElement)) return;
+        // 合并已有内联样式和新样式（新样式覆盖已有）
+        const styleMap = new Map<string, string>();
+        const existing = (el.getAttribute("style") || "").trim();
+        existing.split(";").forEach((s) => {
+          const colonIdx = s.indexOf(":");
+          if (colonIdx > 0) {
+            styleMap.set(
+              s.substring(0, colonIdx).trim(),
+              s.substring(colonIdx + 1).trim(),
+            );
+          }
+        });
+        styles.split(";").forEach((s) => {
+          const colonIdx = s.indexOf(":");
+          if (colonIdx > 0) {
+            styleMap.set(
+              s.substring(0, colonIdx).trim(),
+              s.substring(colonIdx + 1).trim(),
+            );
+          }
+        });
+        const merged = Array.from(styleMap.entries())
+          .map(([p, v]) => `${p}: ${v}`)
+          .join("; ");
+        el.setAttribute("style", merged);
+      });
+    } catch {
+      // 无效选择器（如 data-props 属性选择器含特殊字符）跳过
+    }
+  }
+
+  return container.innerHTML;
+};
 
 /**
  * 处理 HTML，添加 data-tool 属性并应用 CSS 样式
@@ -76,17 +224,38 @@ export const processHtml = (
     },
   );
 
-  const wrappedHtml = `<section id="${SECTION_ID}">${html}</section>`;
+  let processedHtml = addTocNumbers(html);
+  processedHtml = addChildPositionClasses(processedHtml);
+  const wrappedHtml = `<section id="${SECTION_ID}">${processedHtml}</section>`;
 
   if (!inlineStyles) {
     return wrappedHtml;
   }
 
+  // 展开 CSS 变量：把 var(--wemd-*, fallback) 替换成 fallback 值
+  // juice 无法解析 CSS 自定义属性，带 var() 的属性会被跳过不内联
+  let resolvedCss = css;
+  let prevCss = "";
+  let iterations = 0;
+  while (prevCss !== resolvedCss && iterations < 10) {
+    prevCss = resolvedCss;
+    resolvedCss = resolvedCss.replace(
+      /var\(--wemd-[a-z0-9-]+,\s*([^()]*(?:\([^()]*\)[^()]*)*)\)/g,
+      (_match, fallback: string) => fallback.trim(),
+    );
+    iterations++;
+  }
+
   try {
-    let res = juice.inlineContent(wrappedHtml, css, {
+    let res = juice.inlineContent(wrappedHtml, resolvedCss, {
       inlinePseudoElements,
       preserveImportant: true,
     });
+
+    // juice 浏览器版本存在 bug：大量 CSS 规则（尤其是 #wemd {} 块）之后
+    // 会停止解析后续的选择器，导致所有组件样式丢失。
+    // 这里手动从 resolvedCss 中提取组件规则，注入到对应 HTML 元素上。
+    res = injectComponentStylesManually(res, resolvedCss);
 
     // 在 juice 处理之后，为代码块追加关键内联样式
     // 这确保我们的样式不会被 juice 覆盖，且优先级最高
