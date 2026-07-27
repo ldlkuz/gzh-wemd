@@ -111,10 +111,10 @@ export const ThemeLivePreview = memo(function ThemeLivePreview({
     <head>
       <meta charset="UTF-8">
       <style id="base-style">
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
+        body {
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
           padding: 0;
+          margin: 0;
           font-size: 14px;
           line-height: 1.6;
           transition: background 0.2s, color 0.2s;
@@ -139,7 +139,9 @@ export const ThemeLivePreview = memo(function ThemeLivePreview({
       : PREVIEW_MARKDOWN;
   const html = useMemo(() => {
     const rawHtml = parser.render(previewContent);
-    return processHtml(rawHtml, finalCss, true);
+    // 与 MarkdownPreview 保持一致，使用 inlineStyles=false
+    // 避免内联化导致 CSS 变量丢失、伪元素跳过、双重样式应用等问题
+    return processHtml(rawHtml, finalCss, false);
   }, [parser, finalCss, previewContent]);
 
   useEffect(() => {

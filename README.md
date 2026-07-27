@@ -13,6 +13,16 @@
   它建立在上游开源项目之上，并在 AI 辅助排版、组件系统和公众号发布链路方面做了针对性增强。
 </p>
 
+## 预览
+
+<p align="center">
+  <img src=".github/assets/test.png" alt="主界面预览" style="border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);" />
+</p>
+
+<p align="center">
+  <img src=".github/assets/test1.png" alt="杂志风排版效果" style="border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);" />
+</p>
+
 ---
 
 ## 项目说明
