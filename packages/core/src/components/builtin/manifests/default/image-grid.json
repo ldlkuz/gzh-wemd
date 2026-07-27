@@ -1,0 +1,15 @@
+{
+  "type": "image-grid",
+  "variant": "default",
+  "version": "1.0.0",
+  "label": "图片画廊",
+  "description": "多张图片的网格布局展示",
+  "author": "wemd",
+  "category": "Media",
+  "semantic": "Gallery",
+  "intent": "collect",
+  "tags": ["图片", "画廊"],
+  "tone": ["warm", "elegant"],
+  "articleCategories": ["emotion", "essay"],
+  "insertPosition": ["body"]
+}

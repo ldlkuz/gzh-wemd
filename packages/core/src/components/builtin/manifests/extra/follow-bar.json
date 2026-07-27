@@ -1,0 +1,15 @@
+{
+  "type": "follow-bar",
+  "variant": "extra",
+  "version": "1.0.0",
+  "label": "关注引导",
+  "description": "文章顶部引导读者关注公众号",
+  "author": "wemd",
+  "category": "Header",
+  "semantic": "Follow",
+  "intent": "convert",
+  "tags": ["关注", "引导"],
+  "tone": ["warm", "minimal"],
+  "articleCategories": ["emotion", "essay", "tutorial"],
+  "insertPosition": ["header"]
+}

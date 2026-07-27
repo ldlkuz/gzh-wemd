@@ -1,0 +1,15 @@
+{
+  "type": "end-card",
+  "variant": "magazine",
+  "version": "1.0.0",
+  "label": "结尾致谢",
+  "description": "杂志风格的文末致谢卡片",
+  "author": "wemd",
+  "category": "Ending",
+  "semantic": "Thanks",
+  "intent": "branding",
+  "tags": ["结尾", "致谢"],
+  "tone": ["warm", "elegant"],
+  "articleCategories": ["emotion", "essay"],
+  "insertPosition": ["ending"]
+}

@@ -1,0 +1,15 @@
+{
+  "type": "section-divider",
+  "variant": "magazine",
+  "version": "1.0.0",
+  "label": "章节分隔",
+  "description": "杂志风格的章节分隔装饰",
+  "author": "wemd",
+  "category": "Structure",
+  "semantic": "Chapter",
+  "intent": "guide",
+  "tags": ["章节", "分隔"],
+  "tone": ["minimal", "elegant"],
+  "articleCategories": ["emotion", "essay"],
+  "insertPosition": ["body"]
+}

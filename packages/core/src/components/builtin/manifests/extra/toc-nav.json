@@ -1,0 +1,15 @@
+{
+  "type": "toc-nav",
+  "variant": "extra",
+  "version": "1.0.0",
+  "label": "目录导航",
+  "description": "自动生成的文章内容目录",
+  "author": "wemd",
+  "category": "Structure",
+  "semantic": "Navigation",
+  "intent": "guide",
+  "tags": ["目录", "导航"],
+  "tone": ["neutral", "professional"],
+  "articleCategories": ["tutorial"],
+  "insertPosition": ["header", "body"]
+}

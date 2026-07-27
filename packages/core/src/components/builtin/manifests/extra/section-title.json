@@ -1,0 +1,15 @@
+{
+  "type": "section-title",
+  "variant": "extra",
+  "version": "1.0.0",
+  "label": "段落标题",
+  "description": "带装饰的章节分隔标题",
+  "author": "wemd",
+  "category": "Structure",
+  "semantic": "Section",
+  "intent": "guide",
+  "tags": ["章节", "标题"],
+  "tone": ["minimal", "neutral"],
+  "articleCategories": ["tutorial", "essay"],
+  "insertPosition": ["body"]
+}

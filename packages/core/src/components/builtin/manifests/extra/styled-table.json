@@ -1,0 +1,15 @@
+{
+  "type": "styled-table",
+  "variant": "extra",
+  "version": "1.0.0",
+  "label": "样式表格",
+  "description": "带彩色表头和斑马条纹的数据表格",
+  "author": "wemd",
+  "category": "Data",
+  "semantic": "Table",
+  "intent": "guide",
+  "tags": ["表格", "数据"],
+  "tone": ["neutral", "professional"],
+  "articleCategories": ["tutorial"],
+  "insertPosition": ["body"]
+}

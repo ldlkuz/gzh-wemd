@@ -1,0 +1,15 @@
+{
+  "type": "callout-pro",
+  "variant": "default",
+  "version": "1.0.0",
+  "label": "提示卡片",
+  "description": "带图标的彩色提示信息块",
+  "author": "wemd",
+  "category": "Highlight",
+  "semantic": "Hint",
+  "intent": "guide",
+  "tags": ["提示", "强调"],
+  "tone": ["neutral", "professional"],
+  "articleCategories": ["tutorial", "essay"],
+  "insertPosition": ["body"]
+}

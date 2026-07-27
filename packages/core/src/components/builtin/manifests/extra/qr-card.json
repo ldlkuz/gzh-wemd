@@ -1,0 +1,15 @@
+{
+  "type": "qr-card",
+  "variant": "extra",
+  "version": "1.0.0",
+  "label": "二维码卡片",
+  "description": "文末展示二维码引导扫码关注",
+  "author": "wemd",
+  "category": "Footer",
+  "semantic": "QR",
+  "intent": "convert",
+  "tags": ["二维码", "引流"],
+  "tone": ["warm", "persuasive"],
+  "articleCategories": ["emotion", "essay", "tutorial"],
+  "insertPosition": ["ending"]
+}

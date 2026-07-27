@@ -1,0 +1,15 @@
+{
+  "type": "divider-fancy",
+  "variant": "default",
+  "version": "1.0.0",
+  "label": "装饰分隔线",
+  "description": "带装饰图案的内容分隔线",
+  "author": "wemd",
+  "category": "Structure",
+  "semantic": "Divider",
+  "intent": "guide",
+  "tags": ["分隔", "装饰"],
+  "tone": ["minimal", "neutral"],
+  "articleCategories": ["tutorial", "essay"],
+  "insertPosition": ["body"]
+}

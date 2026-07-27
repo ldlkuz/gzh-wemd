@@ -1,0 +1,15 @@
+{
+  "type": "stats-block",
+  "variant": "default",
+  "version": "1.0.0",
+  "label": "数据统计",
+  "description": "以可视化方式展示关键数据指标",
+  "author": "wemd",
+  "category": "Data",
+  "semantic": "Stat",
+  "intent": "share",
+  "tags": ["数据", "统计"],
+  "tone": ["neutral", "professional"],
+  "articleCategories": ["tutorial", "essay"],
+  "insertPosition": ["body"]
+}

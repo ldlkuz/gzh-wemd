@@ -1,0 +1,15 @@
+{
+  "type": "quote-card",
+  "variant": "default",
+  "version": "1.0.0",
+  "label": "引用卡片",
+  "description": "突出展示金句或名人名言",
+  "author": "wemd",
+  "category": "Highlight",
+  "semantic": "Quote",
+  "intent": "discussion",
+  "tags": ["引用", "金句"],
+  "tone": ["warm", "elegant"],
+  "articleCategories": ["emotion", "essay"],
+  "insertPosition": ["body"]
+}

@@ -1,0 +1,15 @@
+{
+  "type": "text-card",
+  "variant": "magazine",
+  "version": "1.0.0",
+  "label": "文字卡片",
+  "description": "杂志风格的纯文字内容卡片",
+  "author": "wemd",
+  "category": "Structure",
+  "semantic": "Card",
+  "intent": "guide",
+  "tags": ["卡片", "文字"],
+  "tone": ["minimal", "neutral"],
+  "articleCategories": ["tutorial", "essay"],
+  "insertPosition": ["body"]
+}
