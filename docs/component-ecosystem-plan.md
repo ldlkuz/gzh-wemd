@@ -1,417 +1,385 @@
-# WeMD 组件生态系统 — 改造计划书
+# WeMD AI 内容设计系统 — 改造计划书 v2
 
-> 版本：1.0
+> 版本：2.0
 > 日期：2026-07-27
 > 分支：feature/component-ecosystem
 > 状态：规划阶段
+>
+> **核心原则：先让 AI 变聪明，聪明之后再谈生态。**
 
 ---
 
-## 一、背景与动机
+## 一、当前问题
 
-### 1.1 现状问题
+### 1.1 AI 在"填表"而非"设计"
 
-当前 30 个组件分散在 4 个 CSS 文件 + 5 个注册表中，新增一个组件需要同时修改：
+|                | 当前                   | 愿景                        |
+| -------------- | ---------------------- | --------------------------- |
+| 怎么选组件     | 按文章类型固定分配     | 读懂文章后自主决策          |
+| 知道为什么选吗 | 不知道，模板写死了     | 知道（意图 + 语义）         |
+| 能换风格吗     | 不能，一个组件一种 CSS | 能（Design Theme 统一驱动） |
+| 第三方能贡献吗 | 完全不能               | .wemdc 文件导入             |
 
-| 步骤 | 文件                    | 内容                          |
-| ---- | ----------------------- | ----------------------------- |
-| 1    | `components-*.ts`       | CSS 样式                      |
-| 2    | `componentSchemas.ts`   | AI 可识别的 content schema    |
-| 3    | `componentRenderers.ts` | Template JSON 渲染逻辑        |
-| 4    | `analysisAgent.ts`      | `AVAILABLE_COMPONENTS` 白名单 |
-| 5    | `AiLayoutPanel.tsx`     | 中文标签映射                  |
-
-**核心痛点**：
-
-- 组件不是自包含的，无法独立分发
-- 第三方无法贡献新组件或同类型变体
-- AI 无法感知组件的语义信息和风格差异
-- 组件样式和渲染逻辑与解析器强耦合
-
-### 1.2 目标愿景
-
-构建一个可扩展的组件生态系统：
+当前 `designPatterns.ts` 的 7 套模板：
 
 ```
-组件库 = 基础组件类型 × N 个风格变体
-         ↓
-    同一语义，不同外观
-         ↓
-   用户 / 第三方可自由导入
+教程类 → hero-banner + toc-nav + numbered-heading + share-card
+故事类 → hero-banner + quote-card + share-card
+...
 ```
 
-- 每个组件是**自包含的包**（manifest + CSS + renderer）
-- 同类型可有多个风格变体
-- AI 可根据文章风格自动选择合适的变体
-- 支持从文件 / URL / 组件市场导入
+这不是 AI 设计，这是 AI 在 7 个预置表单里打勾。
+
+### 1.2 组件没有语义
+
+AI 看到的名字是 `share-card`。但它无法知道：
+
+- 这个组件用来完成什么目的？（促进评论？引导分享？号召收藏？）
+- 适合什么情绪的文章？（温暖？严肃？理性？）
+- 应该放在什么位置？（文末？段落间？）
+- 和什么风格搭配？（科技？极简？杂志？）
 
 ---
 
-## 二、当前架构梳理
+## 二、目标架构
 
-### 2.1 组件生命周期
+### 2.1 AI 四层推理流程
 
 ```
-定义层（4 个 CSS 文件）
-    → Schema 层（componentSchemas.ts）
-        → 渲染层（componentRenderers.ts / magazineRenderers.ts）
-            → 解析层（markdown-it-component.ts）
-                → 后处理层（ThemeProcessor.ts）
+文章原文
+    │
+    ▼
+┌─────────────────────────────────┐
+│ 第一层：文章画像 (Article Profile) │  ← 理解文章
+│ category + tone + purpose + depth │
+└─────────────────────────────────┘
+    │
+    ▼
+┌─────────────────────────────────┐
+│ 第二层：设计主题 (Design Theme)    │  ← 全局风格统一
+│ Warm / Tech / Minimal / Magazine  │
+└─────────────────────────────────┘
+    │
+    ▼
+┌─────────────────────────────────┐
+│ 第三层：内容块规划 (Content Plan)  │  ← 决定放什么
+│ Title → Quote → Image → Ending   │
+└─────────────────────────────────┘
+    │
+    ▼
+┌─────────────────────────────────┐
+│ 第四层：视觉变体 (Variant)        │  ← 决定长什么样
+│ 基于 Theme 匹配具体 CSS          │
+└─────────────────────────────────┘
+    │
+    ▼
+ 最终页面
 ```
 
-### 2.2 现有扩展点
+### 2.2 组件的三层语义模型
 
-| 扩展点            | 位置                    | 方式              | 动态性    |
-| ----------------- | ----------------------- | ----------------- | --------- |
-| Markdown 解析插件 | `MarkdownParser.ts`     | `.use()` 链式注册 | ❌ 硬编码 |
-| 组件 CSS          | 4 个 `components-*.ts`  | 字符串导出        | ❌ 硬编码 |
-| 组件 Schema       | `componentSchemas.ts`   | 数组              | ❌ 硬编码 |
-| 组件渲染器        | `componentRenderers.ts` | Record 对象       | ❌ 硬编码 |
-| 杂志级渲染器      | `magazineRenderers.ts`  | Record 对象       | ❌ 硬编码 |
-| AI 白名单         | `AVAILABLE_COMPONENTS`  | 数组              | ❌ 硬编码 |
-| 主题变量          | `theme-variables.ts`    | CSS 变量          | ❌ 硬编码 |
+```
+Category（内容类别）    →  组件在文章结构中的角色
+  Semantic（语义意图）  →  组件要实现的目的
+    Variant（视觉变体） →  具体的外观风格
+```
 
-**结论：所有扩展点均为编译时硬编码，没有动态注册能力。**
+示例：
 
-### 2.3 现有组件清单（30 个）
+```
+Ending（结尾类）
+  └── Comment（评论引导）
+  │     ├── Minimal（极简）
+  │     ├── Magazine（杂志）
+  │     └── Warm（温暖）
+  └── Share（分享引导）
+  │     ├── Simple（简单）
+  │     └── Business（商务）
+  └── Thanks（致谢）
+        ├── Elegant（优雅）
+        └── Warm（温暖）
+```
 
-| 文件                     | 数量 | 组件                                                                                                                                                                            |
-| ------------------------ | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `components-default.ts`  | 9    | quote-card, divider-fancy, cta-card, code-frame, callout-pro, stats-block, image-grid, author-card, timeline                                                                    |
-| `components-extra.ts`    | 13   | follow-bar, qr-card, numbered-heading, section-title, image-text-row, hero-banner, share-card, related-posts, toc-nav, tag-label, image-caption, copyright-notice, styled-table |
-| `components-faq.ts`      | 1    | faq                                                                                                                                                                             |
-| `components-magazine.ts` | 7    | magazine-cover, section-divider, image-card, text-card, full-quote, two-column-cards, end-card                                                                                  |
+这样 AI 的决策路径是：
+
+> "这篇文章是温暖的个人故事，目的促进讨论"
+> → 结尾需要 Ending.Comment.Warm
+> → 不是随便一个 share-card
+
+### 2.3 设计主题 (Design Theme)
+
+组件不孤立存在，整篇文章统一风格：
+
+```
+Theme = WarmMagazine
+
+    magazine-cover        → Warm 风格
+    section-divider       → Warm 风格
+    quote-card            → Warm 风格
+    share-card            → Warm 风格
+    end-card              → Warm 风格
+          ↑
+    全部由 Theme 统一驱动，不是各自为政
+```
+
+### 2.4 文章画像 (Article Profile)
+
+```
+Category     Tone         Purpose      ReadingDepth
+─────────    ───────      ─────────    ────────────
+Tech         Warm         Discussion   Quick
+AI           Serious      Collect      Medium
+Emotion      Rational     Share        Deep
+Finance      Luxury       Convert
+News         Modern       Guide
+Travel       Elegant      Branding
+Education    Playful
+Business
+```
 
 ---
 
-## 三、目标架构
+## 三、实施路线
 
-### 3.1 组件包格式（.wemdc）
+### Phase 1：统一内置组件格式（2-3 天）✅ 保留
 
-每个组件包是一个包含 `manifest.json` 和 `style.css` 的目录或 zip 包：
+**目标**：不改功能，把现有 30 个组件迁移到 manifest 模式。
 
+**动什么**：
+
+- 创建 `packages/core/src/components/builtin/` 目录
+- 每个组件 = `manifest.json` + `style.css`
+- 创建 `ComponentRegistry` 核心类
+- CSS 拼接输出与现在完全一致
+
+**不动什么**：
+
+- `::: share-card{...}:::` 语法不变
+- 渲染 HTML 结构不变
+- 预览效果不变
+- 复制到公众号不变
+- 现有 CSS 内容不修改
+
+### Phase 2：AI 智能设计（4-5 天）← **核心重点**
+
+**目标**：AI 从"填模板"升级为"理解文章后自主设计"。
+
+**2.1 文章画像 (Article Profile)**
+
+在 `analysisAgent.ts` 的 Stage 1 后插入新分析维度：
+
+```typescript
+interface ArticleProfile {
+  category: string; // Tech | Emotion | Finance | ...
+  tone: string; // Warm | Serious | Rational | ...
+  purpose: string; // Discussion | Share | Collect | ...
+  readingDepth: string; // Quick | Medium | Deep
+}
 ```
-share-card-neon/
-├── manifest.json
-└── style.css
-```
 
-**manifest.json 规范**：
+AI 一次调用同时输出 `type` + `profile`：
 
 ```json
 {
-  "type": "share-card",
-  "variant": "neon",
-  "version": "1.0.0",
-  "label": "霓虹分享引导",
-  "description": "霓虹灯效果的文末分享引导，适合科技/潮流类文章",
-  "author": "community",
-  "tags": ["科技", "潮流", "高对比"],
-  "schema": {
-    "text": {
-      "type": "string",
-      "description": "收尾感言文字",
-      "default": "觉得有用就分享给朋友吧"
-    }
-  },
-  "props": {
-    "intensity": {
-      "type": "string",
-      "enum": ["low", "medium", "high"],
-      "default": "medium"
-    }
-  },
-  "magazineLevel": ["high", "medium"],
-  "requires": {
-    "themeVariables": ["--wemd-primary", "--wemd-bg-soft"]
+  "type": "story",
+  "reason": "第一人称叙述个人经历，有情感转折",
+  "profile": {
+    "category": "Emotion",
+    "tone": "Warm",
+    "purpose": "Discussion",
+    "depth": "Medium"
   }
 }
 ```
 
-**字段说明**：
+**2.2 组件语义标注**
 
-| 字段            | 必需 | 说明                                                                                  |
-| --------------- | ---- | ------------------------------------------------------------------------------------- |
-| `type`          | ✅   | 归属的基础组件类型。同一 type 的所有 variant 语义等价（都可作为文章收尾），仅视觉不同 |
-| `variant`       | ✅   | 风格变体标识，在 type 内唯一                                                          |
-| `version`       | ✅   | 语义化版本                                                                            |
-| `label`         | ✅   | 中文标签，展示给用户                                                                  |
-| `description`   | ✅   | 详细描述，帮助用户和 AI 选择                                                          |
-| `author`        | ✅   | 作者标识                                                                              |
-| `tags`          |      | 风格标签，辅助 AI 匹配                                                                |
-| `schema`        | ✅   | AI 调用时需要的 content 数据结构                                                      |
-| `props`         |      | 组件可配置属性定义                                                                    |
-| `magazineLevel` |      | 适用的杂志化等级，空数组或省略表示不限制                                              |
-| `requires`      |      | 依赖的 CSS 变量清单，确保主题兼容                                                     |
+给 manifest.json 增加语义字段：
 
-**style.css 规范**：
-
-- 所有选择器以 `#wemd .wemd-{type}[data-variant="{variant}"]` 为前缀
-- 禁止使用 `background-color` 在 `#wemd` 层级
-- 禁止外部资源引用（`@import`, `url()` 外链）
-- 字体大小 ≥ 14px
-- 颜色对比度满足 WCAG AA
-
-示例：
-
-```css
-#wemd .wemd-share-card[data-variant="neon"] {
-  margin: 40px 0 24px 0;
-  padding: 24px 16px;
-  text-align: center;
-  border-top: 2px solid var(--wemd-primary, #07c160);
-  box-shadow: 0 0 20px rgba(7, 193, 96, 0.15);
-}
-
-#wemd
-  .wemd-share-card[data-variant="neon"]
-  .wemd-component-body
-  > p:first-child {
-  font-size: 15px;
-  color: var(--wemd-primary, #07c160);
-  text-shadow: 0 0 8px rgba(7, 193, 96, 0.3);
+```json
+{
+  "type": "share-card",
+  "variant": "default",
+  "category": "Ending",
+  "semantic": "Share",
+  "intent": "discussion",
+  "tone": ["warm", "minimal"],
+  "articleCategories": ["emotion", "essay"],
+  "insertPosition": ["ending"]
 }
 ```
 
-### 3.2 ComponentRegistry
+现有组件的分类映射：
 
-统一的组件注册中心：
+| 组件             | Category  | Semantic      | Intent     |
+| ---------------- | --------- | ------------- | ---------- |
+| magazine-cover   | Hero      | Brand         | branding   |
+| section-divider  | Structure | Chapter       | guide      |
+| quote-card       | Highlight | Quote         | discussion |
+| callout-pro      | Highlight | Hint          | guide      |
+| stats-block      | Data      | Stat          | share      |
+| share-card       | Ending    | Share/Comment | discussion |
+| cta-card         | Ending    | CTA           | convert    |
+| end-card         | Ending    | Thanks        | branding   |
+| follow-bar       | Header    | Follow        | convert    |
+| toc-nav          | Structure | Navigation    | guide      |
+| tag-label        | Footer    | Tag           | collect    |
+| related-posts    | Footer    | Related       | collect    |
+| timeline         | Data      | Timeline      | guide      |
+| image-card       | Media     | Image         | collect    |
+| two-column-cards | Structure | Compare       | guide      |
+| full-quote       | Highlight | Quote         | discussion |
+| faq              | Structure | FAQ           | guide      |
+
+**2.3 四层推理实现**
+
+改造 `analysisAgent.ts`，不再两阶段，改为四层：
 
 ```typescript
-class ComponentRegistry {
-  // 注册一个组件包
-  register(pkg: ComponentPackage): void;
+async function analyzeArticle(markdown: string): Promise<DesignPlan> {
+  // 第1层 + 第2层：一次 LLM 调用
+  //   输出：Profile + Theme
+  const { profile, theme } = await inferProfileAndTheme(markdown);
 
-  // 注销
-  unregister(type: string, variant: string): void;
+  // 第3层：基于 Profile + Theme 规划内容块
+  //   可纯代码决策（基于语义规则），也可再调一次 LLM
+  const contentPlan = planContentBlocks(markdown, profile, theme);
 
-  // 获取某个类型的所有变体
-  getVariants(type: string): ComponentVariant[];
+  // 第4层：基于 Theme 匹配视觉变体
+  const variants = matchVariants(contentPlan, theme);
 
-  // 获取所有已注册的类型
-  getTypes(): string[];
-
-  // 获取当前活跃的默认变体
-  getDefaultVariant(type: string): ComponentVariant | undefined;
-
-  // 为 AI 生成组件描述
-  describeForAi(): string;
-
-  // 获取所有组件 CSS（拼接后注入页面）
-  getAllCss(): string;
-
-  // 获取组件的 content schema（供 AI 调用）
-  getSchema(type: string, variant: string): ComponentSchema | undefined;
+  return { profile, theme, contentPlan, variants };
 }
 ```
 
-**注册时机**：
+**2.4 与现有 AI 的兼容**
 
-- 内置组件：应用启动时批量注册
-- 导入组件：用户操作后调用 `registry.register(pkg)`
+- 现有 `designPatterns.ts` 从"规则"降级为"参考建议"，AI 可以越过模板自主决策
+- 如果 Profile 识别的置信度 < 0.6，回退到模板逻辑
+- 用户可以在 UI 中覆盖 AI 的选择
 
-### 3.3 渲染流程变更
+**产出**：
 
-```
-markdown-it-component 解析 ::: share-card{...} :::
-    ↓
-生成 <section class="wemd-share-card" data-variant="neon">
-    ↓
-ThemeProcessor 内联样式时：
-  1. 读取元素 data-variant 属性
-  2. 从 Registry 获取对应 variant 的 CSS
-  3. 注入对应选择器的样式
-```
+- AI 不再是填表，而是从文章内容出发做设计决策
+- 同一篇文章换不同 Tone 能自动匹配不同组件变体
+- 设计模式保留为兜底，不强约束
 
-### 3.4 AI 集成变革
+### Phase 3：变体系统 + Design Theme（3-4 天）
 
-**之前**：AI 只知道 16 个组件名，按模板槽位分配。
+**目标**：同类型多种风格变体，整篇文章风格统一。
 
-**之后**：AI 感知完整组件生态：
+**3.1 变体系统**
 
-```
-可用组件类型 (30):
-  share-card (3 个变体):
-    - 默认: 一行文字收尾
-    - neon: 霓虹灯效果，适合科技/潮流
-    - minimal: 极简风格，适合严肃内容
-  quote-card (2 个变体):
-    - 默认: 左边框引用
-    - magazine: 全宽背景引用
-  ...
-```
+- `data-variant` 属性注入（`markdown-it-component.ts` 改造）
+- CSS 变体选择器：`#wemd .wemd-share-card[data-variant="warm"]`
+- `ThemeProcessor.ts` 变体 CSS 动态匹配
+- 为 3-5 个高频组件创建示范变体
 
-AI 选择逻辑从"填表"变成"内容+风格匹配"：
+**3.2 Design Theme**
 
 ```
-1. 文章这里需要收尾引导 → 选 share-card 类型
-2. 文章整体风格轻松 → 从 tags 匹配 → 选 neon 变体
-3. 如果无匹配 → 使用默认变体
+用户/AI 选择一个 Theme（如 Warm）
+    ↓
+ThemeRegistry 返回该 Theme 下的所有组件变体映射
+    ↓
+share-card → warm variant
+quote-card → warm variant
+end-card   → warm variant
 ```
 
-### 3.5 导入机制
+- Theme 是一个"风格标签集合"：`{ tone: "warm", visual: "magazine", variants: {...} }`
+- 组件在自己的 manifest 里声明"我支持哪些 theme"
 
-| 来源         | 方式                     | 格式                   |
-| ------------ | ------------------------ | ---------------------- |
-| 本地文件     | 拖拽 .wemdc 文件到编辑器 | 单个 zip/目录          |
-| 组件市场 URL | 输入 GitHub raw URL      | manifest.json 远程获取 |
-| CDN 分发     | manifest 索引文件        | JSON 注册表            |
+**3.3 导入机制**
 
-**导入流程**：
+- `.wemdc` 文件解析和校验
+- 本地存储持久化
+- UI：组件管理面板（查看、导入、启用/禁用）
+
+**产出**：
+
+- 组件变体可用
+- Design Theme 驱动全局风格
+- 可导入 .wemdc 文件
+
+### Phase 4：组件市场（2-3 天）← **最不急**
+
+- GitHub raw 分发
+- 版本检查 + 更新提示
+- 市场索引格式
+- 组件安全校验
+
+---
+
+## 四、优先级图谱
 
 ```
-.wemdc 文件 / URL
-    ↓
-解包 / 下载
-    ↓
-校验 manifest.json + style.css
-    ↓
-Registry.register()
-    ↓
-CSS 注入页面 → 即时可用
-    ↓
-持久化到本地存储 → 下次启动自动加载
+优先级     事项                    依赖
+────────────────────────────────────────
+  🔴       组件语义层（Category/Semantic）  无 —— 马上可做
+  🔴       Article Profile（AI 读懂文章）   无 —— 马上可做
+  🔴       四层推理流程                     Profile + 语义层
+  🟡       Design Theme               依赖 变体系统
+  🟡       变体系统 + .wemdc 导入       依赖 Phase 1
+  🟢       组件市场                    依赖 变体系统
 ```
 
 ---
 
-## 四、实施路线
+## 五、与升级思路2.md 的对齐
 
-### Phase 1：统一内置组件格式（2-3 天）
-
-**目标**：不改功能，把现有 30 个组件迁移到 manifest 模式。
-
-**工作项**：
-
-1. 创建 `packages/core/src/components/` 目录
-2. 每个组件一个目录：`{type}/default/`、`{type}/{variant}/`
-3. 每个目录含 `manifest.json` + `style.css`
-4. 把现有 4 个 CSS 文件的内容拆解到各组件目录
-5. 创建 `ComponentRegistry` 核心类
-6. 应用启动时内置组件自动注册
-7. 保持现有 API 兼容（`getAllCss()` 拼接输出不变）
-
-**产出**：
-
-- 30 个组件包目录
-- `ComponentRegistry` 可工作
-- 现有功能完全不受影响
-
-### Phase 2：变体系统 + 导入机制（3-4 天）
-
-**目标**：支持同类型多变体和外部导入。
-
-**工作项**：
-
-1. 实现 `data-variant` 属性注入（`markdown-it-component.ts` 改造）
-2. 实现 CSS 选择器变体匹配（`ThemeProcessor.ts` 改造）
-3. 实现 `.wemdc` 文件解析和导入
-4. 实现本地存储持久化
-5. UI：组件管理面板（查看已安装、导入、启用/禁用）
-6. 为 2-3 个高频组件创建示范变体（如 share-card-minimal、quote-card-bold）
-
-**产出**：
-
-- 变体系统可用
-- 可导入 `.wemdc` 文件
-- 管理面板上线
-
-### Phase 3：AI 感知变体（2 天）
-
-**目标**：AI 根据文章风格选择组件变体。
-
-**工作项**：
-
-1. `Registry.describeForAi()` 在 prompt 中注入变体信息
-2. AI 的 `analysisAgent` 和 `templateAgent` 支持输出 `variant` 字段
-3. `applyInsertions` 和 `renderer` 处理 `variant` 字段
-4. 变体匹配启发式规则（基于 tags + magazineLevel）
-
-**产出**：
-
-- AI 可自动选择变体
-- 变体信息在 AI prompt 中可见
-
-### Phase 4：组件市场（2-3 天）
-
-**目标**：第三方可发布和安装组件。
-
-**工作项**：
-
-1. 组件市场 manifest 索引格式规范
-2. 从 GitHub raw 下载安装
-3. 版本检查 + 自动更新提示
-4. 组件安全校验（CSS 注入前过滤危险规则）
-5. 市场 UI（浏览、搜索、安装）
-
-**产出**：
-
-- 组件市场可用
-- 文档：组件开发指南 + API 参考
-
----
-
-## 五、架构对比
-
-| 维度       | 当前              | 目标                                     |
-| ---------- | ----------------- | ---------------------------------------- |
-| 组件定位   | 4 个 CSS 文件散装 | 自包含包（manifest + CSS）               |
-| 注册方式   | 硬编码 import     | `Registry.register(pkg)` 动态注册        |
-| 风格变体   | 不存在            | type + variant 双层体系                  |
-| 第三方贡献 | 不可能            | `.wemdc` 文件导入                        |
-| AI 感知    | 仅知名称          | 完整 schema + tags + 变体描述            |
-| 扩展门槛   | 改 5 个文件       | 写 2 个文件（manifest.json + style.css） |
-| 分发方式   | Git 源码          | 组件市场 URL / 本地文件                  |
+| 升级思路2.md 概念             | 计划中对应位置                     |
+| ----------------------------- | ---------------------------------- |
+| Category → Semantic → Variant | 组件三层语义模型（2.2）            |
+| Intent 比 Component 更重要    | manifest 增加 semantic/intent 字段 |
+| Article Profile               | Phase 2.1，四层推理第一层          |
+| Design Theme                  | Phase 3.2，全局风格统一            |
+| Content Block                 | 语义层，Category 即内容块角色      |
+| 四层推理流程                  | Phase 2.3，analysisAgent 改造      |
+| AI 内容设计平台               | 长期愿景，Phase 2 是第一步         |
 
 ---
 
 ## 六、兼容性保证
 
-- 现有 Markdown 语法（`::: type{props}...:::`）不变
-- 现有渲染输出（HTML 结构）不变
-- 现有 AI 接口不变（渐进增强 `variant` 可选字段）
-- `style.css` 使用 `[data-variant]` 属性选择器隔离，不影响默认行为
-- 内置组件保留为"默认变体"，无需额外配置
+| 层面               | 说明                         |
+| ------------------ | ---------------------------- |
+| 现有 Markdown 语法 | `::: type{props}...:::` 不变 |
+| 现有渲染 HTML      | 结构不变                     |
+| 现有 AI 接口       | 渐进增强，默认行为不变       |
+| Phase 1 CSS 拼接   | 输出与现在完全一致           |
+| 设计模式           | 保留为兜底，不强约束         |
 
 ---
 
-## 七、风险与对策
-
-| 风险                     | 对策                                                               |
-| ------------------------ | ------------------------------------------------------------------ |
-| CSS 选择器冲突           | `[data-variant]` 属性隔离，variant 命名空间在 type 内唯一          |
-| 第三方组件安全           | CSS 注入前过滤 `expression()`/`javascript:`/`@import`/外部 `url()` |
-| 变体过多导致 AI 选择困难 | 默认变体 + 启发式匹配兜底，AI 不选就回退默认                       |
-| 组件包体积膨胀           | 本地最多缓存 50 个包，按使用频率清理                               |
-| 破坏现有功能             | Phase 1 维持 API 兼容，全部旧测试应通过                            |
-
----
-
-## 八、关键文件清单（Phase 1 新增）
+## 七、关键文件清单
 
 ```
+Phase 1 新增:
 packages/core/src/components/
 ├── registry/
-│   ├── ComponentRegistry.ts    ← 核心注册中心
-│   ├── packageLoader.ts        ← .wemdc 解析/校验
-│   └── cssInjector.ts          ← CSS 动态注入
-├── builtin/
-│   ├── share-card/
-│   │   └── default/
-│   │       ├── manifest.json
-│   │       └── style.css
-│   ├── quote-card/
-│   │   └── default/
-│   │       ├── manifest.json
-│   │       └── style.css
-│   └── ...（共 30 个组件）
-└── index.ts                    ← 组件系统入口
+│   ├── ComponentRegistry.ts
+│   ├── packageLoader.ts
+│   └── cssInjector.ts
+├── builtin/（30 个组件，每个 manifest.json + style.css）
+└── index.ts
+
+Phase 2 新增/改造:
+apps/web/src/services/ai/
+├── articleProfile.ts        ← 文章画像分析
+├── semanticMapper.ts        ← 语义层 → 组件映射
+└── analysisAgent.ts         ← 改造：四层推理
+
+packages/core/src/themes/
+└── designThemes.ts          ← Design Theme 定义
 ```
 
 ---
 
-## 九、下一步
+## 八、下一步
 
-1. 审查本计划书，确认技术路线
-2. 开始 Phase 1：统一内置组件格式
-3. 完成 Phase 1 后，在真实文章中测试变体系统
+1. 审查本计划书，确认 Phase 2 方向
+2. 开始 Phase 1（统一内置组件格式，零影响）
+3. 完成 Phase 1 后立即启动 Phase 2（AI 智能设计，核心价值）
+
+> **一句话原则**：不要在建商场之前先装修店铺。组件市场是最不着急的事。
