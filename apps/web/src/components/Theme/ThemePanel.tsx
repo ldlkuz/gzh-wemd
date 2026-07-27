@@ -2,7 +2,10 @@ import { useEffect, useMemo, useState, useRef } from "react";
 import toast from "react-hot-toast";
 import { useEditorStore } from "../../store/editorStore";
 import { useThemeStore } from "../../store/themeStore";
-import { isThemeSelectable } from "../../store/themes/builtInThemes";
+import {
+  isThemeSelectable,
+  type ThemeDefinition,
+} from "../../store/themes/builtInThemes";
 import { useHistoryStore } from "../../store/historyStore";
 import { platformActions } from "../../lib/platformAdapter";
 import { type DesignerVariables, defaultVariables } from "./ThemeDesigner";
@@ -84,6 +87,9 @@ export function ThemePanel({ open, onClose }: ThemePanelProps) {
     DesignerVariables | undefined
   >(undefined);
   const [useCurrentArticle, setUseCurrentArticle] = useState(true);
+  const [pendingDefinition, setPendingDefinition] = useState<
+    ThemeDefinition | undefined
+  >(undefined);
 
   const selectedTheme = allThemes.find((item) => item.id === selectedThemeId);
   const isCustomTheme = selectedTheme && !selectedTheme.isBuiltIn;
@@ -184,10 +190,11 @@ export function ThemePanel({ open, onClose }: ThemePanelProps) {
     setCreationStep("editing");
   };
 
-  /** AI 生成完成后,切到 css 模式让用户继续微调,把生成的 CSS 填入 */
-  const handleAiGenerated = (css: string) => {
+  /** AI 生成完成后,切到 css 模式让用户继续微调,把生成的 CSS 填入；若有 definition 则保存 */
+  const handleAiGenerated = (css: string, definition?: ThemeDefinition) => {
     setCssInput(css);
     setEditorMode("css");
+    setPendingDefinition(definition);
   };
 
   const handleVisualCssChange = (nextCss: string) => {
@@ -265,6 +272,7 @@ export function ThemePanel({ open, onClose }: ThemePanelProps) {
         savedMode,
         cssToSave,
         savedMode === "visual" ? designerVariables : undefined,
+        pendingDefinition,
       );
       selectTheme(newTheme.id);
 

@@ -4,6 +4,7 @@ import {
   builtInThemes,
   type CustomTheme,
   type DesignerVariables,
+  type ThemeDefinition,
 } from "./themes/builtInThemes";
 import {
   convertCssToWeChatDarkMode,
@@ -164,10 +165,13 @@ interface ThemeStore {
     editorMode: "visual" | "css",
     css?: string,
     designerVariables?: DesignerVariables,
+    definition?: ThemeDefinition,
   ) => CustomTheme;
   updateTheme: (
     id: string,
-    updates: Partial<Pick<CustomTheme, "name" | "css" | "designerVariables">>,
+    updates: Partial<
+      Pick<CustomTheme, "name" | "css" | "designerVariables" | "definition">
+    >,
   ) => void;
   deleteTheme: (id: string) => void;
   duplicateTheme: (id: string, newName: string) => CustomTheme;
@@ -256,6 +260,7 @@ export const useThemeStore = create<ThemeStore>((set, get) => ({
     editorMode: "visual" | "css",
     css?: string,
     designerVariables?: DesignerVariables,
+    definition?: ThemeDefinition,
   ) => {
     const state = get();
     const trimmedName = name.trim() || "未命名主题";
@@ -271,6 +276,7 @@ export const useThemeStore = create<ThemeStore>((set, get) => ({
       editorMode,
       designerVariables:
         editorMode === "visual" ? designerVariables : undefined,
+      definition: definition || undefined,
     };
 
     const nextCustomThemes = [...state.customThemes, newTheme];
@@ -363,25 +369,56 @@ export const useThemeStore = create<ThemeStore>((set, get) => ({
   exportTheme: (id: string) => {
     const state = get();
     const theme = state.customThemes.find((t) => t.id === id);
-    if (!theme || theme.editorMode !== "visual" || !theme.designerVariables) {
-      console.warn("只能导出可视化编辑的主题");
+    if (!theme) {
+      console.warn("主题未找到");
       return;
     }
 
-    const exportData = {
-      version: 1,
-      name: theme.name,
-      editorMode: "visual",
-      designerVariables: theme.designerVariables,
-    };
+    // Phase 3: 优先导出 definition（ThemeDefinition JSON）
+    if (theme.definition) {
+      const exportData = {
+        version: 2,
+        name: theme.name,
+        definition: theme.definition,
+      };
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${theme.name}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      return;
+    }
 
-    const blob = new Blob([JSON.stringify(exportData, null, 2)], {
-      type: "application/json",
-    });
+    // 兼容旧格式：导出 designerVariables
+    if (theme.editorMode === "visual" && theme.designerVariables) {
+      const exportData = {
+        version: 1,
+        name: theme.name,
+        editorMode: "visual",
+        designerVariables: theme.designerVariables,
+      };
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${theme.name}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      return;
+    }
+
+    // 纯 CSS 主题导出 CSS
+    const blob = new Blob([theme.css], { type: "text/css" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${theme.name}.json`;
+    a.download = `${theme.name}.css`;
     a.click();
     URL.revokeObjectURL(url);
   },
@@ -415,11 +452,7 @@ export const useThemeStore = create<ThemeStore>((set, get) => ({
       const data = JSON.parse(text);
 
       // 验证必要字段
-      if (
-        typeof data.version !== "number" ||
-        typeof data.name !== "string" ||
-        !data.designerVariables
-      ) {
+      if (typeof data.version !== "number" || typeof data.name !== "string") {
         console.error("无效的主题文件格式：缺少必要字段");
         return false;
       }
@@ -435,9 +468,27 @@ export const useThemeStore = create<ThemeStore>((set, get) => ({
         finalName = `${data.name} (${suffix})`;
       }
 
-      const css = generateCSS(data.designerVariables);
-      get().createTheme(finalName, "visual", css, data.designerVariables);
-      return true;
+      // v2 格式：ThemeDefinition JSON
+      if (data.version >= 2 && data.definition) {
+        try {
+          const css = renderTheme(data.definition);
+          get().createTheme(finalName, "css", css, undefined, data.definition);
+          return true;
+        } catch (e) {
+          console.error("renderTheme 失败:", e);
+          return false;
+        }
+      }
+
+      // v1 格式：designerVariables
+      if (data.designerVariables) {
+        const css = generateCSS(data.designerVariables);
+        get().createTheme(finalName, "visual", css, data.designerVariables);
+        return true;
+      }
+
+      console.error("不支持的主题文件格式：无 definition 或 designerVariables");
+      return false;
     } catch (error) {
       console.error("导入主题失败:", error);
       return false;

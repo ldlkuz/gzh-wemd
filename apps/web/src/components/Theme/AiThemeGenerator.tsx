@@ -10,13 +10,16 @@ import toast from "react-hot-toast";
 import { generateThemeStream } from "../../services/ai/aiService";
 import { isAiConfigured, openAiSettings } from "../../services/ai/aiConfig";
 import { validateThemeJson } from "../../services/ai/aiPrompts";
-import type { CustomTheme } from "../../store/themes/builtInThemes";
+import type {
+  CustomTheme,
+  ThemeDefinition,
+} from "../../store/themes/builtInThemes";
 import "./AiThemeGenerator.css";
 
 interface AiThemeGeneratorProps {
   builtInThemes: CustomTheme[];
-  /** 生成完成回调，CSS 传给父组件 */
-  onGenerated: (css: string) => void;
+  /** 生成完成回调，CSS 传给父组件；若 AI 返回 JSON 则附带 definition */
+  onGenerated: (css: string, definition?: ThemeDefinition) => void;
 }
 
 const PLACEHOLDER = `描述你想要的主题风格,例如:
@@ -76,7 +79,7 @@ export function AiThemeGenerator({
           const { renderTheme } = await import("@wemd/core");
           const css = renderTheme(parsed as Parameters<typeof renderTheme>[0]);
           toast.success("主题设计成功,已生成完整 CSS");
-          onGenerated(css);
+          onGenerated(css, parsed as ThemeDefinition);
           setStreamText("");
         } catch {
           // renderTheme 失败時降级为原始文本

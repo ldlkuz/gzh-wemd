@@ -38,6 +38,7 @@ import type {
 } from "../../components/Theme/ThemeDesigner/types";
 import type { ThemeDefinition } from "@wemd/core";
 export type { DesignerVariables, HeadingStyle };
+export type { ThemeDefinition };
 
 /**
  * 自定义主题接口
@@ -60,9 +61,9 @@ export interface CustomTheme {
 }
 
 /**
- * 主题定义接口（简化版，用于向后兼容）
+ * 旧版主题定义接口（向后兼容）
  */
-export interface ThemeDefinition {
+export interface LegacyThemeDefinition {
   id: string;
   name: string;
   css: string;
@@ -264,7 +265,7 @@ export const builtInThemes: CustomTheme[] = [
 /**
  * 默认主题列表（向后兼容格式）
  */
-export const defaultThemes: ThemeDefinition[] = [
+export const defaultThemes: LegacyThemeDefinition[] = [
   {
     id: "default",
     name: "默认主题",

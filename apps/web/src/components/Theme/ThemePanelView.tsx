@@ -13,7 +13,10 @@ import {
   X,
 } from "lucide-react";
 import type { MutableRefObject } from "react";
-import type { CustomTheme } from "../../store/themes/builtInThemes";
+import type {
+  CustomTheme,
+  ThemeDefinition,
+} from "../../store/themes/builtInThemes";
 import { ThemeDesigner, type DesignerVariables } from "./ThemeDesigner";
 import { ThemeLivePreview } from "./ThemeLivePreview";
 import { AiThemeGenerator } from "./AiThemeGenerator";
@@ -60,8 +63,8 @@ interface ThemePanelViewProps {
   onDeleteClick: () => void;
   onSave: () => void;
   onApply: () => void;
-  /** AI 生成 CSS 完成回调 */
-  onAiGenerated: (css: string) => void;
+  /** AI 生成 CSS 完成回调，附带 definition（若 AI 返回 JSON） */
+  onAiGenerated: (css: string, definition?: ThemeDefinition) => void;
 }
 
 export function ThemePanelView({
