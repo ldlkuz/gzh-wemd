@@ -56,8 +56,9 @@ export function renderTheme(theme: ThemeDefinition): string {
  * 从 components 配置中提取已启用的变体并注入 CSS
  */
 function injectVariantCss(
-  components: Record<string, ComponentStyleOverride>,
+  components?: Record<string, ComponentStyleOverride>,
 ): string {
+  if (!components) return "";
   const usedVariants = new Map<string, Set<string>>();
 
   for (const [compType, override] of Object.entries(components)) {

@@ -1,5 +1,3 @@
-import juice from "juice";
-
 const DATA_TOOL = "WeMD编辑器";
 const SECTION_ID = "wemd";
 
@@ -95,29 +93,29 @@ const BLOCK_TAGS = [
 ] as const;
 
 /**
- * 手动注入基础主题样式（#wemd 后代选择器如 h1/h2/p/a/strong 等）
+ * 通用手动 CSS 内联器 —— 完全替代 juice
  *
- * juice 浏览器版 bug：大量 CSS 规则后停止解析，#wemd 块之后的
- * 基础样式（字体、颜色、间距、标题、链接等）全部丢失。
- * injectComponentStylesManually 只救回了 .wemd-* 组件样式，
- * 本函数补充恢复 #wemd 后代选择器的样式。
+ * juice 浏览器版本存在严重 bug：其依赖的 slick/parser 解析某些
+ * 选择器（如带转义引号的属性选择器）时返回 undefined，导致
+ * getPseudoElementType(undefined) 崩溃。即使剥离伪元素规则
+ * 也无法避免。
+ *
+ * 本函数直接用浏览器原生 querySelectorAll 匹配选择器，稳定可靠。
+ * CSS 规则按出现顺序应用，后出现的规则覆盖先出现的（与 CSS 层叠一致）。
  */
-const injectBaseThemeStylesManually = (html: string, css: string): string => {
+const inlineAllStylesManually = (html: string, css: string): string => {
   const rules: Array<{ selector: string; styles: string }> = [];
-  const ruleRegex = /([^{}]+)\{([^}]*)\}/g;
+  const ruleRegex = /([^{}]+)\{([^{}]*)\}/g;
   let match: RegExpExecArray | null;
 
   while ((match = ruleRegex.exec(css)) !== null) {
     const selector = match[1].trim();
     const body = match[2].trim();
 
-    // 只处理 #wemd 开头的选择器
-    if (!selector.startsWith("#wemd")) continue;
-    // 排除伪元素/伪类（::before/::after 等由 juice 的 inlinePseudoElements 处理）
+    // 跳过空选择器、伪元素、@-规则
+    if (!selector) continue;
     if (selector.includes("::")) continue;
-    if (selector.includes("@")) continue;
-    // 排除 .wemd-* 组件选择器（已有 injectComponentStylesManually 处理）
-    if (selector.includes(".wemd-")) continue;
+    if (selector.startsWith("@")) continue;
 
     const styleStr = body
       .split(";")
@@ -174,85 +172,10 @@ const injectBaseThemeStylesManually = (html: string, css: string): string => {
 };
 
 /**
- * 手动注入组件内联样式（绕过 juice 浏览器版本 bug）
- *
- * juice 在浏览器端处理大量 CSS 规则后会停止解析，导致组件样式丢失。
- * 此函数从 CSS 中提取所有 .wemd-* 选择器的样式，通过浏览器原生
- * querySelectorAll 精确匹配后代选择器/子选择器/伪类，直接注入到对应 HTML 元素上。
- */
-const injectComponentStylesManually = (html: string, css: string): string => {
-  // 提取所有 .wemd-* 组件 CSS 规则
-  const rules: Array<{ selector: string; styles: string }> = [];
-  const ruleRegex = /([^{}]+)\{([^}]*)\}/g;
-  let match: RegExpExecArray | null;
-  while ((match = ruleRegex.exec(css)) !== null) {
-    const selector = match[1].trim();
-    const body = match[2].trim();
-    if (!selector.includes(".wemd-")) continue;
-    if (selector.includes("::") || selector.includes("@")) continue;
-    if (selector.trim() === "#wemd") continue;
-
-    const styleStr = body
-      .split(";")
-      .map((s) => s.trim())
-      .filter((s) => s.length > 0 && s.indexOf(":") > 0)
-      .join("; ");
-
-    if (styleStr) {
-      rules.push({ selector, styles: styleStr });
-    }
-  }
-
-  if (rules.length === 0) return html;
-
-  // 创建临时 DOM，利用浏览器 querySelectorAll 精确匹配选择器
-  const container = document.createElement("div");
-  container.innerHTML = html;
-
-  for (const { selector, styles } of rules) {
-    try {
-      const elements = container.querySelectorAll(selector);
-      elements.forEach((el) => {
-        if (!(el instanceof HTMLElement)) return;
-        // 合并已有内联样式和新样式（新样式覆盖已有）
-        const styleMap = new Map<string, string>();
-        const existing = (el.getAttribute("style") || "").trim();
-        existing.split(";").forEach((s) => {
-          const colonIdx = s.indexOf(":");
-          if (colonIdx > 0) {
-            styleMap.set(
-              s.substring(0, colonIdx).trim(),
-              s.substring(colonIdx + 1).trim(),
-            );
-          }
-        });
-        styles.split(";").forEach((s) => {
-          const colonIdx = s.indexOf(":");
-          if (colonIdx > 0) {
-            styleMap.set(
-              s.substring(0, colonIdx).trim(),
-              s.substring(colonIdx + 1).trim(),
-            );
-          }
-        });
-        const merged = Array.from(styleMap.entries())
-          .map(([p, v]) => `${p}: ${v}`)
-          .join("; ");
-        el.setAttribute("style", merged);
-      });
-    } catch {
-      // 无效选择器（如 data-props 属性选择器含特殊字符）跳过
-    }
-  }
-
-  return container.innerHTML;
-};
-
-/**
  * 处理 HTML，添加 data-tool 属性并应用 CSS 样式
  * @param html - 原始 HTML 字符串
  * @param css - CSS 样式字符串
- * @param inlineStyles - 是否内联样式 (使用 juice)，默认为 true。预览模式建议设为 false 以提高性能。
+ * @param inlineStyles - 是否内联样式，默认为 true。预览模式建议设为 false 以提高性能。
  * @param inlinePseudoElements - 是否内联伪元素内容（如 ::before / ::after），默认为 false。复制到微信时建议设为 true。
  * @returns 处理后的 HTML 字符串
  */
@@ -325,69 +248,52 @@ export const processHtml = (
     iterations++;
   }
 
-  try {
-    let res = juice.inlineContent(wrappedHtml, resolvedCss, {
-      inlinePseudoElements,
-      preserveImportant: true,
-    });
+  // 使用手动 CSS 内联器，完全替代 juice
+  // juice 浏览器版本存在严重 bug（slick/parser 返回 undefined 导致崩溃），
+  // 且即使剥离伪元素规则也无法避免。手动内联器更稳定可靠。
+  let res = inlineAllStylesManually(wrappedHtml, resolvedCss);
 
-    // juice 浏览器版本存在 bug：大量 CSS 规则（尤其是 #wemd {} 块）之后
-    // 会停止解析后续的选择器，导致所有组件样式丢失。
-    // 这里手动从 resolvedCss 中提取规则，注入到对应 HTML 元素上。
-    res = injectComponentStylesManually(res, resolvedCss);
-    res = injectBaseThemeStylesManually(res, resolvedCss);
+  // 为代码块追加关键内联样式
+  if (inlinePseudoElements) {
+    const appendStyleValue = (styleValue: string, extra: string) => {
+      const trimmed = styleValue.trim();
+      if (!trimmed) return extra;
+      const needsSemicolon = !trimmed.endsWith(";");
+      return `${trimmed}${needsSemicolon ? ";" : ""}${extra}`;
+    };
 
-    // 在 juice 处理之后，为代码块追加关键内联样式
-    // 这确保我们的样式不会被 juice 覆盖，且优先级最高
-    if (inlinePseudoElements) {
-      const appendStyleValue = (styleValue: string, extra: string) => {
-        const trimmed = styleValue.trim();
-        if (!trimmed) return extra;
-        const needsSemicolon = !trimmed.endsWith(";");
-        return `${trimmed}${needsSemicolon ? ";" : ""}${extra}`;
-      };
+    // 处理 pre 元素：确保 overflow 和 white-space 正确
+    res = res.replace(
+      /<pre([^>]*)(style="[^"]*")([^>]*)>/gi,
+      (match, before: string, styleAttr: string, after: string) => {
+        const styleMatch = styleAttr.match(/style="([^"]*)"/i);
+        const existing = styleMatch ? styleMatch[1] : "";
+        const nextStyle = appendStyleValue(
+          existing,
+          "overflow-x:auto;-webkit-overflow-scrolling:touch;",
+        );
+        return `<pre${before}style="${nextStyle}"${after}>`;
+      },
+    );
 
-      // 处理 pre 元素：确保 overflow 和 white-space 正确
-      res = res.replace(
-        /<pre([^>]*)(style="[^"]*")([^>]*)>/gi,
-        (match, before: string, styleAttr: string, after: string) => {
-          const styleMatch = styleAttr.match(/style="([^"]*)"/i);
-          const existing = styleMatch ? styleMatch[1] : "";
-          const nextStyle = appendStyleValue(
-            existing,
-            "overflow-x:auto;-webkit-overflow-scrolling:touch;",
-          );
-          return `<pre${before}style="${nextStyle}"${after}>`;
-        },
-      );
-
-      // 处理 code 元素：防止 text-align:justify 破坏代码格式
-      // 匹配所有带 style 属性的 code 元素（不限制 class）
-      res = res.replace(
-        /<code([^>]*)(style="[^"]*")([^>]*)>/gi,
-        (match, before: string, styleAttr: string, after: string) => {
-          const styleMatch = styleAttr.match(/style="([^"]*)"/i);
-          const existing = styleMatch ? styleMatch[1] : "";
-          const normalized = existing.replace(
-            /white-space:\s*pre-wrap/gi,
-            "white-space:pre",
-          );
-          const nextStyle = appendStyleValue(
-            normalized,
-            "text-align:left;letter-spacing:0;word-spacing:0;",
-          );
-          return `<code${before}style="${nextStyle}"${after}>`;
-        },
-      );
-    }
-
-    return res;
-  } catch (e) {
-    console.error("Juice inline error:", e);
-    // juice 崩溃时，仍然手动注入样式到原始 HTML
-    let fallback = wrappedHtml;
-    fallback = injectComponentStylesManually(fallback, resolvedCss);
-    fallback = injectBaseThemeStylesManually(fallback, resolvedCss);
-    return fallback;
+    // 处理 code 元素：防止 text-align:justify 破坏代码格式
+    res = res.replace(
+      /<code([^>]*)(style="[^"]*")([^>]*)>/gi,
+      (match, before: string, styleAttr: string, after: string) => {
+        const styleMatch = styleAttr.match(/style="([^"]*)"/i);
+        const existing = styleMatch ? styleMatch[1] : "";
+        const normalized = existing.replace(
+          /white-space:\s*pre-wrap/gi,
+          "white-space:pre",
+        );
+        const nextStyle = appendStyleValue(
+          normalized,
+          "text-align:left;letter-spacing:0;word-spacing:0;",
+        );
+        return `<code${before}style="${nextStyle}"${after}>`;
+      },
+    );
   }
+
+  return res;
 };

@@ -20,3 +20,6 @@ apps/electron/release/
 AGENTS.md
 .gemini/
 .claude/
+
+# Sandbox / temporary files
+sandbox/

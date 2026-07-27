@@ -151,6 +151,8 @@ export function validateThemeJson(raw: string): Record<string, unknown> | null {
       parsed.tokens.shadow = { enabled: false, value: "" };
     if (!t.codeFontFamily) t.codeFontFamily = "monospace";
 
+    if (!parsed.components) parsed.components = {};
+
     return parsed;
   } catch {
     return null;

@@ -86,9 +86,9 @@ export function AiThemeGenerator({
         if (name) onNameSuggestion(name);
 
         return true;
-      } catch {
-        toast.success("主题生成成功,已填入编辑区");
-        onGenerated(raw);
+      } catch (e) {
+        console.error("renderTheme failed:", e);
+        toast.error("主题渲染失败，请重试");
         return false;
       }
     } else {
