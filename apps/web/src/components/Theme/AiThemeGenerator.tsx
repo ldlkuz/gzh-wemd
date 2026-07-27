@@ -13,9 +13,14 @@ import {
   Send,
   MessageCircle,
   CheckCircle2,
+  Wand2,
 } from "lucide-react";
 import toast from "react-hot-toast";
-import { generateThemeStream, refineTheme } from "../../services/ai/aiService";
+import {
+  generateThemeStream,
+  refineTheme,
+  refineDescription,
+} from "../../services/ai/aiService";
 import { isAiConfigured, openAiSettings } from "../../services/ai/aiConfig";
 import { validateThemeJson } from "../../services/ai/aiPrompts";
 import type { ThemeDefinition } from "../../store/themes/builtInThemes";
@@ -49,6 +54,7 @@ export function AiThemeGenerator({
 }: AiThemeGeneratorProps) {
   const [step, setStep] = useState<Step>("idle");
   const [description, setDescription] = useState("");
+  const [refiningDesc, setRefiningDesc] = useState(false);
   const [streamText, setStreamText] = useState("");
   const [refineInput, setRefineInput] = useState("");
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
@@ -207,6 +213,27 @@ export function AiThemeGenerator({
     }
   };
 
+  // ---- AI 润色描述 ----
+  const handleRefineDescription = async () => {
+    const text = description.trim();
+    if (!text) return;
+    if (!isAiConfigured()) {
+      toast.error("请先配置 AI 模型");
+      openAiSettings();
+      return;
+    }
+    setRefiningDesc(true);
+    try {
+      const refined = await refineDescription(text);
+      setDescription(refined);
+      toast.success("已整理为专业描述");
+    } catch (e) {
+      toast.error(`整理失败: ${(e as Error).message || String(e)}`);
+    } finally {
+      setRefiningDesc(false);
+    }
+  };
+
   // ---- 重新生成 ----
   const handleRegenerate = () => {
     setStep("idle");
@@ -232,6 +259,21 @@ export function AiThemeGenerator({
               rows={6}
               spellCheck={false}
             />
+            {description.trim() && (
+              <button
+                type="button"
+                className="ai-polish-btn"
+                onClick={handleRefineDescription}
+                disabled={refiningDesc}
+              >
+                {refiningDesc ? (
+                  <Loader2 size={13} className="spinning" />
+                ) : (
+                  <Wand2 size={13} />
+                )}
+                AI 润色
+              </button>
+            )}
           </div>
 
           {!isAiConfigured() && (

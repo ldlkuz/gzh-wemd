@@ -161,6 +161,21 @@ export function validateThemeJson(raw: string): Record<string, unknown> | null {
 // 主题微调（对话式迭代）
 // ============================================================
 
+export function buildDescriptionRefinePrompt(userInput: string): string {
+  return [
+    "你是一个主题设计需求整理助手。请把用户的口语化描述整理成一段专业、具体的主题风格描述。",
+    "要求：",
+    "1. 保留用户的原始意图和风格方向",
+    "2. 补充具体的配色倾向、排版特点、适用场景",
+    "3. 使用设计师术语（如莫兰迪色系、留白、字重、对比度等）",
+    "4. 只输出整理后的描述，不要加解释，不要加前缀",
+    "5. 控制在 3-5 句话，简洁有力",
+    "",
+    "用户描述：",
+    userInput,
+  ].join("\n");
+}
+
 export function buildThemeRefinePrompt(
   currentJson: string,
   feedback: string,

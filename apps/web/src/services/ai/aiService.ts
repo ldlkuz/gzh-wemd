@@ -19,6 +19,7 @@ import {
   buildThemePrompt,
   buildThemeJsonPrompt,
   buildThemeRefinePrompt,
+  buildDescriptionRefinePrompt,
   sanitizeCss,
 } from "./aiPrompts";
 
@@ -372,4 +373,44 @@ export async function refineTheme(params: RefineThemeParams): Promise<string> {
     throw new Error("模型返回内容为空");
   }
   return raw.trim();
+}
+
+/**
+ * 润色用户主题描述：口语化 → 专业设计术语
+ */
+export async function refineDescription(userInput: string): Promise<string> {
+  const config = getAiConfig();
+  const configError = validateAiConfig(config);
+  if (configError) {
+    throw new Error(configError);
+  }
+
+  const systemPrompt = buildDescriptionRefinePrompt(userInput);
+
+  const url = chatCompletionsUrl(config.baseUrl);
+  const resp = await fetch(url, {
+    method: "POST",
+    headers: buildHeaders(config),
+    body: JSON.stringify({
+      model: config.model,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userInput },
+      ],
+      temperature: 0.5,
+      stream: false,
+    }),
+  });
+
+  if (!resp.ok) {
+    const errText = await resp.text().catch(() => resp.statusText);
+    throw new Error(formatAiHttpError(config.baseUrl, resp.status, errText));
+  }
+
+  const data = await resp.json();
+  const result = data.choices?.[0]?.message?.content?.trim();
+  if (!result) {
+    throw new Error("模型返回内容为空");
+  }
+  return result;
 }

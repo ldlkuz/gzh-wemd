@@ -51,6 +51,34 @@
   font-size: 12px;
 }
 
+/* AI 润色按钮 */
+.ai-polish-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 8px;
+  padding: 5px 12px;
+  border: 1px dashed color-mix(in srgb, var(--accent-primary) 40%, transparent);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--accent-primary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  align-self: flex-start;
+}
+
+.ai-polish-btn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent-primary) 8%, transparent);
+  border-style: solid;
+}
+
+.ai-polish-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .ai-theme-base {
   width: 100%;
   box-sizing: border-box;
