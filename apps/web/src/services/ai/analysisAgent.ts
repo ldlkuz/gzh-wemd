@@ -332,10 +332,6 @@ function parsePlanResponse(content: string): PlanResult | null {
               depth: parsed.profile.depth || "Medium",
             }
           : undefined,
-      designLanguageId:
-        typeof parsed.designLanguage === "string"
-          ? parsed.designLanguage
-          : undefined,
       slotPlan: parsed.slotPlan.filter(
         (item: { component?: unknown; section?: unknown }) =>
           item.component && item.section,

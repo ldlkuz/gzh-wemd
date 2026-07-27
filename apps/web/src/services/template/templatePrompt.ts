@@ -1,12 +1,7 @@
 /**
  * Template JSON AI Prompt 构建器
  *
- * 单阶段：直接让 AI 输出 Template JSON，包含完整 layout。
- * AI 职责：
- * 1. 识别文章类型（复用 designPatterns 的 7 种分类）
- * 2. 按类型设计 layout（组件顺序 + 数量）
- * 3. 填充每个组件的 content（从文章提炼，不照抄）
- * 4. 用 article-section 组件引用原文段落（fromParagraph / toParagraph）
+ * Phase 3: 主题感知 — 接受 themeLayout，注入主题偏好到 prompt
  */
 import {
   DESIGN_PATTERNS,
@@ -14,6 +9,7 @@ import {
   type DesignPattern,
 } from "../ai/designPatterns";
 import { COMPONENT_CONTENT_SCHEMAS } from "./componentSchemas";
+import type { LayoutPreference } from "@wemd/core";
 
 /**
  * 构建 Template JSON 生成的系统 prompt
@@ -21,11 +17,17 @@ import { COMPONENT_CONTENT_SCHEMAS } from "./componentSchemas";
 export function buildTemplatePrompt(
   totalParagraphs: number,
   articleTypeHint?: string,
+  themeLayout?: LayoutPreference,
 ): string {
   const patternList = PATTERN_LABELS.map(
     (p) =>
       `- ${p.type}（${p.label}）: ${p.whenToUse}\n  识别特征:\n${p.signatures.map((s) => `    · ${s}`).join("\n")}`,
   ).join("\n\n");
+
+  // Phase 3: 主题约束
+  const themeHint = themeLayout
+    ? `\n\n## 主题约束（当前使用的品牌规范）\n- 风格基调：${themeLayout.tone.join("、")}\n- 排版密度：${themeLayout.density}\n- 杂志化等级：${themeLayout.magazineLevel}\n- 主题偏好的组件：${themeLayout.preferredComponents.join("、")}\n\n注意：优先选择主题偏好的组件，杂志化等级应匹配主题设定。`
+    : "";
 
   // 构建各类型杂志化等级说明
   const magazineLevelList = DESIGN_PATTERNS.map(
@@ -57,7 +59,7 @@ export function buildTemplatePrompt(
 
   return [
     "你是一个资深公众号版式设计师。你的任务是阅读用户的文章，生成一份 Template JSON，用于将文章排版为杂志级公众号样式。",
-    "",
+    themeHint,
     "## 工作流程",
     "",
     "1. 识别文章类型（从下面 7 种中选一个，或 unknown）",

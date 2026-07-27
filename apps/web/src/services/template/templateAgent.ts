@@ -204,10 +204,12 @@ async function callLLM(
  *
  * @param markdown 原文 Markdown
  * @param articleTypeHint 可选，用户指定的文章类型
+ * @param themeLayout 可选，当前主题的 layout 偏好（Phase 3 新增）
  */
 export async function generateTemplate(
   markdown: string,
   articleTypeHint?: string,
+  themeLayout?: import("@wemd/core").LayoutPreference,
 ): Promise<TemplateGenerationResult> {
   const totalParagraphs = getParagraphCount(markdown);
 
@@ -236,7 +238,11 @@ export async function generateTemplate(
     };
   }
 
-  const systemPrompt = buildTemplatePrompt(totalParagraphs, articleTypeHint);
+  const systemPrompt = buildTemplatePrompt(
+    totalParagraphs,
+    articleTypeHint,
+    themeLayout,
+  );
   const aiContent = await callLLM(systemPrompt, markdown, 0.6);
 
   const parsed = parseTemplateResponse(aiContent);

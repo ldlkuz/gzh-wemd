@@ -515,7 +515,11 @@ export function MarkdownEditor({ onScrollSyncReady }: MarkdownEditorProps) {
     setTemplateLoading(true);
     setTemplateResult(null);
     try {
-      const result = await generateTemplate(text);
+      // Phase 3: 获取当前主题的 layout 偏好，传递给模板生成
+      const themeId = useThemeStore.getState().themeId;
+      const builtInDef = getBuiltInThemeDefinition(themeId);
+      const themeLayout = builtInDef?.layout;
+      const result = await generateTemplate(text, undefined, themeLayout);
       setTemplateResult(result);
     } catch (e) {
       toast.error((e as Error).message || "AI 生成失败");
