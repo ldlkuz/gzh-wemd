@@ -39,24 +39,18 @@ interface ToolbarProps {
   onInsert: (prefix: string, suffix: string, placeholder: string) => void;
   onOpenAi?: () => void;
   aiLoading?: boolean;
-  /** 打开 AI 设计版式面板 */
-  onOpenAiLayout?: () => void;
-  /** AI 设计版式加载中 */
-  aiLayoutLoading?: boolean;
-  /** 打开 AI 杂志级排版（Template 模式） */
-  onOpenTemplate?: () => void;
-  /** Template 模式加载中 */
-  templateLoading?: boolean;
+  /** 打开 AI 设计面板（统一入口：组件插入 + 杂志排版） */
+  onOpenAiDesign?: () => void;
+  /** AI 设计加载中 */
+  aiDesignLoading?: boolean;
 }
 
 export function Toolbar({
   onInsert,
   onOpenAi,
   aiLoading,
-  onOpenAiLayout,
-  aiLayoutLoading,
-  onOpenTemplate,
-  templateLoading,
+  onOpenAiDesign,
+  aiDesignLoading,
 }: ToolbarProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -478,47 +472,24 @@ export function Toolbar({
         </button>
       )}
 
-      {/* AI 设计版式（新增）：分析文章并建议插入组件 */}
-      {onOpenAiLayout && (
+      {/* AI 设计（统一入口：组件插入 + 杂志排版） */}
+      {onOpenAiDesign && (
         <button
           className="md-toolbar-btn md-toolbar-ai-btn md-toolbar-ai-layout-btn"
-          onClick={onOpenAiLayout}
-          disabled={aiLayoutLoading}
+          onClick={onOpenAiDesign}
+          disabled={aiDesignLoading}
           data-tooltip={
-            aiLayoutLoading
-              ? "AI 正在分析文章..."
-              : "AI 设计版式（智能插入组件，让文章更高大上）"
+            aiDesignLoading
+              ? "AI 正在设计..."
+              : "AI 设计（智能组件插入 + 杂志级排版）"
           }
         >
-          {aiLayoutLoading ? (
+          {aiDesignLoading ? (
             <Loader2 size={14} className="spinning" />
           ) : (
             <>
               <Workflow size={14} />
-              <span className="md-toolbar-ai-text">设计版式</span>
-            </>
-          )}
-        </button>
-      )}
-
-      {/* AI 杂志级排版（Template 模式） */}
-      {onOpenTemplate && (
-        <button
-          className="md-toolbar-btn md-toolbar-ai-btn md-toolbar-template-btn"
-          onClick={onOpenTemplate}
-          disabled={templateLoading}
-          data-tooltip={
-            templateLoading
-              ? "AI 正在设计排版方案..."
-              : "AI 杂志级排版（一键生成完整排版模板）"
-          }
-        >
-          {templateLoading ? (
-            <Loader2 size={14} className="spinning" />
-          ) : (
-            <>
-              <LayoutTemplate size={14} />
-              <span className="md-toolbar-ai-text">杂志排版</span>
+              <span className="md-toolbar-ai-text">AI 设计</span>
             </>
           )}
         </button>

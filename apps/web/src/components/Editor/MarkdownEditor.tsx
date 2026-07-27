@@ -22,12 +22,15 @@ import {
   type Insertion,
 } from "../../services/ai/analysisAgent";
 import { applyInsertions } from "../../services/ai/applyInsertions";
-import { AiLayoutPanel } from "./AiLayoutPanel";
-import { TemplateLayoutPanel } from "./TemplateLayoutPanel";
+import { AiDesignPanel } from "./AiDesignPanel";
 import {
   generateTemplate,
   type TemplateGenerationResult,
 } from "../../services/template";
+import type {
+  Audience,
+  DesignConstraints,
+} from "../../services/ai/analysisAgent";
 import toast from "react-hot-toast";
 import "./MarkdownEditor.css";
 import { customKeymap } from "./editorShortcuts";
@@ -73,9 +76,10 @@ export function MarkdownEditor({ onScrollSyncReady }: MarkdownEditorProps) {
   const [showSearch, setShowSearch] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
   const [showAuthorSuggestions, setShowAuthorSuggestions] = useState(false);
-  // AI 设计版式相关状态
-  const [showAiLayout, setShowAiLayout] = useState(false);
-  const [aiLayoutLoading, setAiLayoutLoading] = useState(false);
+  // AI 设计统一状态
+  const [showAiDesign, setShowAiDesign] = useState(false);
+  // 组件插入模式状态
+  const [insertLoading, setInsertLoading] = useState(false);
   const [aiLayoutInsertions, setAiLayoutInsertions] = useState<Insertion[]>([]);
   const [aiLayoutType, setAiLayoutType] = useState<string | undefined>(
     undefined,
@@ -83,8 +87,10 @@ export function MarkdownEditor({ onScrollSyncReady }: MarkdownEditorProps) {
   const [aiLayoutTypeReason, setAiLayoutTypeReason] = useState<
     string | undefined
   >(undefined);
-  // AI 杂志级排版（Template 模式）相关状态
-  const [showTemplateLayout, setShowTemplateLayout] = useState(false);
+  const [aiLayoutStrategy, setAiLayoutStrategy] = useState<string | undefined>(
+    undefined,
+  );
+  // 模板排版模式状态
   const [templateLoading, setTemplateLoading] = useState(false);
   const [templateResult, setTemplateResult] =
     useState<TemplateGenerationResult | null>(null);
@@ -406,9 +412,8 @@ export function MarkdownEditor({ onScrollSyncReady }: MarkdownEditorProps) {
     }
   };
 
-  // AI 设计版式：分析文章并弹出方案面板
-  const handleAiLayout = async () => {
-    if (aiLayoutLoading) return;
+  // AI 设计：打开统一面板
+  const handleOpenAiDesign = () => {
     const view = viewRef.current;
     if (!view) return;
 
@@ -424,27 +429,49 @@ export function MarkdownEditor({ onScrollSyncReady }: MarkdownEditorProps) {
       return;
     }
 
-    setShowAiLayout(true);
-    setAiLayoutLoading(true);
+    setShowAiDesign(true);
+  };
+
+  // 组件插入模式：分析文章
+  const handleAnalyzeInsert = async (
+    audience?: Audience,
+    constraints?: DesignConstraints,
+  ) => {
+    const view = viewRef.current;
+    if (!view) return;
+
+    if (!isAiConfigured()) {
+      toast.error("请先在 AI 设置中完成服务配置");
+      openAiSettings();
+      return;
+    }
+
+    const text = view.state.doc.toString().trim();
+    if (!text) {
+      toast.error("编辑器没有内容可分析");
+      return;
+    }
+
+    setInsertLoading(true);
     setAiLayoutInsertions([]);
     setAiLayoutType(undefined);
     setAiLayoutTypeReason(undefined);
+    setAiLayoutStrategy(undefined);
     try {
-      const result = await analyzeArticle(text);
+      const result = await analyzeArticle(text, audience, constraints);
       setAiLayoutInsertions(result.insertions);
       setAiLayoutType(result.articleType);
       setAiLayoutTypeReason(result.typeReason);
+      setAiLayoutStrategy(result.strategy);
     } catch (e) {
       toast.error((e as Error).message || "AI 分析失败");
-      setShowAiLayout(false);
     } finally {
-      setAiLayoutLoading(false);
+      setInsertLoading(false);
     }
   };
 
-  // AI 杂志级排版（Template 模式）：生成排版方案
-  const handleGenerateTemplate = async () => {
-    if (templateLoading) return;
+  // 模板排版模式：生成模板
+  const handleGenerateTemplateInner = async () => {
     const view = viewRef.current;
     if (!view) return;
 
@@ -474,7 +501,6 @@ export function MarkdownEditor({ onScrollSyncReady }: MarkdownEditorProps) {
       setIsTemplatePreviewing(false);
     }
 
-    setShowTemplateLayout(true);
     setTemplateLoading(true);
     setTemplateResult(null);
     try {
@@ -482,9 +508,36 @@ export function MarkdownEditor({ onScrollSyncReady }: MarkdownEditorProps) {
       setTemplateResult(result);
     } catch (e) {
       toast.error((e as Error).message || "AI 生成失败");
-      setShowTemplateLayout(false);
     } finally {
       setTemplateLoading(false);
+    }
+  };
+
+  // 重置插入结果
+  const handleResetInsertions = () => {
+    setAiLayoutInsertions([]);
+    setAiLayoutType(undefined);
+    setAiLayoutTypeReason(undefined);
+    setAiLayoutStrategy(undefined);
+  };
+
+  // 重置模板结果
+  const handleResetTemplate = () => {
+    setTemplateResult(null);
+    if (isTemplatePreviewing && templateOriginalRef.current !== null) {
+      const view = viewRef.current;
+      if (view) {
+        view.dispatch({
+          changes: {
+            from: 0,
+            to: view.state.doc.length,
+            insert: templateOriginalRef.current,
+          },
+        });
+        setMarkdown(templateOriginalRef.current);
+      }
+      templateOriginalRef.current = null;
+      setIsTemplatePreviewing(false);
     }
   };
 
@@ -545,7 +598,7 @@ export function MarkdownEditor({ onScrollSyncReady }: MarkdownEditorProps) {
     });
     setMarkdown(result.rendered.markdown);
     toast.success("已应用杂志级排版");
-    setShowTemplateLayout(false);
+    setShowAiDesign(false);
     templateOriginalRef.current = null;
     setIsTemplatePreviewing(false);
     view.focus();
@@ -563,7 +616,7 @@ export function MarkdownEditor({ onScrollSyncReady }: MarkdownEditorProps) {
     });
     setMarkdown(newText);
     toast.success(`已采纳 ${insertions.length} 条建议`);
-    setShowAiLayout(false);
+    setShowAiDesign(false);
     view.focus();
   };
 
@@ -675,10 +728,8 @@ export function MarkdownEditor({ onScrollSyncReady }: MarkdownEditorProps) {
         onInsert={handleInsert}
         onOpenAi={handleOpenAi}
         aiLoading={aiLoading}
-        onOpenAiLayout={handleAiLayout}
-        aiLayoutLoading={aiLayoutLoading}
-        onOpenTemplate={handleGenerateTemplate}
-        templateLoading={templateLoading}
+        onOpenAiDesign={handleOpenAiDesign}
+        aiDesignLoading={insertLoading || templateLoading}
       />
       <div className="editor-meta-bar">
         <div className="editor-meta-field editor-meta-field-title">
@@ -802,28 +853,29 @@ export function MarkdownEditor({ onScrollSyncReady }: MarkdownEditorProps) {
         </div>
         <SaveIndicator />
       </div>
-      <AiLayoutPanel
-        open={showAiLayout}
-        loading={aiLayoutLoading}
+      <AiDesignPanel
+        open={showAiDesign}
+        onClose={() => setShowAiDesign(false)}
+        // 组件插入模式
+        insertLoading={insertLoading}
         insertions={aiLayoutInsertions}
-        onClose={() => setShowAiLayout(false)}
-        onApply={handleApplyInsertions}
-        onPreview={handlePreviewInsertion}
-        onUndoPreview={handleUndoPreview}
-        onRefresh={handleAiLayout}
         articleType={aiLayoutType}
         typeReason={aiLayoutTypeReason}
-      />
-      <TemplateLayoutPanel
-        open={showTemplateLayout}
-        loading={templateLoading}
-        result={templateResult}
-        onClose={() => setShowTemplateLayout(false)}
-        onApply={handleTemplateApply}
-        onPreview={handleTemplatePreview}
-        onUndoPreview={handleTemplateUndoPreview}
-        onRegenerate={handleGenerateTemplate}
-        isPreviewing={isTemplatePreviewing}
+        strategy={aiLayoutStrategy}
+        onAnalyzeInsert={handleAnalyzeInsert}
+        onApplyInsertions={handleApplyInsertions}
+        onPreviewInsertion={handlePreviewInsertion}
+        onUndoPreview={handleUndoPreview}
+        onResetInsertions={handleResetInsertions}
+        // 模板排版模式
+        templateLoading={templateLoading}
+        templateResult={templateResult}
+        onGenerateTemplate={handleGenerateTemplateInner}
+        onApplyTemplate={handleTemplateApply}
+        onPreviewTemplate={handleTemplatePreview}
+        onUndoTemplatePreview={handleTemplateUndoPreview}
+        isTemplatePreviewing={isTemplatePreviewing}
+        onResetTemplate={handleResetTemplate}
       />
     </div>
   );
