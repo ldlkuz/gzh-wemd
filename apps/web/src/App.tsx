@@ -256,15 +256,6 @@ function App() {
           }}
         />
         <Header />
-        <button
-          className={`history-toggle ${showHistory ? "" : "is-collapsed"}`}
-          onClick={() => setShowHistory((prev) => !prev)}
-          aria-label={showHistory ? "隐藏列表" : "显示列表"}
-        >
-          <span className="sr-only">
-            {showHistory ? "隐藏列表" : "显示列表"}
-          </span>
-        </button>
         <main
           className={mainClass}
           style={mainStyle}
@@ -299,6 +290,8 @@ function App() {
               (historyLoading && !isElectron && storageType === "indexeddb")
             }
             mobileView={isMobile ? activeView : undefined}
+            showHistory={showHistory}
+            onToggleHistory={() => setShowHistory((prev) => !prev)}
           />
 
           {/* 移动端底部工具栏 */}

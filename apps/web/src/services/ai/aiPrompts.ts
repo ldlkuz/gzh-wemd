@@ -70,7 +70,7 @@ export function buildThemeJsonPrompt(): string {
     '      "fontSize": "15px或16px或17px", "lineHeight": "1.6~2.0", "letterSpacing": 0.2,',
     '      "codeFontFamily": "monospace字体",',
     '      "heading": {',
-    '        "h1": { "fontSize": 28, "color": "#色", "marginTop": 36, "marginBottom": 20, "fontWeight": "600或700", "preset": "simple|left-border|bottom-border|double-line|boxed|pill|bottom-highlight|bracket", "centered": true或false },',
+    '        "h1": { "fontSize": 28, "color": "#色", "marginTop": 36, "marginBottom": 20, "fontWeight": "600或700", "preset": "simple|left-border|bottom-border|top-border|double-line|boxed|pill|bottom-highlight|bracket", "presetColor": "#可选边框色", "centered": true或false },',
     '        "h2": { "fontSize": 22, "color": "#色", "marginTop": 28, "marginBottom": 14, "fontWeight": "600", "preset": "同上" },',
     '        "h3": { "fontSize": 19, "color": "#色", "marginTop": 24, "marginBottom": 12, "fontWeight": "600" },',
     '        "h4": { "fontSize": 17, "color": "#色", "marginTop": 20, "marginBottom": 10, "fontWeight": "600" }',
@@ -91,7 +91,7 @@ export function buildThemeJsonPrompt(): string {
     "设计规则：",
     "1. primary 是核心色，primaryLight 是浅色变体，primaryDark 是深色变体",
     "2. bgSoft/bgCard/bgMuted 与 primary 氛围协调（暖色配暖底，冷色配冷底）",
-    "3. heading preset: 默认 simple，强调用 left-border/bottom-border，活泼用 pill/boxed",
+    "3. heading preset: 默认 simple，强调用 left-border/bottom-border/top-border，活泼用 pill/boxed。presetColor 可选，用于指定边框色（默认使用 color）",
     "4. preferredComponents 从以下选：quote-card, divider-fancy, cta-card, code-frame, callout-pro, stats-block, timeline, follow-bar, numbered-heading, section-title, share-card, toc-nav, tag-label, styled-table, hero-banner, faq, magazine-cover, section-divider, image-card, full-quote, two-column-cards, end-card",
     "5. tone 选：warm(温暖), minimal(极简), elegant(优雅), rational(理性), serious(严肃), modern(现代), playful(活泼)",
   ].join("\n");

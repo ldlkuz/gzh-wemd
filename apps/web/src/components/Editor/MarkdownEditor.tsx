@@ -3,7 +3,7 @@ import { EditorView, minimalSetup } from "codemirror";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { EditorState } from "@codemirror/state";
 import { githubLight } from "@uiw/codemirror-theme-github";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, PanelLeft, PanelLeftClose } from "lucide-react";
 import {
   wechatMarkdownHighlighting,
   wechatMarkdownHighlightingDark,
@@ -50,12 +50,18 @@ import { WECHAT_TITLE_MAX_LENGTH } from "../../utils/publishMeta";
 
 interface MarkdownEditorProps {
   onScrollSyncReady?: (adapter: ScrollSyncAdapter | null) => void;
+  showHistory?: boolean;
+  onToggleHistory?: () => void;
 }
 
 const clamp = (value: number, min: number, max: number): number =>
   Math.min(Math.max(value, min), max);
 
-export function MarkdownEditor({ onScrollSyncReady }: MarkdownEditorProps) {
+export function MarkdownEditor({
+  onScrollSyncReady,
+  showHistory,
+  onToggleHistory,
+}: MarkdownEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
   const authorFieldRef = useRef<HTMLDivElement>(null);
@@ -737,6 +743,18 @@ export function MarkdownEditor({ onScrollSyncReady }: MarkdownEditorProps) {
   return (
     <div className="markdown-editor">
       <div className="editor-header">
+        <button
+          className="btn-icon-only sidebar-toggle"
+          onClick={onToggleHistory}
+          aria-label={showHistory ? "隐藏列表" : "显示列表"}
+          title={showHistory ? "隐藏列表" : "显示列表"}
+        >
+          {showHistory ? (
+            <PanelLeftClose size={18} strokeWidth={2} />
+          ) : (
+            <PanelLeft size={18} strokeWidth={2} />
+          )}
+        </button>
         <span className="editor-title">Markdown 编辑器</span>
       </div>
       <Toolbar

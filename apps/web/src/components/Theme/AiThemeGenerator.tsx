@@ -76,13 +76,14 @@ export function AiThemeGenerator({
         definitionRef.current = parsed;
 
         const { renderTheme } = await import("@wemd/core");
-        const css = renderTheme(parsed as Parameters<typeof renderTheme>[0]);
+        const def = parsed as unknown as ThemeDefinition;
+        const css = renderTheme(def);
 
         onPreviewCss(css);
-        onGenerated(css, parsed as ThemeDefinition);
+        onGenerated(css, def);
 
         // 建议名称
-        const name = parsed.meta?.name || "";
+        const name = def.meta?.name || "";
         if (name) onNameSuggestion(name);
 
         return true;

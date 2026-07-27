@@ -4,7 +4,7 @@
  * 将 DesignTokens 中的结构化数据转为 #wemd { --wemd-*: ... } CSS 声明块。
  * 组件样式通过 var(--wemd-*) 引用这些变量，实现主题切换时组件自动跟随。
  */
-import type { DesignTokens } from "../../theme-schema/types";
+import type { DesignTokens } from "../theme-schema/types";
 
 /**
  * 将 hex 颜色转为带透明度的 rgba

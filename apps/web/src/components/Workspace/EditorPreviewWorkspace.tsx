@@ -10,6 +10,8 @@ import "./EditorPreviewWorkspace.css";
 interface EditorPreviewWorkspaceProps {
   loading: boolean;
   mobileView?: "editor" | "preview";
+  showHistory?: boolean;
+  onToggleHistory?: () => void;
 }
 
 const Loading = () => (
@@ -22,6 +24,8 @@ const Loading = () => (
 export function EditorPreviewWorkspace({
   loading,
   mobileView,
+  showHistory,
+  onToggleHistory,
 }: EditorPreviewWorkspaceProps) {
   const { registerEditor, registerPreview } = useEditorPreviewScrollSync();
   const {
@@ -51,7 +55,11 @@ export function EditorPreviewWorkspace({
         {loading ? (
           <Loading />
         ) : (
-          <MarkdownEditor onScrollSyncReady={registerEditor} />
+          <MarkdownEditor
+            onScrollSyncReady={registerEditor}
+            showHistory={showHistory}
+            onToggleHistory={onToggleHistory}
+          />
         )}
       </div>
       <ResizeHandle

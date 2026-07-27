@@ -121,7 +121,10 @@ export function ThemePanelView({
 
   return (
     <div className="theme-overlay" onClick={onClose}>
-      <div className="theme-modal" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="theme-modal theme-panel"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="theme-header">
           <h3>主题管理</h3>
           <button className="close-btn" onClick={onClose} aria-label="关闭">

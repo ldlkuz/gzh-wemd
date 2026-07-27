@@ -4,7 +4,7 @@
  * 从 DesignTokens 生成段落、标题、列表的完整 CSS。
  * 包含 heading preset 支持（left-border / bottom-border / boxed / pill 等）。
  */
-import type { DesignTokens, HeadingToken } from "../../theme-schema/types";
+import type { DesignTokens, HeadingToken } from "../theme-schema/types";
 
 // ============================================================
 // Heading Preset 预设样式
@@ -28,6 +28,11 @@ const HEADING_PRESETS: Record<
 
   "bottom-border": (tag, color) => ({
     content: `#wemd ${tag} { border-bottom: 2px solid ${color}; padding-bottom: 8px; }`,
+    extra: "",
+  }),
+
+  "top-border": (tag, color) => ({
+    content: `#wemd ${tag} { border-top: 3px solid ${color}; padding-top: 14px; }`,
     extra: "",
   }),
 
@@ -80,7 +85,7 @@ function renderHeadingPreset(
   const presetId = h.preset || "simple";
   const fn = HEADING_PRESETS[presetId];
   if (!fn) return { content: "", extra: "" };
-  return fn(tag, h.color);
+  return fn(tag, h.presetColor || h.color);
 }
 
 // ============================================================

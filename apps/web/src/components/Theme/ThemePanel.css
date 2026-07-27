@@ -468,8 +468,8 @@
   color: var(--accent-primary);
 }
 
-.btn-secondary,
-.btn-primary {
+.theme-panel .btn-secondary,
+.theme-panel .btn-primary {
   padding: 10px 20px;
   border-radius: var(--radius-pill);
   font-size: 14px;
@@ -480,29 +480,30 @@
   white-space: nowrap;
 }
 
-.btn-secondary {
+/* ThemePanel 内部的按钮样式，不影响 Header 中的按钮 */
+.theme-panel .btn-secondary {
   background: var(--bg-primary);
   color: var(--text-secondary);
   border: 1px solid var(--border-light);
 }
 
-.btn-secondary:hover {
+.theme-panel .btn-secondary:hover {
   color: var(--accent-primary);
   border-color: var(--accent-primary);
 }
 
-.btn-primary {
+.theme-panel .btn-primary {
   background: var(--accent-gradient);
   color: white;
   box-shadow: var(--shadow-md);
 }
 
-.btn-primary:hover {
+.theme-panel .btn-primary:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
 }
 
-.btn-primary:disabled {
+.theme-panel .btn-primary:disabled {
   background: var(--border-light);
   box-shadow: none;
   cursor: not-allowed;

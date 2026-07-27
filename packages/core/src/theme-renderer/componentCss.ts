@@ -13,7 +13,7 @@
  *
  * 所有样式通过 var(--wemd-*) 引用主题 Token。
  */
-import type { DesignTokens } from "../../theme-schema/types";
+import type { DesignTokens } from "../theme-schema/types";
 
 export function renderComponentCss(_tokens: DesignTokens): string {
   return [

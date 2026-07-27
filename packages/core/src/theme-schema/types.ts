@@ -95,6 +95,8 @@ export interface HeadingToken {
   fontWeight: string;
   /** 预设样式 ID */
   preset?: string;
+  /** 预设样式的边框/背景色（默认使用 color） */
+  presetColor?: string;
   centered?: boolean;
   letterSpacing?: number;
 }

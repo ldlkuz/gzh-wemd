@@ -1,6 +1,6 @@
 .app-header {
-  height: 72px;
-  margin: 16px 24px 0;
+  height: 60px;
+  margin: 12px 24px 0;
   border-radius: var(--radius-xl);
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
@@ -10,10 +10,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 calc(32px + var(--titlebar-right-inset, 0px)) 0
-    calc(32px + var(--titlebar-left-inset, 0px));
+  padding: 0 calc(24px + var(--titlebar-right-inset, 0px)) 0
+    calc(24px + var(--titlebar-left-inset, 0px));
   position: sticky;
-  top: 16px;
+  top: 12px;
   z-index: 100;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   -webkit-app-region: drag;
@@ -24,12 +24,12 @@
   transform: translateY(-100%);
   opacity: 0;
   pointer-events: none;
-  margin-top: -72px;
+  margin-top: -60px;
 }
 
 /* Windows 平台下避让窗口控制按钮 */
 .floating-toolbar.floating-toolbar-win {
-  top: 72px;
+  top: 60px;
 }
 
 /* 隐藏状态下的浮动工具栏 */
@@ -164,19 +164,35 @@
   transform: translateY(-50%) translateX(0);
 }
 
-/* 无边框纯图标按钮 */
+/* 纯图标按钮 - 统一 jztheme 风格 */
 .btn-ghost {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   padding: 0;
-  border: none;
-  background: transparent;
-  color: var(--text-secondary);
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: all 0.2s ease-in-out;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.06),
+    0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.btn-ghost:hover {
+  background: var(--bg-hover);
+  color: var(--accent-primary);
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.08),
+    0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.btn-ghost:active {
+  transform: scale(0.97);
 }
 
 /* Windows 持久化窗口控制按钮 */
@@ -201,7 +217,89 @@
 .header-left {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 32px;
+}
+
+/* 左侧导航 */
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: 6px 14px;
+  border: 2px solid var(--border);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.06),
+    0 4px 12px rgba(0, 0, 0, 0.08);
+  white-space: nowrap;
+}
+
+.nav-item:hover {
+  background: var(--bg-hover);
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.08),
+    0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.nav-item:active {
+  transform: scale(0.97);
+}
+
+/* 分隔线 */
+.header-divider {
+  width: 1px;
+  height: 24px;
+  background: var(--border-light);
+  margin: 0 8px;
+}
+
+/* 文本操作按钮（复制HTML等） - 参考 jztheme 风格 */
+.btn-text-action {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.06),
+    0 4px 12px rgba(0, 0, 0, 0.08);
+  user-select: none;
+}
+
+.btn-text-action:hover {
+  background: var(--bg-hover);
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.08),
+    0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.btn-text-action:active {
+  transform: scale(0.97);
+}
+
+.btn-text-action svg {
+  width: 16px;
+  height: 16px;
 }
 
 /* 右侧区域容器（工具栏 + 窗口控制按钮） */
@@ -312,38 +410,20 @@
 .logo {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   cursor: pointer;
   transition: transform 0.2s ease;
-  opacity: 0.9;
 }
 
 .logo:hover {
   transform: translateY(-1px);
-  opacity: 1;
 }
 
 .logo-text {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--text-primary);
-  letter-spacing: -0.5px;
-}
-
-.logo-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.logo-subtitle {
-  font-size: 11px;
-  color: var(--text-secondary);
-  background: var(--bg-hover);
-  padding: 2px 8px;
-  border-radius: var(--radius-pill);
-  font-weight: 500;
-  letter-spacing: 0.5px;
+  letter-spacing: -0.3px;
 }
 
 /* UI 主题切换按钮 */
@@ -374,66 +454,73 @@
   transform: translateY(0);
 }
 
-/* 纯图标按钮 - 用于明暗模式切换 */
+/* 纯图标按钮 - 统一 jztheme 风格 */
 .btn-icon-only {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   padding: 0;
-  border: var(--border-width) solid var(--border-light);
-  border-radius: var(--radius-pill);
+  border: 2px solid var(--border);
+  border-radius: 6px;
   background: var(--bg-primary);
-  color: var(--text-secondary);
+  color: var(--text-primary);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s ease-in-out;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.06),
+    0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .btn-icon-only:hover {
   background: var(--bg-hover);
   color: var(--accent-primary);
-  border-color: var(--accent-primary);
-  transform: translateY(-1px);
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.08),
+    0 6px 16px rgba(0, 0, 0, 0.1);
 }
 
 .btn-icon-only:active {
-  transform: translateY(0);
+  transform: scale(0.97);
 }
 
 .header-right {
   display: flex;
   align-items: center;
-  gap: 16px;
-  /* 增加间距 */
+  gap: 8px;
 }
 
-/* 主按钮 - 更加精致 */
+/* 主按钮 - jztheme 边框风格 */
 .btn-primary {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 24px;
-  background: var(--accent-gradient) !important;
-  color: #ffffff !important;
-  border: none;
-  border-radius: var(--radius-pill);
+  padding: 8px 20px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 2px solid var(--border);
+  border-radius: 6px;
   font-size: 14px;
-  font-weight: 600;
-  box-shadow: var(--shadow-md);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 500;
+  font-family: inherit;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.06),
+    0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease-in-out;
   cursor: pointer;
-  letter-spacing: 0.3px;
+  user-select: none;
 }
 
 .btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-lg);
+  background: var(--bg-hover);
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.08),
+    0 6px 16px rgba(0, 0, 0, 0.1);
 }
 
 .btn-primary:active {
-  transform: translateY(1px);
-  box-shadow: var(--shadow-sm);
+  transform: scale(0.97);
 }
 
 .btn-primary svg {

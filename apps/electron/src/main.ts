@@ -60,9 +60,10 @@ app.whenReady().then(() => {
 
   createMenu(getMainWindow);
 
-  setTimeout(() => {
-    checkForUpdates(mainWindow);
-  }, 3000);
+  // 暂不自动检查更新，保留代码结构以备后续启用
+  // setTimeout(() => {
+  //   checkForUpdates(mainWindow);
+  // }, 3000);
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {

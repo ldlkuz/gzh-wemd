@@ -73,6 +73,7 @@ interface PlanResult {
   type: string;
   reason: string;
   confidence: number;
+  profile?: ArticleProfile;
   /** 启用的组件槽位（按头/中/尾顺序） */
   slotPlan: Array<{
     component: string;
