@@ -39,7 +39,7 @@
 
 ## 技术栈
 
-React 18 + TypeScript + Vite + Electron + CodeMirror 6 + Zustand + markdown-it（自研插件体系）
+React 18 + TypeScript + Vite + Electron + CodeMirror 6 + Zustand + markdown-it
 
 ---
 
