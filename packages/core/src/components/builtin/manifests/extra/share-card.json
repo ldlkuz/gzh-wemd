@@ -1,0 +1,15 @@
+{
+  "type": "share-card",
+  "variant": "extra",
+  "version": "1.0.0",
+  "label": "分享引导",
+  "description": "文末收尾引导，一行走心文字",
+  "author": "wemd",
+  "category": "Ending",
+  "semantic": "Share/Comment",
+  "intent": "discussion",
+  "tags": ["收尾", "引导"],
+  "tone": ["warm", "minimal"],
+  "articleCategories": ["emotion", "essay", "tutorial"],
+  "insertPosition": ["ending"]
+}

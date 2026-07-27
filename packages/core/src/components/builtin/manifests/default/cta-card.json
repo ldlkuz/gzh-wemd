@@ -1,0 +1,15 @@
+{
+  "type": "cta-card",
+  "variant": "default",
+  "version": "1.0.0",
+  "label": "行动号召",
+  "description": "引导读者执行特定操作",
+  "author": "wemd",
+  "category": "Ending",
+  "semantic": "CTA",
+  "intent": "convert",
+  "tags": ["行动号召", "引导"],
+  "tone": ["warm", "persuasive"],
+  "articleCategories": ["tutorial", "emotion"],
+  "insertPosition": ["ending"]
+}

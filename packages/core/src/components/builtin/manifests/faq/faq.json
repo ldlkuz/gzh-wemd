@@ -1,0 +1,15 @@
+{
+  "type": "faq",
+  "variant": "faq",
+  "version": "1.0.0",
+  "label": "常见问答",
+  "description": "折叠式常见问题与解答列表",
+  "author": "wemd",
+  "category": "Structure",
+  "semantic": "FAQ",
+  "intent": "guide",
+  "tags": ["问答", "常见"],
+  "tone": ["neutral", "professional"],
+  "articleCategories": ["tutorial"],
+  "insertPosition": ["body", "ending"]
+}

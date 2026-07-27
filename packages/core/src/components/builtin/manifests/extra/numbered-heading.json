@@ -1,0 +1,15 @@
+{
+  "type": "segment-heading",
+  "variant": "extra",
+  "version": "1.0.0",
+  "label": "编号标题",
+  "description": "带自动编号的层级标题",
+  "author": "wemd",
+  "category": "Structure",
+  "semantic": "Section",
+  "intent": "guide",
+  "tags": ["编号", "章节"],
+  "tone": ["neutral", "professional"],
+  "articleCategories": ["tutorial"],
+  "insertPosition": ["body"]
+}

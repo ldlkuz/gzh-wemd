@@ -1,0 +1,15 @@
+{
+  "type": "tag-label",
+  "variant": "extra",
+  "version": "1.0.0",
+  "label": "标签徽章",
+  "description": "彩色标签徽章用于文章分类标记",
+  "author": "wemd",
+  "category": "Footer",
+  "semantic": "Tag",
+  "intent": "collect",
+  "tags": ["标签", "分类"],
+  "tone": ["minimal", "neutral"],
+  "articleCategories": ["tutorial", "essay"],
+  "insertPosition": ["body", "ending"]
+}

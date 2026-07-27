@@ -1,0 +1,15 @@
+{
+  "type": "code-frame",
+  "variant": "default",
+  "version": "1.0.0",
+  "label": "代码框",
+  "description": "带样式装饰的代码展示区块",
+  "author": "wemd",
+  "category": "Data",
+  "semantic": "Code",
+  "intent": "guide",
+  "tags": ["代码", "技术"],
+  "tone": ["neutral", "professional"],
+  "articleCategories": ["tutorial"],
+  "insertPosition": ["body"]
+}

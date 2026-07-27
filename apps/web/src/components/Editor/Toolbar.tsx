@@ -9,6 +9,7 @@ import {
   ChevronLeft,
   ListEnd,
   WrapText,
+  LayoutTemplate,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -19,11 +20,13 @@ import {
 import { uploadEditorImage } from "../../services/image/imageUploadFlow";
 import {
   blockTools,
+  componentTemplates,
   headingOptions,
   listOptions,
   mermaidMoreTemplates,
   mermaidPrimaryTemplates,
   textFormatTools,
+  type ComponentTemplate,
 } from "./toolbarConfigs";
 import {
   getPublishingPreference,
@@ -36,18 +39,30 @@ interface ToolbarProps {
   onInsert: (prefix: string, suffix: string, placeholder: string) => void;
   onOpenAi?: () => void;
   aiLoading?: boolean;
+  /** 打开 AI 设计面板（统一入口：组件插入 + 杂志排版） */
+  onOpenAiDesign?: () => void;
+  /** AI 设计加载中 */
+  aiDesignLoading?: boolean;
 }
 
-export function Toolbar({ onInsert, onOpenAi, aiLoading }: ToolbarProps) {
+export function Toolbar({
+  onInsert,
+  onOpenAi,
+  aiLoading,
+  onOpenAiDesign,
+  aiDesignLoading,
+}: ToolbarProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [showMermaidMenu, setShowMermaidMenu] = useState(false);
   const [showMermaidMore, setShowMermaidMore] = useState(false);
   const [showHeadingMenu, setShowHeadingMenu] = useState(false);
   const [showListMenu, setShowListMenu] = useState(false);
+  const [showComponentMenu, setShowComponentMenu] = useState(false);
   const mermaidMenuRef = useRef<HTMLDivElement>(null);
   const headingMenuRef = useRef<HTMLDivElement>(null);
   const listMenuRef = useRef<HTMLDivElement>(null);
+  const componentMenuRef = useRef<HTMLDivElement>(null);
   const mermaidMoreRef = useRef<HTMLDivElement>(null);
   const mermaidSubmenuRef = useRef<HTMLDivElement>(null);
   const [mermaidSubmenuSide, setMermaidSubmenuSide] = useState<
@@ -76,6 +91,13 @@ export function Toolbar({ onInsert, onOpenAi, aiLoading }: ToolbarProps) {
       if (listMenuRef.current && !listMenuRef.current.contains(target)) {
         setShowListMenu(false);
       }
+      // 关闭组件菜单
+      if (
+        componentMenuRef.current &&
+        !componentMenuRef.current.contains(target)
+      ) {
+        setShowComponentMenu(false);
+      }
       // 关闭 Mermaid 菜单
       if (mermaidMenuRef.current && !mermaidMenuRef.current.contains(target)) {
         setShowMermaidMenu(false);
@@ -83,14 +105,15 @@ export function Toolbar({ onInsert, onOpenAi, aiLoading }: ToolbarProps) {
       }
     };
 
-    const anyMenuOpen = showHeadingMenu || showListMenu || showMermaidMenu;
+    const anyMenuOpen =
+      showHeadingMenu || showListMenu || showMermaidMenu || showComponentMenu;
     if (anyMenuOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [showHeadingMenu, showListMenu, showMermaidMenu]);
+  }, [showHeadingMenu, showListMenu, showMermaidMenu, showComponentMenu]);
 
   useEffect(() => {
     if (!showMermaidMore) return;
@@ -134,6 +157,29 @@ export function Toolbar({ onInsert, onOpenAi, aiLoading }: ToolbarProps) {
         // 关闭其他菜单
         setShowHeadingMenu(false);
         setShowListMenu(false);
+        setShowComponentMenu(false);
+      }
+      return next;
+    });
+  };
+
+  const handleComponentInsert = (template: ComponentTemplate) => {
+    const propsSeg = template.props ? `{${template.props}}` : "";
+    const prefix = `::: ${template.name}${propsSeg}\n`;
+    const suffix = `\n:::`;
+    onInsert(prefix, suffix, template.body);
+    setShowComponentMenu(false);
+  };
+
+  const toggleComponentMenu = () => {
+    setShowComponentMenu((prev) => {
+      const next = !prev;
+      if (next) {
+        // 关闭其他菜单
+        setShowHeadingMenu(false);
+        setShowListMenu(false);
+        setShowMermaidMenu(false);
+        setShowMermaidMore(false);
       }
       return next;
     });
@@ -226,6 +272,7 @@ export function Toolbar({ onInsert, onOpenAi, aiLoading }: ToolbarProps) {
             setShowHeadingMenu((prev) => !prev);
             setShowListMenu(false);
             setShowMermaidMenu(false);
+            setShowComponentMenu(false);
           }}
           data-tooltip="标题"
         >
@@ -258,6 +305,7 @@ export function Toolbar({ onInsert, onOpenAi, aiLoading }: ToolbarProps) {
             setShowListMenu((prev) => !prev);
             setShowHeadingMenu(false);
             setShowMermaidMenu(false);
+            setShowComponentMenu(false);
           }}
           data-tooltip="列表"
         >
@@ -362,6 +410,34 @@ export function Toolbar({ onInsert, onOpenAi, aiLoading }: ToolbarProps) {
         )}
       </div>
 
+      {/* 组件下拉菜单（公众号富文本组件） */}
+      <div className="md-toolbar-dropdown-container" ref={componentMenuRef}>
+        <button
+          className={`md-toolbar-btn ${showComponentMenu ? "active" : ""}`}
+          onClick={toggleComponentMenu}
+          data-tooltip="插入组件"
+        >
+          <LayoutTemplate size={16} />
+        </button>
+        {showComponentMenu && (
+          <div className="md-toolbar-dropdown-menu md-toolbar-component-menu">
+            {componentTemplates.map((template, idx) => (
+              <button
+                key={idx}
+                className="md-toolbar-dropdown-item md-toolbar-component-item"
+                onClick={() => handleComponentInsert(template)}
+                title={template.description}
+              >
+                <template.icon size={14} className="mr-2" />
+                <span className="md-toolbar-component-label">
+                  {template.label}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
       {/* 图片上传按钮 */}
       <button
         className="md-toolbar-btn"
@@ -392,6 +468,29 @@ export function Toolbar({ onInsert, onOpenAi, aiLoading }: ToolbarProps) {
             <Loader2 size={14} className="spinning" />
           ) : (
             <span className="md-toolbar-ai-text">AI</span>
+          )}
+        </button>
+      )}
+
+      {/* AI 设计（统一入口：组件插入 + 杂志排版） */}
+      {onOpenAiDesign && (
+        <button
+          className="md-toolbar-btn md-toolbar-ai-btn md-toolbar-ai-layout-btn"
+          onClick={onOpenAiDesign}
+          disabled={aiDesignLoading}
+          data-tooltip={
+            aiDesignLoading
+              ? "AI 正在设计..."
+              : "AI 设计（智能组件插入 + 杂志级排版）"
+          }
+        >
+          {aiDesignLoading ? (
+            <Loader2 size={14} className="spinning" />
+          ) : (
+            <>
+              <Workflow size={14} />
+              <span className="md-toolbar-ai-text">AI 设计</span>
+            </>
           )}
         </button>
       )}

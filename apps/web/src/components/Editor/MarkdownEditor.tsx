@@ -3,7 +3,7 @@ import { EditorView, minimalSetup } from "codemirror";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { EditorState } from "@codemirror/state";
 import { githubLight } from "@uiw/codemirror-theme-github";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, PanelLeft, PanelLeftClose } from "lucide-react";
 import {
   wechatMarkdownHighlighting,
   wechatMarkdownHighlightingDark,
@@ -11,12 +11,28 @@ import {
 import { underlineExtension } from "./markdownUnderline";
 import { useUITheme } from "../../hooks/useUITheme";
 import { useEditorStore } from "../../store/editorStore";
+import { useThemeStore } from "../../store/themeStore";
+import { getBuiltInThemeDefinition } from "@wemd/core";
 import { countWords, countLines } from "../../utils/wordCount";
 import { Toolbar } from "./Toolbar";
 import { SearchPanel } from "./SearchPanel";
 import { SaveIndicator } from "./SaveIndicator";
 import { openAiSettings, isAiConfigured } from "../../services/ai/aiConfig";
 import { textToMarkdown } from "../../services/ai/aiService";
+import {
+  analyzeArticle,
+  type Insertion,
+} from "../../services/ai/analysisAgent";
+import { applyInsertions } from "../../services/ai/applyInsertions";
+import { AiDesignPanel } from "./AiDesignPanel";
+import {
+  generateTemplate,
+  type TemplateGenerationResult,
+} from "../../services/template";
+import type {
+  Audience,
+  DesignConstraints,
+} from "../../services/ai/analysisAgent";
 import toast from "react-hot-toast";
 import "./MarkdownEditor.css";
 import { customKeymap } from "./editorShortcuts";
@@ -34,12 +50,18 @@ import { WECHAT_TITLE_MAX_LENGTH } from "../../utils/publishMeta";
 
 interface MarkdownEditorProps {
   onScrollSyncReady?: (adapter: ScrollSyncAdapter | null) => void;
+  showHistory?: boolean;
+  onToggleHistory?: () => void;
 }
 
 const clamp = (value: number, min: number, max: number): number =>
   Math.min(Math.max(value, min), max);
 
-export function MarkdownEditor({ onScrollSyncReady }: MarkdownEditorProps) {
+export function MarkdownEditor({
+  onScrollSyncReady,
+  showHistory,
+  onToggleHistory,
+}: MarkdownEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
   const authorFieldRef = useRef<HTMLDivElement>(null);
@@ -62,6 +84,26 @@ export function MarkdownEditor({ onScrollSyncReady }: MarkdownEditorProps) {
   const [showSearch, setShowSearch] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
   const [showAuthorSuggestions, setShowAuthorSuggestions] = useState(false);
+  // AI 设计统一状态
+  const [showAiDesign, setShowAiDesign] = useState(false);
+  // 组件插入模式状态
+  const [insertLoading, setInsertLoading] = useState(false);
+  const [aiLayoutInsertions, setAiLayoutInsertions] = useState<Insertion[]>([]);
+  const [aiLayoutType, setAiLayoutType] = useState<string | undefined>(
+    undefined,
+  );
+  const [aiLayoutTypeReason, setAiLayoutTypeReason] = useState<
+    string | undefined
+  >(undefined);
+  const [aiLayoutStrategy, setAiLayoutStrategy] = useState<string | undefined>(
+    undefined,
+  );
+  // 模板排版模式状态
+  const [templateLoading, setTemplateLoading] = useState(false);
+  const [templateResult, setTemplateResult] =
+    useState<TemplateGenerationResult | null>(null);
+  const [isTemplatePreviewing, setIsTemplatePreviewing] = useState(false);
+  const templateOriginalRef = useRef<string | null>(null);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -365,7 +407,9 @@ export function MarkdownEditor({ onScrollSyncReady }: MarkdownEditorProps) {
         setMarkdown(markdown);
       }
       toast.success(
-        mode === "selection" ? "选区已转换为 Markdown" : "整篇已转换为 Markdown",
+        mode === "selection"
+          ? "选区已转换为 Markdown"
+          : "整篇已转换为 Markdown",
         { id: toastId },
       );
       view.focus();
@@ -374,6 +418,304 @@ export function MarkdownEditor({ onScrollSyncReady }: MarkdownEditorProps) {
     } finally {
       setAiLoading(false);
     }
+  };
+
+  // AI 设计：打开统一面板
+  const handleOpenAiDesign = () => {
+    const view = viewRef.current;
+    if (!view) return;
+
+    if (!isAiConfigured()) {
+      toast.error("请先在 AI 设置中完成服务配置");
+      openAiSettings();
+      return;
+    }
+
+    const text = view.state.doc.toString().trim();
+    if (!text) {
+      toast.error("编辑器没有内容可分析");
+      return;
+    }
+
+    setShowAiDesign(true);
+  };
+
+  // 组件插入模式：分析文章
+  const handleAnalyzeInsert = async (
+    audience?: Audience,
+    constraints?: DesignConstraints,
+  ) => {
+    const view = viewRef.current;
+    if (!view) return;
+
+    if (!isAiConfigured()) {
+      toast.error("请先在 AI 设置中完成服务配置");
+      openAiSettings();
+      return;
+    }
+
+    const text = view.state.doc.toString().trim();
+    if (!text) {
+      toast.error("编辑器没有内容可分析");
+      return;
+    }
+
+    setInsertLoading(true);
+    setAiLayoutInsertions([]);
+    setAiLayoutType(undefined);
+    setAiLayoutTypeReason(undefined);
+    setAiLayoutStrategy(undefined);
+    try {
+      // Phase 3: 获取当前主题的 layout 偏好，传递给 AI
+      const themeId = useThemeStore.getState().themeId;
+      const builtInDef = getBuiltInThemeDefinition(themeId);
+      const themeLayout = builtInDef?.layout;
+      const result = await analyzeArticle(
+        text,
+        audience,
+        constraints,
+        themeLayout,
+      );
+      setAiLayoutInsertions(result.insertions);
+      setAiLayoutType(result.articleType);
+      setAiLayoutTypeReason(result.typeReason);
+      setAiLayoutStrategy(result.strategy);
+    } catch (e) {
+      toast.error((e as Error).message || "AI 分析失败");
+    } finally {
+      setInsertLoading(false);
+    }
+  };
+
+  // 模板排版模式：生成模板
+  const handleGenerateTemplateInner = async () => {
+    const view = viewRef.current;
+    if (!view) return;
+
+    if (!isAiConfigured()) {
+      toast.error("请先在 AI 设置中完成服务配置");
+      openAiSettings();
+      return;
+    }
+
+    const text = view.state.doc.toString().trim();
+    if (!text) {
+      toast.error("编辑器没有内容可分析");
+      return;
+    }
+
+    // 如果正在预览，先恢复原文
+    if (isTemplatePreviewing && templateOriginalRef.current !== null) {
+      view.dispatch({
+        changes: {
+          from: 0,
+          to: view.state.doc.length,
+          insert: templateOriginalRef.current,
+        },
+      });
+      setMarkdown(templateOriginalRef.current);
+      templateOriginalRef.current = null;
+      setIsTemplatePreviewing(false);
+    }
+
+    setTemplateLoading(true);
+    setTemplateResult(null);
+    try {
+      // Phase 3: 获取当前主题的 layout 偏好，传递给模板生成
+      const themeId = useThemeStore.getState().themeId;
+      const builtInDef = getBuiltInThemeDefinition(themeId);
+      const themeLayout = builtInDef?.layout;
+      const result = await generateTemplate(text, undefined, themeLayout);
+      setTemplateResult(result);
+    } catch (e) {
+      toast.error((e as Error).message || "AI 生成失败");
+    } finally {
+      setTemplateLoading(false);
+    }
+  };
+
+  // 重置插入结果
+  const handleResetInsertions = () => {
+    setAiLayoutInsertions([]);
+    setAiLayoutType(undefined);
+    setAiLayoutTypeReason(undefined);
+    setAiLayoutStrategy(undefined);
+  };
+
+  // 重置模板结果
+  const handleResetTemplate = () => {
+    setTemplateResult(null);
+    if (isTemplatePreviewing && templateOriginalRef.current !== null) {
+      const view = viewRef.current;
+      if (view) {
+        view.dispatch({
+          changes: {
+            from: 0,
+            to: view.state.doc.length,
+            insert: templateOriginalRef.current,
+          },
+        });
+        setMarkdown(templateOriginalRef.current);
+      }
+      templateOriginalRef.current = null;
+      setIsTemplatePreviewing(false);
+    }
+  };
+
+  // Template 模式：预览全文
+  const handleTemplatePreview = (result: TemplateGenerationResult) => {
+    const view = viewRef.current;
+    if (!view) return;
+
+    // 保存原文
+    const original = view.state.doc.toString();
+    templateOriginalRef.current = original;
+
+    // 替换为渲染后的 Markdown
+    view.dispatch({
+      changes: {
+        from: 0,
+        to: view.state.doc.length,
+        insert: result.rendered.markdown,
+      },
+    });
+    setMarkdown(result.rendered.markdown);
+    setIsTemplatePreviewing(true);
+
+    // 滚动到顶部
+    setTimeout(() => {
+      const container = document.querySelector(".preview-container");
+      if (container) {
+        (container as HTMLElement).scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }, 120);
+  };
+
+  // Template 模式：撤销预览
+  const handleTemplateUndoPreview = () => {
+    const view = viewRef.current;
+    if (!view || templateOriginalRef.current === null) return;
+
+    const original = templateOriginalRef.current;
+    view.dispatch({
+      changes: { from: 0, to: view.state.doc.length, insert: original },
+    });
+    setMarkdown(original);
+    templateOriginalRef.current = null;
+    setIsTemplatePreviewing(false);
+  };
+
+  // Template 模式：应用到文章
+  const handleTemplateApply = (result: TemplateGenerationResult) => {
+    const view = viewRef.current;
+    if (!view) return;
+
+    view.dispatch({
+      changes: {
+        from: 0,
+        to: view.state.doc.length,
+        insert: result.rendered.markdown,
+      },
+    });
+    setMarkdown(result.rendered.markdown);
+    toast.success("已应用杂志级排版");
+    setShowAiDesign(false);
+    templateOriginalRef.current = null;
+    setIsTemplatePreviewing(false);
+    view.focus();
+  };
+
+  // 应用插入建议到编辑器（批量采纳时调用）
+  const handleApplyInsertions = (insertions: Insertion[]) => {
+    const view = viewRef.current;
+    if (!view || insertions.length === 0) return;
+
+    const currentText = view.state.doc.toString();
+    const newText = applyInsertions(currentText, insertions);
+    view.dispatch({
+      changes: { from: 0, to: view.state.doc.length, insert: newText },
+    });
+    setMarkdown(newText);
+    toast.success(`已采纳 ${insertions.length} 条建议`);
+    setShowAiDesign(false);
+    view.focus();
+  };
+
+  // 预览单条建议：保存原文 → 临时插入 → 右侧预览框显示
+  const previewOriginalRef = useRef<string | null>(null);
+
+  /** 滚动右侧预览框到目标组件，并加临时高亮 */
+  const scrollPreviewToComponent = () => {
+    // 等待预览框重新渲染（setMarkdown 后异步触发）
+    setTimeout(() => {
+      const container = document.querySelector(".preview-container");
+      const target = document.querySelector(
+        "#wemd .wemd-component[data-wemd-preview-target]",
+      );
+      if (!container || !target) return;
+
+      // 滚动到组件位置（居中显示）
+      const containerEl = container as HTMLElement;
+      const targetEl = target as HTMLElement;
+      const containerRect = containerEl.getBoundingClientRect();
+      const targetRect = targetEl.getBoundingClientRect();
+      const offset =
+        targetRect.top -
+        containerRect.top +
+        containerEl.scrollTop -
+        containerRect.height / 2 +
+        targetRect.height / 2;
+      containerEl.scrollTo({ top: Math.max(0, offset), behavior: "smooth" });
+
+      // 加临时高亮边框（2 秒后消失）
+      targetEl.classList.add("wemd-preview-highlight");
+      setTimeout(() => {
+        targetEl.classList.remove("wemd-preview-highlight");
+        targetEl.removeAttribute("data-wemd-preview-target");
+      }, 2000);
+    }, 120);
+  };
+
+  const handlePreviewInsertion = (ins: Insertion) => {
+    const view = viewRef.current;
+    if (!view) return;
+
+    // 如果正在预览（previewOriginalRef 有值），先恢复原文，再插入新预览
+    // 这样 previewOriginalRef 始终保存"真原文"，切换预览不会污染
+    const baseText =
+      previewOriginalRef.current !== null
+        ? previewOriginalRef.current
+        : view.state.doc.toString();
+    previewOriginalRef.current = baseText;
+
+    // 给组件 body 加临时标记（用于渲染后定位）
+    const markedIns: Insertion = {
+      ...ins,
+      body: `${ins.body}\n\n<span data-wemd-preview-target></span>`,
+    };
+
+    // 插入单条建议
+    const newText = applyInsertions(baseText, [markedIns]);
+    view.dispatch({
+      changes: { from: 0, to: view.state.doc.length, insert: newText },
+    });
+    setMarkdown(newText);
+
+    // 滚动右侧预览框到组件位置
+    scrollPreviewToComponent();
+  };
+
+  // 撤销预览：恢复原文
+  const handleUndoPreview = () => {
+    const view = viewRef.current;
+    if (!view || previewOriginalRef.current === null) return;
+
+    const original = previewOriginalRef.current;
+    view.dispatch({
+      changes: { from: 0, to: view.state.doc.length, insert: original },
+    });
+    setMarkdown(original);
+    previewOriginalRef.current = null;
   };
 
   const handleUseHeadingTitle = () => {
@@ -401,12 +743,33 @@ export function MarkdownEditor({ onScrollSyncReady }: MarkdownEditorProps) {
   return (
     <div className="markdown-editor">
       <div className="editor-header">
+        <button
+          className="btn-icon-only sidebar-toggle"
+          onClick={onToggleHistory}
+          aria-label={showHistory ? "隐藏列表" : "显示列表"}
+          title={showHistory ? "隐藏列表" : "显示列表"}
+        >
+          {showHistory ? (
+            <PanelLeftClose size={18} strokeWidth={2} />
+          ) : (
+            <PanelLeft size={18} strokeWidth={2} />
+          )}
+        </button>
         <span className="editor-title">Markdown 编辑器</span>
       </div>
-      <Toolbar onInsert={handleInsert} onOpenAi={handleOpenAi} aiLoading={aiLoading} />
+      <Toolbar
+        onInsert={handleInsert}
+        onOpenAi={handleOpenAi}
+        aiLoading={aiLoading}
+        onOpenAiDesign={handleOpenAiDesign}
+        aiDesignLoading={insertLoading || templateLoading}
+      />
       <div className="editor-meta-bar">
         <div className="editor-meta-field editor-meta-field-title">
-          <label className="editor-meta-toggle" htmlFor="editor-use-publish-title">
+          <label
+            className="editor-meta-toggle"
+            htmlFor="editor-use-publish-title"
+          >
             <input
               id="editor-use-publish-title"
               type="checkbox"
@@ -450,7 +813,10 @@ export function MarkdownEditor({ onScrollSyncReady }: MarkdownEditorProps) {
           ref={authorFieldRef}
           className="editor-meta-field editor-meta-field-author"
         >
-          <label className="editor-meta-toggle" htmlFor="editor-use-publish-author">
+          <label
+            className="editor-meta-toggle"
+            htmlFor="editor-use-publish-author"
+          >
             <input
               id="editor-use-publish-author"
               type="checkbox"
@@ -464,12 +830,12 @@ export function MarkdownEditor({ onScrollSyncReady }: MarkdownEditorProps) {
             id="editor-publish-author"
             className="editor-meta-input"
             type="text"
-            placeholder={
+            placeholder={usePublishAuthor ? "作者名称" : "未启用作者同步"}
+            title={
               usePublishAuthor
-                ? "作者名称"
+                ? "作者名称，复制 HTML 后插件会优先填这个值"
                 : "未启用作者同步"
             }
-            title={usePublishAuthor ? "作者名称，复制 HTML 后插件会优先填这个值" : "未启用作者同步"}
             value={publishAuthor}
             onFocus={() => setShowAuthorSuggestions(usePublishAuthor)}
             onChange={(e) => {
@@ -520,6 +886,30 @@ export function MarkdownEditor({ onScrollSyncReady }: MarkdownEditorProps) {
         </div>
         <SaveIndicator />
       </div>
+      <AiDesignPanel
+        open={showAiDesign}
+        onClose={() => setShowAiDesign(false)}
+        // 组件插入模式
+        insertLoading={insertLoading}
+        insertions={aiLayoutInsertions}
+        articleType={aiLayoutType}
+        typeReason={aiLayoutTypeReason}
+        strategy={aiLayoutStrategy}
+        onAnalyzeInsert={handleAnalyzeInsert}
+        onApplyInsertions={handleApplyInsertions}
+        onPreviewInsertion={handlePreviewInsertion}
+        onUndoPreview={handleUndoPreview}
+        onResetInsertions={handleResetInsertions}
+        // 模板排版模式
+        templateLoading={templateLoading}
+        templateResult={templateResult}
+        onGenerateTemplate={handleGenerateTemplateInner}
+        onApplyTemplate={handleTemplateApply}
+        onPreviewTemplate={handleTemplatePreview}
+        onUndoTemplatePreview={handleTemplateUndoPreview}
+        isTemplatePreviewing={isTemplatePreviewing}
+        onResetTemplate={handleResetTemplate}
+      />
     </div>
   );
 }

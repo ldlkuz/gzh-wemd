@@ -33,6 +33,7 @@ import markdownItTaskLists from "markdown-it-task-lists";
 import markdownItCheckboxEmoji from "./plugins/markdown-it-checkbox-emoji";
 import markdownItAttributePolicy from "./plugins/markdown-it-attribute-policy";
 import markdownItSourcePosition from "./plugins/markdown-it-source-position";
+import markdownItComponent from "./plugins/markdown-it-component";
 
 import highlightjs from "./utils/langHighlight";
 
@@ -126,7 +127,8 @@ export const createMarkdownParser = (options: MarkdownParserOptions = {}) => {
       label: true,
       labelAfter: true,
     })
-    .use(markdownItCheckboxEmoji);
+    .use(markdownItCheckboxEmoji)
+    .use(markdownItComponent);
 
   if (options.includeSourcePosition) {
     markdownParser.use(markdownItSourcePosition);

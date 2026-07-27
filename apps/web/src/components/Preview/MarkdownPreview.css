@@ -98,3 +98,23 @@
 [data-ui-theme="dark"] .preview-content {
   box-shadow: none;
 }
+
+/* ========================================
+   AI 版式预览临时高亮（插入后 2 秒消失）
+   ======================================== */
+#wemd .wemd-component.wemd-preview-highlight {
+  outline: 3px solid #07c160;
+  outline-offset: 4px;
+  border-radius: 8px;
+  animation: wemd-preview-pulse 1s ease-in-out 2;
+}
+
+@keyframes wemd-preview-pulse {
+  0%,
+  100% {
+    outline-color: #07c160;
+  }
+  50% {
+    outline-color: #86efac;
+  }
+}

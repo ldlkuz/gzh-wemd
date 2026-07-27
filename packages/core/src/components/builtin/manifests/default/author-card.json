@@ -1,0 +1,15 @@
+{
+  "type": "author-card",
+  "variant": "default",
+  "version": "1.0.0",
+  "label": "作者卡片",
+  "description": "文末展示作者头像与简介",
+  "author": "wemd",
+  "category": "Footer",
+  "semantic": "Author",
+  "intent": "branding",
+  "tags": ["作者", "品牌"],
+  "tone": ["warm", "minimal"],
+  "articleCategories": ["emotion", "essay", "tutorial"],
+  "insertPosition": ["ending"]
+}

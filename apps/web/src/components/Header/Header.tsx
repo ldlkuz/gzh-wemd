@@ -239,15 +239,42 @@ export function Header() {
             ) : (
               <DefaultLogoMark />
             )}
-            <div className="logo-info">
-              <span className="logo-text">WeMD</span>
-              <span className="logo-subtitle">公众号 Markdown 排版编辑器</span>
-            </div>
+            <span className="logo-text">WeMD</span>
+          </div>
+
+          <div className="header-nav">
+            {!isElectron && (
+              <button
+                className="nav-item"
+                onClick={() => setShowStorageModal(true)}
+              >
+                <span>存储模式</span>
+              </button>
+            )}
+            <button
+              className="nav-item"
+              onClick={() => setShowImageHostModal(true)}
+            >
+              <span>图床设置</span>
+            </button>
+            <button
+              className="nav-item"
+              onClick={() => setShowThemePanel(true)}
+            >
+              <span>文章主题</span>
+            </button>
           </div>
         </div>
 
         <div className="header-actions">
           <div className="header-right">
+            <button
+              className="btn-icon-only"
+              onClick={() => setShowAiSettingsModal(true)}
+              title="AI 设置"
+            >
+              <Sparkles size={18} strokeWidth={2} />
+            </button>
             <button
               className="btn-icon-only"
               onClick={() => setTheme(uiTheme === "dark" ? "default" : "dark")}
@@ -262,39 +289,11 @@ export function Header() {
                 <Moon size={18} strokeWidth={2} />
               )}
             </button>
-            {!isElectron && (
-              <button
-                className="btn-secondary"
-                onClick={() => setShowStorageModal(true)}
-              >
-                <Layers size={18} strokeWidth={2} />
-                <span>存储模式</span>
-              </button>
-            )}
-            <button
-              className="btn-secondary"
-              onClick={() => setShowImageHostModal(true)}
-            >
-              <ImageIcon size={18} strokeWidth={2} />
-              <span>图床设置</span>
-            </button>
-            <button
-              className="btn-secondary"
-              onClick={() => setShowAiSettingsModal(true)}
-            >
-              <Sparkles size={18} strokeWidth={2} />
-              <span>AI 设置</span>
-            </button>
-            <button
-              className="btn-secondary"
-              onClick={() => setShowThemePanel(true)}
-            >
-              <Palette size={18} strokeWidth={2} />
-              <span>主题管理</span>
-            </button>
 
-            <button className="btn-secondary" onClick={copyAsHtml}>
-              <Code size={18} strokeWidth={2} />
+            <div className="header-divider" />
+
+            <button className="btn-text-action" onClick={copyAsHtml}>
+              <Code size={16} strokeWidth={2} />
               <span>复制 HTML</span>
             </button>
 

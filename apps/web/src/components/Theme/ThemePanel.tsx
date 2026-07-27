@@ -2,7 +2,10 @@ import { useEffect, useMemo, useState, useRef } from "react";
 import toast from "react-hot-toast";
 import { useEditorStore } from "../../store/editorStore";
 import { useThemeStore } from "../../store/themeStore";
-import { isThemeSelectable } from "../../store/themes/builtInThemes";
+import {
+  isThemeSelectable,
+  type ThemeDefinition,
+} from "../../store/themes/builtInThemes";
 import { useHistoryStore } from "../../store/historyStore";
 import { platformActions } from "../../lib/platformAdapter";
 import { type DesignerVariables, defaultVariables } from "./ThemeDesigner";
@@ -84,6 +87,9 @@ export function ThemePanel({ open, onClose }: ThemePanelProps) {
     DesignerVariables | undefined
   >(undefined);
   const [useCurrentArticle, setUseCurrentArticle] = useState(true);
+  const [pendingDefinition, setPendingDefinition] = useState<
+    ThemeDefinition | undefined
+  >(undefined);
 
   const selectedTheme = allThemes.find((item) => item.id === selectedThemeId);
   const isCustomTheme = selectedTheme && !selectedTheme.isBuiltIn;
@@ -177,6 +183,7 @@ export function ThemePanel({ open, onClose }: ThemePanelProps) {
     setDesignerVariables(undefined);
     setOriginalDesignerVariables(undefined);
     setShowDeleteConfirm(false);
+    setPendingDefinition(undefined);
   };
 
   const handleSelectCreationMode = (mode: "visual" | "css" | "ai") => {
@@ -184,10 +191,28 @@ export function ThemePanel({ open, onClose }: ThemePanelProps) {
     setCreationStep("editing");
   };
 
-  /** AI 生成完成后,切到 css 模式让用户继续微调,把生成的 CSS 填入 */
-  const handleAiGenerated = (css: string) => {
+  /** AI 生成完成后,推送 CSS 到预览区,建议名称,不切 CSS 模式 */
+  const handleAiGenerated = (css: string, definition?: ThemeDefinition) => {
     setCssInput(css);
-    setEditorMode("css");
+    setVisualCss(css);
+    setPendingDefinition(definition);
+    // AI 建议名称
+    if (definition?.meta?.name) {
+      setNameInput(definition.meta.name);
+    }
+  };
+
+  /** AI 预览 CSS 实时更新 */
+  const handlePreviewCss = (css: string) => {
+    setVisualCss(css);
+    setCssInput(css);
+  };
+
+  /** AI 建议主题名称 */
+  const handleNameSuggestion = (name: string) => {
+    if (!nameInput.trim()) {
+      setNameInput(name);
+    }
   };
 
   const handleVisualCssChange = (nextCss: string) => {
@@ -265,6 +290,7 @@ export function ThemePanel({ open, onClose }: ThemePanelProps) {
         savedMode,
         cssToSave,
         savedMode === "visual" ? designerVariables : undefined,
+        pendingDefinition,
       );
       selectTheme(newTheme.id);
 
@@ -437,6 +463,8 @@ export function ThemePanel({ open, onClose }: ThemePanelProps) {
       onSave={handleSave}
       onApply={handleApply}
       onAiGenerated={handleAiGenerated}
+      onPreviewCss={handlePreviewCss}
+      onNameSuggestion={handleNameSuggestion}
     />
   );
 }

@@ -17,6 +17,9 @@ import {
 import {
   buildTextToMarkdownPrompt,
   buildThemePrompt,
+  buildThemeJsonPrompt,
+  buildThemeRefinePrompt,
+  buildDescriptionRefinePrompt,
   sanitizeCss,
 } from "./aiPrompts";
 
@@ -34,6 +37,15 @@ export interface GenerateThemeParams {
   description: string;
   /** 可选:基础主题 CSS,基于此风格调整 */
   baseThemeCss?: string;
+  /** Phase 3: 使用 JSON 格式 prompt（输出 ThemeDefinition JSON） */
+  useJson?: boolean;
+}
+
+export interface RefineThemeParams {
+  /** 当前主题 JSON 字符串 */
+  currentJson: string;
+  /** 用户微调意见 */
+  feedback: string;
 }
 
 /** 规范化 baseUrl:去末尾斜杠 */
@@ -189,7 +201,9 @@ export async function generateTheme(
     throw new Error(configError);
   }
 
-  const systemPrompt = buildThemePrompt();
+  const systemPrompt = params.useJson
+    ? buildThemeJsonPrompt()
+    : buildThemePrompt();
   const userParts: string[] = [params.description];
   if (params.baseThemeCss?.trim()) {
     userParts.push(
@@ -244,7 +258,9 @@ export async function generateThemeStream(
     throw new Error(configError);
   }
 
-  const systemPrompt = buildThemePrompt();
+  const systemPrompt = params.useJson
+    ? buildThemeJsonPrompt()
+    : buildThemePrompt();
   const userParts: string[] = [params.description];
   if (params.baseThemeCss?.trim()) {
     userParts.push(
@@ -311,6 +327,90 @@ export async function generateThemeStream(
     }
   }
 
-  // 流式返回的是原始文本,需要清洗后返回
-  return sanitizeCss(accumulated);
+  // 流式返回的是原始文本,JSON 模式不需要 CSS 清洗
+  return params.useJson ? accumulated.trim() : sanitizeCss(accumulated);
+}
+
+/**
+ * 主题微调：对话式迭代
+ * 传入当前 Theme JSON + 用户反馈 → AI 返回修改后的 JSON（非流式）
+ */
+export async function refineTheme(params: RefineThemeParams): Promise<string> {
+  const config = getAiConfig();
+  const configError = validateAiConfig(config);
+  if (configError) {
+    throw new Error(configError);
+  }
+
+  const systemPrompt = buildThemeRefinePrompt(
+    params.currentJson,
+    params.feedback,
+  );
+
+  const url = chatCompletionsUrl(config.baseUrl);
+  const resp = await fetch(url, {
+    method: "POST",
+    headers: buildHeaders(config),
+    body: JSON.stringify({
+      model: config.model,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: params.feedback },
+      ],
+      temperature: 0.5,
+      stream: false,
+    }),
+  });
+
+  if (!resp.ok) {
+    const errText = await resp.text().catch(() => resp.statusText);
+    throw new Error(formatAiHttpError(config.baseUrl, resp.status, errText));
+  }
+
+  const data = await resp.json();
+  const raw = data.choices?.[0]?.message?.content ?? "";
+  if (!raw.trim()) {
+    throw new Error("模型返回内容为空");
+  }
+  return raw.trim();
+}
+
+/**
+ * 润色用户主题描述：口语化 → 专业设计术语
+ */
+export async function refineDescription(userInput: string): Promise<string> {
+  const config = getAiConfig();
+  const configError = validateAiConfig(config);
+  if (configError) {
+    throw new Error(configError);
+  }
+
+  const systemPrompt = buildDescriptionRefinePrompt(userInput);
+
+  const url = chatCompletionsUrl(config.baseUrl);
+  const resp = await fetch(url, {
+    method: "POST",
+    headers: buildHeaders(config),
+    body: JSON.stringify({
+      model: config.model,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userInput },
+      ],
+      temperature: 0.5,
+      stream: false,
+    }),
+  });
+
+  if (!resp.ok) {
+    const errText = await resp.text().catch(() => resp.statusText);
+    throw new Error(formatAiHttpError(config.baseUrl, resp.status, errText));
+  }
+
+  const data = await resp.json();
+  const result = data.choices?.[0]?.message?.content?.trim();
+  if (!result) {
+    throw new Error("模型返回内容为空");
+  }
+  return result;
 }

@@ -339,6 +339,7 @@
   border: var(--border-width) solid var(--border-light);
   border-radius: var(--radius-md);
   font-size: 14px;
+  font-family: inherit;
   transition: all 0.2s;
   background: var(--bg-primary);
   color: var(--text-primary);
@@ -467,8 +468,8 @@
   color: var(--accent-primary);
 }
 
-.btn-secondary,
-.btn-primary {
+.theme-panel .btn-secondary,
+.theme-panel .btn-primary {
   padding: 10px 20px;
   border-radius: var(--radius-pill);
   font-size: 14px;
@@ -479,29 +480,30 @@
   white-space: nowrap;
 }
 
-.btn-secondary {
+/* ThemePanel 内部的按钮样式，不影响 Header 中的按钮 */
+.theme-panel .btn-secondary {
   background: var(--bg-primary);
   color: var(--text-secondary);
   border: 1px solid var(--border-light);
 }
 
-.btn-secondary:hover {
+.theme-panel .btn-secondary:hover {
   color: var(--accent-primary);
   border-color: var(--accent-primary);
 }
 
-.btn-primary {
+.theme-panel .btn-primary {
   background: var(--accent-gradient);
   color: white;
   box-shadow: var(--shadow-md);
 }
 
-.btn-primary:hover {
+.theme-panel .btn-primary:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
 }
 
-.btn-primary:disabled {
+.theme-panel .btn-primary:disabled {
   background: var(--border-light);
   box-shadow: none;
   cursor: not-allowed;
@@ -726,7 +728,11 @@
 
 .mode-icon-ai {
   color: #8b5cf6;
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(236, 72, 153, 0.12));
+  background: linear-gradient(
+    135deg,
+    rgba(139, 92, 246, 0.12),
+    rgba(236, 72, 153, 0.12)
+  );
   width: 56px;
   height: 56px;
   border-radius: 50%;

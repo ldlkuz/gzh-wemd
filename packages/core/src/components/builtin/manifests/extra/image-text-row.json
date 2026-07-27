@@ -1,0 +1,15 @@
+{
+  "type": "image-text-row",
+  "variant": "extra",
+  "version": "1.0.0",
+  "label": "图文横排",
+  "description": "图片与文字左右并排展示",
+  "author": "wemd",
+  "category": "Media",
+  "semantic": "Layout",
+  "intent": "collect",
+  "tags": ["图文", "排版"],
+  "tone": ["warm", "elegant"],
+  "articleCategories": ["emotion", "essay", "tutorial"],
+  "insertPosition": ["body"]
+}

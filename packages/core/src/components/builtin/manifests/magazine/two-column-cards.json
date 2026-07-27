@@ -1,0 +1,15 @@
+{
+  "type": "two-column-cards",
+  "variant": "magazine",
+  "version": "1.0.0",
+  "label": "双栏对比",
+  "description": "左右双栏对比展示内容",
+  "author": "wemd",
+  "category": "Structure",
+  "semantic": "Compare",
+  "intent": "guide",
+  "tags": ["对比", "双栏"],
+  "tone": ["neutral", "professional"],
+  "articleCategories": ["tutorial", "essay"],
+  "insertPosition": ["body"]
+}

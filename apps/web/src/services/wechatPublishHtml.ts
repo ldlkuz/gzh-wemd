@@ -162,7 +162,7 @@ export async function buildWechatPublishHtml(
       sourceHtml,
       themedCss,
     );
-    const styledHtml = processHtml(materializedHtml, sanitizedCss, true, true);
+    const styledHtml = processHtml(materializedHtml, sanitizedCss, true, false);
     const resolvedHtml = resolveInlineStyleVariablesForCopy(styledHtml);
     const finalHtml = convertCheckboxesToEmoji(resolvedHtml);
 

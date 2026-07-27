@@ -1,0 +1,15 @@
+{
+  "type": "timeline",
+  "variant": "default",
+  "version": "1.0.0",
+  "label": "时间线",
+  "description": "按时间轴展示事件历程",
+  "author": "wemd",
+  "category": "Data",
+  "semantic": "Timeline",
+  "intent": "guide",
+  "tags": ["时间线", "历程"],
+  "tone": ["neutral", "professional"],
+  "articleCategories": ["tutorial", "essay"],
+  "insertPosition": ["body"]
+}

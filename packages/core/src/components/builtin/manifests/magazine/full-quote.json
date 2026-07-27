@@ -1,0 +1,15 @@
+{
+  "type": "full-quote",
+  "variant": "magazine",
+  "version": "1.0.0",
+  "label": "全幅引用",
+  "description": "杂志风格的满版金句引用",
+  "author": "wemd",
+  "category": "Highlight",
+  "semantic": "Quote",
+  "intent": "discussion",
+  "tags": ["引用", "金句"],
+  "tone": ["warm", "creative"],
+  "articleCategories": ["emotion", "essay"],
+  "insertPosition": ["body"]
+}

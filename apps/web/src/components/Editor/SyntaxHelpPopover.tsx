@@ -19,6 +19,47 @@ const syntaxItems = [
   { syntax: "**文字**{.class}", desc: "行内/图片属性" },
 ];
 
+// 组件语法速查
+const componentItems = [
+  {
+    syntax: '::: quote-card{author="作者"}\n金句内容\n:::',
+    desc: "金句卡片",
+  },
+  { syntax: "::: divider-fancy\n:::", desc: "装饰分割线" },
+  {
+    syntax: "::: cta-card\n引导文案\n:::",
+    desc: "关注引导卡片",
+  },
+  {
+    syntax: '::: callout-pro{type="info"}\n**标题**\n正文\n:::',
+    desc: "强化提示框（info/success/warning/danger/tip）",
+  },
+  {
+    syntax: '::: code-frame{lang="js" title="标题"}\n```js\ncode\n```\n:::',
+    desc: "代码框（带标题）",
+  },
+  {
+    syntax: "::: stats-block\n标题\n- 项 **数值**\n:::",
+    desc: "数据统计块",
+  },
+  {
+    syntax: "::: image-grid\n标题\n- ![](url)\n:::",
+    desc: "图片网格（2 列）",
+  },
+  {
+    syntax: "::: author-card\n![](头像)\n**姓名** *角色*\n简介\n:::",
+    desc: "作者卡片",
+  },
+  {
+    syntax: "::: timeline\n标题\n- **节点** 描述\n:::",
+    desc: "时间线（带圆点竖线）",
+  },
+  {
+    syntax: '::: faq{title="常见问题"}\n**问题一**\n回答内容\n:::',
+    desc: "FAQ 问答卡片",
+  },
+];
+
 export function SyntaxHelpPopover() {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -68,6 +109,18 @@ export function SyntaxHelpPopover() {
           <div className="syntax-help-list">
             {syntaxItems.map((item, idx) => (
               <div key={idx} className="syntax-help-row">
+                <code>{item.syntax}</code>
+                <span>{item.desc}</span>
+              </div>
+            ))}
+          </div>
+          <div className="syntax-help-header">公众号组件语法</div>
+          <div className="syntax-help-list">
+            {componentItems.map((item, idx) => (
+              <div
+                key={idx}
+                className="syntax-help-row syntax-help-row-component"
+              >
                 <code>{item.syntax}</code>
                 <span>{item.desc}</span>
               </div>

@@ -1,0 +1,15 @@
+{
+  "type": "copyright-notice",
+  "variant": "extra",
+  "version": "1.0.0",
+  "label": "版权声明",
+  "description": "文末版权与转载声明信息",
+  "author": "wemd",
+  "category": "Footer",
+  "semantic": "Legal",
+  "intent": "branding",
+  "tags": ["版权", "声明"],
+  "tone": ["minimal", "neutral"],
+  "articleCategories": ["emotion", "essay", "tutorial"],
+  "insertPosition": ["ending"]
+}

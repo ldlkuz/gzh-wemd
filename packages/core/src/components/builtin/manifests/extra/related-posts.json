@@ -1,0 +1,15 @@
+{
+  "type": "related-posts",
+  "variant": "extra",
+  "version": "1.0.0",
+  "label": "相关推荐",
+  "description": "文末推荐相关历史文章",
+  "author": "wemd",
+  "category": "Footer",
+  "semantic": "Related",
+  "intent": "collect",
+  "tags": ["推荐", "相关"],
+  "tone": ["neutral", "minimal"],
+  "articleCategories": ["tutorial", "essay"],
+  "insertPosition": ["ending"]
+}

@@ -1,7 +1,6 @@
 import {
   AlertTriangle,
   ChevronDown,
-  Code,
   Copy,
   Download,
   Eye,
@@ -14,7 +13,10 @@ import {
   X,
 } from "lucide-react";
 import type { MutableRefObject } from "react";
-import type { CustomTheme } from "../../store/themes/builtInThemes";
+import type {
+  CustomTheme,
+  ThemeDefinition,
+} from "../../store/themes/builtInThemes";
 import { ThemeDesigner, type DesignerVariables } from "./ThemeDesigner";
 import { ThemeLivePreview } from "./ThemeLivePreview";
 import { AiThemeGenerator } from "./AiThemeGenerator";
@@ -61,8 +63,12 @@ interface ThemePanelViewProps {
   onDeleteClick: () => void;
   onSave: () => void;
   onApply: () => void;
-  /** AI 生成 CSS 完成回调 */
-  onAiGenerated: (css: string) => void;
+  /** AI 生成 CSS 完成回调，附带 definition（若 AI 返回 JSON） */
+  onAiGenerated: (css: string, definition?: ThemeDefinition) => void;
+  /** AI 预览 CSS 实时更新 */
+  onPreviewCss: (css: string) => void;
+  /** AI 建议主题名称 */
+  onNameSuggestion: (name: string) => void;
 }
 
 export function ThemePanelView({
@@ -108,12 +114,17 @@ export function ThemePanelView({
   onSave,
   onApply,
   onAiGenerated,
+  onPreviewCss,
+  onNameSuggestion,
 }: ThemePanelViewProps) {
   if (!open) return null;
 
   return (
     <div className="theme-overlay" onClick={onClose}>
-      <div className="theme-modal" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="theme-modal theme-panel"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="theme-header">
           <h3>主题管理</h3>
           <button className="close-btn" onClick={onClose} aria-label="关闭">
@@ -226,28 +237,15 @@ export function ThemePanelView({
                       <span className="mode-tag">适合快速上手</span>
                     </button>
                     <button
-                      className="mode-card"
-                      onClick={() => onSelectCreationMode("css")}
-                    >
-                      <span className="mode-icon">
-                        <Code size={32} />
-                      </span>
-                      <span className="mode-title">手写 CSS</span>
-                      <span className="mode-desc">
-                        直接编写 CSS 代码，完全自由控制
-                      </span>
-                      <span className="mode-tag">适合高级用户</span>
-                    </button>
-                    <button
                       className="mode-card mode-card-ai"
                       onClick={() => onSelectCreationMode("ai")}
                     >
                       <span className="mode-icon mode-icon-ai">
                         <Sparkles size={32} />
                       </span>
-                      <span className="mode-title">AI 生成 CSS</span>
+                      <span className="mode-title">AI 生成</span>
                       <span className="mode-desc">
-                        描述需求，AI 自动生成主题样式
+                        描述需求，AI 自动生成主题
                       </span>
                       <span className="mode-tag">适合零基础</span>
                     </button>
@@ -314,8 +312,9 @@ export function ThemePanelView({
                     {isCreating && editorMode === "ai" && (
                       <div className="ai-designer-container">
                         <AiThemeGenerator
-                          builtInThemes={builtInThemes}
                           onGenerated={onAiGenerated}
+                          onPreviewCss={onPreviewCss}
+                          onNameSuggestion={onNameSuggestion}
                         />
                       </div>
                     )}

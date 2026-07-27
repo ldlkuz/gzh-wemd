@@ -1,0 +1,15 @@
+{
+  "type": "image-caption",
+  "variant": "extra",
+  "version": "1.0.0",
+  "label": "图片说明",
+  "description": "为图片添加带样式的说明文字",
+  "author": "wemd",
+  "category": "Media",
+  "semantic": "Caption",
+  "intent": "collect",
+  "tags": ["图片", "说明"],
+  "tone": ["minimal", "neutral"],
+  "articleCategories": ["emotion", "essay", "tutorial"],
+  "insertPosition": ["body"]
+}

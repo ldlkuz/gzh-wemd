@@ -1,0 +1,15 @@
+{
+  "type": "magazine-cover",
+  "variant": "magazine",
+  "version": "1.0.0",
+  "label": "杂志封面",
+  "description": "杂志风格的文章封面头图",
+  "author": "wemd",
+  "category": "Hero",
+  "semantic": "Brand",
+  "intent": "branding",
+  "tags": ["封面", "品牌"],
+  "tone": ["warm", "creative"],
+  "articleCategories": ["emotion", "essay"],
+  "insertPosition": ["header"]
+}

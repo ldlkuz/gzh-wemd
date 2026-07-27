@@ -2,27 +2,48 @@ import {
   Activity,
   Binary,
   Bold,
+  BookOpen,
+  Bookmark,
   Calendar,
+  Camera,
   Clock,
   Code,
+  Columns,
+  Copyright,
   Database,
   GitGraph,
+  Hash,
   Heading1,
   Heading2,
   Heading3,
   Heading4,
+  HelpCircle,
+  ImagePlus,
   Italic,
+  LayoutGrid,
+  LayoutTemplate,
   Link,
   List,
   ListOrdered,
+  ListTree,
   Minus,
   Network,
   PieChart,
+  QrCode,
   Quote,
   Route,
+  Share2,
+  Sparkles,
   Strikethrough,
+  Table,
+  Tag,
   Underline,
+  User,
+  UserPlus,
   Workflow,
+  Image,
+  FileText,
+  Flag,
   type LucideIcon,
 } from "lucide-react";
 
@@ -38,6 +59,19 @@ export interface MermaidTemplate {
   icon: LucideIcon;
   label: string;
   code: string;
+}
+
+export interface ComponentTemplate {
+  icon: LucideIcon;
+  label: string;
+  /** 组件名（用于 :::name{...} 语法） */
+  name: string;
+  /** 完整 props 字符串（不含大括号） */
+  props: string;
+  /** 组件 body 模板内容 */
+  body: string;
+  /** 简短描述，用于 tooltip */
+  description: string;
 }
 
 export const mermaidPrimaryTemplates: MermaidTemplate[] = [
@@ -264,5 +298,255 @@ export const blockTools: ToolbarInsertTool[] = [
     prefix: "\n---\n",
     suffix: "",
     placeholder: "",
+  },
+];
+
+/**
+ * 公众号组件模板（9 初始 + 13 扩展 = 22 个）
+ * 通过 ::: name{props} ... ::: 语法插入
+ */
+export const componentTemplates: ComponentTemplate[] = [
+  {
+    icon: Quote,
+    label: "金句卡片",
+    name: "quote-card",
+    props: 'author="作者名" role="身份"',
+    body: "在这里写下值得被记住的金句",
+    description: "高亮一段引用，带作者署名",
+  },
+  {
+    icon: Sparkles,
+    label: "装饰分割线",
+    name: "divider-fancy",
+    props: "",
+    body: "",
+    description: "比普通 hr 更精致的分割线",
+  },
+  {
+    icon: LayoutTemplate,
+    label: "关注引导",
+    name: "cta-card",
+    props: "",
+    body: "如果觉得有用，欢迎关注\n点赞 + 在看，支持下作者\n点击关注",
+    description: "末尾的关注/引导卡片",
+  },
+  {
+    icon: Code,
+    label: "代码框",
+    name: "code-frame",
+    props: 'lang="javascript" title="示例代码"',
+    body: "**示例代码** `js`\n```js\nconst x = 42;\nconsole.log(x);\n```",
+    description: "带标题和语言标签的代码块",
+  },
+  {
+    icon: Sparkles,
+    label: "强化提示",
+    name: "callout-pro",
+    props: 'type="info"',
+    body: "**提示标题**\n这里是正文内容，可以有多行。",
+    description: "info/success/warning/danger/tip 五种类型",
+  },
+  {
+    icon: PieChart,
+    label: "数据统计",
+    name: "stats-block",
+    props: "",
+    body: "本月数据\n- 用户数 **1,234**\n- 收入 **¥9,800**\n- 留存率 **68%**",
+    description: "数据指标卡片，数字高亮",
+  },
+  {
+    icon: LayoutGrid,
+    label: "图片网格",
+    name: "image-grid",
+    props: 'cols="2"',
+    body: "现场照片\n- ![](https://via.placeholder.com/300x200)\n- ![](https://via.placeholder.com/300x200)\n- ![](https://via.placeholder.com/300x200)\n- ![](https://via.placeholder.com/300x200)",
+    description: "2 列网格布局图片",
+  },
+  {
+    icon: User,
+    label: "作者卡片",
+    name: "author-card",
+    props: "",
+    body: "![](https://via.placeholder.com/128x128)\n**张三** *产品设计师 / 公众号主理人*\n专注于工具类产品设计与写作，分享设计方法论与行业观察。",
+    description: "作者头像 + 简介，用于文末",
+  },
+  {
+    icon: Clock,
+    label: "时间线",
+    name: "timeline",
+    props: "",
+    body: "发展历程\n- **2019 年** 项目立项，明确方向\n- **2020 年** 首个版本上线，用户突破 1 万\n- **2022 年** 完成商业化转型\n- **2024 年** 成为行业标杆",
+    description: "演进/步骤时间线，节点带圆点",
+  },
+  // === 第一批高频组件（8 个） ===
+  {
+    icon: UserPlus,
+    label: "关注引导条",
+    name: "follow-bar",
+    props: "",
+    body: "点击上方蓝字关注我们\n关注",
+    description: "顶部渐变关注引导横条",
+  },
+  {
+    icon: QrCode,
+    label: "二维码卡片",
+    name: "qr-card",
+    props: "",
+    body: "![](https://via.placeholder.com/140x140)\n**公众号名称**\n一句话简介，扫码关注",
+    description: "二维码 + 公众号名称 + 简介",
+  },
+  {
+    icon: Hash,
+    label: "序号章节",
+    name: "numbered-heading",
+    props: "",
+    body: "01\n核心理念",
+    description: "大号数字 + 标题文字",
+  },
+  {
+    icon: Bookmark,
+    label: "章节小标题",
+    name: "section-title",
+    props: "",
+    body: "本节标题",
+    description: "左侧色条 + 浅色背景的小标题",
+  },
+  {
+    icon: Columns,
+    label: "图文混排",
+    name: "image-text-row",
+    props: "",
+    body: "![](https://via.placeholder.com/120x120)\n**卡片标题**\n这里是描述文字，图文左右混排展示，适合介绍产品或人物。",
+    description: "图片 + 文字左右排布",
+  },
+  {
+    icon: ImagePlus,
+    label: "顶部头图",
+    name: "hero-banner",
+    props: "",
+    body: "**文章主标题**\n一句话副标题，点明文章主旨",
+    description: "渐变背景的头图 Banner",
+  },
+  {
+    icon: Share2,
+    label: "分享引导",
+    name: "share-card",
+    props: "",
+    body: "如果这篇文章对你有帮助\n- **分享**\n- **点赞**\n- **在看**",
+    description: "文末分享/点赞/在看三按钮",
+  },
+  {
+    icon: BookOpen,
+    label: "推荐阅读",
+    name: "related-posts",
+    props: "",
+    body: "推荐阅读\n- [相关文章标题一](url)\n- [相关文章标题二](url)\n- [相关文章标题三](url)",
+    description: "文末相关文章推荐列表",
+  },
+  // === 第二批中频组件（5 个） ===
+  {
+    icon: ListTree,
+    label: "目录导航",
+    name: "toc-nav",
+    props: "",
+    body: "目录\n- 第一章 起源\n- 第二章 发展\n- 第三章 未来",
+    description: "带序号的目录章节导航",
+  },
+  {
+    icon: Tag,
+    label: "关键词标签",
+    name: "tag-label",
+    props: "",
+    body: "- 产品设计\n- 用户体验\n- 工具方法",
+    description: "圆角胶囊形关键词标签",
+  },
+  {
+    icon: Camera,
+    label: "图片图注",
+    name: "image-caption",
+    props: "",
+    body: "![](https://via.placeholder.com/400x240)\n图片说明：这是一段图注文字",
+    description: "图片 + 居中图注说明",
+  },
+  {
+    icon: Copyright,
+    label: "转载声明",
+    name: "copyright-notice",
+    props: "",
+    body: "**转载声明**\n本文首发于公众号「公众号名称」，转载请保留原文链接并注明出处。",
+    description: "文末转载/版权声明卡片",
+  },
+  {
+    icon: Table,
+    label: "美化表格",
+    name: "styled-table",
+    props: "",
+    body: "用户数据对比\n| 指标 | 本月 | 上月 |\n| --- | --- | --- |\n| 用户数 | 1,234 | 1,100 |\n| 收入 | ¥9,800 | ¥8,500 |",
+    description: "主色表头 + 斑马纹表格",
+  },
+  {
+    icon: HelpCircle,
+    label: "常见问题",
+    name: "faq",
+    props: 'title="常见问题解答"',
+    body: "**问题一：如何使用？**\n\n这里是问题一的回答内容。\n\n**问题二：支持哪些功能？**\n\n这里是问题二的回答内容。",
+    description: "FAQ 问答卡片，支持 card/simple 两种风格",
+  },
+  // === 杂志级排版组件（7 个） ===
+  {
+    icon: LayoutTemplate,
+    label: "杂志封面",
+    name: "magazine-cover",
+    props: "",
+    body: "盛夏时光\n\nSummer Breeze\n\n---\n\n愿所有美好\n如夏日微风一般如期而至。",
+    description: "大标题 + 英文副标题 + 装饰线 + 描述",
+  },
+  {
+    icon: Flag,
+    label: "章节分隔",
+    name: "section-divider",
+    props: "",
+    body: "PART 01\n\n夏日故事",
+    description: "PART 编号 + 中文标题，居中分隔",
+  },
+  {
+    icon: Image,
+    label: "图片卡片",
+    name: "image-card",
+    props: "",
+    body: "![](https://picsum.photos/600/400)\n\n图片说明文字",
+    description: "白底卡片 + 阴影 + 圆角包裹图片",
+  },
+  {
+    icon: FileText,
+    label: "正文卡片",
+    name: "text-card",
+    props: "",
+    body: "七月盛夏，阳光透过树叶洒落在地面，微风轻轻吹过，带来了青草与花朵的香气。\n\n我们在这个充满希望的季节，保持热爱，奔赴山海。",
+    description: "白底卡片包裹正文段落，杂志风",
+  },
+  {
+    icon: Quote,
+    label: "整行引用",
+    name: "full-quote",
+    props: "",
+    body: "愿这个夏天，所有期待都有回应。",
+    description: "整块主色背景 + 白字 + 居中",
+  },
+  {
+    icon: Columns,
+    label: "两栏卡片",
+    name: "two-column-cards",
+    props: "",
+    body: "- ☀️<br>**阳光**<br>每一天都充满能量\n- 🍃<br>**微风**<br>吹散所有烦恼",
+    description: "flex 两栏，emoji + 标题 + 描述",
+  },
+  {
+    icon: Sparkles,
+    label: "结尾致谢",
+    name: "end-card",
+    props: "",
+    body: "Thanks\n\n感谢阅读 · 期待下次相遇",
+    description: "居中 Thanks 样式，文末收尾",
   },
 ];

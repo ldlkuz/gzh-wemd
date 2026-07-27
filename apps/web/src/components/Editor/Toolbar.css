@@ -100,6 +100,26 @@
   }
 }
 
+/* 杂志级排版按钮（橙色渐变，与"设计版式"区分） */
+.md-toolbar-template-btn {
+  color: #f97316 !important;
+}
+
+.md-toolbar-template-btn:hover:not(:disabled) {
+  background: rgba(249, 115, 22, 0.1) !important;
+}
+
+.md-toolbar-template-btn:hover:not(:disabled) .md-toolbar-ai-text {
+  background: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.md-toolbar-template-btn:active:not(:disabled) {
+  background: rgba(249, 115, 22, 0.18) !important;
+}
+
 /* 自定义快速 Tooltip */
 .md-toolbar-btn {
   position: relative;
@@ -264,4 +284,23 @@
     opacity: 1;
     transform: translate3d(0, -50%, 0);
   }
+}
+
+/* 组件菜单：稍宽，便于展示组件名 */
+.md-toolbar-component-menu {
+  min-width: 180px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.md-toolbar-component-item {
+  justify-content: flex-start;
+  gap: 0;
+}
+
+.md-toolbar-component-label {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
