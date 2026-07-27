@@ -95,6 +95,87 @@ const BLOCK_TAGS = [
 ] as const;
 
 /**
+ * 手动注入基础主题样式（#wemd 后代选择器如 h1/h2/p/a/strong 等）
+ *
+ * juice 浏览器版 bug：大量 CSS 规则后停止解析，#wemd 块之后的
+ * 基础样式（字体、颜色、间距、标题、链接等）全部丢失。
+ * injectComponentStylesManually 只救回了 .wemd-* 组件样式，
+ * 本函数补充恢复 #wemd 后代选择器的样式。
+ */
+const injectBaseThemeStylesManually = (html: string, css: string): string => {
+  const rules: Array<{ selector: string; styles: string }> = [];
+  const ruleRegex = /([^{}]+)\{([^}]*)\}/g;
+  let match: RegExpExecArray | null;
+
+  while ((match = ruleRegex.exec(css)) !== null) {
+    const selector = match[1].trim();
+    const body = match[2].trim();
+
+    // 只处理 #wemd 开头的选择器
+    if (!selector.startsWith("#wemd")) continue;
+    // 排除 #wemd 自身
+    if (selector.trim() === "#wemd") continue;
+    // 排除伪元素/伪类（::before/::after 等由 juice 的 inlinePseudoElements 处理）
+    if (selector.includes("::")) continue;
+    if (selector.includes("@")) continue;
+    // 排除 .wemd-* 组件选择器（已有 injectComponentStylesManually 处理）
+    if (selector.includes(".wemd-")) continue;
+
+    const styleStr = body
+      .split(";")
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0 && s.indexOf(":") > 0)
+      .join("; ");
+
+    if (styleStr) {
+      rules.push({ selector, styles: styleStr });
+    }
+  }
+
+  if (rules.length === 0) return html;
+
+  const container = document.createElement("div");
+  container.innerHTML = html;
+
+  for (const { selector, styles } of rules) {
+    try {
+      const elements = container.querySelectorAll(selector);
+      elements.forEach((el) => {
+        if (!(el instanceof HTMLElement)) return;
+        const styleMap = new Map<string, string>();
+        const existing = (el.getAttribute("style") || "").trim();
+        existing.split(";").forEach((s) => {
+          const colonIdx = s.indexOf(":");
+          if (colonIdx > 0) {
+            styleMap.set(
+              s.substring(0, colonIdx).trim(),
+              s.substring(colonIdx + 1).trim(),
+            );
+          }
+        });
+        styles.split(";").forEach((s) => {
+          const colonIdx = s.indexOf(":");
+          if (colonIdx > 0) {
+            styleMap.set(
+              s.substring(0, colonIdx).trim(),
+              s.substring(colonIdx + 1).trim(),
+            );
+          }
+        });
+        const merged = Array.from(styleMap.entries())
+          .map(([p, v]) => `${p}: ${v}`)
+          .join("; ");
+        el.setAttribute("style", merged);
+      });
+    } catch {
+      // 无效选择器跳过
+    }
+  }
+
+  return container.innerHTML;
+};
+
+/**
  * 手动注入组件内联样式（绕过 juice 浏览器版本 bug）
  *
  * juice 在浏览器端处理大量 CSS 规则后会停止解析，导致组件样式丢失。
@@ -254,8 +335,9 @@ export const processHtml = (
 
     // juice 浏览器版本存在 bug：大量 CSS 规则（尤其是 #wemd {} 块）之后
     // 会停止解析后续的选择器，导致所有组件样式丢失。
-    // 这里手动从 resolvedCss 中提取组件规则，注入到对应 HTML 元素上。
+    // 这里手动从 resolvedCss 中提取规则，注入到对应 HTML 元素上。
     res = injectComponentStylesManually(res, resolvedCss);
+    res = injectBaseThemeStylesManually(res, resolvedCss);
 
     // 在 juice 处理之后，为代码块追加关键内联样式
     // 这确保我们的样式不会被 juice 覆盖，且优先级最高
