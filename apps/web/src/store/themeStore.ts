@@ -5,7 +5,11 @@ import {
   type CustomTheme,
   type DesignerVariables,
 } from "./themes/builtInThemes";
-import { convertCssToWeChatDarkMode } from "@wemd/core";
+import {
+  convertCssToWeChatDarkMode,
+  renderTheme,
+  getBuiltInThemeDefinition,
+} from "@wemd/core";
 import { generateCSS } from "../components/Theme/ThemeDesigner/generateCSS";
 
 // 深色模式 CSS 转换缓存
@@ -204,15 +208,26 @@ export const useThemeStore = create<ThemeStore>((set, get) => ({
 
   getThemeCSS: (themeId: string, darkMode?: boolean) => {
     const state = get();
+    let css: string;
 
-    // 先查找内置主题
-    const builtIn = builtInThemes.find((t) => t.id === themeId);
-    let css = builtIn ? builtIn.css : "";
+    // Phase 2: 优先查找 ThemeDefinition（新格式），走 renderTheme 渲染管线
+    const builtInDef = getBuiltInThemeDefinition(themeId);
+    if (builtInDef) {
+      css = renderTheme(builtInDef);
+    } else {
+      // 回退到旧格式：CSS 字符串
+      const builtIn = builtInThemes.find((t) => t.id === themeId);
+      css = builtIn ? builtIn.css : "";
 
-    // 再查找自定义主题
-    if (!css) {
-      const custom = state.customThemes.find((t) => t.id === themeId);
-      css = custom ? custom.css : builtInThemes[0].css;
+      if (!css) {
+        const custom = state.customThemes.find((t) => t.id === themeId);
+        // 如果自定义主题有 definition，也走 renderTheme
+        if (custom?.definition) {
+          css = renderTheme(custom.definition);
+        } else {
+          css = custom ? custom.css : builtInThemes[0].css;
+        }
+      }
     }
 
     // 深色模式下：使用微信颜色转换算法

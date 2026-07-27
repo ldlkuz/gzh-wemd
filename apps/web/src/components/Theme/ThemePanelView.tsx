@@ -1,7 +1,6 @@
 import {
   AlertTriangle,
   ChevronDown,
-  Code,
   Copy,
   Download,
   Eye,
@@ -226,28 +225,15 @@ export function ThemePanelView({
                       <span className="mode-tag">适合快速上手</span>
                     </button>
                     <button
-                      className="mode-card"
-                      onClick={() => onSelectCreationMode("css")}
-                    >
-                      <span className="mode-icon">
-                        <Code size={32} />
-                      </span>
-                      <span className="mode-title">手写 CSS</span>
-                      <span className="mode-desc">
-                        直接编写 CSS 代码，完全自由控制
-                      </span>
-                      <span className="mode-tag">适合高级用户</span>
-                    </button>
-                    <button
                       className="mode-card mode-card-ai"
                       onClick={() => onSelectCreationMode("ai")}
                     >
                       <span className="mode-icon mode-icon-ai">
                         <Sparkles size={32} />
                       </span>
-                      <span className="mode-title">AI 生成 CSS</span>
+                      <span className="mode-title">AI 生成</span>
                       <span className="mode-desc">
-                        描述需求，AI 自动生成主题样式
+                        描述需求，AI 自动生成主题
                       </span>
                       <span className="mode-tag">适合零基础</span>
                     </button>

@@ -36,6 +36,7 @@ import type {
   DesignerVariables,
   HeadingStyle,
 } from "../../components/Theme/ThemeDesigner/types";
+import type { ThemeDefinition } from "@wemd/core";
 export type { DesignerVariables, HeadingStyle };
 
 /**
@@ -54,6 +55,8 @@ export interface CustomTheme {
   editorMode?: "visual" | "css";
   /** 可视化设计器变量，仅 visual 模式存在 */
   designerVariables?: DesignerVariables;
+  /** 主题定义（Phase 2 新增，有则走 renderTheme 渲染管线） */
+  definition?: ThemeDefinition;
 }
 
 /**

@@ -3,14 +3,14 @@
  *
  * 渲染管线：
  *   ThemeDefinition
- *     ├─ renderBaseCss()         → 基础重置样式
- *     ├─ renderTokenCss()        → #wemd { --wemd-* } 变量块
- *     ├─ renderTypographyCss()   → 段落/标题/列表排版
- *     ├─ renderComponentCss()    → 引用/代码/表格/图片/脚注
- *     ├─ renderExtrasCss()       → Callout / Mermaid / Imageflow
- *     ├─ injectVariantCss()      → 组件变体 CSS
- *     ├─ injectCodeTheme()       → 代码高亮主题
- *     └─ injectComponentDefaultCss() → 30 个 WeMD 组件的默认样式
+ *     ├─ renderBaseCss()           → 基础重置样式
+ *     ├─ renderTokenCss()          → #wemd { --wemd-* } 变量块
+ *     ├─ renderTypographyCss()     → 段落/标题/列表排版
+ *     ├─ renderComponentCss()      → 引用/代码/表格/图片/脚注
+ *     ├─ injectVariantCss()        → 组件变体 CSS
+ *     ├─ injectCodeTheme()         → 代码高亮主题（github / github-dark）
+ *     ├─ injectComponentStyles()   → 30 个 WeMD 组件默认样式
+ *     └─ renderExtrasCss()         → Callout / Mermaid / Imageflow
  *
  *   → 拼接为完整 CSS 字符串
  */
@@ -25,11 +25,17 @@ import { renderComponentCss } from "./componentCss";
 import { renderExtrasCss } from "./extrasCss";
 import { VARIANT_CSS_MAP } from "../components/variants/variantCss";
 import { codeGithubTheme } from "../themes/code-github";
+import { codeGithubDarkTheme } from "../themes/code-github-dark";
+import { componentStylesDefault } from "../themes/components-default";
+import { componentStylesExtra } from "../themes/components-extra";
+import { componentStylesFaq } from "../themes/components-faq";
+import { componentStylesMagazine } from "../themes/components-magazine";
 
 /**
  * 渲染完整的主题 CSS
  *
- * 按层拼接，顺序固定：基础 → Token → 排版 → 组件 → 变体 → WeMD 组件 → 代码高亮 → 额外
+ * 按层拼接，顺序固定。组件默认样式在变体 CSS 之后但 extras 之前，
+ * 确保变体能覆盖默认组件样式。
  */
 export function renderTheme(theme: ThemeDefinition): string {
   const parts: string[] = [
@@ -38,7 +44,8 @@ export function renderTheme(theme: ThemeDefinition): string {
     renderTypographyCss(theme.tokens),
     renderComponentCss(theme.tokens),
     injectVariantCss(theme.components),
-    injectCodeTheme(),
+    injectCodeTheme(theme.codeTheme),
+    injectComponentStyles(),
     renderExtrasCss(),
   ];
 
@@ -47,15 +54,11 @@ export function renderTheme(theme: ThemeDefinition): string {
 
 /**
  * 从 components 配置中提取已启用的变体并注入 CSS
- *
- * 组件变体通过 data-variant 属性切换，每个变体有独立 CSS。
- * 所有已启用的变体 CSS 都注入，运行时由 HTML 的 data-variant 属性决定哪个生效。
  */
 function injectVariantCss(
   components: Record<string, ComponentStyleOverride>,
 ): string {
-  // 收集所有引用了变体的组件
-  const usedVariants = new Map<string, Set<string>>(); // component → variant[]
+  const usedVariants = new Map<string, Set<string>>();
 
   for (const [compType, override] of Object.entries(components)) {
     if (
@@ -70,7 +73,6 @@ function injectVariantCss(
 
   if (usedVariants.size === 0) return "";
 
-  // 从变体库中注入对应的 CSS
   const cssParts: string[] = [];
   for (const [compType, variants] of usedVariants) {
     const variantMap = VARIANT_CSS_MAP[compType];
@@ -86,11 +88,24 @@ function injectVariantCss(
 
 /**
  * 注入代码高亮主题 CSS
- *
- * 默认使用 GitHub 主题，后续可由 ThemeDefinition 扩展字段选择。
  */
-function injectCodeTheme(): string {
-  return codeGithubTheme;
+function injectCodeTheme(codeTheme?: "github" | "github-dark"): string {
+  return codeTheme === "github-dark" ? codeGithubDarkTheme : codeGithubTheme;
+}
+
+/**
+ * 注入 30 个 WeMD 组件的默认样式
+ *
+ * 顺序：default → extra → faq → magazine
+ * 组件样式通过 var(--wemd-*) 引用主题色，实现跟随主题。
+ */
+function injectComponentStyles(): string {
+  return [
+    componentStylesDefault,
+    componentStylesExtra,
+    componentStylesFaq,
+    componentStylesMagazine,
+  ].join("\n\n");
 }
 
 export {

@@ -157,4 +157,6 @@ export interface ThemeDefinition {
   tokens: DesignTokens;
   components: Record<string, ComponentStyleOverride>;
   layout: LayoutPreference;
+  /** 代码高亮主题：github（亮色）/ github-dark（暗色） */
+  codeTheme?: "github" | "github-dark";
 }
