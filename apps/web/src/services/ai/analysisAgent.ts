@@ -1,12 +1,12 @@
 /**
  * AI 设计版式 —— 多阶段 AnalysisAgent
  *
- * Phase 2 升级：从"填模板"升级为"理解文章后自主设计"
- * - 阶段1（Profile）：识别文章类型 + 文章画像 + 设计语言
- * - 阶段2（Plan）：基于 Profile 规划内容块
- * - 阶段3（Execute）：填充组件内容，生成 insertions
+ * Phase 3 升级：主题感知
+ * - 阶段1（Profile）：识别文章类型 + 文章画像 + 主题约束
+ * - 阶段2（Execute）：在主题框架内填充组件内容
  *
- * 不修改原文，只建议插入组件位置。
+ * 主题（Theme）提供品牌约束（配色/基调/密度/偏好组件），
+ * AI 在约束内自由创作，确保每篇气质一致但表达不同。
  */
 import { formatAiHttpError, getAiConfig, validateAiConfig } from "./aiConfig";
 import {
@@ -20,13 +20,7 @@ import {
   type ReadingDepth,
   buildProfilePromptSnippet,
 } from "./articleProfile";
-import {
-  type DesignLanguage,
-  type DesignLanguageId,
-  DESIGN_LANGUAGES,
-  matchDesignLanguage,
-  buildDesignLanguagePromptSnippet,
-} from "./designLanguage";
+import type { LayoutPreference } from "@wemd/core";
 import {
   recommendEndingIntent,
   recommendCategories,
@@ -68,11 +62,9 @@ export interface AnalysisResult {
   articleType?: string;
   /** 类型识别理由 */
   typeReason?: string;
-  /** 文章画像（Phase 2 新增） */
+  /** 文章画像 */
   profile?: ArticleProfile;
-  /** 推荐的设计语言（Phase 2 新增） */
-  designLanguage?: DesignLanguage;
-  /** 设计策略说明（Phase 2 新增） */
+  /** 设计策略说明 */
   strategy?: string;
 }
 
@@ -81,9 +73,6 @@ interface PlanResult {
   type: string;
   reason: string;
   confidence: number;
-  /** Phase 2 新增 */
-  profile?: ArticleProfile;
-  designLanguageId?: string;
   /** 启用的组件槽位（按头/中/尾顺序） */
   slotPlan: Array<{
     component: string;
@@ -125,8 +114,11 @@ export const AVAILABLE_COMPONENTS = [
   "faq",
 ] as const;
 
-/** 阶段1：构建识别文章类型 + 画像 + 设计语言 + slotPlan 的 prompt */
-function buildPlanPrompt(audience?: Audience): string {
+/** 阶段1：构建识别文章类型 + 主题约束 + slotPlan 的 prompt */
+function buildPlanPrompt(
+  audience?: Audience,
+  themeLayout?: LayoutPreference,
+): string {
   const patternList = PATTERN_LABELS.map(
     (p) =>
       `- ${p.type}（${p.label}）: ${p.whenToUse}\n  识别特征:\n${p.signatures.map((s) => `    · ${s}`).join("\n")}`,
@@ -136,9 +128,15 @@ function buildPlanPrompt(audience?: Audience): string {
     ? `\n\n## 读者画像\n目标读者：${audience.type === "developer" ? "程序员/技术人" : audience.type === "manager" ? "管理者/决策者" : audience.type === "beginner" ? "小白/初学者" : "普通读者"}\n请根据读者背景调整设计策略。`
     : "";
 
+  // Phase 3: 主题约束
+  const themeHint = themeLayout
+    ? `\n\n## 主题约束（当前文章使用的品牌规范，必须遵守）\n- 风格基调：${themeLayout.tone.join("、")}\n- 排版密度：${themeLayout.density}（${themeLayout.density === "low" ? "简洁为主，少用组件" : themeLayout.density === "medium" ? "适度点缀" : "丰富组件，杂志级排版"}）\n- 杂志化等级：${themeLayout.magazineLevel}\n- 主题偏好的组件：${themeLayout.preferredComponents.join("、")}\n\n注意：\n1. 优先从主题偏好的组件中选择槽位，但也可根据文章内容选择其他合适的组件\n2. slotPlan 的总组件数量应符合排版密度要求\n3. 主题基调决定了文章的整体氛围，designLanguage 应与之匹配`
+    : "";
+
   return [
-    "你是一个资深公众号版式设计师。你的任务是阅读用户的文章，识别文章类型，选择最匹配的版式设计模式。",
+    "你是一个资深公众号版式设计师。你的任务是阅读用户的文章，识别文章类型，在主题约束下选择最匹配的版式设计。",
     audienceHint,
+    themeHint,
     "",
     "## 判断原则（按优先级）",
     "",
@@ -146,6 +144,7 @@ function buildPlanPrompt(audience?: Audience): string {
     "2. 再看『内容形式』：有代码/步骤→tutorial，有数据/表格→data，有并列项→list",
     "3. 再看『表达方式』：叙事→story，论证观点→opinion",
     "4. 多类型混合时，选『主导内容』对应的类型（如教程文末带产品介绍，主导是 tutorial）",
+    "5. 主题约束优先于类型判断：如果主题偏好的组件更适合某种布局，应优先考虑",
     "",
     "## 可选设计模式（7 种 + unknown 兜底）",
     "",
@@ -167,7 +166,6 @@ function buildPlanPrompt(audience?: Audience): string {
     '       "purpose": "Discussion|Share|Collect|Convert|Guide|Branding|Inform",',
     '       "depth": "Quick|Medium|Deep"',
     "     },",
-    '     "designLanguage": "warm-magazine|apple-minimal|tech-data|editorial|playful-card",',
     '     "slotPlan": [',
     '       {"component": "组件名", "section": "head|body|tail", "count": 1}',
     "     ]",
@@ -181,26 +179,27 @@ function buildPlanPrompt(audience?: Audience): string {
     "4. 非 repeatable 组件 count 只能是 1",
     "5. 顺序按 head → body → tail 排列",
     "6. count 必须基于文章实际内容估算",
+    "7. 如果有主题约束，优先选择主题偏好组件中的 match 项",
     "",
     "## 判断示例（few-shot）",
     "",
-    '示例1：文章含"第一步...第二步..."且有 `const x = 1` 代码块',
-    '  → {"type":"tutorial","confidence":0.95,"reason":"含步骤序号和代码块，是典型教程","profile":{"category":"Tech","tone":"Rational","purpose":"Guide","depth":"Deep"},"designLanguage":"tech-data","slotPlan":[...]}',
+    '示例1：文章含"第一步...第二步..."且有 `const x = 1` 代码块，主题偏好=[code-frame, toc-nav]，密度=high',
+    '  → {"type":"tutorial","confidence":0.95,"reason":"含步骤序号和代码块，是典型教程","profile":{"category":"Tech","tone":"Rational","purpose":"Guide","depth":"Deep"},"slotPlan":[{"component":"toc-nav","section":"head","count":1},{"component":"code-frame","section":"body","count":2},{"component":"quote-card","section":"body","count":1}]}',
     "",
-    '示例2：文章以"我"叙述创业经历，有情感转折',
-    '  → {"type":"story","confidence":0.9,"reason":"第一人称叙事创业经历","profile":{"category":"Life","tone":"Warm","purpose":"Discussion","depth":"Medium"},"designLanguage":"warm-magazine","slotPlan":[...]}',
+    '示例2：文章以"我"叙述创业经历，有情感转折，主题偏好=[quote-card, end-card]，基调=[warm, elegant]',
+    '  → {"type":"story","confidence":0.9,"reason":"第一人称叙事创业经历","profile":{"category":"Life","tone":"Warm","purpose":"Discussion","depth":"Medium"},"slotPlan":[{"component":"hero-banner","section":"head","count":1},{"component":"quote-card","section":"body","count":2},{"component":"end-card","section":"tail","count":1}]}',
     "",
-    '示例3：文章含"占比 45%""同比增长"等数据，有对比表格',
-    '  → {"type":"data","confidence":0.92,"reason":"含统计数据和对比表格","profile":{"category":"Business","tone":"Serious","purpose":"Share","depth":"Deep"},"designLanguage":"editorial","slotPlan":[...]}',
+    '示例3：文章含"占比 45%""同比增长"等数据，有对比表格，主题密度=high',
+    '  → {"type":"data","confidence":0.92,"reason":"含统计数据和对比表格","profile":{"category":"Business","tone":"Serious","purpose":"Share","depth":"Deep"},"slotPlan":[{"component":"stats-block","section":"head","count":1},{"component":"styled-table","section":"body","count":1},{"component":"divider-fancy","section":"body","count":1}]}',
     "",
     '示例4：文章列出"10 本好书推荐"，每本有简短点评',
-    '  → {"type":"list","confidence":0.9,"reason":"并列推荐 10 本书","profile":{"category":"Life","tone":"Plain","purpose":"Collect","depth":"Quick"},"designLanguage":"playful-card","slotPlan":[...]}',
+    '  → {"type":"list","confidence":0.9,"reason":"并列推荐 10 本书","profile":{"category":"Life","tone":"Plain","purpose":"Collect","depth":"Quick"},"slotPlan":[{"component":"numbered-heading","section":"body","count":10},{"component":"share-card","section":"tail","count":1}]}',
     "",
     '示例5：文章介绍某产品功能，文末有"立即购买"',
-    '  → {"type":"product","confidence":0.88,"reason":"介绍产品功能且有转化引导","profile":{"category":"Business","tone":"Modern","purpose":"Convert","depth":"Medium"},"designLanguage":"apple-minimal","slotPlan":[...]}',
+    '  → {"type":"product","confidence":0.88,"reason":"介绍产品功能且有转化引导","profile":{"category":"Business","tone":"Modern","purpose":"Convert","depth":"Medium"},"slotPlan":[{"component":"hero-banner","section":"head","count":1},{"component":"cta-card","section":"tail","count":1}]}',
     "",
     "示例6：文章仅 100 字，是产品简介",
-    '  → {"type":"unknown","confidence":0.3,"reason":"文章过短","profile":{"category":"Other","tone":"Plain","purpose":"Inform","depth":"Quick"},"designLanguage":"apple-minimal","slotPlan":[]}',
+    '  → {"type":"unknown","confidence":0.3,"reason":"文章过短","profile":{"category":"Other","tone":"Plain","purpose":"Inform","depth":"Quick"},"slotPlan":[]}',
     "",
     "## 约束",
     "",
@@ -455,23 +454,24 @@ async function callLLM(
 /**
  * 分析文章，返回插入建议（多阶段）
  *
- * Phase 2 升级：
- * - 阶段1（Profile）：识别类型 + 画像 + 设计语言 + 槽位规划
+ * Phase 3 升级：主题感知
+ * - 阶段1（Profile）：识别类型 + 画像 + 主题约束 → 槽位计划
  * - 阶段2（Execute）：填充组件内容
- * - 基于 Profile 做语义推荐（ending 意图、复杂度）
+ * - themeLayout 来自当前选中主题的 layout 偏好
  */
 export async function analyzeArticle(
   markdown: string,
   audience?: Audience,
   constraints?: DesignConstraints,
+  themeLayout?: LayoutPreference,
 ): Promise<AnalysisResult> {
   const effectiveConstraints: DesignConstraints = constraints ?? {
     maxComponents: 8,
     complexity: "medium",
   };
 
-  // 阶段1：识别类型 + 画像 + 设计语言 + 槽位规划
-  const planPrompt = buildPlanPrompt(audience);
+  // 阶段1：识别类型 + 画像 + 主题约束 → 槽位计划
+  const planPrompt = buildPlanPrompt(audience, themeLayout);
   const planContent = await callLLM(planPrompt, markdown, 0.3);
   const plan = parsePlanResponse(planContent);
 
@@ -496,28 +496,27 @@ export async function analyzeArticle(
     };
   }
 
-  // 画像处理：AI 输出的优先，否则从 type 推断
+  // 画像处理
   const { inferProfileFromType } = await import("./articleProfile");
   const profile = plan.profile ?? inferProfileFromType(plan.type);
 
-  // 设计语言匹配
-  let designLanguage: DesignLanguage | undefined;
-  if (plan.designLanguageId) {
-    designLanguage =
-      DESIGN_LANGUAGES_ID_MAP[plan.designLanguageId as DesignLanguageId];
-  }
-  if (!designLanguage) {
-    designLanguage = matchDesignLanguage(profile);
-  }
-
-  // 语义推荐
-  const endingIntent = recommendEndingIntent(profile.purpose);
+  // Phase 3: 策略说明基于主题 layout 而非 DesignLanguage
+  const layout = themeLayout;
+  const densityLabel =
+    layout?.density === "high"
+      ? "丰富"
+      : layout?.density === "low"
+        ? "简洁"
+        : "适中";
   const strategy = [
     `文章类型：${plan.type}（${plan.reason}）`,
-    `设计语言：${designLanguage.label}（${designLanguage.description.slice(0, 30)}...）`,
-    `写作目的：${profile.purpose} → 结尾建议：${endingIntent.semantic}`,
+    layout ? `主题基调：${layout.tone.join("、")}，密度：${densityLabel}` : "",
+    `写作目的：${profile.purpose}`,
+    layout?.preferredComponents.length
+      ? `主题偏好组件：${layout.preferredComponents.join("、")}`
+      : "",
     effectiveConstraints.complexity !== "medium"
-      ? `复杂度：${effectiveConstraints.complexity}`
+      ? `用户复杂度：${effectiveConstraints.complexity}`
       : "",
   ]
     .filter(Boolean)
@@ -539,15 +538,8 @@ export async function analyzeArticle(
     articleType: plan.type,
     typeReason: plan.reason,
     profile,
-    designLanguage,
     strategy,
   };
-}
-
-// 设计语言 ID → 对象映射
-const DESIGN_LANGUAGES_ID_MAP: Record<string, DesignLanguage> = {};
-for (const dl of DESIGN_LANGUAGES) {
-  DESIGN_LANGUAGES_ID_MAP[dl.id] = dl;
 }
 
 // 导出设计模式库（供 UI 展示类型识别结果用）

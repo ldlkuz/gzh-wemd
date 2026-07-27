@@ -17,6 +17,7 @@ import {
 import {
   buildTextToMarkdownPrompt,
   buildThemePrompt,
+  buildThemeJsonPrompt,
   sanitizeCss,
 } from "./aiPrompts";
 
@@ -34,6 +35,8 @@ export interface GenerateThemeParams {
   description: string;
   /** 可选:基础主题 CSS,基于此风格调整 */
   baseThemeCss?: string;
+  /** Phase 3: 使用 JSON 格式 prompt（输出 ThemeDefinition JSON） */
+  useJson?: boolean;
 }
 
 /** 规范化 baseUrl:去末尾斜杠 */
@@ -189,7 +192,9 @@ export async function generateTheme(
     throw new Error(configError);
   }
 
-  const systemPrompt = buildThemePrompt();
+  const systemPrompt = params.useJson
+    ? buildThemeJsonPrompt()
+    : buildThemePrompt();
   const userParts: string[] = [params.description];
   if (params.baseThemeCss?.trim()) {
     userParts.push(

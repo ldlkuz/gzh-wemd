@@ -11,6 +11,8 @@ import {
 import { underlineExtension } from "./markdownUnderline";
 import { useUITheme } from "../../hooks/useUITheme";
 import { useEditorStore } from "../../store/editorStore";
+import { useThemeStore } from "../../store/themeStore";
+import { getBuiltInThemeDefinition } from "@wemd/core";
 import { countWords, countLines } from "../../utils/wordCount";
 import { Toolbar } from "./Toolbar";
 import { SearchPanel } from "./SearchPanel";
@@ -458,7 +460,16 @@ export function MarkdownEditor({ onScrollSyncReady }: MarkdownEditorProps) {
     setAiLayoutTypeReason(undefined);
     setAiLayoutStrategy(undefined);
     try {
-      const result = await analyzeArticle(text, audience, constraints);
+      // Phase 3: 获取当前主题的 layout 偏好，传递给 AI
+      const themeId = useThemeStore.getState().themeId;
+      const builtInDef = getBuiltInThemeDefinition(themeId);
+      const themeLayout = builtInDef?.layout;
+      const result = await analyzeArticle(
+        text,
+        audience,
+        constraints,
+        themeLayout,
+      );
       setAiLayoutInsertions(result.insertions);
       setAiLayoutType(result.articleType);
       setAiLayoutTypeReason(result.typeReason);

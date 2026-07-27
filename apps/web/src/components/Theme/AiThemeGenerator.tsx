@@ -1,20 +1,21 @@
 /**
- * AI 主题生成器
- * 用户输入自然语言描述,可选基于某内置主题,调用 AI 流式生成 CSS。
- * 生成过程中实时显示 AI 输出的内容,生成完成后调用 onGenerated(css)。
+ * AI 主题生成器（Phase 3 升级：JSON 输出）
+ *
+ * 用户输入自然语言描述 → AI 流式生成 ThemeDefinition JSON
+ * → validateThemeJson 校验 → renderTheme 渲染 CSS → 回调
  */
 import { useRef, useState } from "react";
-import { Sparkles, Loader2, AlertCircle, Square } from "lucide-react";
+import { Sparkles, Loader2, AlertCircle, Square, FileJson } from "lucide-react";
 import toast from "react-hot-toast";
 import { generateThemeStream } from "../../services/ai/aiService";
 import { isAiConfigured, openAiSettings } from "../../services/ai/aiConfig";
+import { validateThemeJson } from "../../services/ai/aiPrompts";
 import type { CustomTheme } from "../../store/themes/builtInThemes";
 import "./AiThemeGenerator.css";
 
 interface AiThemeGeneratorProps {
-  /** 内置主题列表,用于"基础风格"下拉 */
   builtInThemes: CustomTheme[];
-  /** 生成完成回调,把 CSS 传给父组件 */
+  /** 生成完成回调，CSS 传给父组件 */
   onGenerated: (css: string) => void;
 }
 
@@ -28,7 +29,6 @@ export function AiThemeGenerator({
   onGenerated,
 }: AiThemeGeneratorProps) {
   const [description, setDescription] = useState("");
-  const [baseThemeId, setBaseThemeId] = useState("");
   const [loading, setLoading] = useState(false);
   const [streamText, setStreamText] = useState("");
   const abortRef = useRef<AbortController | null>(null);
@@ -52,15 +52,13 @@ export function AiThemeGenerator({
     abortRef.current = controller;
 
     try {
-      const baseTheme = builtInThemes.find((t) => t.id === baseThemeId);
       const raw = await generateThemeStream(
         {
           description: desc,
-          baseThemeCss: baseTheme?.css,
+          useJson: true, // Phase 3: 使用 JSON prompt
         },
         (accumulated) => {
           setStreamText(accumulated);
-          // 自动滚动到底部
           requestAnimationFrame(() => {
             if (logRef.current) {
               logRef.current.scrollTop = logRef.current.scrollHeight;
@@ -69,9 +67,28 @@ export function AiThemeGenerator({
         },
         controller.signal,
       );
-      toast.success("CSS 生成成功,已填入编辑区,可继续微调");
-      onGenerated(raw);
-      setStreamText("");
+
+      // Phase 3: 尝试解析为 JSON，通过 renderTheme 生成 CSS
+      const parsed = validateThemeJson(raw);
+      if (parsed) {
+        try {
+          // 动态导入 renderTheme（避免循环依赖）
+          const { renderTheme } = await import("@wemd/core");
+          const css = renderTheme(parsed as Parameters<typeof renderTheme>[0]);
+          toast.success("主题设计成功,已生成完整 CSS");
+          onGenerated(css);
+          setStreamText("");
+        } catch {
+          // renderTheme 失败時降级为原始文本
+          toast.success("主题生成成功,已填入编辑区");
+          onGenerated(raw);
+        }
+      } else {
+        // JSON 解析失败，可能是旧格式 CSS，直接传给编辑器
+        toast.success("主题生成成功,已填入编辑区（检测到自由格式输出）");
+        onGenerated(raw);
+        setStreamText("");
+      }
     } catch (e) {
       if ((e as Error).name === "AbortError") {
         toast("已停止生成", { icon: "⏹️" });
@@ -104,29 +121,15 @@ export function AiThemeGenerator({
         />
       </div>
 
-      <div className="ai-theme-field">
-        <label>基础风格(可选)</label>
-        <select
-          className="ai-theme-base"
-          value={baseThemeId}
-          onChange={(e) => setBaseThemeId(e.target.value)}
-          disabled={loading}
-        >
-          <option value="">不基于任何主题,从零生成</option>
-          {builtInThemes.map((t) => (
-            <option key={t.id} value={t.id}>
-              {t.name}
-            </option>
-          ))}
-        </select>
-        <small>选择后,AI 会基于该主题的 CSS 做风格调整</small>
-      </div>
-
       {!isAiConfigured() && (
         <div className="ai-theme-warn">
           <AlertCircle size={14} />
           <span>未配置 AI 模型,</span>
-          <button type="button" className="ai-theme-warn-btn" onClick={openAiSettings}>
+          <button
+            type="button"
+            className="ai-theme-warn-btn"
+            onClick={openAiSettings}
+          >
             前往配置
           </button>
         </div>
@@ -139,10 +142,10 @@ export function AiThemeGenerator({
               {loading ? (
                 <>
                   <Loader2 size={13} className="spinning" />
-                  AI 正在生成 CSS...
+                  AI 正在设计主题...
                 </>
               ) : (
-                "生成内容"
+                "生成结果"
               )}
             </span>
             {loading && (
@@ -164,26 +167,24 @@ export function AiThemeGenerator({
       )}
 
       <div className="ai-theme-actions">
-        {loading ? (
-          <button
-            type="button"
-            className="ai-theme-generate-btn ai-theme-stop-btn"
-            onClick={handleStop}
-          >
-            <Square size={16} />
-            停止生成
-          </button>
-        ) : (
-          <button
-            type="button"
-            className="ai-theme-generate-btn"
-            onClick={handleGenerate}
-            disabled={!description.trim()}
-          >
-            <Sparkles size={16} />
-            生成 CSS
-          </button>
-        )}
+        <button
+          type="button"
+          className="ai-theme-generate-btn"
+          onClick={handleGenerate}
+          disabled={loading || !description.trim()}
+        >
+          {loading ? (
+            <>
+              <Loader2 size={16} className="spinning" />
+              生成中...
+            </>
+          ) : (
+            <>
+              <FileJson size={16} />
+              生成主题
+            </>
+          )}
+        </button>
       </div>
     </div>
   );
