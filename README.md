@@ -370,10 +370,6 @@ WeMD/
 
 ---
 
-## 截图
-
-![screenshot](.github/assets/screenshot.png)
-
 ---
 
 ## 与上游项目的关系
