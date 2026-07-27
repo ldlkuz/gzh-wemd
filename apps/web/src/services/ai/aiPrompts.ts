@@ -158,6 +158,34 @@ export function validateThemeJson(raw: string): Record<string, unknown> | null {
 }
 
 // ============================================================
+// 主题微调（对话式迭代）
+// ============================================================
+
+export function buildThemeRefinePrompt(
+  currentJson: string,
+  feedback: string,
+): string {
+  return [
+    "你是一个微信公众号主题设计师。用户对当前主题有调整意见。",
+    "请修改 Theme JSON，只修改与用户反馈相关的字段，其他字段保持不变。",
+    "只输出修改后的完整 JSON，不要代码块包裹，不要解释。",
+    "",
+    "当前主题 JSON：",
+    currentJson,
+    "",
+    "用户调整意见：",
+    feedback,
+    "",
+    "注意：",
+    "1. 严格保持 JSON 结构不变，只修改值",
+    "2. 若用户说「太暗」，调亮 color 相关字段",
+    "3. 若用户说「字号太小」，增大 typography.fontSize 和 heading 的 fontSize",
+    "4. 若用户说「加点留白」，增大 spacing.pagePadding 和 paragraphMargin",
+    "5. meta.name 根据反馈内容更新为更贴切的名称",
+  ].join("\n");
+}
+
+// ============================================================
 // CSS 清洗（Legacy）
 // ============================================================
 

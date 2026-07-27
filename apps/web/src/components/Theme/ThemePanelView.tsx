@@ -65,6 +65,10 @@ interface ThemePanelViewProps {
   onApply: () => void;
   /** AI 生成 CSS 完成回调，附带 definition（若 AI 返回 JSON） */
   onAiGenerated: (css: string, definition?: ThemeDefinition) => void;
+  /** AI 预览 CSS 实时更新 */
+  onPreviewCss: (css: string) => void;
+  /** AI 建议主题名称 */
+  onNameSuggestion: (name: string) => void;
 }
 
 export function ThemePanelView({
@@ -110,6 +114,8 @@ export function ThemePanelView({
   onSave,
   onApply,
   onAiGenerated,
+  onPreviewCss,
+  onNameSuggestion,
 }: ThemePanelViewProps) {
   if (!open) return null;
 
@@ -303,8 +309,9 @@ export function ThemePanelView({
                     {isCreating && editorMode === "ai" && (
                       <div className="ai-designer-container">
                         <AiThemeGenerator
-                          builtInThemes={builtInThemes}
                           onGenerated={onAiGenerated}
+                          onPreviewCss={onPreviewCss}
+                          onNameSuggestion={onNameSuggestion}
                         />
                       </div>
                     )}
