@@ -113,8 +113,6 @@ const injectBaseThemeStylesManually = (html: string, css: string): string => {
 
     // 只处理 #wemd 开头的选择器
     if (!selector.startsWith("#wemd")) continue;
-    // 排除 #wemd 自身
-    if (selector.trim() === "#wemd") continue;
     // 排除伪元素/伪类（::before/::after 等由 juice 的 inlinePseudoElements 处理）
     if (selector.includes("::")) continue;
     if (selector.includes("@")) continue;
