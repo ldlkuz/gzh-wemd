@@ -123,12 +123,12 @@ export const componentStylesExtra = `/* === WeMD 扩展组件样式（跟随主�
 /* 第一段作为大序号（用 accent 点缀色，跳出来） */
 #wemd .wemd-numbered-heading .wemd-component-body > p:first-child {
   margin: 0;
-  font-size: 42px;
+  font-size: 36px;
   font-weight: 800;
   line-height: 1;
   color: var(--wemd-accent, #07c160);
   font-family: "SF Mono", Monaco, "Helvetica Neue", sans-serif;
-  letter-spacing: -2px;
+  letter-spacing: -1px;
   flex-shrink: 0;
 }
 

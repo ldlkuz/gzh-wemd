@@ -3,7 +3,36 @@
  *
  * Template JSON 是 AI 生成的结构化排版方案，
  * 由 Renderer 渲染为组件 Markdown（含 ::: 语法）。
+ *
+ * v2.0: 引入 DesignIntent + reason + role，替代 magazineLevel 全局标签。
+ * AI 逐节点输出设计意图，Renderer 根据 design 自动推导 variant。
  */
+
+/** 设计意图：AI 对单个节点的视觉表达决策 */
+export interface DesignIntent {
+  /** 设计目的：这个组件在页面里的角色 */
+  purpose?: "headline" | "emphasis" | "transition" | "summary" | "decoration";
+  /** 视觉强调程度：high 冲击 / medium 适中 / low 弱化 */
+  emphasis?: "high" | "medium" | "low";
+  /** 布局方式 */
+  layout?: "center" | "left" | "stacked" | "split" | "inline";
+  /** 情绪基调 */
+  tone?: "professional" | "warm" | "minimal" | "bold" | "playful";
+  /** 间距密度 */
+  spacing?: "large" | "normal" | "compact";
+  /** 字号层级 */
+  headlineSize?: "xxl" | "xl" | "lg" | "md";
+}
+
+/** 内容角色：稳定的语义层，与 component（可替换实现）解耦 */
+export type ContentRole =
+  | "opening"
+  | "summary"
+  | "transition"
+  | "evidence"
+  | "case"
+  | "conclusion"
+  | "cta";
 
 /** 排版节点：一个组件 */
 export interface LayoutNode {
@@ -13,24 +42,30 @@ export interface LayoutNode {
   props?: Record<string, string | number | boolean>;
   /** 组件内容（结构化数据，由 Renderer 转为 Markdown） */
   content: Record<string, unknown>;
+  /** 设计意图：AI 对视觉呈现的决策（v2.0 新增） */
+  design?: DesignIntent;
+  /** 设计理由：AI 解释为什么这样决策（v2.0 新增，给调试/用户可见） */
+  reason?: string;
+  /** 内容角色：稳定的语义层标签（v2.0 新增，可选，为未来 role→component 映射预留） */
+  role?: ContentRole;
 }
 
-/** 杂志化等级 */
+/** 杂志化等级（v2.0 起废弃，保留以兼容旧模板） */
 export type MagazineLevel = "high" | "medium" | "low";
 
 /** Template JSON 完整结构 */
 export interface TemplateJSON {
   /** 模板名称（展示用） */
   name?: string;
-  /** 规范版本，当前 1.0 */
+  /** 规范版本，v2.0 起 design 字段成为标准 */
   version?: string;
   /** 推荐主题 ID（可不填，跟随用户当前主题） */
   theme?: string;
-  /** AI 识别的文章类型 */
+  /** @deprecated v2.0 起由 design 字段替代，保留以兼容旧模板 */
   articleType?: string;
-  /** 杂志化等级 */
+  /** @deprecated v2.0 起由 design.emphasis 替代 */
   magazineLevel?: MagazineLevel;
-  /** 杂志化理由 */
+  /** @deprecated v2.0 起由 node.reason 替代 */
   magazineReason?: string;
   /** 文章元信息 */
   meta?: {

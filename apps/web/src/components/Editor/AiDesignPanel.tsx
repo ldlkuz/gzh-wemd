@@ -120,9 +120,12 @@ export function AiDesignPanel({
     low: { label: "简洁为主", desc: "信息高效，最少装饰" },
   };
 
-  const magazineLevelInfo = templateResult?.magazineLevel
-    ? magazineLevelLabels[templateResult.magazineLevel] || null
-    : null;
+  // v2.0 模板不再有 magazineLevel 概念，仅旧模板显示
+  const isV2Template = templateResult?.template.version?.startsWith("2.");
+  const magazineLevelInfo =
+    !isV2Template && templateResult?.magazineLevel
+      ? magazineLevelLabels[templateResult.magazineLevel] || null
+      : null;
 
   return (
     <Modal

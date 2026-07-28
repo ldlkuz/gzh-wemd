@@ -3,6 +3,9 @@
  *
  * 单阶段调用 LLM，直接生成 Template JSON。
  * 然后用 validateTemplate 做合法性校验，确保输出可被 Renderer 正确消费。
+ *
+ * v2.0: AI 输出 design + reason + role 字段，不再输出 articleType/magazineLevel。
+ * 旧格式（AI 仍返回 articleType/magazineLevel）会被兼容处理。
  */
 import {
   formatAiHttpError,
@@ -16,14 +19,18 @@ import type { TemplateJSON, LayoutNode } from "./types";
 import { getParagraphCount } from "./contentExtractor";
 import { AI_GENERATABLE_COMPONENTS } from "./componentSchemas";
 
-import type { MagazineLevel } from "./types";
+import type { MagazineLevel, DesignIntent, ContentRole } from "./types";
 import type { Audience, DesignConstraints } from "../ai/analysisAgent";
 
-/** AI 生成的原始响应结构 */
+/** AI 生成的原始响应结构（v2.0） */
 interface AiTemplateResponse {
-  articleType: string;
-  typeReason: string;
+  /** @deprecated v2.0 起 AI 不再输出，兼容旧格式 */
+  articleType?: string;
+  /** @deprecated v2.0 起 AI 不再输出，兼容旧格式 */
+  typeReason?: string;
+  /** @deprecated v2.0 起 AI 不再输出，兼容旧格式 */
   magazineLevel?: string;
+  /** @deprecated v2.0 起 AI 不再输出，兼容旧格式 */
   magazineReason?: string;
   layout: LayoutNode[];
 }
@@ -32,13 +39,13 @@ interface AiTemplateResponse {
 export interface TemplateGenerationResult {
   /** 生成的 Template JSON（经校验和修复） */
   template: TemplateJSON;
-  /** 识别出的文章类型 */
+  /** @deprecated v2.0 起始终为 "unknown" */
   articleType: string;
-  /** 类型识别理由 */
+  /** @deprecated v2.0 起始终为 "" */
   typeReason: string;
-  /** 杂志化等级 */
+  /** @deprecated v2.0 起始终为 "medium" */
   magazineLevel: MagazineLevel;
-  /** 杂志化理由 */
+  /** @deprecated v2.0 起始终为 "" */
   magazineReason: string;
   /** 渲染结果（可直接用于预览） */
   rendered: RenderResult;
@@ -60,16 +67,19 @@ function parseTemplateResponse(content: string): AiTemplateResponse | null {
     if (!parsed.layout || !Array.isArray(parsed.layout)) return null;
 
     return {
+      // 兼容旧格式：如果 AI 仍返回这些字段，保留但不使用
       articleType:
-        typeof parsed.articleType === "string" ? parsed.articleType : "unknown",
+        typeof parsed.articleType === "string" ? parsed.articleType : undefined,
       typeReason:
-        typeof parsed.typeReason === "string" ? parsed.typeReason : "",
+        typeof parsed.typeReason === "string" ? parsed.typeReason : undefined,
       magazineLevel:
         typeof parsed.magazineLevel === "string"
           ? parsed.magazineLevel
           : undefined,
       magazineReason:
-        typeof parsed.magazineReason === "string" ? parsed.magazineReason : "",
+        typeof parsed.magazineReason === "string"
+          ? parsed.magazineReason
+          : undefined,
       layout: parsed.layout.filter(
         (item: { component?: unknown }) =>
           item.component && typeof item.component === "string",
@@ -80,7 +90,56 @@ function parseTemplateResponse(content: string): AiTemplateResponse | null {
   }
 }
 
-/** 修复 AI 生成的 Template JSON：过滤不支持的组件、修复越界段落等 */
+/** 合法 role 值列表 */
+const VALID_ROLES: ContentRole[] = [
+  "opening",
+  "summary",
+  "transition",
+  "evidence",
+  "case",
+  "conclusion",
+  "cta",
+];
+
+/** 合法 design 字段值校验 */
+const VALID_DESIGN_VALUES = {
+  purpose: ["headline", "emphasis", "transition", "summary", "decoration"],
+  emphasis: ["high", "medium", "low"],
+  layout: ["center", "left", "stacked", "split", "inline"],
+  tone: ["professional", "warm", "minimal", "bold", "playful"],
+  spacing: ["large", "normal", "compact"],
+  headlineSize: ["xxl", "xl", "lg", "md"],
+} as const;
+
+/** 清洗 design 字段：移除非法值 */
+function sanitizeDesign(design: unknown): DesignIntent | undefined {
+  if (!design || typeof design !== "object") return undefined;
+  const d = design as Record<string, unknown>;
+  const result: DesignIntent = {};
+  let hasValid = false;
+
+  for (const [key, validValues] of Object.entries(VALID_DESIGN_VALUES)) {
+    if (
+      key in d &&
+      typeof d[key] === "string" &&
+      (validValues as readonly string[]).includes(d[key] as string)
+    ) {
+      (result as Record<string, unknown>)[key] = d[key];
+      hasValid = true;
+    }
+  }
+  return hasValid ? result : undefined;
+}
+
+/** 清洗 role 字段 */
+function sanitizeRole(role: unknown): ContentRole | undefined {
+  if (typeof role === "string" && VALID_ROLES.includes(role as ContentRole)) {
+    return role as ContentRole;
+  }
+  return undefined;
+}
+
+/** 修复 AI 生成的 Template JSON：过滤不支持的组件、修复越界段落、清洗 design/role 字段 */
 function sanitizeTemplate(
   template: TemplateJSON,
   totalParagraphs: number,
@@ -94,6 +153,12 @@ function sanitizeTemplate(
       warnings.push(`跳过不支持的组件: ${node.component}`);
       continue;
     }
+
+    // 清洗 design 字段（v2.0 新增）
+    const cleanedDesign = sanitizeDesign(node.design);
+
+    // 清洗 role 字段（v2.0 新增）
+    const cleanedRole = sanitizeRole(node.role);
 
     // article-section 越界修复
     if (node.component === "article-section") {
@@ -119,9 +184,15 @@ function sanitizeTemplate(
       cleanedLayout.push({
         ...node,
         content: { fromParagraph: from, toParagraph: to },
+        design: cleanedDesign,
+        role: cleanedRole,
       });
     } else {
-      cleanedLayout.push(node);
+      cleanedLayout.push({
+        ...node,
+        design: cleanedDesign,
+        role: cleanedRole,
+      });
     }
   }
 
@@ -200,16 +271,61 @@ async function callLLM(
   return content;
 }
 
+/** 构造降级模板（文章过短 / AI 异常 / layout 为空） */
+function fallbackTemplate(
+  totalParagraphs: number,
+  reason: string,
+): TemplateJSON {
+  return {
+    version: "2.0",
+    layout: [
+      {
+        component: "article-section",
+        content: { fromParagraph: 1, toParagraph: totalParagraphs },
+        design: {
+          emphasis: "medium",
+          layout: "left",
+          tone: "minimal",
+          spacing: "normal",
+        },
+        reason,
+      },
+    ],
+  };
+}
+
+/** 构造降级结果（保持 TemplateGenerationResult 结构兼容） */
+function fallbackResult(
+  template: TemplateJSON,
+  rendered: RenderResult,
+  warnings: string[],
+): TemplateGenerationResult {
+  return {
+    template,
+    articleType: "unknown",
+    typeReason: "",
+    magazineLevel: "medium",
+    magazineReason: "",
+    rendered,
+    warnings,
+  };
+}
+
 /**
  * 生成文章的 Template JSON
  *
+ * v2.0: AI 输出 design + reason + role 字段。
+ * 旧格式（AI 返回 articleType/magazineLevel）会被兼容处理。
+ *
  * @param markdown 原文 Markdown
- * @param articleTypeHint 可选，用户指定的文章类型
- * @param themeLayout 可选，当前主题的 layout 偏好（Phase 3 新增）
+ * @param _articleTypeHint 已废弃，保留参数兼容调用方
+ * @param themeLayout 可选，当前主题的 layout 偏好
+ * @param audience 可选，读者画像
+ * @param constraints 可选，排版丰富度约束
  */
 export async function generateTemplate(
   markdown: string,
-  articleTypeHint?: string,
+  _articleTypeHint?: string,
   themeLayout?: import("@wemd/core").LayoutPreference,
   audience?: Audience,
   constraints?: DesignConstraints,
@@ -218,32 +334,17 @@ export async function generateTemplate(
 
   // 文章过短：返回纯 article-section 模板
   if (totalParagraphs < 3 || markdown.length < 100) {
-    const template: TemplateJSON = {
-      articleType: "unknown",
-      magazineLevel: "low",
-      magazineReason: "文章过短，不适合杂志化排版",
-      layout: [
-        {
-          component: "article-section",
-          content: { fromParagraph: 1, toParagraph: totalParagraphs },
-        },
-      ],
-    };
+    const template = fallbackTemplate(
+      totalParagraphs,
+      "文章过短，使用纯文本模式",
+    );
     const rendered = renderTemplate(template, markdown);
-    return {
-      template,
-      articleType: "unknown",
-      typeReason: "文章过短，不适合复杂版式",
-      magazineLevel: "low",
-      magazineReason: "文章过短，不适合杂志化排版",
-      rendered,
-      warnings: ["文章过短，使用默认全文模板"],
-    };
+    return fallbackResult(template, rendered, ["文章过短，使用默认全文模板"]);
   }
 
   const systemPrompt = buildTemplatePrompt(
     totalParagraphs,
-    articleTypeHint,
+    undefined,
     themeLayout,
     audience,
     constraints,
@@ -253,47 +354,23 @@ export async function generateTemplate(
   const parsed = parseTemplateResponse(aiContent);
   if (!parsed) {
     // AI 返回解析失败：降级为纯 article-section
-    const template: TemplateJSON = {
-      articleType: "unknown",
-      magazineLevel: "medium",
-      magazineReason: "AI 返回格式异常，使用默认中等杂志化等级",
-      layout: [
-        {
-          component: "article-section",
-          content: { fromParagraph: 1, toParagraph: totalParagraphs },
-        },
-      ],
-    };
+    const template = fallbackTemplate(
+      totalParagraphs,
+      "AI 返回格式异常，使用默认模板",
+    );
     const rendered = renderTemplate(template, markdown);
-    return {
-      template,
-      articleType: "unknown",
-      typeReason: "AI 返回格式异常，使用默认全文模板",
-      magazineLevel: "medium",
-      magazineReason: "AI 返回格式异常，使用默认中等杂志化等级",
-      rendered,
-      warnings: ["AI 返回格式异常，降级为默认模板"],
-    };
+    return fallbackResult(template, rendered, [
+      "AI 返回格式异常，降级为默认模板",
+    ]);
   }
 
-  // 规范化 magazineLevel
-  const validLevels: MagazineLevel[] = ["high", "medium", "low"];
-  const magazineLevel: MagazineLevel = validLevels.includes(
-    parsed.magazineLevel as MagazineLevel,
-  )
-    ? (parsed.magazineLevel as MagazineLevel)
-    : "medium";
-
-  // 构造 Template JSON
+  // 构造 Template JSON（v2.0 结构）
   let template: TemplateJSON = {
-    articleType: parsed.articleType,
-    magazineLevel,
-    magazineReason: parsed.magazineReason || "",
-    meta: {},
+    version: "2.0",
     layout: parsed.layout,
   };
 
-  // 修复和清洗
+  // 修复和清洗（含 design/role 字段清洗）
   const sanitized = sanitizeTemplate(template, totalParagraphs);
   template = sanitized.template;
   const allWarnings = [...sanitized.warnings];
@@ -306,30 +383,12 @@ export async function generateTemplate(
 
   // 如果 layout 为空（所有组件都被过滤了），降级为全文
   if (template.layout.length === 0) {
-    template = {
-      articleType: "unknown",
-      magazineLevel: "medium",
-      magazineReason: "layout 为空，降级为默认中等杂志化等级",
-      layout: [
-        {
-          component: "article-section",
-          content: { fromParagraph: 1, toParagraph: totalParagraphs },
-        },
-      ],
-    };
+    template = fallbackTemplate(totalParagraphs, "layout 为空，使用默认模板");
     allWarnings.push("layout 为空，降级为默认全文模板");
   }
 
   // 渲染为 Markdown
   const rendered = renderTemplate(template, markdown);
 
-  return {
-    template,
-    articleType: parsed.articleType,
-    typeReason: parsed.typeReason,
-    magazineLevel,
-    magazineReason: parsed.magazineReason || "",
-    rendered,
-    warnings: allWarnings,
-  };
+  return fallbackResult(template, rendered, allWarnings);
 }

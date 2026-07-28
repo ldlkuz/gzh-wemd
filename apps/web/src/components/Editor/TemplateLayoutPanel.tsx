@@ -102,9 +102,12 @@ export function TemplateLayoutPanel({
     low: { label: "简洁为主", desc: "信息高效，最少装饰" },
   };
 
-  const magazineLevelInfo = result?.magazineLevel
-    ? magazineLevelLabels[result.magazineLevel] || null
-    : null;
+  // v2.0 模板不再有 magazineLevel 概念，仅旧模板显示
+  const isV2Template = result?.template.version?.startsWith("2.");
+  const magazineLevelInfo =
+    !isV2Template && result?.magazineLevel
+      ? magazineLevelLabels[result.magazineLevel] || null
+      : null;
 
   return (
     <Modal

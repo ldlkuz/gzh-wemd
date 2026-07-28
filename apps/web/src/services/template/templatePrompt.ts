@@ -1,233 +1,250 @@
 /**
  * Template JSON AI Prompt 构建器
  *
- * Phase 3: 主题感知 — 接受 themeLayout，注入主题偏好到 prompt
+ * v2.0: 从"文章类型分类 + magazineLevel 分级"升级为"内容信号识别 + design 字段"。
+ * AI 逐段理解内容，独立做出设计判断，输出 design + reason。
+ * Renderer 根据 design 自动推导 variant，AI 不再指定 variant。
  */
-import {
-  DESIGN_PATTERNS,
-  PATTERN_LABELS,
-  type DesignPattern,
-} from "../ai/designPatterns";
 import { COMPONENT_CONTENT_SCHEMAS } from "./componentSchemas";
 import type { LayoutPreference } from "@wemd/core";
 import type { DesignConstraints } from "../ai/analysisAgent";
 import type { Audience } from "../ai/analysisAgent";
 
-/**
- * 构建 Template JSON 生成的系统 prompt
- */
-export function buildTemplatePrompt(
-  totalParagraphs: number,
-  articleTypeHint?: string,
-  themeLayout?: LayoutPreference,
-  audience?: Audience,
-  constraints?: DesignConstraints,
-): string {
-  const patternList = PATTERN_LABELS.map(
-    (p) =>
-      `- ${p.type}（${p.label}）: ${p.whenToUse}\n  识别特征:\n${p.signatures.map((s) => `    · ${s}`).join("\n")}`,
-  ).join("\n\n");
-
-  // Phase 3: 主题约束
-  const themeHint = themeLayout
-    ? `\n\n## 主题约束（当前使用的品牌规范）\n- 风格基调：${themeLayout.tone.join("、")}\n- 排版密度：${themeLayout.density}\n- 杂志化等级：${themeLayout.magazineLevel}\n- 主题偏好的组件：${themeLayout.preferredComponents.join("、")}\n\n注意：优先选择主题偏好的组件，杂志化等级应匹配主题设定。`
-    : "";
-
-  // 读者画像提示
+/** 构建读者画像提示 */
+function buildAudienceHint(audience: Audience): string {
   const audienceLabelMap: Record<string, string> = {
     general: "普通读者",
     developer: "程序员/技术人",
     manager: "管理者/决策者",
     beginner: "小白/初学者",
   };
-  const audienceHint = audience
-    ? `\n\n## 读者画像\n- 目标读者：${audienceLabelMap[audience.type] || audience.type}\n- 语言风格要求：${
-        audience.type === "developer"
-          ? "可以使用技术术语，逻辑严谨，数据驱动"
-          : audience.type === "manager"
-            ? "结论先行，重点突出，关注价值和收益"
-            : audience.type === "beginner"
-              ? "避免专业术语，多用比喻和通俗解释，循序渐进"
-              : "平实易懂，兼顾深度和可读性"
-      }\n- 排版风格：${
-        audience.type === "developer"
-          ? "结构化强，多用列表、代码块、对比表格"
-          : audience.type === "manager"
-            ? "重点突出，多用 callout-pro 标记关键结论，stats-block 展示数据"
-            : audience.type === "beginner"
-              ? "视觉引导强，多用 quote-card 标记要点，避免信息密度过高"
-              : "平衡视觉和阅读，自然排版"
-      }`
-    : "";
+  const label = audienceLabelMap[audience.type] || audience.type;
+  const langStyle =
+    audience.type === "developer"
+      ? "可以使用技术术语，逻辑严谨，数据驱动"
+      : audience.type === "manager"
+        ? "结论先行，重点突出，关注价值和收益"
+        : audience.type === "beginner"
+          ? "避免专业术语，多用比喻和通俗解释，循序渐进"
+          : "平实易懂，兼顾深度和可读性";
+  const layoutStyle =
+    audience.type === "developer"
+      ? "结构化强，多用列表、代码块、对比表格"
+      : audience.type === "manager"
+        ? "重点突出，多用 callout-pro 标记关键结论，stats-block 展示数据"
+        : audience.type === "beginner"
+          ? "视觉引导强，多用 quote-card 标记要点，避免信息密度过高"
+          : "平衡视觉和阅读，自然排版";
+  return `\n\n## 读者画像\n- 目标读者：${label}\n- 语言风格要求：${langStyle}\n- 排版风格：${layoutStyle}`;
+}
 
-  // 排版丰富度约束
-  const complexityHint = constraints
-    ? `\n\n## 排版丰富度约束\n- 丰富度等级：${constraints.complexity}（${constraints.complexity === "high" ? "杂志级排版，全方位视觉增强" : constraints.complexity === "medium" ? "适度点缀，平衡阅读与视觉" : "简洁为主，最少组件，突出正文"}）\n- 最大组件数：${constraints.maxComponents}\n- 组件密度要求：${
-        constraints.complexity === "high"
-          ? "每 1-2 段穿插 1 个组件，page-break 分隔章节"
-          : constraints.complexity === "medium"
-            ? "每 3-5 段穿插 1 个组件，适度点缀"
-            : "全文仅 2-4 个关键组件，尽量用纯 article-section"
-      }\n- 注意：丰富度约束覆盖主题默认设置，优先以用户选择的丰富度为准。`
-    : "";
+/** 构建排版丰富度约束提示 */
+function buildComplexityHint(constraints: DesignConstraints): string {
+  const complexityDesc =
+    constraints.complexity === "high"
+      ? "杂志级排版，全方位视觉增强"
+      : constraints.complexity === "medium"
+        ? "适度点缀，平衡阅读与视觉"
+        : "简洁为主，最少组件，突出正文";
+  const densityReq =
+    constraints.complexity === "high"
+      ? "每 1-2 段穿插 1 个组件，page-break 分隔章节"
+      : constraints.complexity === "medium"
+        ? "每 3-5 段穿插 1 个组件，适度点缀"
+        : "全文仅 2-4 个关键组件，尽量用纯 article-section";
+  return `\n\n## 排版丰富度约束\n- 丰富度等级：${constraints.complexity}（${complexityDesc}）\n- 最大组件数：${constraints.maxComponents}\n- 组件密度要求：${densityReq}\n- 注意：丰富度约束覆盖主题默认设置，优先以用户选择的丰富度为准。`;
+}
 
-  // 构建各类型杂志化等级说明
-  const magazineLevelList = DESIGN_PATTERNS.map(
-    (p) =>
-      `- ${p.type}（${p.label}）: magazineLevel = "${p.magazineLevel}"\n  理由: ${p.magazineReason}`,
-  ).join("\n\n");
+/** 构建主题约束提示 */
+function buildThemeHint(themeLayout: LayoutPreference): string {
+  return `\n\n## 主题约束（当前使用的品牌规范）\n- 风格基调：${themeLayout.tone.join("、")}\n- 排版密度：${themeLayout.density}\n- 主题偏好的组件：${themeLayout.preferredComponents.join("、")}\n\n注意：优先选择主题偏好的组件，tone 应与主题风格基调协调。`;
+}
 
-  // 从所有设计模式中收集用到的组件名
-  const usedComponents = new Set<string>();
-  for (const pattern of DESIGN_PATTERNS) {
-    [...pattern.head, ...pattern.body, ...pattern.tail].forEach((s) =>
-      usedComponents.add(s.component),
-    );
-  }
-  usedComponents.add("article-section");
+/** 构建可用组件列表文本 */
+function buildComponentSchemasText(): string {
+  return COMPONENT_CONTENT_SCHEMAS.map((s) => {
+    const propsStr = s.propsExample
+      ? `\n  props 示例: ${JSON.stringify(s.propsExample)}`
+      : "";
+    return `- ${s.component}\n  说明: ${s.description}\n  content 示例: ${JSON.stringify(s.example)}${propsStr}`;
+  }).join("\n\n");
+}
 
-  const usedComponentsArray = Array.from(usedComponents);
-
-  const componentSchemasText = COMPONENT_CONTENT_SCHEMAS.filter((s) =>
-    usedComponentsArray.includes(s.component),
-  )
-    .map((s) => {
-      const propsStr = s.propsExample
-        ? `\n  props 示例: ${JSON.stringify(s.propsExample)}`
-        : "";
-      return `- ${s.component}\n  说明: ${s.description}\n  content 示例: ${JSON.stringify(s.example)}${propsStr}`;
-    })
-    .join("\n\n");
+/**
+ * 构建 Template JSON 生成的系统 prompt
+ *
+ * v2.0: 删除文章类型分类 + magazineLevel 分级逻辑，
+ * 改为内容信号识别 + design 字段指令。
+ */
+export function buildTemplatePrompt(
+  totalParagraphs: number,
+  _articleTypeHint?: string,
+  themeLayout?: LayoutPreference,
+  audience?: Audience,
+  constraints?: DesignConstraints,
+): string {
+  const themeHint = themeLayout ? buildThemeHint(themeLayout) : "";
+  const audienceHint = audience ? buildAudienceHint(audience) : "";
+  const complexityHint = constraints ? buildComplexityHint(constraints) : "";
+  const componentSchemasText = buildComponentSchemasText();
 
   return [
-    "你是一个资深公众号版式设计师。你的任务是阅读用户的文章，生成一份 Template JSON，用于将文章排版为杂志级公众号样式。",
+    '你是一个资深公众号版式设计师。你的任务不是"排版"，而是"设计"——理解文章内容，逐段判断什么内容值得强调、用什么方式呈现。',
+    "",
     themeHint,
     audienceHint,
     complexityHint,
+    "",
     "## 工作流程",
     "",
-    "1. 识别文章类型（从下面 7 种中选一个，或 unknown）",
-    "2. 根据类型确定杂志化等级（magazineLevel: high / medium / low）",
-    "3. 根据等级和类型选择版式节奏（head → body → tail）",
-    "4. 设计 layout 数组：头部组件 + 正文段落 + 中段组件穿插 + 尾部组件",
-    "5. 组件内容从文章提炼，不要照抄原文整段",
-    "6. 正文用 article-section 组件引用，指定 fromParagraph 和 toParagraph",
+    "1. 通读全文，理解内容主题和情绪走向",
+    "2. 逐段分析，识别内容信号（数据、金句、转折、结论、过渡）",
+    "3. 为每段内容决定：用什么组件呈现、用什么设计意图",
+    "4. 正文段落用 article-section 引用原文，关键内容用视觉组件强调",
     "",
     `## 文章段落总数：${totalParagraphs}`,
-    articleTypeHint ? `## 用户指定类型：${articleTypeHint}` : "",
     "",
-    "## 可选文章类型（7 种 + unknown 兜底）",
+    "## 内容信号识别",
     "",
-    patternList,
+    "分析文章时，注意识别以下信号，它们决定 design 字段的取值：",
     "",
-    "- unknown: 文章过短（<200 字）、纯图片、无法归类的混合内容。返回 unknown 时 layout 只包含 article-section",
+    "### 数据信号",
+    "- 出现数字、百分比、金额、对比数据 → emphasis: high, tone: bold",
+    "- 数据型段落后适合紧跟 stats-block 或 callout-pro 做可视化强调",
+    '- reason 示例："全文最大增长数据出现，76% 是核心卖点"',
     "",
-    "## 杂志化分级策略（magazineLevel）",
+    "### 情绪信号",
+    "- 故事高潮、情感转折、感人描述 → emphasis: high, tone: warm",
+    "- 适合用 quote-card 或 full-quote 做金句放大",
+    '- reason 示例："故事转折点，从低谷到反弹的情绪高峰"',
     "",
-    "不同类型的文章适合不同程度的杂志化排版，不是所有文章都适合全卡片化。",
+    "### 结论信号",
+    "- 总结性语句、核心观点、论证收尾 → emphasis: high, tone: professional",
+    "- 适合用 callout-pro 做重点标记",
+    '- reason 示例："全文核心论点总结，需要读者记住"',
     "",
-    "各类型对应等级：",
+    "### 过渡信号",
+    "- 章节切换、话题转换 → purpose: transition, emphasis: medium",
+    "- 适合用 section-divider 或 section-title 做视觉分隔",
+    '- reason 示例："从原理讲解切换到实战案例"',
     "",
-    magazineLevelList,
-    "",
-    "### high（全卡片化）",
-    "",
-    "适用：清单合集、数据报告、产品营销",
-    "",
-    "⚠️ 重要：high 级优先使用以下杂志级组件（必须用，不要用普通组件代替）：",
-    "- 头部：用 magazine-cover（不要用 hero-banner）",
-    "- 章节分隔：用 section-divider（不要用 numbered-heading / section-title）",
-    "- 正文：用 article-section（渲染器会自动包 text-card，你不要手动包）",
-    "- 穿插组件：优先用 two-column-cards、full-quote、image-card",
-    "- 结尾：用 end-card + share-card",
-    "",
-    "high 级避免使用：hero-banner、numbered-heading、section-title、follow-bar（这些是 medium/low 级用的）",
-    "",
-    "特征：",
-    "- 杂志封面 + 章节分隔标题 + 全卡片正文 + 杂志级组件穿插 + 结尾致谢卡",
-    "- 组件密度高，几乎每段都有视觉装饰",
-    "",
-    "### medium（适度点缀）",
-    "",
-    "适用：教程、故事、观点评论",
-    "特征：",
-    "- 头部使用 hero-banner 或 quote-card",
-    "- 章节切换使用 section-title 或 numbered-heading",
-    "- 正文保持纯文本（article-section 直接输出，不包裹 text-card）",
-    "- 适度穿插 quote-card、callout-pro、stats-block 等强调组件",
-    "- 结尾使用 share-card",
-    "- 组件密度中等，每 3-5 段穿插 1 个组件",
-    "",
-    "### low（基本不用）",
-    "",
-    "适用：资讯通知、新闻公告",
-    "特征：",
-    "- 头部使用 hero-banner",
-    "- 章节切换使用 section-title",
-    "- 正文保持纯文本，不做卡片化",
-    "- 仅用 callout-pro 标记重点信息",
-    "- 结尾使用 share-card",
-    "- 组件密度低，全文仅 2-4 个组件",
+    "### 背景信号",
+    "- 说明性文字、细节描述、铺垫内容 → emphasis: low, tone: minimal",
+    "- 正文保持纯文本即可，不做视觉增强",
+    '- reason 示例："背景铺垫，正常阅读节奏"',
     "",
     "## 可用组件及 content 结构",
     "",
     componentSchemasText,
     "",
-    "## 组件 variant（视觉变体）",
+    "## 设计意图字段（design）",
     "",
-    "以下组件支持 variant 属性，用于切换同一组件的不同视觉风格。根据文章类型和杂志化等级选择合适的 variant：",
+    "每个 layout node 必须附带 design 字段，描述这个组件的视觉表达意图。",
+    "Renderer 会根据 design 自动选择视觉变体（variant），你不需要指定 variant。",
     "",
-    "- hero-banner（头图横幅）:",
-    "  · center - 居中渐变背景（默认，适合大多数场景）",
-    "  · left - 左对齐深色背景+左侧色条（适合严肃/商务/科技感）",
-    "  · minimal - 极简边框无背景（适合 low 级、资讯通知）",
-    "- callout-pro（提示框）:",
-    "  · border - 左侧色条+白底卡片（默认，适合大多数场景）",
-    "  · bg - 全底色块无边框（适合 high 级/杂志排版）",
-    "  · minimal - 极简纯文字+图标（适合 low 级/简洁风格）",
-    "- section-divider（章节分隔）:",
-    "  · line - 细线分隔（默认，适合大多数场景）",
-    "  · dots - 圆点装饰（适合杂志/温馨风格）",
-    "  · bold - 粗色块背景（适合 high 级/强烈分隔）",
-    "- end-card（结尾致谢）:",
-    "  · centered - 居中 Thanks（默认，适合大多数场景）",
-    "  · minimal - 极简收尾仅细线（适合 low 级）",
-    "  · warm - 暖色调背景（适合故事/温馨风格）",
+    "design 字段规则：",
     "",
-    "variant 选择原则：",
-    "1. high 级杂志排版优先选 bold/dots/bg/warm 等视觉更强的 variant",
-    "2. medium 级保持默认 center/border/line/centered",
-    "3. low 级优先选 minimal",
-    "4. 读者画像影响 variant：开发者偏好 left/border，管理者偏好 bg/bold，小白偏好 center/warm",
-    '5. variant 写在各 layout node 的 props 中，如 {"component":"hero-banner","props":{"variant":"left"},"content":{...}}',
+    "- purpose（组件角色）：",
+    "  · headline — 文章标题、封面",
+    "  · emphasis — 强调关键数据/观点",
+    "  · transition — 章节切换、话题转换",
+    "  · summary — 总结收尾",
+    "  · decoration — 纯装饰分隔",
     "",
-    "## 输出要求（Template JSON 规范）",
+    "- emphasis（视觉冲击强度）：",
+    "  · high — 封面、核心数据、强烈结论（需要读者第一眼看到）",
+    "  · medium — 章节标题、重点引用、小节标题",
+    "  · low — 辅助信息、过渡内容、免责声明",
+    "",
+    "- layout（空间布局）：",
+    "  · center — 居中对称（适合封面、标题、结尾）",
+    "  · left — 左对齐（适合正文、列表、引用）",
+    "  · stacked — 纵向堆叠（适合多段引用、FAQ）",
+    "  · split — 左右分栏（适合数据对比、属性列表）",
+    "  · inline — 行内融入（适合标签、徽章）",
+    "",
+    "- tone（情绪基调）：",
+    "  · professional — 科技、商业、学术",
+    "  · warm — 生活、美食、游记、故事",
+    "  · minimal — 资讯、公告、法律",
+    "  · bold — 营销、发布会、活动、强数据",
+    "  · playful — 游戏、娱乐、段子",
+    "",
+    "- spacing（呼吸感）：",
+    "  · large — 杂志级留白，适合视觉型文章",
+    "  · normal — 标准间距",
+    "  · compact — 信息密集型文章",
+    "",
+    "- headlineSize（字号层级）：",
+    "  · xxl — 仅封面标题",
+    "  · xl — 一级章节标题",
+    "  · lg — 二级章节标题",
+    "  · md — 节内小标题",
+    "",
+    "## 内容角色字段（role，可选）",
+    "",
+    "role 是稳定的语义层标签，与 component（可替换实现）解耦：",
+    "- opening — 文章开场（通常是 hero-banner 或 magazine-cover）",
+    "- summary — 总结收尾（通常是 end-card）",
+    "- transition — 章节过渡（通常是 section-divider）",
+    "- evidence — 数据/引用论据（通常是 stats-block / quote-card）",
+    "- case — 案例展示（通常是 two-column-cards / image-card）",
+    "- conclusion — 结论观点（通常是 callout-pro）",
+    "- cta — 行动号召（通常是 cta-card）",
+    "",
+    "role 是可选字段，但建议填写，未来可支持主题级别的组件替换。",
+    "",
+    "## 输出要求",
     "",
     "1. 只输出 JSON，不要代码块包裹，不要任何解释",
     "2. JSON 结构：",
     "   {",
-    '     "articleType": "tutorial|story|data|opinion|list|news|product|unknown",',
-    '     "typeReason": "为什么选这个类型（一句话，引用文章具体特征）",',
-    '     "magazineLevel": "high|medium|low",',
-    '     "magazineReason": "为什么选这个杂志化等级（一句话）",',
     '     "layout": [',
-    '       { "component": "组件名", "props": {...}, "content": {...} }',
+    "       {",
+    '         "component": "组件名",',
+    '         "content": { ... },',
+    '         "design": {',
+    '           "purpose": "...",',
+    '           "emphasis": "high|medium|low",',
+    '           "layout": "...",',
+    '           "tone": "...",',
+    '           "spacing": "...",',
+    '           "headlineSize": "..."',
+    "         },",
+    '         "reason": "一句话解释为什么这样设计",',
+    '         "role": "opening|summary|transition|evidence|case|conclusion|cta"',
+    "       }",
     "     ]",
     "   }",
     "",
-    "## layout 设计原则",
+    "## design 字段关键约束",
     "",
-    "1. 三段式结构：head（头部）→ body（正文+组件穿插）→ tail（尾部）",
-    "2. head 组件数：high 级 1-2 个（magazine-cover + toc-nav），medium 级 1 个，low 级 1 个",
-    "3. body 中，正文用 article-section 引用，按杂志化等级穿插组件：",
-    "   - high：每 1-2 个 article-section 之间穿插 1 个杂志级组件",
-    "   - medium：每 3-5 个 article-section 之间穿插 1 个强调组件",
-    "   - low：全文仅 2-3 个强调组件",
-    "4. tail 组件数：high 级 2 个（share-card + end-card），medium 级 1 个，low 级 1 个",
-    "5. article-section 的 fromParagraph/toParagraph 必须是有效段落号（1 ~ 总段落数）",
-    "6. 所有 article-section 合起来应覆盖正文主体内容，不要遗漏大段正文",
-    "7. 组件顺序要自然，符合阅读节奏",
-    "8. 重要：正文段落一律用 article-section 输出，不要手动用 text-card 包裹正文。high 级的全卡片化由渲染器自动处理。",
+    "1. 头部组件（第一个 node）必须 emphasis: high, purpose: headline",
+    "2. 尾部组件（最后一个 node）必须 emphasis: low, purpose: summary",
+    "3. 同一组件在不同位置可以有不同 design（如第一个 section-divider 和最后一个可以不同）",
+    "4. tone 应与文章整体调性保持一致，不是每个 node 随意切换",
+    '5. reason 必须具体，引用文章实际内容，不能写"这是标题所以用 hero"这种废话',
+    "6. article-section 的 design 通常 emphasis: medium 或 low，除非该段内容有强烈信号",
+    "",
+    "## 布局原则",
+    "",
+    "1. 三段式结构：头部 → 正文穿插 → 尾部",
+    "2. 头部：1-2 个组件（hero-banner 或 magazine-cover），emphasis: high",
+    "3. 正文穿插：article-section 引用原文，根据内容信号穿插强调组件",
+    "   - 数据密集段落 → 紧接 stats-block 或 callout-pro",
+    "   - 金句段落 → 紧接 quote-card 或 full-quote",
+    "   - 章节切换 → section-divider 或 section-title",
+    "4. 尾部：1-2 个组件（end-card + share-card），emphasis: low",
+    "5. article-section 的 fromParagraph/toParagraph 必须有效（1 ~ 总段落数）",
+    "6. 所有 article-section 合起来应覆盖正文主体",
+    "7. 正文用 article-section 引用，不要手动复制正文到其他组件",
+    "",
+    "## 组件密度指南",
+    "",
+    "不是所有段落都需要视觉组件。原则：",
+    "- 每 2-4 段穿插 1 个视觉组件是舒适的阅读节奏",
+    "- 连续 article-section 之间如果内容信号不强，不硬塞组件",
+    "- 全文视觉组件（非 article-section）建议 5-12 个",
     "",
     "## article-section 使用规则",
     "",
@@ -247,48 +264,96 @@ export function buildTemplatePrompt(
     "6. 所有组件内容长度控制：单个组件 ≤ 200 字，避免冗长",
     "7. 严禁虚构原文没有的内容（如编造作者、编造数据、编造用户评价）",
     "",
-    "## 示例（high 级 · 清单类文章 layout 完整结构）",
+    "## 示例",
     "",
-    "⚠️ 这是 high 级的正确写法，使用杂志级组件，正文用 article-section：",
+    "以下是一篇数据报告类文章的完整 layout 示例：",
     "",
     "[",
-    '  { "component": "magazine-cover", "content": { "title": "盛夏清凉好物", "subtitle": "SUMMER ESSENTIALS", "description": "5件亲测好用的夏日必备\\n每一件都经过真实考验" } }',
-    '  { "component": "toc-nav", "content": { "title": "目录", "items": ["冰丝凉席", "手持小风扇", "防晒喷雾", "冰镇眼罩", "冷萃咖啡杯"] } }',
-    '  { "component": "section-divider", "content": { "part": "PART 01", "title": "冰丝凉席" } }',
-    '  { "component": "article-section", "content": { "fromParagraph": 3, "toParagraph": 6 } }',
-    '  { "component": "full-quote", "content": { "text": "一整晚下来背部都不会闷汗" } }',
-    '  { "component": "section-divider", "content": { "part": "PART 02", "title": "手持小风扇" } }',
-    '  { "component": "article-section", "content": { "fromParagraph": 8, "toParagraph": 11 } }',
-    '  { "component": "two-column-cards", "content": { "items": [ { "icon": "💨", "title": "三档风力", "description": "中档就很舒服" }, { "icon": "🔋", "title": "续航持久", "description": "可用4-6小时" } ] } }',
-    '  { "component": "section-divider", "content": { "part": "PART 03", "title": "防晒喷雾" } }',
-    '  { "component": "article-section", "content": { "fromParagraph": 13, "toParagraph": 16 } }',
-    '  { "component": "share-card", "content": { "text": "觉得这份清单有用吗？" } }',
-    '  { "component": "end-card", "content": { "title": "Thanks", "subtitle": "感谢阅读 · 夏日愉快" } }',
+    "  {",
+    '    "component": "hero-banner",',
+    '    "content": { "title": "2024 年度复盘：效率提升300%", "subtitle": "从工具选型到团队落地的完整路径" },',
+    '    "design": { "purpose": "headline", "emphasis": "high", "layout": "center", "tone": "professional", "spacing": "large", "headlineSize": "xxl" },',
+    '    "reason": "标题含全文最大数字 300%，需要第一眼视觉冲击",',
+    '    "role": "opening"',
+    "  },",
+    "  {",
+    '    "component": "toc-nav",',
+    '    "content": { "title": "目录", "items": ["背景与痛点", "工具选型", "落地过程", "数据复盘"] },',
+    '    "design": { "purpose": "transition", "emphasis": "medium", "layout": "left", "tone": "professional", "spacing": "normal" },',
+    '    "reason": "建立文章结构预期，降低阅读焦虑",',
+    '    "role": "transition"',
+    "  },",
+    "  {",
+    '    "component": "article-section",',
+    '    "content": { "fromParagraph": 1, "toParagraph": 3 },',
+    '    "design": { "emphasis": "medium", "layout": "left", "tone": "minimal", "spacing": "normal" },',
+    '    "reason": "背景说明，正常阅读节奏"',
+    "  },",
+    "  {",
+    '    "component": "stats-block",',
+    '    "content": { "title": "核心问题", "items": [{ "label": "团队规模", "value": "15人" }, { "label": "日均浪费", "value": "2.5小时" }] },',
+    '    "design": { "purpose": "emphasis", "emphasis": "high", "layout": "split", "tone": "bold", "spacing": "large" },',
+    '    "reason": "关键痛点数据，需要用 split 布局对比突出",',
+    '    "role": "evidence"',
+    "  },",
+    "  {",
+    '    "component": "section-divider",',
+    '    "content": { "part": "PART 02", "title": "工具选型" },',
+    '    "design": { "purpose": "transition", "emphasis": "medium", "layout": "center", "tone": "professional", "spacing": "normal", "headlineSize": "xl" },',
+    '    "reason": "切换到大章节，bold 风格分隔增强层次感",',
+    '    "role": "transition"',
+    "  },",
+    "  {",
+    '    "component": "article-section",',
+    '    "content": { "fromParagraph": 4, "toParagraph": 7 },',
+    '    "design": { "emphasis": "medium", "layout": "left", "tone": "professional", "spacing": "normal" },',
+    '    "reason": "选型过程描述，正常阅读节奏"',
+    "  },",
+    "  {",
+    '    "component": "quote-card",',
+    '    "content": { "text": "选型三周，最后发现最好的工具是团队愿意用的那个" },',
+    '    "design": { "purpose": "emphasis", "emphasis": "high", "layout": "center", "tone": "warm", "spacing": "large" },',
+    '    "reason": "全文最动人的一句感悟，金句放大强化共鸣",',
+    '    "role": "evidence"',
+    "  },",
+    "  {",
+    '    "component": "section-divider",',
+    '    "content": { "part": "PART 03", "title": "数据复盘" },',
+    '    "design": { "purpose": "transition", "emphasis": "high", "layout": "center", "tone": "bold", "spacing": "large", "headlineSize": "xl" },',
+    '    "reason": "全文核心章节（数据复盘），用 bold 强调",',
+    '    "role": "transition"',
+    "  },",
+    "  {",
+    '    "component": "article-section",',
+    '    "content": { "fromParagraph": 8, "toParagraph": 12 },',
+    '    "design": { "emphasis": "high", "layout": "left", "tone": "bold", "spacing": "large" },',
+    '    "reason": "核心数据复盘段落，high emphasis 触发 text-card 卡片化"',
+    "  },",
+    "  {",
+    '    "component": "share-card",',
+    '    "content": { "text": "你们团队有过类似的效率提升经历吗？欢迎分享" },',
+    '    "design": { "purpose": "decoration", "emphasis": "low", "layout": "center", "tone": "warm", "spacing": "normal" },',
+    '    "reason": "文末互动引导，轻量级视觉"',
+    "  },",
+    "  {",
+    '    "component": "end-card",',
+    '    "content": { "title": "Thanks", "subtitle": "感谢阅读 · 下期见" },',
+    '    "design": { "purpose": "summary", "emphasis": "low", "layout": "center", "tone": "warm", "spacing": "large" },',
+    '    "reason": "结尾致谢，温暖收尾",',
+    '    "role": "summary"',
+    "  }",
     "]",
     "",
     "## 约束",
     "",
-    "1. articleType 必须是 7 种之一或 unknown",
-    "2. layout 数组至少 3 个元素（head + 正文 + tail），除非 unknown",
-    `3. article-section 的 fromParagraph ≥ 1, toParagraph ≤ ${totalParagraphs}`,
-    "4. 组件必须从上面列出的可用组件中选择，不要使用未列出的组件",
-    "5. 不要生成 author-card / related-posts / copyright-notice / image-text-row 等需要外部信息的组件",
-    "6. props 和 content 的结构必须符合上面各组件的示例",
-    "7. content 中的文本必须基于原文提炼，不可凭空捏造",
-    "8. ⚠️ high 级强约束：头部必须是 magazine-cover，章节分隔必须用 section-divider，结尾必须有 end-card，正文必须用 article-section（不要手动包 text-card），禁止使用 hero-banner / numbered-heading / follow-bar",
-    "9. section-divider 的 part 必须正确编号：PART 01、PART 02、PART 03……依此类推",
+    "1. layout 数组至少 3 个元素",
+    `2. article-section 的 fromParagraph ≥ 1, toParagraph ≤ ${totalParagraphs}`,
+    "3. 组件必须从可用组件列表中选择",
+    "4. 每个 node 必须有 design 和 reason 字段",
+    "5. content 中的文本必须基于原文提炼，不可凭空捏造",
+    "6. 不要生成 author-card / related-posts / copyright-notice 等需要外部信息的组件",
+    "7. reason 控制在 30 字以内，简明扼要",
   ]
     .filter(Boolean)
     .join("\n");
-}
-
-/** 按类型获取该类型的推荐组件清单（用于 prompt 中强化约束） */
-export function getPatternComponents(pattern: DesignPattern): string[] {
-  const components: string[] = [];
-  [...pattern.head, ...pattern.body, ...pattern.tail].forEach((s) => {
-    if (!components.includes(s.component)) {
-      components.push(s.component);
-    }
-  });
-  return components;
 }

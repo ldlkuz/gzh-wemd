@@ -17,29 +17,28 @@ describe("Template Prompt", () => {
     expect(prompt).toContain("20");
     expect(prompt).toContain("hero-banner");
     expect(prompt).toContain("article-section");
-    expect(prompt).toContain("Template JSON");
   });
 
-  it("包含用户指定类型", () => {
-    const prompt = buildTemplatePrompt(20, "list");
-    expect(prompt).toContain("list");
-    expect(prompt).toContain("用户指定类型");
-  });
-
-  it("包含所有 7 种文章类型", () => {
+  it("包含 design 字段说明", () => {
     const prompt = buildTemplatePrompt(20);
-    const types = [
-      "tutorial",
-      "story",
-      "data",
-      "opinion",
-      "list",
-      "news",
-      "product",
-    ];
-    types.forEach((t) => {
-      expect(prompt).toContain(t);
-    });
+    expect(prompt).toContain("design");
+    expect(prompt).toContain("emphasis");
+    expect(prompt).toContain("purpose");
+    expect(prompt).toContain("reason");
+  });
+
+  it("包含内容信号识别", () => {
+    const prompt = buildTemplatePrompt(20);
+    expect(prompt).toContain("内容信号");
+    expect(prompt).toContain("数据信号");
+    expect(prompt).toContain("情绪信号");
+  });
+
+  it("包含 role 字段说明", () => {
+    const prompt = buildTemplatePrompt(20);
+    expect(prompt).toContain("role");
+    expect(prompt).toContain("opening");
+    expect(prompt).toContain("summary");
   });
 });
 
@@ -91,19 +90,42 @@ describe("Template JSON 解析", () => {
 第三段内容。`;
 
     const template = {
-      articleType: "list" as const,
+      version: "2.0",
       layout: [
         {
           component: "hero-banner",
           content: { title: "测试标题", subtitle: "副标题" },
+          design: {
+            purpose: "headline",
+            emphasis: "high",
+            layout: "center",
+            tone: "professional",
+            spacing: "large",
+          },
+          reason: "测试标题",
         },
         {
           component: "article-section",
           content: { fromParagraph: 1, toParagraph: 4 },
+          design: {
+            emphasis: "medium",
+            layout: "left",
+            tone: "minimal",
+            spacing: "normal",
+          },
+          reason: "正文段落",
         },
         {
           component: "share-card",
           content: { text: "分享给朋友" },
+          design: {
+            purpose: "decoration",
+            emphasis: "low",
+            layout: "center",
+            tone: "warm",
+            spacing: "normal",
+          },
+          reason: "文末分享引导",
         },
       ],
     };
@@ -125,6 +147,28 @@ describe("Template JSON 解析", () => {
     });
     expect(errors.length).toBeGreaterThan(0);
     expect(errors.some((e) => e.includes("不支持"))).toBe(true);
+  });
+
+  it("旧模板（v1.x 含 magazineLevel）能被渲染", async () => {
+    const { renderTemplate } = await import("../../../services/template");
+
+    const sampleArticle = "第一段。\n\n第二段。\n\n第三段。";
+    const oldTemplate = {
+      articleType: "data",
+      magazineLevel: "high" as const,
+      magazineReason: "数据密集型文章",
+      layout: [
+        { component: "hero-banner", content: { title: "旧模板测试" } },
+        {
+          component: "article-section",
+          content: { fromParagraph: 1, toParagraph: 3 },
+        },
+      ],
+    };
+
+    const result = renderTemplate(oldTemplate, sampleArticle);
+    expect(result.markdown).toContain("hero-banner");
+    expect(result.coverage).toBeGreaterThan(0.5);
   });
 });
 
