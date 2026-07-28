@@ -4,6 +4,7 @@
  */
 import { describe, it, expect } from "vitest";
 import { buildTemplatePrompt } from "../../../services/template/templatePrompt";
+import type { TemplateJSON } from "../../../services/template/types";
 import {
   COMPONENT_CONTENT_SCHEMAS,
   AI_GENERATABLE_COMPONENTS,
@@ -128,7 +129,7 @@ describe("Template JSON 解析", () => {
           reason: "文末分享引导",
         },
       ],
-    };
+    } as TemplateJSON;
 
     const errors = validateTemplate(template);
     expect(errors).toHaveLength(0);

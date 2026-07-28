@@ -448,6 +448,561 @@ export const endCardWarmCss = `/* === end-card 暖色调 === */
   margin-top: 16px;
 }`;
 
+// ============================================================
+// product-card 变体（3 个）
+// ============================================================
+
+/** product-card ecommerce 经典电商（默认） */
+export const productCardEcommerceCss = `/* === product-card 经典电商 === */
+#wemd .wemd-product-card[data-props*="\\"variant\\":\\"ecommerce\\""] {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f1f1f3;
+}
+#wemd .wemd-product-card[data-props*="\\"variant\\":\\"ecommerce\\""] .wemd-pc-badge {
+  background: linear-gradient(135deg, #ff7a45, #ff4d4f);
+}
+#wemd .wemd-product-card[data-props*="\\"variant\\":\\"ecommerce\\""] .wemd-pc-button {
+  background: linear-gradient(90deg, #ff6a3d, #ff4d4f);
+  letter-spacing: 2px;
+}
+#wemd .wemd-product-card[data-props*="\\"variant\\":\\"ecommerce\\""] .wemd-pc-price {
+  color: #ff4d4f;
+}`;
+
+/** product-card minimal 极简杂志（图片在上，无阴影） */
+export const productCardMinimalCss = `/* === product-card 极简杂志 === */
+#wemd .wemd-product-card[data-props*="\\"variant\\":\\"minimal\\""] {
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: none;
+  border: 1px solid #ececf0;
+  padding: 0;
+  overflow: hidden;
+}
+#wemd .wemd-product-card[data-props*="\\"variant\\":\\"minimal\\""] .wemd-pc-image img {
+  border-radius: 0;
+  max-height: 260px;
+  margin-bottom: 0;
+}
+#wemd .wemd-product-card[data-props*="\\"variant\\":\\"minimal\\""] .wemd-pc-header,
+#wemd .wemd-product-card[data-props*="\\"variant\\":\\"minimal\\""] .wemd-pc-description,
+#wemd .wemd-product-card[data-props*="\\"variant\\":\\"minimal\\""] .wemd-pc-price-row,
+#wemd .wemd-product-card[data-props*="\\"variant\\":\\"minimal\\""] .wemd-pc-meta-row,
+#wemd .wemd-product-card[data-props*="\\"variant\\":\\"minimal\\""] .wemd-pc-tags {
+  padding: 0 18px;
+}
+#wemd .wemd-product-card[data-props*="\\"variant\\":\\"minimal\\""] .wemd-pc-header {
+  margin-top: 18px;
+}
+#wemd .wemd-product-card[data-props*="\\"variant\\":\\"minimal\\""] .wemd-pc-button {
+  border-radius: 6px;
+  background: #0f172a;
+  margin: 18px;
+  color: #fff;
+}
+#wemd .wemd-product-card[data-props*="\\"variant\\":\\"minimal\\""] .wemd-pc-tags {
+  padding-bottom: 18px;
+  margin-top: 10px;
+}`;
+
+/** product-card promo 促销强调（大价格+大红标签） */
+export const productCardPromoCss = `/* === product-card 促销强调 === */
+#wemd .wemd-product-card[data-props*="\\"variant\\":\\"promo\\""] {
+  background: linear-gradient(135deg, #fff8f0 0%, #fff 100%);
+  border-radius: 18px;
+  border: 1.5px dashed #ff9f43;
+  box-shadow: 0 6px 24px rgba(255, 122, 69, 0.12);
+  position: relative;
+}
+#wemd .wemd-product-card[data-props*="\\"variant\\":\\"promo\\""]::before {
+  content: "限时";
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: #ff4d4f;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+  letter-spacing: 2px;
+}
+#wemd .wemd-product-card[data-props*="\\"variant\\":\\"promo\\""] .wemd-pc-badge {
+  background: #ff9f43;
+}
+#wemd .wemd-product-card[data-props*="\\"variant\\":\\"promo\\""] .wemd-pc-price {
+  font-size: 32px;
+  color: #ff4d4f;
+}
+#wemd .wemd-product-card[data-props*="\\"variant\\":\\"promo\\""] .wemd-pc-original s {
+  font-size: 16px;
+  color: #ff7a45;
+}
+#wemd .wemd-product-card[data-props*="\\"variant\\":\\"promo\\""] .wemd-pc-button {
+  background: linear-gradient(135deg, #ff4d4f, #ff7a45);
+  border-radius: 999px;
+  box-shadow: 0 6px 16px rgba(255, 77, 79, 0.32);
+}`;
+
+// ============================================================
+// brand-sign 变体（3 个）
+// ============================================================
+
+/** brand-sign inline 水平一行（段落间插入） */
+export const brandSignInlineCss = `/* === brand-sign inline === */
+#wemd .wemd-brand-sign[data-props*="\\"variant\\":\\"inline\\""] {
+  margin: 20px 0;
+}
+#wemd .wemd-brand-sign[data-props*="\\"variant\\":\\"inline\\""] .wemd-bs-wrapper {
+  flex-direction: row;
+  justify-content: flex-start;
+  padding: 12px 0;
+}
+#wemd .wemd-brand-sign[data-props*="\\"variant\\":\\"inline\\""] .wemd-bs-logo img {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+}
+#wemd .wemd-brand-sign[data-props*="\\"variant\\":\\"inline\\""] .wemd-bs-brand-name {
+  font-size: 15px;
+  letter-spacing: 0.3px;
+}
+#wemd .wemd-brand-sign[data-props*="\\"variant\\":\\"inline\\""] .wemd-bs-slogan {
+  margin-left: auto;
+  font-size: 12px;
+}`;
+
+/** brand-sign stacked 纵向堆叠（文末品牌签名） */
+export const brandSignStackedCss = `/* === brand-sign stacked === */
+#wemd .wemd-brand-sign[data-props*="\\"variant\\":\\"stacked\\""] {
+  margin: 40px 0 20px;
+}
+#wemd .wemd-brand-sign[data-props*="\\"variant\\":\\"stacked\\""] .wemd-bs-wrapper {
+  flex-direction: column;
+  text-align: center;
+  padding: 26px 20px;
+  border: 1px solid var(--wemd-border-soft, #e8ebe8);
+  border-radius: 14px;
+  background: linear-gradient(180deg, var(--wemd-bg-card, #fff), var(--wemd-bg-soft, #f7f8fa));
+}
+#wemd .wemd-brand-sign[data-props*="\\"variant\\":\\"stacked\\""] .wemd-bs-logo img {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  margin-bottom: 10px;
+}
+#wemd .wemd-brand-sign[data-props*="\\"variant\\":\\"stacked\\""] .wemd-bs-brand-name {
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+#wemd .wemd-brand-sign[data-props*="\\"variant\\":\\"stacked\\""] .wemd-bs-slogan {
+  font-size: 14px;
+  color: var(--wemd-primary, #07c160);
+  font-weight: 500;
+  margin-bottom: 14px;
+}
+#wemd .wemd-brand-sign[data-props*="\\"variant\\":\\"stacked\\""] .wemd-bs-subtext {
+  padding-top: 14px;
+  margin-top: 4px;
+  border-top: 1px dashed var(--wemd-border-soft, #e8ebe8);
+}`;
+
+/** brand-sign signature 手写签名感（斜体+装饰线） */
+export const brandSignSignatureCss = `/* === brand-sign signature === */
+#wemd .wemd-brand-sign[data-props*="\\"variant\\":\\"signature\\""] {
+  margin: 32px 0 20px;
+}
+#wemd .wemd-brand-sign[data-props*="\\"variant\\":\\"signature\\""] .wemd-bs-wrapper {
+  flex-direction: column;
+  text-align: right;
+  padding: 10px 6px;
+  border: none;
+  background: transparent;
+  position: relative;
+}
+#wemd .wemd-brand-sign[data-props*="\\"variant\\":\\"signature\\""] .wemd-bs-wrapper::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--wemd-primary, #07c160), transparent);
+  border-radius: 2px;
+}
+#wemd .wemd-brand-sign[data-props*="\\"variant\\":\\"signature\\""] .wemd-bs-logo img {
+  display: none;
+}
+#wemd .wemd-brand-sign[data-props*="\\"variant\\":\\"signature\\""] .wemd-bs-brand-name {
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-size: 20px;
+  color: var(--wemd-text-strong, #0f172a);
+  padding-right: 14px;
+}
+#wemd .wemd-brand-sign[data-props*="\\"variant\\":\\"signature\\""] .wemd-bs-slogan {
+  padding-right: 14px;
+  font-style: italic;
+  font-size: 13px;
+  color: var(--wemd-text-soft, #64748b);
+}`;
+
+// ============================================================
+// resource-list 变体（3 个）
+// ============================================================
+
+/** resource-list files 资料包风格 */
+export const resourceListFilesCss = `/* === resource-list files === */
+#wemd .wemd-resource-list[data-props*="\\"variant\\":\\"files\\""] {
+  background: var(--wemd-bg-soft, #f7f8fa);
+}
+#wemd .wemd-resource-list[data-props*="\\"variant\\":\\"files\\""] .wemd-rl-item {
+  background: #fff;
+  border: 1px solid var(--wemd-border-soft, #e8ebe8);
+  transition: border-color 0.2s ease;
+}
+#wemd .wemd-resource-list[data-props*="\\"variant\\":\\"files\\""] .wemd-rl-tag {
+  background: var(--wemd-primary, #07c160);
+}`;
+
+/** resource-list steps 步骤流程风格（大号序号） */
+export const resourceListStepsCss = `/* === resource-list steps 步骤风 === */
+#wemd .wemd-resource-list[data-props*="\\"variant\\":\\"steps\\""] {
+  background: transparent;
+  padding: 8px 0;
+}
+#wemd .wemd-resource-list[data-props*="\\"variant\\":\\"steps\\""] .wemd-rl-title {
+  padding: 0 20px;
+  color: var(--wemd-primary, #07c160);
+}
+#wemd .wemd-resource-list[data-props*="\\"variant\\":\\"steps\\""] .wemd-rl-subtitle {
+  padding: 0 20px;
+}
+#wemd .wemd-resource-list[data-props*="\\"variant\\":\\"steps\\""] .wemd-rl-items {
+  gap: 0;
+  margin-top: 12px;
+  padding-left: 36px;
+  position: relative;
+}
+#wemd .wemd-resource-list[data-props*="\\"variant\\":\\"steps\\""] .wemd-rl-items::before {
+  content: "";
+  position: absolute;
+  left: 15px;
+  top: 16px;
+  bottom: 16px;
+  width: 2px;
+  background: linear-gradient(180deg, var(--wemd-primary, #07c160), #dcf3e6);
+}
+#wemd .wemd-resource-list[data-props*="\\"variant\\":\\"steps\\""] .wemd-rl-item {
+  background: var(--wemd-bg-card, #fff);
+  border-radius: 12px;
+  border: 1px solid var(--wemd-border-soft, #e8ebe8);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  margin-bottom: 14px;
+}
+#wemd .wemd-resource-list[data-props*="\\"variant\\":\\"steps\\""] .wemd-rl-idx {
+  width: 40px;
+  height: 40px;
+  font-size: 16px;
+  background: var(--wemd-primary, #07c160);
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(7, 193, 96, 0.25);
+}
+#wemd .wemd-resource-list[data-props*="\\"variant\\":\\"steps\\""] .wemd-rl-tag {
+  display: none;
+}`;
+
+/** resource-list minimal 极简参考书目（无图标、细线分隔） */
+export const resourceListMinimalCss = `/* === resource-list minimal 极简 === */
+#wemd .wemd-resource-list[data-props*="\\"variant\\":\\"minimal\\""] {
+  background: transparent;
+  padding: 0;
+}
+#wemd .wemd-resource-list[data-props*="\\"variant\\":\\"minimal\\""] .wemd-rl-title {
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--wemd-text-soft, #64748b);
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--wemd-border-soft, #e8ebe8);
+}
+#wemd .wemd-resource-list[data-props*="\\"variant\\":\\"minimal\\""] .wemd-rl-subtitle {
+  display: none;
+}
+#wemd .wemd-resource-list[data-props*="\\"variant\\":\\"minimal\\""] .wemd-rl-items {
+  gap: 0;
+}
+#wemd .wemd-resource-list[data-props*="\\"variant\\":\\"minimal\\""] .wemd-rl-item {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--wemd-border-soft, #e8ebe8);
+  border-radius: 0;
+  padding: 12px 4px;
+}
+#wemd .wemd-resource-list[data-props*="\\"variant\\":\\"minimal\\""] .wemd-rl-icon,
+#wemd .wemd-resource-list[data-props*="\\"variant\\":\\"minimal\\""] .wemd-rl-idx {
+  display: none;
+}
+#wemd .wemd-resource-list[data-props*="\\"variant\\":\\"minimal\\""] .wemd-rl-item-title {
+  font-size: 14.5px;
+  font-weight: 500;
+}
+#wemd .wemd-resource-list[data-props*="\\"variant\\":\\"minimal\\""] .wemd-rl-tag {
+  display: none;
+}`;
+
+// ============================================================
+// testimonial-card 变体（3 个）
+// ============================================================
+
+/** testimonial-card classic 经典名言（大号引号装饰） */
+export const testimonialClassicCss = `/* === testimonial-card classic === */
+#wemd .wemd-testimonial-card[data-props*="\\"variant\\":\\"classic\\""] {
+  background: linear-gradient(135deg, #fff, var(--wemd-bg-soft, #f7f8fa));
+}
+#wemd .wemd-testimonial-card[data-props*="\\"variant\\":\\"classic\\""]::before {
+  font-size: 64px;
+  color: var(--wemd-primary-light, #d4f4e1);
+}
+#wemd .wemd-testimonial-card[data-props*="\\"variant\\":\\"classic\\""] .wemd-tc-quote {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.8;
+  color: var(--wemd-text-strong, #0f172a);
+  padding-top: 12px;
+}
+#wemd .wemd-testimonial-card[data-props*="\\"variant\\":\\"classic\\""] .wemd-tc-person {
+  padding-left: 36px;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+#wemd .wemd-testimonial-card[data-props*="\\"variant\\":\\"classic\\""] .wemd-tc-avatar img {
+  border: 3px solid var(--wemd-primary-light, #d4f4e1);
+}`;
+
+/** testimonial-card casual 轻量种草（左头像右正文） */
+export const testimonialCasualCss = `/* === testimonial-card casual 种草 === */
+#wemd .wemd-testimonial-card[data-props*="\\"variant\\":\\"casual\\""] {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.04);
+}
+#wemd .wemd-testimonial-card[data-props*="\\"variant\\":\\"casual\\""]::before {
+  display: none;
+}
+#wemd .wemd-testimonial-card[data-props*="\\"variant\\":\\"casual\\""] .wemd-tc-person {
+  padding-left: 0;
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--wemd-border-soft, #e8ebe8);
+  align-items: center;
+}
+#wemd .wemd-testimonial-card[data-props*="\\"variant\\":\\"casual\\""] .wemd-tc-quote {
+  padding: 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--wemd-text-normal, #334155);
+  line-height: 1.8;
+}
+#wemd .wemd-testimonial-card[data-props*="\\"variant\\":\\"casual\\""] .wemd-tc-source {
+  padding-left: 0;
+}
+#wemd .wemd-testimonial-card[data-props*="\\"variant\\":\\"casual\\""] .wemd-tc-company-logo img {
+  margin-left: 0;
+}`;
+
+/** testimonial-card featured 重点背书（居中+公司Logo一排） */
+export const testimonialFeaturedCss = `/* === testimonial-card featured 重点背书 === */
+#wemd .wemd-testimonial-card[data-props*="\\"variant\\":\\"featured\\""] {
+  background: linear-gradient(135deg, var(--wemd-primary, #07c160), var(--wemd-primary-dark, #0a8f4a));
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 36px 28px;
+}
+#wemd .wemd-testimonial-card[data-props*="\\"variant\\":\\"featured\\""]::before {
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 72px;
+  top: 12px;
+  left: 24px;
+}
+#wemd .wemd-testimonial-card[data-props*="\\"variant\\":\\"featured\\""] .wemd-tc-quote {
+  color: #fff;
+  font-size: 19px;
+  font-weight: 700;
+  text-align: center;
+  padding: 14px 6px 12px;
+}
+#wemd .wemd-testimonial-card[data-props*="\\"variant\\":\\"featured\\""] .wemd-tc-source {
+  color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  padding: 0 0 18px;
+}
+#wemd .wemd-testimonial-card[data-props*="\\"variant\\":\\"featured\\""] .wemd-tc-person {
+  flex-direction: column;
+  text-align: center;
+  padding-left: 0;
+  gap: 6px;
+}
+#wemd .wemd-testimonial-card[data-props*="\\"variant\\":\\"featured\\""] .wemd-tc-avatar img {
+  width: 64px;
+  height: 64px;
+  border: 3px solid rgba(255, 255, 255, 0.4);
+}
+#wemd .wemd-testimonial-card[data-props*="\\"variant\\":\\"featured\\""] .wemd-tc-name {
+  color: #fff;
+  margin-top: 6px;
+}
+#wemd .wemd-testimonial-card[data-props*="\\"variant\\":\\"featured\\""] .wemd-tc-title {
+  color: rgba(255, 255, 255, 0.85);
+}
+#wemd .wemd-testimonial-card[data-props*="\\"variant\\":\\"featured\\""] .wemd-tc-company {
+  color: rgba(255, 255, 255, 0.85);
+}
+#wemd .wemd-testimonial-card[data-props*="\\"variant\\":\\"featured\\""] .wemd-tc-company-logo {
+  text-align: center;
+  padding-top: 22px;
+  margin-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+}
+#wemd .wemd-testimonial-card[data-props*="\\"variant\\":\\"featured\\""] .wemd-tc-company-logo img {
+  margin: 0 auto;
+  filter: brightness(0) invert(1);
+}`;
+
+// ============================================================
+// series-nav 变体（3 个）
+// ============================================================
+
+/** series-nav progress 进度条风（紧凑，不展开列表） */
+export const seriesProgressCss = `/* === series-nav progress === */
+#wemd .wemd-series-nav[data-props*="\\"variant\\":\\"progress\\""] .wemd-sn-articles {
+  display: none;
+}
+#wemd .wemd-series-nav[data-props*="\\"variant\\":\\"progress\\""] {
+  padding: 16px 20px;
+  border-radius: 12px;
+  background: var(--wemd-bg-soft, #f7f8fa);
+}
+#wemd .wemd-series-nav[data-props*="\\"variant\\":\\"progress\\""] .wemd-sn-name {
+  font-size: 15px;
+}
+#wemd .wemd-series-nav[data-props*="\\"variant\\":\\"progress\\""] .wemd-sn-desc {
+  display: none;
+}
+#wemd .wemd-series-nav[data-props*="\\"variant\\":\\"progress\\""] .wemd-sn-nav {
+  margin-bottom: 0;
+}`;
+
+/** series-nav toc 目录风（展开所有文章） */
+export const seriesTocCss = `/* === series-nav toc 目录风 === */
+#wemd .wemd-series-nav[data-props*="\\"variant\\":\\"toc\\""] {
+  background: #fff;
+  border: 1px solid var(--wemd-border, #e2e8f0);
+  border-radius: 16px;
+}
+#wemd .wemd-series-nav[data-props*="\\"variant\\":\\"toc\\""] .wemd-sn-header {
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px dashed var(--wemd-border-soft, #e8ebe8);
+}
+#wemd .wemd-series-nav[data-props*="\\"variant\\":\\"toc\\""] .wemd-sn-name {
+  font-size: 20px;
+}
+#wemd .wemd-series-nav[data-props*="\\"variant\\":\\"toc\\""] .wemd-sn-progress-bar {
+  display: none;
+}
+#wemd .wemd-series-nav[data-props*="\\"variant\\":\\"toc\\""] .wemd-sn-nav {
+  display: none;
+}
+#wemd .wemd-series-nav[data-props*="\\"variant\\":\\"toc\\""] .wemd-sn-articles {
+  gap: 8px;
+  background: transparent;
+  padding: 0;
+}
+#wemd .wemd-series-nav[data-props*="\\"variant\\":\\"toc\\""] .wemd-sn-item {
+  padding: 10px 12px;
+  border-radius: 10px;
+}
+#wemd .wemd-series-nav[data-props*="\\"variant\\":\\"toc\\""] .wemd-sn-item.current {
+  background: linear-gradient(90deg, var(--wemd-primary-light, #e7f8ef), transparent);
+}`;
+
+/** series-nav breadcrumb 面包屑风（一行紧凑） */
+export const seriesBreadcrumbCss = `/* === series-nav breadcrumb === */
+#wemd .wemd-series-nav[data-props*="\\"variant\\":\\"breadcrumb\\""] {
+  padding: 10px 16px;
+  margin: 20px 0;
+  border-radius: 999px;
+  background: var(--wemd-bg-soft, #f7f8fa);
+  box-shadow: none;
+}
+#wemd .wemd-series-nav[data-props*="\\"variant\\":\\"breadcrumb\\""] .wemd-sn-desc,
+#wemd .wemd-series-nav[data-props*="\\"variant\\":\\"breadcrumb\\""] .wemd-sn-progress-bar,
+#wemd .wemd-series-nav[data-props*="\\"variant\\":\\"breadcrumb\\""] .wemd-sn-articles {
+  display: none;
+}
+#wemd .wemd-series-nav[data-props*="\\"variant\\":\\"breadcrumb\\""] .wemd-sn-header {
+  margin-bottom: 0;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 16px;
+}
+#wemd .wemd-series-nav[data-props*="\\"variant\\":\\"breadcrumb\\""] .wemd-sn-name {
+  font-size: 14px;
+  font-weight: 600;
+}
+#wemd .wemd-series-nav[data-props*="\\"variant\\":\\"breadcrumb\\""] .wemd-sn-name small {
+  display: none;
+}
+#wemd .wemd-series-nav[data-props*="\\"variant\\":\\"breadcrumb\\""] .wemd-sn-nav {
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 0;
+  vertical-align: middle;
+  width: calc(100% - 260px);
+}
+#wemd .wemd-series-nav[data-props*="\\"variant\\":\\"breadcrumb\\""] .wemd-sn-prev,
+#wemd .wemd-series-nav[data-props*="\\"variant\\":\\"breadcrumb\\""] .wemd-sn-next {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  background: transparent;
+  border: none;
+}
+#wemd .wemd-series-nav[data-props*="\\"variant\\":\\"breadcrumb\\""] .wemd-sn-next {
+  justify-content: flex-end;
+}
+#wemd .wemd-series-nav[data-props*="\\"variant\\":\\"breadcrumb\\""] .wemd-sn-prev-label,
+#wemd .wemd-series-nav[data-props*="\\"variant\\":\\"breadcrumb\\""] .wemd-sn-next-label {
+  display: none;
+}
+#wemd .wemd-series-nav[data-props*="\\"variant\\":\\"breadcrumb\\""] .wemd-sn-prev::before {
+  content: "‹";
+  font-size: 20px;
+  color: var(--wemd-text-soft, #64748b);
+  font-weight: 700;
+}
+#wemd .wemd-series-nav[data-props*="\\"variant\\":\\"breadcrumb\\""] .wemd-sn-next::after {
+  content: "›";
+  font-size: 20px;
+  color: var(--wemd-text-soft, #64748b);
+  font-weight: 700;
+  order: 2;
+}
+#wemd .wemd-series-nav[data-props*="\\"variant\\":\\"breadcrumb\\""] .wemd-sn-empty {
+  opacity: 0.5;
+  padding: 0;
+  min-height: 0;
+}`;
+
 export const VARIANT_CSS_MAP: Record<string, Record<string, string>> = {
   "share-card": {
     warm: shareCardWarmCss,
@@ -488,5 +1043,30 @@ export const VARIANT_CSS_MAP: Record<string, Record<string, string>> = {
     centered: endCardCenteredCss,
     minimal: endCardMinimalCss,
     warm: endCardWarmCss,
+  },
+  "product-card": {
+    ecommerce: productCardEcommerceCss,
+    minimal: productCardMinimalCss,
+    promo: productCardPromoCss,
+  },
+  "brand-sign": {
+    inline: brandSignInlineCss,
+    stacked: brandSignStackedCss,
+    signature: brandSignSignatureCss,
+  },
+  "resource-list": {
+    files: resourceListFilesCss,
+    steps: resourceListStepsCss,
+    minimal: resourceListMinimalCss,
+  },
+  "testimonial-card": {
+    classic: testimonialClassicCss,
+    casual: testimonialCasualCss,
+    featured: testimonialFeaturedCss,
+  },
+  "series-nav": {
+    progress: seriesProgressCss,
+    toc: seriesTocCss,
+    breadcrumb: seriesBreadcrumbCss,
   },
 };

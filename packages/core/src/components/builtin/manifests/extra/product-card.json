@@ -1,0 +1,15 @@
+{
+  "type": "product-card",
+  "variant": "extra",
+  "version": "1.0.0",
+  "label": "产品卡片",
+  "description": "电商/带货向的商品展示卡，包含价格、评分、标签和购买按钮",
+  "author": "wemd",
+  "category": "CTA",
+  "semantic": "Product",
+  "intent": "conversion",
+  "tags": ["商品", "电商", "带货"],
+  "tone": ["commercial", "playful", "professional"],
+  "articleCategories": ["review", "tutorial"],
+  "insertPosition": ["body", "ending"]
+}

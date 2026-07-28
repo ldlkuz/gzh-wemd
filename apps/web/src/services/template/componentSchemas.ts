@@ -217,6 +217,110 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
       subtitle: "感谢阅读 · 期待下次相遇",
     },
   },
+  // === 新增扩展组件（产品/品牌/资料/推荐/系列） ===
+  {
+    component: "product-card",
+    description:
+      "产品/商品卡片（电商/带货向）：图片 + 标题 + 描述 + 价格/原价折扣 + 评分⭐ + 购买按钮 + 标签",
+    propsExample: { variant: "ecommerce" },
+    example: {
+      image: "https://example.com/product.jpg",
+      title: "星空投影灯 Pro",
+      subtitle: "居家氛围感神器",
+      description: "360° 全景星空投影，支持蓝牙音箱二合一，卧室露营两用品",
+      price: "¥399",
+      originalPrice: "¥599",
+      badge: "限时 限时特惠",
+      rating: 4.8,
+      sales: "已售 1.2w",
+      stock: "仅剩 50 件",
+      buttonText: "立即抢购",
+      tags: ["顺丰包邮", "七天无理由", "品牌直发"],
+    },
+  },
+  {
+    component: "brand-sign",
+    description: "品牌签名 Logo 小标：品牌 Logo + 品牌名 + Slogan + 小装饰",
+    propsExample: { variant: "inline" },
+    example: {
+      logo: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+      brandName: "WeMD",
+      slogan: "优雅排版，不止所见",
+      subText: "© 2026 WeMD Team",
+      style: "inline",
+      divider: true,
+    },
+  },
+  {
+    component: "resource-list",
+    description:
+      "资料清单/步骤清单：非文章目录，用于资料下载列表、操作N步法、参考书目等外部列表",
+    propsExample: { variant: "files" },
+    example: {
+      title: "配套资料包",
+      subtitle: "关注公众号后台回复「vue」即可下载」即可获取",
+      numbered: false,
+      layout: "comfortable",
+      items: [
+        {
+          type: "file",
+          title: "01-Vue3 入门讲义 PDF",
+          description: "120 页完整讲义",
+          meta: "PDF / 12MB",
+          tag: "推荐",
+          url: "https://example.com/01.pdf",
+        },
+        {
+          type: "file",
+          title: "02-配套源码压缩包",
+          description: "12 个章节逐节对应的项目工程",
+          meta: "ZIP / 38MB",
+          url: "https://example.com/02.zip",
+        },
+        {
+          type: "link",
+          title: "03-在线视频课程",
+          description: "B站同步视频讲解",
+          meta: "免费 / 24 节",
+          url: "https://example.com/03",
+        },
+      ],
+    },
+  },
+  {
+    component: "testimonial-card",
+    description:
+      "名人名言/客户推荐卡：头像 + 人名 + 职位 + 公司 + 名言正文 + 来源 + 公司 Logo 可选",
+    propsExample: { variant: "classic" },
+    example: {
+      avatar: "https://example.com/avatar.jpg",
+      name: "史蒂夫·乔布斯",
+      title: "联合创始人",
+      company: "Apple Inc.",
+      quote: "Stay hungry, stay foolish. 求知若饥，虚心若愚。",
+      source: "2005 年斯坦福大学毕业演讲",
+    },
+  },
+  {
+    component: "series-nav",
+    description:
+      "系列文章导航：系列名 + 当前第 N 篇/共 X 篇 + 上一篇/下一篇 + 文章列表或进度条",
+    propsExample: { variant: "progress" },
+    example: {
+      seriesName: "Vue3 从 0 到 1",
+      currentIndex: 3,
+      totalCount: 10,
+      description: "本系列 10 篇，带你系统掌握 Vue3 组合式 API 实战",
+      articles: [
+        { index: 1, title: "初识 Vue3：与 Vue2 的核心区别" },
+        { index: 2, title: "Setup 语法糖的正确姿势" },
+        { index: 3, title: "Ref 和 Reactive：到底怎么选？", current: true },
+        { index: 4, title: "计算属性与侦听器的妙用", current: false },
+      ],
+      prevArticle: { index: 2, title: "Setup 语法糖的正确姿势" },
+      nextArticle: { index: 4, title: "计算属性与侦听器的妙用" },
+    },
+  },
 ];
 
 /** 按组件名获取 schema */
@@ -249,4 +353,10 @@ export const AI_GENERATABLE_COMPONENTS = [
   "full-quote",
   "two-column-cards",
   "end-card",
+  // 新增扩展组件
+  "product-card",
+  "brand-sign",
+  "resource-list",
+  "testimonial-card",
+  "series-nav",
 ];

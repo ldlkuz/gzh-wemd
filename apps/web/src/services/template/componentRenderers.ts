@@ -26,6 +26,12 @@ import type {
   FullQuoteContent,
   TwoColumnCardsContent,
   EndCardContent,
+  ProductCardContent,
+  BrandSignContent,
+  ResourceListContent,
+  TestimonialCardContent,
+  SeriesNavContent,
+  ResourceItem,
 } from "./types";
 
 /**
@@ -193,6 +199,12 @@ export const componentRenderers: Record<string, ComponentRenderer> = {
   "full-quote": renderFullQuote,
   "two-column-cards": renderTwoColumnCards,
   "end-card": renderEndCard,
+  // 新增扩展组件渲染器
+  "product-card": renderProductCard,
+  "brand-sign": renderBrandSign,
+  "resource-list": renderResourceList,
+  "testimonial-card": renderTestimonialCard,
+  "series-nav": renderSeriesNav,
 };
 
 /**
@@ -271,4 +283,167 @@ function renderEndCard(content: EndCardContent): string {
     lines.push(content.subtitle);
   }
   return lines.join("\n\n");
+}
+
+/* === 新增扩展组件渲染器 === */
+
+/**
+ * product-card 产品/商品卡片
+ * Markdown 结构（段落方式，magazineRenderer 会按顺序取每段）：
+ *   段1: ![产品图](image URL)                <- 可选，缺则跳过
+ *   段2: 🛒<badge>  **title**  subtitle      <- badge 和标题行
+ *   段3: description                         <- 详细描述（可选）
+ *   段4: price  ~~originalPrice~~            <- 价格 + 删除线原价
+ *   段5: ⭐rating  sales  stock              <- 评分、销量、库存
+ *   段6: 【按钮】buttonText                   <- 按钮
+ *   段7: 标签1  标签2  标签3                 <- tags 用 空格分隔
+ */
+function renderProductCard(content: ProductCardContent): string {
+  const lines: string[] = [];
+  if (content.image) lines.push(`![product](${content.image})`);
+
+  const titleParts: string[] = [];
+  if (content.badge) titleParts.push(`【${content.badge}】`);
+  titleParts.push(`**${content.title}**`);
+  if (content.subtitle) titleParts.push(content.subtitle);
+  lines.push(titleParts.join(" "));
+
+  if (content.description) lines.push(content.description);
+
+  const priceParts: string[] = [];
+  priceParts.push(`💰 ${content.price}`);
+  if (content.originalPrice) priceParts.push(`~~${content.originalPrice}~~`);
+  lines.push(priceParts.join("  "));
+
+  const metaParts: string[] = [];
+  if (typeof content.rating === "number") {
+    const full = Math.round(content.rating);
+    const stars = "⭐".repeat(full) + "☆".repeat(Math.max(0, 5 - full));
+    metaParts.push(`${stars} ${content.rating.toFixed(1)}`);
+  }
+  if (content.sales) metaParts.push(`📦 ${content.sales}`);
+  if (content.stock) metaParts.push(`🔥 ${content.stock}`);
+  if (metaParts.length) lines.push(metaParts.join("   "));
+
+  lines.push(`【${content.buttonText || "立即购买"}】`);
+
+  if (content.tags && content.tags.length) {
+    lines.push(content.tags.map((t) => `#${t}`).join("  "));
+  }
+
+  return lines.join("\n\n");
+}
+
+/**
+ * brand-sign 品牌签名 Logo 小标
+ * 结构：
+ *   段1: ![logo](logo URL)        <- 可选
+ *   段2: **brandName**            <- 品牌名
+ *   段3: slogan                   <- slogan 可选
+ *   段4: style | divider          <- style=inline/stacked/centered, divider=true/false 空格分隔
+ *   段5: subText                  <- 小字版权可选
+ */
+function renderBrandSign(content: BrandSignContent): string {
+  const lines: string[] = [];
+  if (content.logo) lines.push(`![brand-logo](${content.logo})`);
+  lines.push(`**${content.brandName}**`);
+  if (content.slogan) lines.push(content.slogan);
+  const meta: string[] = [];
+  if (content.style) meta.push(`style=${content.style}`);
+  if (content.divider) meta.push("divider=true");
+  if (meta.length) lines.push(meta.join(" "));
+  if (content.subText) lines.push(`*${content.subText}*`);
+  return lines.join("\n\n");
+}
+
+/**
+ * resource-list 资料清单 / 步骤清单
+ * 结构：
+ *   段1: **title**                <- 标题
+ *   段2: subtitle                 <- 副标题 可选
+ *   段3: numbered=N  layout=X     <- 元信息
+ *   其后每个列表项一行 "- [type|index] title  | description | meta | tag | url"
+ *     用列表方式，magazineRenderer 会解析每个 li
+ */
+function renderResourceList(content: ResourceListContent): string {
+  const lines: string[] = [];
+  lines.push(`**${content.title}**`);
+  if (content.subtitle) lines.push(content.subtitle);
+  const meta: string[] = [];
+  meta.push(content.numbered ? "numbered=true" : "numbered=false");
+  meta.push(`layout=${content.layout || "comfortable"}`);
+  lines.push(meta.join(" "));
+
+  lines.push("");
+  (content.items || []).forEach((item: ResourceItem, idx) => {
+    const tokens: string[] = [];
+    const type = item.type || "link";
+    const index = typeof item.index === "number" ? item.index : idx + 1;
+    tokens.push(`[${type}|${index}]`);
+    tokens.push(item.title);
+    if (item.description) tokens.push(`|D=${item.description}`);
+    if (item.meta) tokens.push(`|M=${item.meta}`);
+    if (item.tag) tokens.push(`|T=${item.tag}`);
+    if (item.url) tokens.push(`|U=${item.url}`);
+    lines.push(`- ${tokens.join(" ")}`);
+  });
+  return lines.join("\n");
+}
+
+/**
+ * testimonial-card 名人名言 / 客户推荐
+ * 结构：
+ *   段1: ![avatar](avatar)        <- 头像 可选
+ *   段2: quote                    <- 名言正文（加粗）
+ *   段3: "source"                 <- 来源（引用样式）可选
+ *   段4: **name**  title          <- 人名 + 职位
+ *   段5: company                  <- 公司 可选
+ *   段6: ![company-logo](...)     <- 公司 logo 可选
+ */
+function renderTestimonialCard(content: TestimonialCardContent): string {
+  const lines: string[] = [];
+  if (content.avatar) lines.push(`![avatar](${content.avatar})`);
+  lines.push(`> **${content.quote}**`);
+  if (content.source) lines.push(`> —— ${content.source}`);
+  const nameLine: string[] = [];
+  nameLine.push(`**${content.name}**`);
+  if (content.title) nameLine.push(content.title);
+  lines.push(nameLine.join("  "));
+  if (content.company) lines.push(content.company);
+  if (content.companyLogo) lines.push(`![brand](${content.companyLogo})`);
+  return lines.join("\n\n");
+}
+
+/**
+ * series-nav 系列文章导航
+ * 结构：
+ *   段1: 📚 seriesName  (3/10)   <- 系列名 + 进度
+ *   段2: description              <- 系列简介 可选
+ *   段3: PREV  第2篇  Setup 语法糖...   <- prev 篇，可选（第1篇没有）
+ *   段4: NEXT  第4篇  计算属性...        <- next 篇，可选（最后篇没有）
+ *   其后每个列表项一行 "- [1|current] 标题  | url"
+ */
+function renderSeriesNav(content: SeriesNavContent): string {
+  const lines: string[] = [];
+  lines.push(
+    `📚 **${content.seriesName}**  (第 ${content.currentIndex} / ${content.totalCount} 篇)`,
+  );
+  if (content.description) lines.push(content.description);
+  if (content.prevArticle) {
+    lines.push(
+      `⬅️ 上一篇：**第${content.prevArticle.index}篇** — ${content.prevArticle.title}`,
+    );
+  }
+  if (content.nextArticle) {
+    lines.push(
+      `➡️ 下一篇：**第${content.nextArticle.index}篇** — ${content.nextArticle.title}`,
+    );
+  }
+  lines.push("");
+  (content.articles || []).forEach((a) => {
+    const flag = a.current ? "[CURRENT]" : `[${a.index}]`;
+    const urlPart = a.url ? `  |U=${a.url}` : "";
+    lines.push(`- ${flag} ${a.title}${urlPart}`);
+  });
+  return lines.join("\n");
 }

@@ -206,6 +206,84 @@ export interface EndCardContent {
   subtitle?: string;
 }
 
+/** === 新增组件（SDK 扩展包：产品/品牌/资料/推荐/系列） === */
+
+/** product-card 产品/商品卡片 */
+export interface ProductCardContent {
+  image?: string;
+  title: string;
+  subtitle?: string;
+  description?: string;
+  price: string;
+  originalPrice?: string;
+  badge?: string;
+  rating?: number;
+  sales?: string;
+  stock?: string;
+  buttonText?: string;
+  tags?: string[];
+}
+
+/** brand-sign 品牌签名 Logo 小标 */
+export interface BrandSignContent {
+  logo?: string;
+  brandName: string;
+  slogan?: string;
+  subText?: string;
+  style?: "inline" | "stacked" | "centered";
+  divider?: boolean;
+}
+
+/** resource-list 资料清单 / 步骤清单 */
+export type ResourceItemType = "file" | "link" | "video" | "step";
+
+export interface ResourceItem {
+  type?: ResourceItemType;
+  index?: number;
+  title: string;
+  description?: string;
+  meta?: string;
+  url?: string;
+  tag?: string;
+}
+
+export interface ResourceListContent {
+  title: string;
+  subtitle?: string;
+  items: ResourceItem[];
+  numbered?: boolean;
+  layout?: "compact" | "comfortable";
+}
+
+/** testimonial-card 名人名言/客户推荐 */
+export interface TestimonialCardContent {
+  avatar?: string;
+  name: string;
+  title?: string;
+  company?: string;
+  companyLogo?: string;
+  quote: string;
+  source?: string;
+}
+
+/** series-nav 系列文章导航 */
+export interface SeriesArticleItem {
+  index: number;
+  title: string;
+  url?: string;
+  current?: boolean;
+}
+
+export interface SeriesNavContent {
+  seriesName: string;
+  currentIndex: number;
+  totalCount: number;
+  description?: string;
+  articles: SeriesArticleItem[];
+  prevArticle?: SeriesArticleItem;
+  nextArticle?: SeriesArticleItem;
+}
+
 /** Renderer 输出结果 */
 export interface RenderResult {
   /** 渲染后的组件 Markdown（含 ::: 语法） */

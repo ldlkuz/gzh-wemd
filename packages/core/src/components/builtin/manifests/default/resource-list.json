@@ -1,0 +1,15 @@
+{
+  "type": "resource-list",
+  "variant": "default",
+  "version": "1.0.0",
+  "label": "资料清单",
+  "description": "外部资料下载清单或结构化步骤清单（非文章目录 TOC）",
+  "author": "wemd",
+  "category": "List",
+  "semantic": "List",
+  "intent": "share",
+  "tags": ["资料", "下载", "步骤", "清单"],
+  "tone": ["professional", "minimal"],
+  "articleCategories": ["tutorial", "essay"],
+  "insertPosition": ["body", "ending"]
+}

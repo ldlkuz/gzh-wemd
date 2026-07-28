@@ -71,6 +71,46 @@ function resolveVariant(
     return "centered";
   }
 
+  if (component === "product-card") {
+    if (design.tone === "bold" || design.emphasis === "high") return "promo";
+    if (design.tone === "minimal" || design.spacing === "compact")
+      return "minimal";
+    return "ecommerce";
+  }
+
+  if (component === "brand-sign") {
+    if (
+      design.layout === "stacked" ||
+      design.emphasis === "high" ||
+      design.tone === "playful"
+    )
+      return "stacked";
+    if (design.tone === "warm" || design.tone === "minimal") return "signature";
+    return "inline";
+  }
+
+  if (component === "resource-list") {
+    if (design.layout === "stacked" || design.tone === "professional")
+      return "steps";
+    if (design.tone === "minimal" || design.spacing === "compact")
+      return "minimal";
+    return "files";
+  }
+
+  if (component === "testimonial-card") {
+    if (design.emphasis === "high" || design.tone === "bold") return "featured";
+    if (design.tone === "warm" || design.layout === "left") return "casual";
+    return "classic";
+  }
+
+  if (component === "series-nav") {
+    if (design.emphasis === "high" || design.tone === "professional")
+      return "toc";
+    if (design.spacing === "compact" || design.emphasis === "low")
+      return "breadcrumb";
+    return "progress";
+  }
+
   // 其他组件目前无 variant，日后扩展
   return null;
 }
@@ -232,6 +272,42 @@ const DEFAULT_DESIGN: Record<string, DesignIntent> = {
     purpose: "emphasis",
     emphasis: "medium",
     layout: "left",
+    tone: "professional",
+    spacing: "normal",
+  },
+  // === 新增扩展组件默认设计意图 ===
+  "product-card": {
+    purpose: "emphasis",
+    emphasis: "high",
+    layout: "stacked",
+    tone: "bold",
+    spacing: "normal",
+  },
+  "brand-sign": {
+    purpose: "decoration",
+    emphasis: "low",
+    layout: "inline",
+    tone: "professional",
+    spacing: "compact",
+  },
+  "resource-list": {
+    purpose: "summary",
+    emphasis: "medium",
+    layout: "stacked",
+    tone: "professional",
+    spacing: "normal",
+  },
+  "testimonial-card": {
+    purpose: "emphasis",
+    emphasis: "high",
+    layout: "left",
+    tone: "warm",
+    spacing: "normal",
+  },
+  "series-nav": {
+    purpose: "transition",
+    emphasis: "medium",
+    layout: "stacked",
     tone: "professional",
     spacing: "normal",
   },

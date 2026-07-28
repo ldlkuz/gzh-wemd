@@ -1,0 +1,15 @@
+{
+  "type": "series-nav",
+  "variant": "extra",
+  "version": "1.0.0",
+  "label": "系列导航",
+  "description": "系列文章进度与上下篇导航（区别于 related-posts 相关推荐）",
+  "author": "wemd",
+  "category": "Navigation",
+  "semantic": "Series",
+  "intent": "share",
+  "tags": ["系列", "导航", "上下篇", "进度"],
+  "tone": ["minimal", "professional"],
+  "articleCategories": ["tutorial"],
+  "insertPosition": ["header", "ending"]
+}

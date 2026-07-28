@@ -1,0 +1,15 @@
+{
+  "type": "testimonial-card",
+  "variant": "default",
+  "version": "1.0.0",
+  "label": "名人推荐",
+  "description": "名人名言 / 客户推荐卡，头像 + 人名 + 公司 + 正文 + 来源",
+  "author": "wemd",
+  "category": "Evidence",
+  "semantic": "Testimonial",
+  "intent": "share",
+  "tags": ["名言", "推荐", "背书", "KOL"],
+  "tone": ["professional", "warm", "elegant"],
+  "articleCategories": ["essay", "tutorial"],
+  "insertPosition": ["body", "opening"]
+}
