@@ -43,7 +43,7 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
 
 /* 左上角引号水印（primary 色，弱化装饰） */
 #wemd .wemd-quote-card::before {
-  content: """;
+  content: "\u201C";
   position: absolute;
   top: -8px;
   left: 12px;

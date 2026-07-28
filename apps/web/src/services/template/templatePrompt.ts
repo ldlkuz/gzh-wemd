@@ -10,6 +10,8 @@ import {
 } from "../ai/designPatterns";
 import { COMPONENT_CONTENT_SCHEMAS } from "./componentSchemas";
 import type { LayoutPreference } from "@wemd/core";
+import type { DesignConstraints } from "../ai/analysisAgent";
+import type { Audience } from "../ai/analysisAgent";
 
 /**
  * 构建 Template JSON 生成的系统 prompt
@@ -18,6 +20,8 @@ export function buildTemplatePrompt(
   totalParagraphs: number,
   articleTypeHint?: string,
   themeLayout?: LayoutPreference,
+  audience?: Audience,
+  constraints?: DesignConstraints,
 ): string {
   const patternList = PATTERN_LABELS.map(
     (p) =>
@@ -27,6 +31,44 @@ export function buildTemplatePrompt(
   // Phase 3: 主题约束
   const themeHint = themeLayout
     ? `\n\n## 主题约束（当前使用的品牌规范）\n- 风格基调：${themeLayout.tone.join("、")}\n- 排版密度：${themeLayout.density}\n- 杂志化等级：${themeLayout.magazineLevel}\n- 主题偏好的组件：${themeLayout.preferredComponents.join("、")}\n\n注意：优先选择主题偏好的组件，杂志化等级应匹配主题设定。`
+    : "";
+
+  // 读者画像提示
+  const audienceLabelMap: Record<string, string> = {
+    general: "普通读者",
+    developer: "程序员/技术人",
+    manager: "管理者/决策者",
+    beginner: "小白/初学者",
+  };
+  const audienceHint = audience
+    ? `\n\n## 读者画像\n- 目标读者：${audienceLabelMap[audience.type] || audience.type}\n- 语言风格要求：${
+        audience.type === "developer"
+          ? "可以使用技术术语，逻辑严谨，数据驱动"
+          : audience.type === "manager"
+            ? "结论先行，重点突出，关注价值和收益"
+            : audience.type === "beginner"
+              ? "避免专业术语，多用比喻和通俗解释，循序渐进"
+              : "平实易懂，兼顾深度和可读性"
+      }\n- 排版风格：${
+        audience.type === "developer"
+          ? "结构化强，多用列表、代码块、对比表格"
+          : audience.type === "manager"
+            ? "重点突出，多用 callout-pro 标记关键结论，stats-block 展示数据"
+            : audience.type === "beginner"
+              ? "视觉引导强，多用 quote-card 标记要点，避免信息密度过高"
+              : "平衡视觉和阅读，自然排版"
+      }`
+    : "";
+
+  // 排版丰富度约束
+  const complexityHint = constraints
+    ? `\n\n## 排版丰富度约束\n- 丰富度等级：${constraints.complexity}（${constraints.complexity === "high" ? "杂志级排版，全方位视觉增强" : constraints.complexity === "medium" ? "适度点缀，平衡阅读与视觉" : "简洁为主，最少组件，突出正文"}）\n- 最大组件数：${constraints.maxComponents}\n- 组件密度要求：${
+        constraints.complexity === "high"
+          ? "每 1-2 段穿插 1 个组件，page-break 分隔章节"
+          : constraints.complexity === "medium"
+            ? "每 3-5 段穿插 1 个组件，适度点缀"
+            : "全文仅 2-4 个关键组件，尽量用纯 article-section"
+      }\n- 注意：丰富度约束覆盖主题默认设置，优先以用户选择的丰富度为准。`
     : "";
 
   // 构建各类型杂志化等级说明
@@ -60,6 +102,8 @@ export function buildTemplatePrompt(
   return [
     "你是一个资深公众号版式设计师。你的任务是阅读用户的文章，生成一份 Template JSON，用于将文章排版为杂志级公众号样式。",
     themeHint,
+    audienceHint,
+    complexityHint,
     "## 工作流程",
     "",
     "1. 识别文章类型（从下面 7 种中选一个，或 unknown）",
@@ -128,6 +172,34 @@ export function buildTemplatePrompt(
     "## 可用组件及 content 结构",
     "",
     componentSchemasText,
+    "",
+    "## 组件 variant（视觉变体）",
+    "",
+    "以下组件支持 variant 属性，用于切换同一组件的不同视觉风格。根据文章类型和杂志化等级选择合适的 variant：",
+    "",
+    "- hero-banner（头图横幅）:",
+    "  · center - 居中渐变背景（默认，适合大多数场景）",
+    "  · left - 左对齐深色背景+左侧色条（适合严肃/商务/科技感）",
+    "  · minimal - 极简边框无背景（适合 low 级、资讯通知）",
+    "- callout-pro（提示框）:",
+    "  · border - 左侧色条+白底卡片（默认，适合大多数场景）",
+    "  · bg - 全底色块无边框（适合 high 级/杂志排版）",
+    "  · minimal - 极简纯文字+图标（适合 low 级/简洁风格）",
+    "- section-divider（章节分隔）:",
+    "  · line - 细线分隔（默认，适合大多数场景）",
+    "  · dots - 圆点装饰（适合杂志/温馨风格）",
+    "  · bold - 粗色块背景（适合 high 级/强烈分隔）",
+    "- end-card（结尾致谢）:",
+    "  · centered - 居中 Thanks（默认，适合大多数场景）",
+    "  · minimal - 极简收尾仅细线（适合 low 级）",
+    "  · warm - 暖色调背景（适合故事/温馨风格）",
+    "",
+    "variant 选择原则：",
+    "1. high 级杂志排版优先选 bold/dots/bg/warm 等视觉更强的 variant",
+    "2. medium 级保持默认 center/border/line/centered",
+    "3. low 级优先选 minimal",
+    "4. 读者画像影响 variant：开发者偏好 left/border，管理者偏好 bg/bold，小白偏好 center/warm",
+    '5. variant 写在各 layout node 的 props 中，如 {"component":"hero-banner","props":{"variant":"left"},"content":{...}}',
     "",
     "## 输出要求（Template JSON 规范）",
     "",

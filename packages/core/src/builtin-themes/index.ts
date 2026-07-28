@@ -37,6 +37,7 @@ const themeDefault: ThemeDefinition = {
       textNormal: "#242a26",
       textSoft: "#606b64",
       border: "#e4e9e6",
+      borderSoft: "#f0f3f1",
     },
     typography: {
       fontFamily:
@@ -132,6 +133,7 @@ const themeDataBlueprint: ThemeDefinition = {
       textNormal: "#334155",
       textSoft: "#475569",
       border: "#c7d9ec",
+      borderSoft: "#e3eff7",
     },
     typography: {
       fontFamily:
@@ -219,6 +221,7 @@ const themeEasternNotes: ThemeDefinition = {
       textNormal: "#5a4a3a",
       textSoft: "#6b5b4a",
       border: "#e5d5b8",
+      borderSoft: "#f0e6d4",
     },
     typography: {
       fontFamily:
@@ -302,6 +305,7 @@ const themeClearGuide: ThemeDefinition = {
       textNormal: "#374151",
       textSoft: "#6b7280",
       border: "#d1e7d9",
+      borderSoft: "#e8f5ee",
     },
     typography: {
       fontFamily:
@@ -389,6 +393,7 @@ const themeWhitespaceGallery: ThemeDefinition = {
       textNormal: "#4b5563",
       textSoft: "#9ca3af",
       border: "#e5e7eb",
+      borderSoft: "#f3f4f6",
     },
     typography: {
       fontFamily:
@@ -471,6 +476,7 @@ const themeAcademicPaper: ThemeDefinition = {
       textNormal: "#333333",
       textSoft: "#666666",
       border: "#dddddd",
+      borderSoft: "#eeeeee",
     },
     typography: {
       fontFamily:
@@ -552,6 +558,7 @@ const themeKnowledgeBase: ThemeDefinition = {
       textNormal: "#444d56",
       textSoft: "#6a737d",
       border: "#e1e4e8",
+      borderSoft: "#f0f3f6",
     },
     typography: {
       fontFamily:
@@ -633,6 +640,7 @@ const themeLuxuryGold: ThemeDefinition = {
       textNormal: "#d4d4cc",
       textSoft: "#a0a090",
       border: "#333333",
+      borderSoft: "#4a4a4a",
     },
     typography: {
       fontFamily:
@@ -720,6 +728,7 @@ const themeMorandiForest: ThemeDefinition = {
       textNormal: "#5a5a5a",
       textSoft: "#8a8a8a",
       border: "#ddd8d0",
+      borderSoft: "#ece8e2",
     },
     typography: {
       fontFamily:
@@ -806,6 +815,7 @@ const themeModernEditorial: ThemeDefinition = {
       textNormal: "#2d3436",
       textSoft: "#636e72",
       border: "#dfe6e9",
+      borderSoft: "#eef3f5",
     },
     typography: {
       fontFamily: '"Noto Serif SC", "Georgia", "STSong", "PingFang SC", serif',
@@ -895,6 +905,7 @@ const themeReceipt: ThemeDefinition = {
       textNormal: "#4a4a4a",
       textSoft: "#888888",
       border: "#d5d0c8",
+      borderSoft: "#e8e4de",
     },
     typography: {
       fontFamily: '"Courier New", "Source Code Pro", "PingFang SC", monospace',
@@ -976,6 +987,7 @@ const themeSunsetFilm: ThemeDefinition = {
       textNormal: "#5d4037",
       textSoft: "#8d6e63",
       border: "#e0c8b0",
+      borderSoft: "#efe0d0",
     },
     typography: {
       fontFamily:

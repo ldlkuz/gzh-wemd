@@ -17,6 +17,7 @@ import { getParagraphCount } from "./contentExtractor";
 import { AI_GENERATABLE_COMPONENTS } from "./componentSchemas";
 
 import type { MagazineLevel } from "./types";
+import type { Audience, DesignConstraints } from "../ai/analysisAgent";
 
 /** AI 生成的原始响应结构 */
 interface AiTemplateResponse {
@@ -210,6 +211,8 @@ export async function generateTemplate(
   markdown: string,
   articleTypeHint?: string,
   themeLayout?: import("@wemd/core").LayoutPreference,
+  audience?: Audience,
+  constraints?: DesignConstraints,
 ): Promise<TemplateGenerationResult> {
   const totalParagraphs = getParagraphCount(markdown);
 
@@ -242,6 +245,8 @@ export async function generateTemplate(
     totalParagraphs,
     articleTypeHint,
     themeLayout,
+    audience,
+    constraints,
   );
   const aiContent = await callLLM(systemPrompt, markdown, 0.6);
 

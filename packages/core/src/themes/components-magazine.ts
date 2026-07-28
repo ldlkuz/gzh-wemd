@@ -147,7 +147,7 @@ export const componentStylesMagazine = `/* === magazine-cover 杂志封面卡片
   box-sizing: border-box;
   line-height: 1.8;
   font-size: 15px;
-  color: var(--wemd-text, #333333);
+  color: var(--wemd-text-normal, #333333);
 }
 
 #wemd .wemd-text-card p {

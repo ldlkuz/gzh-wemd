@@ -3,7 +3,6 @@ import mermaid from "mermaid";
 import { createMarkdownParser, processHtml } from "@wemd/core";
 import { useEditorStore } from "../../store/editorStore";
 import { useThemeStore } from "../../store/themeStore";
-import { useUITheme } from "../../hooks/useUITheme";
 import { hasMathFormula, renderMathInElement } from "../../utils/katexRenderer";
 import { convertLinksToFootnotes } from "../../utils/linkFootnote";
 import {
@@ -57,7 +56,6 @@ const collectAnchors = (
 export function MarkdownPreview({ onScrollSyncReady }: MarkdownPreviewProps) {
   const { markdown } = useEditorStore();
   const { themeId: theme, customCSS, getThemeCSS } = useThemeStore();
-  const uiTheme = useUITheme((state) => state.theme);
   const [html, setHtml] = useState("");
   const [linkToFootnoteEnabled, setLinkToFootnoteEnabledState] = useState(() =>
     getPublishingPreference("linkToFootnote"),
@@ -89,28 +87,22 @@ export function MarkdownPreview({ onScrollSyncReady }: MarkdownPreviewProps) {
     [showMacBar],
   );
 
+  // 预览 CSS：始终亮色模式（微信/公众号只支持亮色，暗色切换不应影响内容预览）
+  const previewCss = useMemo(() => {
+    return getThemeCSS(theme, false);
+  }, [theme, getThemeCSS]);
+
   useEffect(() => {
     const rawHtml = parser.render(markdown);
     const previewHtml = linkToFootnoteEnabled
       ? convertLinksToFootnotes(rawHtml)
       : rawHtml;
 
-    // 使用 store 中的 getThemeCSS 方法，根据 UI 主题决定是否追加深色模式覆盖
-    const isDarkMode = uiTheme === "dark";
-    const css = getThemeCSS(theme, isDarkMode);
     // 预览模式不使用内联样式，直接注入 style 标签，大幅降低内存占用
-    const styledHtml = processHtml(previewHtml, css, false);
+    const styledHtml = processHtml(previewHtml, previewCss, false);
 
     setHtml(styledHtml);
-  }, [
-    markdown,
-    theme,
-    customCSS,
-    getThemeCSS,
-    parser,
-    uiTheme,
-    linkToFootnoteEnabled,
-  ]);
+  }, [markdown, theme, customCSS, previewCss, parser, linkToFootnoteEnabled]);
 
   // KaTeX 渲染：轻量级、快速，解决内存问题
   // MathJax 仅在复制到微信时使用
@@ -286,7 +278,7 @@ export function MarkdownPreview({ onScrollSyncReady }: MarkdownPreviewProps) {
         <div className="preview-content">
           <style
             dangerouslySetInnerHTML={{
-              __html: getThemeCSS(theme, uiTheme === "dark"),
+              __html: previewCss,
             }}
           />
           <div ref={previewRef} dangerouslySetInnerHTML={{ __html: html }} />

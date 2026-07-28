@@ -25,7 +25,13 @@ export const findNextVarStart = (value: string, startIndex: number): number => {
     }
 
     if (quote) {
-      if (char === quote) quote = null;
+      if (char === quote) {
+        quote = null;
+      }
+      // CSS 字符串不能跨行/跨规则块，遇到 ; 或 } 时强制闭合引号
+      else if (char === ";" || char === "}") {
+        quote = null;
+      }
       continue;
     }
 

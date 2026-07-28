@@ -20,6 +20,7 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
   {
     component: "hero-banner",
     description: "顶部头图 banner，展示标题和副标题",
+    propsExample: { variant: "center" },
     example: {
       title: "文章主标题",
       subtitle: "副标题或摘要",
@@ -61,7 +62,7 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
   {
     component: "callout-pro",
     description: "提示/警告/信息框，用于突出重要内容",
-    propsExample: { type: "tip" },
+    propsExample: { type: "tip", variant: "border" },
     example: {
       title: "提示标题",
       body: "提示内容说明",
@@ -169,6 +170,7 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
   {
     component: "section-divider",
     description: "章节分隔标题，PART 编号 + 中文标题，居中显示",
+    propsExample: { variant: "line" },
     example: {
       part: "PART 01",
       title: "夏日故事",
@@ -209,6 +211,7 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
   {
     component: "end-card",
     description: "结尾致谢卡片，居中 Thanks 样式",
+    propsExample: { variant: "centered" },
     example: {
       title: "Thanks",
       subtitle: "感谢阅读 · 期待下次相遇",

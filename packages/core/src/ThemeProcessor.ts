@@ -105,10 +105,12 @@ const BLOCK_TAGS = [
  */
 const inlineAllStylesManually = (html: string, css: string): string => {
   const rules: Array<{ selector: string; styles: string }> = [];
+  // 剥离 CSS 注释，避免注释文本被误认为是选择器的一部分
+  const cleanCss = css.replace(/\/\*[\s\S]*?\*\//g, "");
   const ruleRegex = /([^{}]+)\{([^{}]*)\}/g;
   let match: RegExpExecArray | null;
 
-  while ((match = ruleRegex.exec(css)) !== null) {
+  while ((match = ruleRegex.exec(cleanCss)) !== null) {
     const selector = match[1].trim();
     const body = match[2].trim();
 
@@ -226,13 +228,18 @@ export const processHtml = (
     },
   );
 
-  let processedHtml = addTocNumbers(html);
+  let processedHtml = html;
   processedHtml = addChildPositionClasses(processedHtml);
   const wrappedHtml = `<section id="${SECTION_ID}">${processedHtml}</section>`;
 
   if (!inlineStyles) {
     return wrappedHtml;
   }
+
+  // 微信导出：添加 toc 序号（微信不支持 ::before 伪元素和 counter 计数器）
+  // 预览模式用 CSS counter，不走这里，避免双重编号
+  processedHtml = addTocNumbers(processedHtml);
+  const inlineWrappedHtml = `<section id="${SECTION_ID}">${processedHtml}</section>`;
 
   // 展开 CSS 变量：把 var(--wemd-*, fallback) 替换成 fallback 值
   // juice 无法解析 CSS 自定义属性，带 var() 的属性会被跳过不内联
@@ -251,7 +258,7 @@ export const processHtml = (
   // 使用手动 CSS 内联器，完全替代 juice
   // juice 浏览器版本存在严重 bug（slick/parser 返回 undefined 导致崩溃），
   // 且即使剥离伪元素规则也无法避免。手动内联器更稳定可靠。
-  let res = inlineAllStylesManually(wrappedHtml, resolvedCss);
+  let res = inlineAllStylesManually(inlineWrappedHtml, resolvedCss);
 
   // 为代码块追加关键内联样式
   if (inlinePseudoElements) {

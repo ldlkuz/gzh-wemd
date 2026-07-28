@@ -2,6 +2,7 @@ export * from "./MarkdownParser";
 export * from "./ThemeProcessor";
 export * from "./themes";
 export { renderTheme } from "./theme-renderer/index";
+export { getVariantCss } from "./components/index";
 export {
   builtInThemeDefinitions,
   getBuiltInThemeDefinition,

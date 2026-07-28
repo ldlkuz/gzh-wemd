@@ -42,6 +42,7 @@ export function renderTokenCss(tokens: DesignTokens): string {
     `  --wemd-text-soft: ${color.textSoft};`,
     `  /* 边框 */`,
     `  --wemd-border: ${color.border};`,
+    `  --wemd-border-soft: ${color.borderSoft};`,
     `  /* 全局排版 */`,
     `  --wemd-page-padding: ${spacing.pagePadding}px;`,
     `  --wemd-font-size: ${typography.fontSize};`,

@@ -39,9 +39,9 @@ interface ToolbarProps {
   onInsert: (prefix: string, suffix: string, placeholder: string) => void;
   onOpenAi?: () => void;
   aiLoading?: boolean;
-  /** 打开 AI 设计面板（统一入口：组件插入 + 杂志排版） */
+  /** 打开 AI 杂志排版面板 */
   onOpenAiDesign?: () => void;
-  /** AI 设计加载中 */
+  /** AI 排版加载中 */
   aiDesignLoading?: boolean;
 }
 
@@ -472,24 +472,20 @@ export function Toolbar({
         </button>
       )}
 
-      {/* AI 设计（统一入口：组件插入 + 杂志排版） */}
+      {/* AI 杂志排版 */}
       {onOpenAiDesign && (
         <button
           className="md-toolbar-btn md-toolbar-ai-btn md-toolbar-ai-layout-btn"
           onClick={onOpenAiDesign}
           disabled={aiDesignLoading}
-          data-tooltip={
-            aiDesignLoading
-              ? "AI 正在设计..."
-              : "AI 设计（智能组件插入 + 杂志级排版）"
-          }
+          data-tooltip={aiDesignLoading ? "AI 正在设计..." : "AI 杂志排版"}
         >
           {aiDesignLoading ? (
             <Loader2 size={14} className="spinning" />
           ) : (
             <>
               <Workflow size={14} />
-              <span className="md-toolbar-ai-text">AI 设计</span>
+              <span className="md-toolbar-ai-text">AI 排版</span>
             </>
           )}
         </button>

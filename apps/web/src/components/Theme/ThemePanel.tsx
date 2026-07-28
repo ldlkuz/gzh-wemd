@@ -405,6 +405,7 @@ export function ThemePanel({ open, onClose }: ThemePanelProps) {
   const isVisualEditing =
     (isCreating && editorMode === "visual") ||
     (!isCreating && isCustomTheme && selectedTheme?.editorMode === "visual");
+
   const previewCss = isVisualEditing ? visualCss || cssInput : cssInput;
   const canSave = Boolean(
     nameInput.trim() &&

@@ -123,8 +123,7 @@ export function renderCalloutPro(content: CalloutProContent): string {
 }
 
 export function renderShareCard(content: ShareCardContent): string {
-  const text = content.text || "如果这篇文章对你有帮助";
-  return `${text}\n\n- **分享**\n- **点赞**\n- **在看**`;
+  return content.text || "如果这篇文章对你有帮助";
 }
 
 export function renderFollowBar(content: FollowBarContent): string {

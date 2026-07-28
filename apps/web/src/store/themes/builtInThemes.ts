@@ -29,6 +29,7 @@ import {
   componentStylesMagazine,
   getThemeVars,
   globalDefaultVars,
+  getVariantCss,
 } from "@wemd/core";
 
 // 从 ThemeDesigner 导入共享类型（解决类型重复定义问题）
@@ -98,6 +99,7 @@ function buildThemeCss(
     componentStylesExtra,
     componentStylesFaq,
     componentStylesMagazine,
+    getVariantCss(), // 组件 variant CSS
   ]
     .filter(Boolean)
     .join("\n");

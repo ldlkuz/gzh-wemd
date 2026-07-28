@@ -6,11 +6,7 @@ import {
   type DesignerVariables,
   type ThemeDefinition,
 } from "./themes/builtInThemes";
-import {
-  convertCssToWeChatDarkMode,
-  renderTheme,
-  getBuiltInThemeDefinition,
-} from "@wemd/core";
+import { convertCssToWeChatDarkMode, renderTheme } from "@wemd/core";
 import { generateCSS } from "../components/Theme/ThemeDesigner/generateCSS";
 
 // 深色模式 CSS 转换缓存
@@ -214,23 +210,17 @@ export const useThemeStore = create<ThemeStore>((set, get) => ({
     const state = get();
     let css: string;
 
-    // Phase 2: 优先查找 ThemeDefinition（新格式），走 renderTheme 渲染管线
-    const builtInDef = getBuiltInThemeDefinition(themeId);
-    if (builtInDef) {
-      css = renderTheme(builtInDef);
+    // 内置主题：优先用 buildThemeCss 产出的 CSS（手写管线，与主题预览框一致）
+    const builtIn = builtInThemes.find((t) => t.id === themeId);
+    if (builtIn?.css) {
+      css = builtIn.css;
     } else {
-      // 回退到旧格式：CSS 字符串
-      const builtIn = builtInThemes.find((t) => t.id === themeId);
-      css = builtIn ? builtIn.css : "";
-
-      if (!css) {
-        const custom = state.customThemes.find((t) => t.id === themeId);
-        // 如果自定义主题有 definition，也走 renderTheme
-        if (custom?.definition) {
-          css = renderTheme(custom.definition);
-        } else {
-          css = custom ? custom.css : builtInThemes[0].css;
-        }
+      // 自定义主题：有 definition 则用 renderTheme，否则用存储的 CSS
+      const custom = state.customThemes.find((t) => t.id === themeId);
+      if (custom?.definition) {
+        css = renderTheme(custom.definition);
+      } else {
+        css = custom?.css || builtInThemes[0]?.css || "";
       }
     }
 

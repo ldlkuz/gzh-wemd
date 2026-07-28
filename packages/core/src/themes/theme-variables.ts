@@ -45,15 +45,20 @@ const defaultVars = `:root {
  * - 颜色取自各主题 CSS 中已使用的主色，保持视觉一致
  */
 const themeVars: Record<string, string> = {
-  // 默认主题（微信绿，与 defaultVars 一致，显式定义以便覆盖）
+  // 默认主题（微信绿）
   default: `#wemd {
   --wemd-primary: #07c160;
   --wemd-primary-dark: #0a8f4a;
   --wemd-primary-light: #d1fae5;
   --wemd-bg-soft: #f7f8fa;
+  --wemd-bg-card: #ffffff;
+  --wemd-bg-muted: #f0fdf4;
+  --wemd-accent: #07c160;
   --wemd-text-strong: #1a1a1a;
+  --wemd-text-normal: #334155;
   --wemd-text-soft: #475569;
   --wemd-border: #e2e8f0;
+  --wemd-border-soft: #f0f0f0;
 }`,
 
   // 数据蓝图（科技蓝）
@@ -62,9 +67,14 @@ const themeVars: Record<string, string> = {
   --wemd-primary-dark: #1e40af;
   --wemd-primary-light: #dbeafe;
   --wemd-bg-soft: #f0f7ff;
+  --wemd-bg-card: #ffffff;
+  --wemd-bg-muted: #eff6ff;
+  --wemd-accent: #2563eb;
   --wemd-text-strong: #1e3a5f;
+  --wemd-text-normal: #334155;
   --wemd-text-soft: #475569;
   --wemd-border: #c7d9ec;
+  --wemd-border-soft: #e8edf3;
 }`,
 
   // 东方笺谱（朱砂红）
@@ -73,9 +83,14 @@ const themeVars: Record<string, string> = {
   --wemd-primary-dark: #8b1a1f;
   --wemd-primary-light: #f5d7d7;
   --wemd-bg-soft: #faf3e8;
+  --wemd-bg-card: #fffbf5;
+  --wemd-bg-muted: #fdf2f2;
+  --wemd-accent: #d4393f;
   --wemd-text-strong: #3a2a1f;
+  --wemd-text-normal: #5a4a3f;
   --wemd-text-soft: #6b5b4a;
   --wemd-border: #e5d5b8;
+  --wemd-border-soft: #ede0cc;
 }`,
 
   // 清晰指南（薄荷绿）
@@ -84,9 +99,14 @@ const themeVars: Record<string, string> = {
   --wemd-primary-dark: #047857;
   --wemd-primary-light: #d1fae5;
   --wemd-bg-soft: #f0fdf4;
+  --wemd-bg-card: #ffffff;
+  --wemd-bg-muted: #ecfdf5;
+  --wemd-accent: #059669;
   --wemd-text-strong: #064e3b;
+  --wemd-text-normal: #374151;
   --wemd-text-soft: #4b5563;
   --wemd-border: #d1d5db;
+  --wemd-border-soft: #e5e7eb;
 }`,
 
   // 留白画册（极简灰）
@@ -95,9 +115,14 @@ const themeVars: Record<string, string> = {
   --wemd-primary-dark: #111827;
   --wemd-primary-light: #e5e7eb;
   --wemd-bg-soft: #fafafa;
+  --wemd-bg-card: #ffffff;
+  --wemd-bg-muted: #f3f4f6;
+  --wemd-accent: #374151;
   --wemd-text-strong: #111827;
+  --wemd-text-normal: #4b5563;
   --wemd-text-soft: #6b7280;
   --wemd-border: #e5e7eb;
+  --wemd-border-soft: #f3f4f6;
 }`,
 
   // 学术论文（深蓝学术）
@@ -106,9 +131,14 @@ const themeVars: Record<string, string> = {
   --wemd-primary-dark: #1e3a8a;
   --wemd-primary-light: #dbeafe;
   --wemd-bg-soft: #f8fafc;
+  --wemd-bg-card: #ffffff;
+  --wemd-bg-muted: #f1f5f9;
+  --wemd-accent: #2563eb;
   --wemd-text-strong: #0f172a;
+  --wemd-text-normal: #334155;
   --wemd-text-soft: #475569;
   --wemd-border: #cbd5e1;
+  --wemd-border-soft: #e2e8f0;
 }`,
 
   // 极光玻璃（青紫渐变）
@@ -117,9 +147,14 @@ const themeVars: Record<string, string> = {
   --wemd-primary-dark: #6d28d9;
   --wemd-primary-light: #ede9fe;
   --wemd-bg-soft: #faf5ff;
+  --wemd-bg-card: #ffffff;
+  --wemd-bg-muted: #f5f3ff;
+  --wemd-accent: #7c3aed;
   --wemd-text-strong: #2e1065;
+  --wemd-text-normal: #475569;
   --wemd-text-soft: #64748b;
   --wemd-border: #ddd6fe;
+  --wemd-border-soft: #ede9fe;
 }`,
 
   // 包豪斯（红黄蓝三原色）
@@ -128,20 +163,30 @@ const themeVars: Record<string, string> = {
   --wemd-primary-dark: #b91c1c;
   --wemd-primary-light: #fee2e2;
   --wemd-bg-soft: #f8f8f8;
+  --wemd-bg-card: #ffffff;
+  --wemd-bg-muted: #fef2f2;
+  --wemd-accent: #dc2626;
   --wemd-text-strong: #1a1a1a;
+  --wemd-text-normal: #404040;
   --wemd-text-soft: #525252;
   --wemd-border: #d4d4d4;
+  --wemd-border-soft: #e5e5e5;
 }`,
 
-  // 赛博朋克（霓虹粉紫）
+  // 赛博朋克（霓虹粉紫 · 深色主题）
   "cyberpunk-neon": `#wemd {
   --wemd-primary: #ec4899;
   --wemd-primary-dark: #be185d;
   --wemd-primary-light: #fce7f3;
   --wemd-bg-soft: #1a0a1f;
+  --wemd-bg-card: #1f0a2e;
+  --wemd-bg-muted: #2d1240;
+  --wemd-accent: #f472b6;
   --wemd-text-strong: #f0abfc;
+  --wemd-text-normal: #e0c0f0;
   --wemd-text-soft: #c084fc;
   --wemd-border: #581c87;
+  --wemd-border-soft: #3d1f5e;
 }`,
 
   // 知识库（沉稳蓝）
@@ -150,20 +195,30 @@ const themeVars: Record<string, string> = {
   --wemd-primary-dark: #1e40af;
   --wemd-primary-light: #dbeafe;
   --wemd-bg-soft: #f1f5f9;
+  --wemd-bg-card: #ffffff;
+  --wemd-bg-muted: #eff6ff;
+  --wemd-accent: #1d4ed8;
   --wemd-text-strong: #0f172a;
+  --wemd-text-normal: #334155;
   --wemd-text-soft: #475569;
   --wemd-border: #e2e8f0;
+  --wemd-border-soft: #e2e8f0;
 }`,
 
-  // 黑金奢华（金色）
+  // 黑金奢华（金色 · 深色主题）
   "luxury-gold": `#wemd {
   --wemd-primary: #d4af37;
   --wemd-primary-dark: #a67c00;
   --wemd-primary-light: #fef3c7;
   --wemd-bg-soft: #1a1a1a;
+  --wemd-bg-card: #252525;
+  --wemd-bg-muted: #2d2d1f;
+  --wemd-accent: #e6c44d;
   --wemd-text-strong: #d4af37;
+  --wemd-text-normal: #c4b998;
   --wemd-text-soft: #a8a29e;
   --wemd-border: #3a3a3a;
+  --wemd-border-soft: #444444;
 }`,
 
   // 莫兰迪森林（雾霾绿）
@@ -172,9 +227,14 @@ const themeVars: Record<string, string> = {
   --wemd-primary-dark: #4a6b5c;
   --wemd-primary-light: #d4e0d8;
   --wemd-bg-soft: #f5f3f0;
+  --wemd-bg-card: #fafaf7;
+  --wemd-bg-muted: #eef0eb;
+  --wemd-accent: #5d7d6e;
   --wemd-text-strong: #3a4a42;
+  --wemd-text-normal: #5a6560;
   --wemd-text-soft: #6b7568;
   --wemd-border: #d4d0c8;
+  --wemd-border-soft: #e2e0d8;
 }`,
 
   // 编辑部手记（复古棕）
@@ -183,9 +243,14 @@ const themeVars: Record<string, string> = {
   --wemd-primary-dark: #78350f;
   --wemd-primary-light: #fef3c7;
   --wemd-bg-soft: #fdf6e3;
+  --wemd-bg-card: #fefcf5;
+  --wemd-bg-muted: #fef9ee;
+  --wemd-accent: #b45309;
   --wemd-text-strong: #1c1917;
+  --wemd-text-normal: #44403c;
   --wemd-text-soft: #57534e;
   --wemd-border: #e7e5e4;
+  --wemd-border-soft: #ede9e3;
 }`,
 
   // 新粗野主义（强对比黑黄）
@@ -194,9 +259,14 @@ const themeVars: Record<string, string> = {
   --wemd-primary-dark: #d97706;
   --wemd-primary-light: #fef3c7;
   --wemd-bg-soft: #ffffff;
+  --wemd-bg-card: #ffffff;
+  --wemd-bg-muted: #fffbeb;
+  --wemd-accent: #f59e0b;
   --wemd-text-strong: #000000;
+  --wemd-text-normal: #333333;
   --wemd-text-soft: #525252;
   --wemd-border: #000000;
+  --wemd-border-soft: #e5e5e5;
 }`,
 
   // 购物小票（极简黑白）
@@ -205,9 +275,14 @@ const themeVars: Record<string, string> = {
   --wemd-primary-dark: #171717;
   --wemd-primary-light: #e5e5e5;
   --wemd-bg-soft: #fafafa;
+  --wemd-bg-card: #ffffff;
+  --wemd-bg-muted: #f5f5f5;
+  --wemd-accent: #525252;
   --wemd-text-strong: #171717;
+  --wemd-text-normal: #404040;
   --wemd-text-soft: #525252;
   --wemd-border: #d4d4d4;
+  --wemd-border-soft: #e5e5e5;
 }`,
 
   // 落日胶片（暖橙）
@@ -216,9 +291,14 @@ const themeVars: Record<string, string> = {
   --wemd-primary-dark: #c2410c;
   --wemd-primary-light: #fed7aa;
   --wemd-bg-soft: #fff7ed;
+  --wemd-bg-card: #fffbf8;
+  --wemd-bg-muted: #fff2e6;
+  --wemd-accent: #f97316;
   --wemd-text-strong: #7c2d12;
+  --wemd-text-normal: #6b3a1f;
   --wemd-text-soft: #78350f;
   --wemd-border: #fde0c4;
+  --wemd-border-soft: #fce4cc;
 }`,
 
   // 主题模板（中性）
@@ -227,9 +307,14 @@ const themeVars: Record<string, string> = {
   --wemd-primary-dark: #4338ca;
   --wemd-primary-light: #e0e7ff;
   --wemd-bg-soft: #f5f5f5;
+  --wemd-bg-card: #ffffff;
+  --wemd-bg-muted: #eef2ff;
+  --wemd-accent: #4f46e5;
   --wemd-text-strong: #1a1a1a;
+  --wemd-text-normal: #374151;
   --wemd-text-soft: #525252;
   --wemd-border: #e5e5e5;
+  --wemd-border-soft: #e8e8e8;
 }`,
 };
 

@@ -65,6 +65,8 @@ export interface ColorTokens {
   textSoft: string;
   /** 边框色 */
   border: string;
+  /** 柔和边框（卡片内分隔等） */
+  borderSoft: string;
 }
 
 export interface TypographyTokens {

@@ -239,8 +239,214 @@ export const dividerFancyDotsCss = `/* === divider-fancy 圆点 === */
 }`;
 
 // ============================================================
-// 变体映射表
+// hero-banner 变体（新增）
 // ============================================================
+
+/** hero-banner 居中渐变（默认风格） */
+export const heroBannerCenterCss = `/* === hero-banner 居中渐变 === */
+#wemd .wemd-hero-banner .wemd-component-body[data-variant="center"] {
+  padding: 40px 32px;
+  text-align: center;
+}`;
+
+/** hero-banner 左对齐 */
+export const heroBannerLeftCss = `/* === hero-banner 左对齐 === */
+#wemd .wemd-hero-banner[data-props*="\\"variant\\":\\"left\\""] {
+  background: var(--wemd-text-strong, #1a1a1a);
+  justify-content: flex-start;
+  border-radius: 0;
+  border-left: 4px solid var(--wemd-primary, #07c160);
+}
+#wemd .wemd-hero-banner .wemd-component-body[data-variant="left"] {
+  padding: 36px 28px;
+  text-align: left;
+}
+#wemd .wemd-hero-banner .wemd-component-body[data-variant="left"] > p:first-child {
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+}
+#wemd .wemd-hero-banner .wemd-component-body[data-variant="left"] > p:nth-child(2) {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+}`;
+
+/** hero-banner 极简 */
+export const heroBannerMinimalCss = `/* === hero-banner 极简 === */
+#wemd .wemd-hero-banner[data-props*="\\"variant\\":\\"minimal\\""] {
+  background: transparent;
+  min-height: auto;
+  border: 2px solid var(--wemd-border, #e2e8f0);
+  border-radius: 8px;
+}
+#wemd .wemd-hero-banner .wemd-component-body[data-variant="minimal"] {
+  padding: 28px 24px;
+  text-align: center;
+}
+#wemd .wemd-hero-banner .wemd-component-body[data-variant="minimal"] > p:first-child {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--wemd-text-strong, #1a1a1a);
+}
+#wemd .wemd-hero-banner .wemd-component-body[data-variant="minimal"] > p:nth-child(2) {
+  font-size: 13px;
+  color: var(--wemd-text-soft, #999999);
+}`;
+
+// ============================================================
+// callout-pro 变体（新增）
+// ============================================================
+
+/** callout-pro 全背景色块 */
+export const calloutProBgCss = `/* === callout-pro 全背景色块 === */
+#wemd .wemd-callout-pro .wemd-component-body[data-variant="bg"] {
+  padding: 0;
+}
+#wemd .wemd-callout-pro[data-props*="\\"variant\\":\\"bg\\""] {
+  border: none;
+  box-shadow: none;
+  border-radius: 8px;
+  padding: 20px 24px;
+}
+#wemd .wemd-callout-pro[data-props*="\\"variant\\":\\"bg\\""]::before {
+  display: none;
+}
+#wemd .wemd-callout-pro[data-props*="\\"variant\\":\\"bg\\"][data-props*="\\"type\\":\\"tip\\""] {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(139, 92, 246, 0.04));
+}
+#wemd .wemd-callout-pro[data-props*="\\"variant\\":\\"bg\\"][data-props*="\\"type\\":\\"info\\""] {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(59, 130, 246, 0.04));
+}
+#wemd .wemd-callout-pro[data-props*="\\"variant\\":\\"bg\\"][data-props*="\\"type\\":\\"warning\\""] {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(245, 158, 11, 0.04));
+}
+#wemd .wemd-callout-pro[data-props*="\\"variant\\":\\"bg\\"][data-props*="\\"type\\":\\"danger\\""] {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(239, 68, 68, 0.04));
+}
+#wemd .wemd-callout-pro[data-props*="\\"variant\\":\\"bg\\""]:not([data-props*="\\"type\\":]) {
+  background: linear-gradient(135deg, var(--wemd-primary-light, #d1fae5), rgba(7, 193, 96, 0.04));
+}`;
+
+/** callout-pro 极简图标 */
+export const calloutProMinimalCss = `/* === callout-pro 极简图标 === */
+#wemd .wemd-callout-pro .wemd-component-body[data-variant="minimal"] {
+  padding: 0;
+}
+#wemd .wemd-callout-pro[data-props*="\\"variant\\":\\"minimal\\""] {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 8px 0;
+  border-radius: 0;
+}
+#wemd .wemd-callout-pro[data-props*="\\"variant\\":\\"minimal\\""]::before {
+  display: none;
+}
+#wemd .wemd-callout-pro .wemd-component-body[data-variant="minimal"] > p:first-child {
+  font-size: 15px;
+  color: var(--wemd-text-strong, #1e293b);
+}`;
+
+// ============================================================
+// section-divider 变体（新增 · 杂志组件）
+// ============================================================
+
+/** section-divider 细线（默认） */
+export const sectionDividerLineCss = `/* === section-divider 细线 === */
+#wemd .wemd-section-divider[data-props*="\\"variant\\":\\"line\\""] {
+  margin: 40px 0 20px 0;
+  text-align: center;
+}`;
+
+/** section-divider 圆点装饰 */
+export const sectionDividerDotsCss = `/* === section-divider 圆点装饰 === */
+#wemd .wemd-section-divider[data-props*="\\"variant\\":\\"dots\\""] {
+  margin: 36px 0 24px 0;
+  text-align: center;
+}
+#wemd .wemd-section-divider[data-props*="\\"variant\\":\\"dots\\""]::before {
+  content: "···";
+  display: block;
+  font-size: 18px;
+  letter-spacing: 6px;
+  color: var(--wemd-primary-light, #d1fae5);
+  margin-bottom: 12px;
+}
+#wemd .wemd-section-divider[data-props*="\\"variant\\":\\"dots\\""] .wemd-sd-part {
+  font-size: 12px;
+  opacity: 0.7;
+}`;
+
+/** section-divider 粗色块 */
+export const sectionDividerBoldCss = `/* === section-divider 粗色块 === */
+#wemd .wemd-section-divider[data-props*="\\"variant\\":\\"bold\\""] {
+  margin: 36px 0 24px 0;
+  text-align: center;
+  padding: 20px 16px;
+  background: linear-gradient(90deg, transparent, var(--wemd-primary-light, #d1fae5), transparent);
+  border-radius: 4px;
+}
+#wemd .wemd-section-divider[data-props*="\\"variant\\":\\"bold\\""] .wemd-sd-part {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--wemd-primary-dark, #0a8f4a);
+}
+#wemd .wemd-section-divider[data-props*="\\"variant\\":\\"bold\\""] .wemd-sd-title {
+  margin-top: 4px;
+  font-size: 24px;
+}`;
+
+// ============================================================
+// end-card 变体（新增 · 杂志组件）
+// ============================================================
+
+/** end-card 居中致谢（默认） */
+export const endCardCenteredCss = `/* === end-card 居中致谢 === */
+#wemd .wemd-end-card[data-props*="\\"variant\\":\\"centered\\""] {
+  margin: 40px 0 20px 0;
+  text-align: center;
+}`;
+
+/** end-card 极简收尾 */
+export const endCardMinimalCss = `/* === end-card 极简收尾 === */
+#wemd .wemd-end-card[data-props*="\\"variant\\":\\"minimal\\""] {
+  margin: 32px 0 16px 0;
+  padding: 20px 0;
+  text-align: center;
+  border-top: 1px solid var(--wemd-border, #e2e8f0);
+}
+#wemd .wemd-end-card[data-props*="\\"variant\\":\\"minimal\\""] .wemd-ec-title {
+  font-size: 15px;
+  color: var(--wemd-text-soft, #999999);
+}
+#wemd .wemd-end-card[data-props*="\\"variant\\":\\"minimal\\""] .wemd-ec-subtitle {
+  font-size: 12px;
+}
+#wemd .wemd-end-card[data-props*="\\"variant\\":\\"minimal\\""] .wemd-ec-deco {
+  display: none;
+}`;
+
+/** end-card 暖色调 */
+export const endCardWarmCss = `/* === end-card 暖色调 === */
+#wemd .wemd-end-card[data-props*="\\"variant\\":\\"warm\\""] {
+  margin: 40px 0 24px 0;
+  padding: 32px 20px;
+  text-align: center;
+  background: linear-gradient(180deg, transparent, rgba(7, 193, 96, 0.06));
+  border-radius: 12px;
+}
+#wemd .wemd-end-card[data-props*="\\"variant\\":\\"warm\\""] .wemd-ec-title {
+  font-size: 20px;
+  color: var(--wemd-primary, #07c160);
+}
+#wemd .wemd-end-card[data-props*="\\"variant\\":\\"warm\\""] .wemd-ec-subtitle {
+  font-size: 14px;
+  color: var(--wemd-text-normal, #666666);
+}
+#wemd .wemd-end-card[data-props*="\\"variant\\":\\"warm\\""] .wemd-ec-deco {
+  font-size: 24px;
+  margin-top: 16px;
+}`;
 
 export const VARIANT_CSS_MAP: Record<string, Record<string, string>> = {
   "share-card": {
@@ -262,5 +468,25 @@ export const VARIANT_CSS_MAP: Record<string, Record<string, string>> = {
     line: dividerFancyLineCss,
     gradient: dividerFancyGradientCss,
     dots: dividerFancyDotsCss,
+  },
+  "hero-banner": {
+    center: heroBannerCenterCss,
+    left: heroBannerLeftCss,
+    minimal: heroBannerMinimalCss,
+  },
+  "callout-pro": {
+    border: "", // 默认样式，无需额外 CSS
+    bg: calloutProBgCss,
+    minimal: calloutProMinimalCss,
+  },
+  "section-divider": {
+    line: sectionDividerLineCss,
+    dots: sectionDividerDotsCss,
+    bold: sectionDividerBoldCss,
+  },
+  "end-card": {
+    centered: endCardCenteredCss,
+    minimal: endCardMinimalCss,
+    warm: endCardWarmCss,
   },
 };
