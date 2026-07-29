@@ -159,6 +159,10 @@ pnpm --filter wemd-electron build:linux
 
 ---
 
+## 致谢
+
+本项目基于 [WeMD](https://github.com/tenngoxars/WeMD) 二次开发，感谢原作者 [@tenngoxars](https://github.com/tenngoxars) 的开源贡献。WeMD 为微信公众号 Markdown 排版提供了优秀的基础框架，GZH-WeMD 在此基础上扩展了 AI 排版引擎、组件系统和主题体系。
+
 ## License
 
 详见 [LICENSE](LICENSE)。
