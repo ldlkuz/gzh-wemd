@@ -148,8 +148,8 @@ export interface LayoutPreference {
   density: "low" | "medium" | "high";
   /** 风格基调 */
   tone: string[];
-  /** 杂志化等级 */
-  magazineLevel: "low" | "medium" | "high";
+  /** @deprecated v2.0 起由 design 字段替代，保留以兼容旧主题 */
+  magazineLevel?: "low" | "medium" | "high";
 }
 
 // ============================================================

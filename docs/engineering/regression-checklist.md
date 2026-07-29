@@ -19,8 +19,8 @@
 ## AI 排版层
 
 - [ ] 纯文本输入能自动转换为 Markdown 再排版
-- [ ] 读者画像参数生效（开发者/管理者/小白各生成一篇对比）
-- [ ] 排版丰富度参数生效（high/medium/low 各生成一篇对比）
+- [ ] 读者画像参数生效（general/quick/deep/learning/decision/brand 各生成一篇对比）
+- [ ] Design Goal 参数生效（reading/balanced/visual/infoDensity 各生成一篇对比）
 - [ ] AI 重新生成时基于原始 Markdown，不是基于已排版内容
 - [ ] 杂志排版模式输出不包含已废弃的组件插入模式元素
 - [ ] AI 排版不硬编码"分享/点赞/在看"（检查 share-card 输出）
@@ -75,11 +75,11 @@
 
 > 方案5 改动范围：types.ts / renderer.ts / templatePrompt.ts / templateAgent.ts
 
-- [ ] 旧模板（v1.x，含 magazineLevel）在新 Renderer 中正常渲染（自动迁移）
+- [ ] 旧模板（v1.x，含 magazineLevel）在新 Renderer 中正常渲染（magazineLevel 已全面废弃，Template v2.0 使用 design 字段替代）
 - [ ] AI 不填 design 字段时，Renderer 自动补全默认值（getDefaultDesign）
 - [ ] AI 不填 reason 字段时，不报错
 - [ ] resolveVariant() 映射到已有 variant 名称，不产生新 variant 名
-- [ ] audience / constraints / themeLayout 参数链路完整（prompt 中有对应注入）
+- [ ] audience / designGoal / themeLayout 参数链路完整（prompt 中有对应注入）
 - [ ] TemplateGenerationResult 的 articleType/magazineLevel 等废弃字段保留（不删，避免调用方报错）
-- [ ] design 字段缺失时 isFullCardMode 逻辑正确迁移到 design.emphasis
+- [ ] design 字段缺失时 emphasis 逻辑正确迁移到 design.emphasis
 - [ ] 同一篇文章改前改后对比，组件选择和内容提取质量无明显退化

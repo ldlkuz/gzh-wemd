@@ -297,6 +297,70 @@ export interface TagLabelContent {
   tags: string[];
 }
 
+/** image-grid 图片画廊 */
+export interface ImageGridContent {
+  title?: string;
+  images: string[];
+}
+
+/** author-card 作者卡片 */
+export interface AuthorCardContent {
+  avatar?: string;
+  name: string;
+  title?: string;
+  bio?: string;
+}
+
+/** timeline 时间线条目 */
+export interface TimelineItem {
+  time?: string;
+  event: string;
+}
+
+/** timeline 时间线 */
+export interface TimelineContent {
+  title?: string;
+  items: TimelineItem[];
+}
+
+/** related-posts 相关推荐 */
+export interface RelatedPost {
+  title: string;
+  url?: string;
+}
+
+export interface RelatedPostsContent {
+  title?: string;
+  posts: RelatedPost[];
+}
+
+/** copyright-notice 版权声明 */
+export interface CopyrightNoticeContent {
+  text?: string;
+  year?: string;
+  author?: string;
+  license?: string;
+}
+
+/** qr-card 二维码卡片 */
+export interface QrCardContent {
+  src?: string;
+  title?: string;
+  description?: string;
+}
+
+/** image-text-row 图文横排 */
+export interface ImageTextRowContent {
+  image?: string;
+  text: string;
+}
+
+/** image-caption 图片说明 */
+export interface ImageCaptionContent {
+  src?: string;
+  caption?: string;
+}
+
 /** Renderer 输出结果 */
 export interface RenderResult {
   /** 渲染后的组件 Markdown（含 ::: 语法） */

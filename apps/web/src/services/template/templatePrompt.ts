@@ -51,7 +51,7 @@ function buildAudienceHint(audience: Audience): string {
 }
 
 /** 构建设计目标约束提示 */
-function buildComplexityHint(constraints: DesignConstraints): string {
+function buildDesignGoalHint(constraints: DesignConstraints): string {
   if (constraints.designGoal === "auto") return "";
 
   const goalDesc =
@@ -132,7 +132,7 @@ export function buildTemplatePrompt(
 ): string {
   const themeHint = themeLayout ? buildThemeHint(themeLayout) : "";
   const audienceHint = audience ? buildAudienceHint(audience) : "";
-  const complexityHint = constraints ? buildComplexityHint(constraints) : "";
+  const designGoalHint = constraints ? buildDesignGoalHint(constraints) : "";
   const componentSchemasText = buildComponentSchemasText();
 
   return [
@@ -140,7 +140,7 @@ export function buildTemplatePrompt(
     "",
     themeHint,
     audienceHint,
-    complexityHint,
+    designGoalHint,
     "",
     "## 工作流程",
     "",

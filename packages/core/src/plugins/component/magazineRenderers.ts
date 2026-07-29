@@ -352,7 +352,7 @@ export const MAGAZINE_RENDERERS: Record<string, (content: string) => string> = {
   "magazine-cover": renderMagazineCover,
   "section-divider": renderSectionDivider,
   "two-column-cards": renderTwoColumnCards,
-  fullQuote: renderFullQuote,
+  "full-quote": renderFullQuote,
   "image-card": renderImageCard,
   "end-card": renderEndCard,
   // 新增扩展组件结构渲染器

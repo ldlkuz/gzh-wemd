@@ -141,54 +141,6 @@ const themeVars: Record<string, string> = {
   --wemd-border-soft: #e2e8f0;
 }`,
 
-  // 极光玻璃（青紫渐变）
-  "aurora-glass": `#wemd {
-  --wemd-primary: #8b5cf6;
-  --wemd-primary-dark: #6d28d9;
-  --wemd-primary-light: #ede9fe;
-  --wemd-bg-soft: #faf5ff;
-  --wemd-bg-card: #ffffff;
-  --wemd-bg-muted: #f5f3ff;
-  --wemd-accent: #7c3aed;
-  --wemd-text-strong: #2e1065;
-  --wemd-text-normal: #475569;
-  --wemd-text-soft: #64748b;
-  --wemd-border: #ddd6fe;
-  --wemd-border-soft: #ede9fe;
-}`,
-
-  // 包豪斯（红黄蓝三原色）
-  bauhaus: `#wemd {
-  --wemd-primary: #e63946;
-  --wemd-primary-dark: #b91c1c;
-  --wemd-primary-light: #fee2e2;
-  --wemd-bg-soft: #f8f8f8;
-  --wemd-bg-card: #ffffff;
-  --wemd-bg-muted: #fef2f2;
-  --wemd-accent: #dc2626;
-  --wemd-text-strong: #1a1a1a;
-  --wemd-text-normal: #404040;
-  --wemd-text-soft: #525252;
-  --wemd-border: #d4d4d4;
-  --wemd-border-soft: #e5e5e5;
-}`,
-
-  // 赛博朋克（霓虹粉紫 · 深色主题）
-  "cyberpunk-neon": `#wemd {
-  --wemd-primary: #ec4899;
-  --wemd-primary-dark: #be185d;
-  --wemd-primary-light: #fce7f3;
-  --wemd-bg-soft: #1a0a1f;
-  --wemd-bg-card: #1f0a2e;
-  --wemd-bg-muted: #2d1240;
-  --wemd-accent: #f472b6;
-  --wemd-text-strong: #f0abfc;
-  --wemd-text-normal: #e0c0f0;
-  --wemd-text-soft: #c084fc;
-  --wemd-border: #581c87;
-  --wemd-border-soft: #3d1f5e;
-}`,
-
   // 知识库（沉稳蓝）
   "knowledge-base": `#wemd {
   --wemd-primary: #2563eb;
@@ -253,22 +205,6 @@ const themeVars: Record<string, string> = {
   --wemd-border-soft: #ede9e3;
 }`,
 
-  // 新粗野主义（强对比黑黄）
-  "neo-brutalism": `#wemd {
-  --wemd-primary: #fbbf24;
-  --wemd-primary-dark: #d97706;
-  --wemd-primary-light: #fef3c7;
-  --wemd-bg-soft: #ffffff;
-  --wemd-bg-card: #ffffff;
-  --wemd-bg-muted: #fffbeb;
-  --wemd-accent: #f59e0b;
-  --wemd-text-strong: #000000;
-  --wemd-text-normal: #333333;
-  --wemd-text-soft: #525252;
-  --wemd-border: #000000;
-  --wemd-border-soft: #e5e5e5;
-}`,
-
   // 购物小票（极简黑白）
   receipt: `#wemd {
   --wemd-primary: #404040;
@@ -299,22 +235,6 @@ const themeVars: Record<string, string> = {
   --wemd-text-soft: #78350f;
   --wemd-border: #fde0c4;
   --wemd-border-soft: #fce4cc;
-}`,
-
-  // 主题模板（中性）
-  template: `#wemd {
-  --wemd-primary: #6366f1;
-  --wemd-primary-dark: #4338ca;
-  --wemd-primary-light: #e0e7ff;
-  --wemd-bg-soft: #f5f5f5;
-  --wemd-bg-card: #ffffff;
-  --wemd-bg-muted: #eef2ff;
-  --wemd-accent: #4f46e5;
-  --wemd-text-strong: #1a1a1a;
-  --wemd-text-normal: #374151;
-  --wemd-text-soft: #525252;
-  --wemd-border: #e5e5e5;
-  --wemd-border-soft: #e8e8e8;
 }`,
 };
 

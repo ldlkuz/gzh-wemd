@@ -210,9 +210,11 @@ export const useThemeStore = create<ThemeStore>((set, get) => ({
     const state = get();
     let css: string;
 
-    // 内置主题：优先用 buildThemeCss 产出的 CSS（手写管线，与主题预览框一致）
+    // 内置主题：有 definition 则走 renderTheme（结构化管线），否则回退 legacy CSS
     const builtIn = builtInThemes.find((t) => t.id === themeId);
-    if (builtIn?.css) {
+    if (builtIn?.definition) {
+      css = renderTheme(builtIn.definition);
+    } else if (builtIn?.css) {
       css = builtIn.css;
     } else {
       // 自定义主题：有 definition 则用 renderTheme，否则用存储的 CSS

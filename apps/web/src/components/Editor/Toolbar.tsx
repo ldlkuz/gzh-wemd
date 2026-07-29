@@ -467,7 +467,7 @@ export function Toolbar({
           {aiLoading ? (
             <Loader2 size={14} className="spinning" />
           ) : (
-            <span className="md-toolbar-ai-text">AI</span>
+            <span className="md-toolbar-ai-text">AI-MD</span>
           )}
         </button>
       )}

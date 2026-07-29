@@ -32,6 +32,16 @@ import type {
   TestimonialCardContent,
   SeriesNavContent,
   ResourceItem,
+  ImageGridContent,
+  AuthorCardContent,
+  TimelineContent,
+  RelatedPostsContent,
+  CopyrightNoticeContent,
+  QrCardContent,
+  ImageTextRowContent,
+  ImageCaptionContent,
+  CtaCardContent,
+  TagLabelContent,
 } from "./types";
 
 /**
@@ -228,6 +238,15 @@ export const componentRenderers: Record<string, ComponentRenderer> = {
   "series-nav": renderSeriesNav,
   "cta-card": renderCtaCard,
   "tag-label": renderTagLabel,
+  // 补充缺失的组件渲染器
+  "image-grid": renderImageGrid,
+  "author-card": renderAuthorCard,
+  timeline: renderTimeline,
+  "related-posts": renderRelatedPosts,
+  "copyright-notice": renderCopyrightNotice,
+  "qr-card": renderQrCard,
+  "image-text-row": renderImageTextRow,
+  "image-caption": renderImageCaption,
 };
 
 /**
@@ -469,4 +488,93 @@ function renderSeriesNav(content: SeriesNavContent): string {
     lines.push(`- ${flag} ${a.title}${urlPart}`);
   });
   return lines.join("\n");
+}
+
+/* === 补充缺失的组件渲染器 === */
+
+/** image-grid 图片画廊 */
+function renderImageGrid(content: ImageGridContent): string {
+  const lines: string[] = [];
+  if (content.title) lines.push(content.title);
+  lines.push("");
+  const images = content.images || [];
+  for (const img of images) {
+    lines.push(`- ![](${img})`);
+  }
+  return lines.join("\n");
+}
+
+/** author-card 作者卡片 */
+function renderAuthorCard(content: AuthorCardContent): string {
+  const lines: string[] = [];
+  if (content.avatar) lines.push(`![](${content.avatar})`);
+  const nameLine: string[] = [`**${content.name || "作者"}**`];
+  if (content.title) nameLine.push(`*${content.title}*`);
+  lines.push(nameLine.join(" "));
+  if (content.bio) lines.push(content.bio);
+  return lines.join("\n\n");
+}
+
+/** timeline 时间线 */
+function renderTimeline(content: TimelineContent): string {
+  const lines: string[] = [];
+  if (content.title) lines.push(content.title);
+  lines.push("");
+  const items = content.items || [];
+  for (const item of items) {
+    lines.push(`- **${item.time || ""}** ${item.event || ""}`);
+  }
+  return lines.join("\n");
+}
+
+/** related-posts 相关推荐 */
+function renderRelatedPosts(content: RelatedPostsContent): string {
+  const lines: string[] = [];
+  if (content.title) lines.push(`**${content.title}**`);
+  lines.push("");
+  const posts = content.posts || [];
+  for (const post of posts) {
+    const link = post.url ? `[${post.title}](${post.url})` : post.title;
+    lines.push(`- ${link}`);
+  }
+  return lines.join("\n");
+}
+
+/** copyright-notice 版权声明 */
+function renderCopyrightNotice(content: CopyrightNoticeContent): string {
+  const lines: string[] = [];
+  if (content.text) {
+    lines.push(content.text);
+  } else {
+    const year = content.year || new Date().getFullYear();
+    const author = content.author || "";
+    lines.push(`© ${year} ${author}`.trim());
+    if (content.license) lines.push(content.license);
+  }
+  return lines.join("\n\n");
+}
+
+/** qr-card 二维码卡片 */
+function renderQrCard(content: QrCardContent): string {
+  const lines: string[] = [];
+  if (content.src) lines.push(`![](${content.src})`);
+  if (content.title) lines.push(`**${content.title}**`);
+  if (content.description) lines.push(content.description);
+  return lines.join("\n\n");
+}
+
+/** image-text-row 图文横排 */
+function renderImageTextRow(content: ImageTextRowContent): string {
+  const lines: string[] = [];
+  if (content.image) lines.push(`![](${content.image})`);
+  if (content.text) lines.push(content.text);
+  return lines.join("\n\n");
+}
+
+/** image-caption 图片说明 */
+function renderImageCaption(content: ImageCaptionContent): string {
+  const lines: string[] = [];
+  if (content.src) lines.push(`![](${content.src})`);
+  if (content.caption) lines.push(`*${content.caption}*`);
+  return lines.join("\n\n");
 }

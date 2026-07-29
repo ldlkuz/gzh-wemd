@@ -20,8 +20,8 @@ describe("built-in themes", () => {
     expect(theme?.css).toContain("#wemd .hljs");
   });
 
-  it("下架旧主题但保留注册信息供历史文章恢复", () => {
-    const retiredThemeIds = [
+  it("已删除的旧主题不再存在于内置主题列表", () => {
+    const deletedThemeIds = [
       "template",
       "aurora-glass",
       "cyberpunk-neon",
@@ -29,29 +29,10 @@ describe("built-in themes", () => {
       "neo-brutalism",
     ];
 
-    for (const themeId of retiredThemeIds) {
+    for (const themeId of deletedThemeIds) {
       const theme = builtInThemes.find((item) => item.id === themeId);
-      expect(theme, `${themeId} 应继续保留注册信息`).toBeTruthy();
-      expect(theme?.isSelectable).toBe(false);
-      expect(theme?.css).toContain("#wemd");
+      expect(theme, `${themeId} 应已删除`).toBeUndefined();
     }
-
-    expect(
-      builtInThemes.find((item) => item.id === "luxury-gold")?.isSelectable,
-    ).not.toBe(false);
-  });
-
-  it("仍可按主题 ID 恢复下架主题", () => {
-    const state = useThemeStore.getState();
-
-    state.selectTheme("bauhaus");
-
-    expect(useThemeStore.getState().themeId).toBe("bauhaus");
-    expect(useThemeStore.getState().getThemeCSS("bauhaus")).toContain(
-      "包豪斯风格",
-    );
-
-    useThemeStore.getState().selectTheme("default");
   });
 
   it("注册四款可选的场景化主题", () => {

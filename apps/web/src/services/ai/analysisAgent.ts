@@ -117,6 +117,7 @@ export const AVAILABLE_COMPONENTS = [
 function buildPlanPrompt(
   audience?: Audience,
   themeLayout?: LayoutPreference,
+  constraints?: DesignConstraints,
 ): string {
   const patternList = PATTERN_LABELS.map(
     (p) =>
@@ -130,13 +131,20 @@ function buildPlanPrompt(
 
   // Phase 3: 主题约束
   const themeHint = themeLayout
-    ? `\n\n## 主题约束（当前文章使用的品牌规范，必须遵守）\n- 风格基调：${themeLayout.tone.join("、")}\n- 排版密度：${themeLayout.density}（${themeLayout.density === "low" ? "简洁为主，少用组件" : themeLayout.density === "medium" ? "适度点缀" : "丰富组件，杂志级排版"}）\n- 杂志化等级：${themeLayout.magazineLevel}\n- 主题偏好的组件：${themeLayout.preferredComponents.join("、")}\n\n注意：\n1. 优先从主题偏好的组件中选择槽位，但也可根据文章内容选择其他合适的组件\n2. slotPlan 的总组件数量应符合排版密度要求\n3. 主题基调决定了文章的整体氛围，designLanguage 应与之匹配`
+    ? `\n\n## 主题约束（当前文章使用的品牌规范，必须遵守）\n- 风格基调：${themeLayout.tone.join("、")}\n- 排版密度：${themeLayout.density}（${themeLayout.density === "low" ? "简洁为主，少用组件" : themeLayout.density === "medium" ? "适度点缀" : "丰富组件，杂志级排版"}）\n- 主题偏好的组件：${themeLayout.preferredComponents.join("、")}\n\n注意：\n1. 优先从主题偏好的组件中选择槽位，但也可根据文章内容选择其他合适的组件\n2. slotPlan 的总组件数量应符合排版密度要求\n3. 主题基调决定了文章的整体氛围，design 字段应与之协调`
     : "";
+
+  // Design Goal 约束（软建议，AI 可偏离）
+  const goalHint =
+    constraints && constraints.designGoal !== "auto"
+      ? `\n\n## 设计目标（用户偏好，软建议）\n${constraints.designGoal === "reading" ? "优先保证阅读流畅性，组件仅用于强调重点，允许大量普通正文" : constraints.designGoal === "visual" ? "优先追求视觉表现力，可以增加视觉模块，强化节奏感" : constraints.designGoal === "infoDensity" ? "优先信息表达效率，多用表格、时间轴、对比等结构化组件" : "在阅读体验和视觉表现之间取得平衡"}\n注意：这是软建议，主题约束优先于此偏好。`
+      : "";
 
   return [
     "你是一个资深公众号版式设计师。你的任务是阅读用户的文章，识别文章类型，在主题约束下选择最匹配的版式设计。",
     audienceHint,
     themeHint,
+    goalHint,
     "",
     "## 判断原则（按优先级）",
     "",
@@ -463,11 +471,15 @@ export async function analyzeArticle(
 ): Promise<AnalysisResult> {
   const effectiveConstraints: DesignConstraints = constraints ?? {
     safetyLimit: 20,
-    designGoal: "balanced",
+    designGoal: "auto",
   };
 
-  // 阶段1：识别类型 + 画像 + 主题约束 → 槽位计划
-  const planPrompt = buildPlanPrompt(audience, themeLayout);
+  // 阶段1：识别类型 + 画像 + 主题约束 + 设计目标 → 槽位计划
+  const planPrompt = buildPlanPrompt(
+    audience,
+    themeLayout,
+    effectiveConstraints,
+  );
   const planContent = await callLLM(planPrompt, markdown, 0.3);
   const plan = parsePlanResponse(planContent);
 
@@ -511,8 +523,9 @@ export async function analyzeArticle(
     layout?.preferredComponents.length
       ? `主题偏好组件：${layout.preferredComponents.join("、")}`
       : "",
+    effectiveConstraints.designGoal !== "auto" &&
     effectiveConstraints.designGoal !== "balanced"
-      ? `设计目标：${effectiveConstraints.designGoal === "reading" ? "阅读优先" : effectiveConstraints.designGoal === "balanced" ? "平衡设计" : effectiveConstraints.designGoal === "visual" ? "视觉优先" : "信息密度"}`
+      ? `设计目标：${effectiveConstraints.designGoal === "reading" ? "阅读优先" : effectiveConstraints.designGoal === "visual" ? "视觉优先" : "信息密度"}`
       : "",
   ]
     .filter(Boolean)
