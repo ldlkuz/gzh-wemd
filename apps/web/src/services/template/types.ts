@@ -284,6 +284,19 @@ export interface SeriesNavContent {
   nextArticle?: SeriesArticleItem;
 }
 
+/** cta-card 行动号召卡片 */
+export interface CtaCardContent {
+  title: string;
+  subtitle?: string;
+  body?: string;
+  buttonText?: string;
+}
+
+/** tag-label 标签组 */
+export interface TagLabelContent {
+  tags: string[];
+}
+
 /** Renderer 输出结果 */
 export interface RenderResult {
   /** 渲染后的组件 Markdown（含 ::: 语法） */

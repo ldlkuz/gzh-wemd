@@ -177,6 +177,27 @@ export function renderCodeFrame(content: CodeFrameContent): string {
 
 export type ComponentRenderer = (content: any) => string;
 
+/**
+ * cta-card 行动号召卡片
+ * 结构：标题 + 副标题 + 正文 + 按钮文案
+ */
+function renderCtaCard(content: CtaCardContent): string {
+  const lines: string[] = [];
+  lines.push(`**${content.title}**`);
+  if (content.subtitle) lines.push(content.subtitle);
+  if (content.body) lines.push(content.body);
+  lines.push(`【${content.buttonText || "立即参与"}】`);
+  return lines.join("\n\n");
+}
+
+/**
+ * tag-label 标签组
+ * 结构：标签列表，用 # 号分隔
+ */
+function renderTagLabel(content: TagLabelContent): string {
+  return (content.tags || []).map((t) => `#${t}`).join("  ");
+}
+
 export const componentRenderers: Record<string, ComponentRenderer> = {
   "hero-banner": renderHeroBanner,
   "toc-nav": renderTocNav,
@@ -205,6 +226,8 @@ export const componentRenderers: Record<string, ComponentRenderer> = {
   "resource-list": renderResourceList,
   "testimonial-card": renderTestimonialCard,
   "series-nav": renderSeriesNav,
+  "cta-card": renderCtaCard,
+  "tag-label": renderTagLabel,
 };
 
 /**

@@ -54,14 +54,6 @@ export type ArticlePurpose =
 /** 阅读深度 */
 export type ReadingDepth = "Quick" | "Medium" | "Deep";
 
-/** 设计语言 */
-export type DesignLanguageId =
-  | "warm-magazine"
-  | "apple-minimal"
-  | "tech-data"
-  | "editorial"
-  | "playful-card";
-
 // === Profile 推断规则（纯代码，不调 LLM） ===
 // 基于现有 designPatterns 的 7 种 type 做初步映射，
 // 实际使用中由 LLM 输出更精确的 profile。

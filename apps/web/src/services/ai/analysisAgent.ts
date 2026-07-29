@@ -15,17 +15,8 @@ import {
   getPattern,
   type ComponentSlot,
 } from "./designPatterns";
-import {
-  type ArticleProfile,
-  type ReadingDepth,
-  buildProfilePromptSnippet,
-} from "./articleProfile";
+import { type ArticleProfile } from "./articleProfile";
 import type { LayoutPreference } from "@wemd/core";
-import {
-  recommendEndingIntent,
-  recommendCategories,
-  recommendComplexity,
-} from "./semanticMapper";
 
 /** 读者画像（用户输入，AI 不推断） */
 export interface Audience {
@@ -520,8 +511,8 @@ export async function analyzeArticle(
     layout?.preferredComponents.length
       ? `主题偏好组件：${layout.preferredComponents.join("、")}`
       : "",
-    effectiveConstraints.complexity !== "medium"
-      ? `用户复杂度：${effectiveConstraints.complexity}`
+    effectiveConstraints.designGoal !== "balanced"
+      ? `设计目标：${effectiveConstraints.designGoal === "reading" ? "阅读优先" : effectiveConstraints.designGoal === "balanced" ? "平衡设计" : effectiveConstraints.designGoal === "visual" ? "视觉优先" : "信息密度"}`
       : "",
   ]
     .filter(Boolean)

@@ -17,7 +17,6 @@ export interface ComponentManifest {
   tone?: string[];
   articleCategories?: string[];
   insertPosition?: string[];
-  magazineLevel?: string[];
   schema?: Record<string, unknown>;
   props?: Record<string, unknown>;
 }

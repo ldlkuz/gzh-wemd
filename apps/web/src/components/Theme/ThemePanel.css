@@ -369,7 +369,7 @@
   resize: none;
 }
 
-.info-hint {
+.theme-editor .info-hint {
   margin: 0;
   padding: 12px 16px;
   background: color-mix(in srgb, var(--accent-primary) 12%, transparent);
