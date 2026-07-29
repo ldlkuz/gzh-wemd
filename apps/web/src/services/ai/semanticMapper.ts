@@ -120,13 +120,13 @@ export function recommendCategories(profile: ArticleProfile): string[] {
  */
 export function recommendComplexity(
   profile: ArticleProfile,
-): "low" | "medium" | "high" {
+): "reading" | "balanced" | "visual" | "infoDensity" {
   switch (profile.depth) {
     case "Quick":
-      return "low";
+      return "reading";
     case "Medium":
-      return "medium";
+      return "balanced";
     case "Deep":
-      return "high";
+      return "visual";
   }
 }

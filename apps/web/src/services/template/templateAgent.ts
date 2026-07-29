@@ -321,7 +321,7 @@ function fallbackResult(
  * @param _articleTypeHint 已废弃，保留参数兼容调用方
  * @param themeLayout 可选，当前主题的 layout 偏好
  * @param audience 可选，读者画像
- * @param constraints 可选，排版丰富度约束
+ * @param constraints 可选，设计目标约束（安全上限 + 设计倾向）
  */
 export async function generateTemplate(
   markdown: string,

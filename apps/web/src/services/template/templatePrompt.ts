@@ -12,47 +12,94 @@ import type { Audience } from "../ai/analysisAgent";
 
 /** 构建读者画像提示 */
 function buildAudienceHint(audience: Audience): string {
-  const audienceLabelMap: Record<string, string> = {
-    general: "普通读者",
-    developer: "程序员/技术人",
-    manager: "管理者/决策者",
-    beginner: "小白/初学者",
+  if (audience.type === "auto") return "";
+
+  const typeMap: Record<string, string> = {
+    general: "大众阅读型",
+    quick: "快速浏览型",
+    deep: "深度阅读型",
+    learning: "学习研究型",
+    decision: "决策参考型",
+    brand: "品牌传播型",
   };
-  const label = audienceLabelMap[audience.type] || audience.type;
-  const langStyle =
-    audience.type === "developer"
-      ? "可以使用技术术语，逻辑严谨，数据驱动"
-      : audience.type === "manager"
-        ? "结论先行，重点突出，关注价值和收益"
-        : audience.type === "beginner"
-          ? "避免专业术语，多用比喻和通俗解释，循序渐进"
-          : "平实易懂，兼顾深度和可读性";
-  const layoutStyle =
-    audience.type === "developer"
-      ? "结构化强，多用列表、代码块、对比表格"
-      : audience.type === "manager"
-        ? "重点突出，多用 callout-pro 标记关键结论，stats-block 展示数据"
-        : audience.type === "beginner"
-          ? "视觉引导强，多用 quote-card 标记要点，避免信息密度过高"
-          : "平衡视觉和阅读，自然排版";
-  return `\n\n## 读者画像\n- 目标读者：${label}\n- 语言风格要求：${langStyle}\n- 排版风格：${layoutStyle}`;
+
+  const styleMap: Record<string, string> = {
+    general: "平实易懂，兼顾深度和可读性",
+    quick: "多小标题、摘要、重点突出，降低阅读负担",
+    deep: "长段落、完整论证、留白更多，保持思考节奏",
+    learning: "多用流程图、知识框、引用和总结，循序渐进攻克难点",
+    decision: "数据驱动、结论先行、对比清晰，让读者快速做判断",
+    brand: "情绪感染优先、视觉冲击强化、CTA 清晰明确",
+  };
+
+  const layoutMap: Record<string, string> = {
+    general: "平衡视觉和阅读，自然排版",
+    quick: "结构化强，多用小标题和列表，视觉锚点清晰",
+    deep: "段落连续性好，少打断，留白充足",
+    learning:
+      "多用 numbered-heading 分步骤、callout-pro 标记重点、stats-block 展示关键数据",
+    decision:
+      "多用 stats-block 展示数据、callout-pro 标记结论、comparison 做对比",
+    brand: "多用 hero-banner 营造氛围、quote-card 做金句、cta-card 做行动号召",
+  };
+
+  const label = typeMap[audience.type] || audience.type;
+  const langStyle = styleMap[audience.type] || styleMap.general;
+  const layoutStyle = layoutMap[audience.type] || layoutMap.general;
+
+  return `\n\n## 读者画像\n- 目标读者：${label}\n- 阅读行为风格：${langStyle}\n- 排版策略：${layoutStyle}`;
 }
 
-/** 构建排版丰富度约束提示 */
+/** 构建设计目标约束提示 */
 function buildComplexityHint(constraints: DesignConstraints): string {
-  const complexityDesc =
-    constraints.complexity === "high"
-      ? "杂志级排版，全方位视觉增强"
-      : constraints.complexity === "medium"
-        ? "适度点缀，平衡阅读与视觉"
-        : "简洁为主，最少组件，突出正文";
-  const densityReq =
-    constraints.complexity === "high"
-      ? "每 1-2 段穿插 1 个组件，page-break 分隔章节"
-      : constraints.complexity === "medium"
-        ? "每 3-5 段穿插 1 个组件，适度点缀"
-        : "全文仅 2-4 个关键组件，尽量用纯 article-section";
-  return `\n\n## 排版丰富度约束\n- 丰富度等级：${constraints.complexity}（${complexityDesc}）\n- 最大组件数：${constraints.maxComponents}\n- 组件密度要求：${densityReq}\n- 注意：丰富度约束覆盖主题默认设置，优先以用户选择的丰富度为准。`;
+  if (constraints.designGoal === "auto") return "";
+
+  const goalDesc =
+    constraints.designGoal === "reading"
+      ? "优先保证阅读流畅性。减少不必要的视觉打断，组件精简但精准。"
+      : constraints.designGoal === "visual"
+        ? "优先追求视觉表现力。大胆使用组件强化节奏和图文变化。"
+        : constraints.designGoal === "infoDensity"
+          ? "优先信息表达效率。多用表格、时间轴、对比、流程图，组件服务于信息传达而非装饰。"
+          : "在阅读体验和视觉表现之间取得平衡。";
+
+  const goalLabel =
+    constraints.designGoal === "reading"
+      ? "阅读优先"
+      : constraints.designGoal === "visual"
+        ? "视觉优先"
+        : constraints.designGoal === "infoDensity"
+          ? "信息密度"
+          : "平衡设计";
+
+  return [
+    "",
+    `## 设计目标（用户偏好，软建议）`,
+    `- 用户倾向：${goalLabel}`,
+    `- ${goalDesc}`,
+    "- 这是用户偏好，不是硬性指令。如果内容的天然结构更适合另一种布局方式，允许 AI 适当偏离。",
+    "- 主题的设计语言优先级高于用户偏好。如果主题风格明显偏向某种布局哲学，优先遵循主题。",
+    `- 组件数量安全上限：${constraints.safetyLimit} 个（仅防异常生成，不作为目标数量）`,
+    "",
+    "## 组件使用原则",
+    "- 组件数量不是质量指标。判断标准：如果删除一个组件后整体阅读体验没有下降，它就不应该存在。",
+    "- 每个组件都必须解决一个具体问题（强调/总结/流程/引用/时间轴/数据/案例）。",
+    "- 纯装饰性组件只用于文首封面和文末收尾，正文中不做无意义的视觉填充。",
+    "- 允许连续多段纯正文，允许整章没有任何组件，允许一个组件的语义跨越多段。",
+    `- 不要因为"已经 N 段没放组件了"而硬塞。空白也是排版语言。`,
+    "- 每 2-4 段穿插 1 个视觉组件是舒适的节奏参考，但不是必须遵守的规则。",
+    "",
+    "## Designer Review（输出前自检）",
+    "在最终输出 JSON 之前，严格检查以下问题：",
+    "",
+    "1. 是否存在连续 3 个以上视觉组件（不含 article-section）？→ 合并或删除中间项",
+    "2. 是否存在没有任何信息价值的纯装饰组件（封面和收尾除外）？→ 删除",
+    "3. 逐个检查每个组件：删除它之后，阅读体验是否明显下降？如果不会 → 删除",
+    "4. 组件的插入位置是否打断了正文的阅读节奏？→ 调整位置或改为 article-section",
+    "5. 是否存在为了凑数量而硬塞的组件？→ 删除",
+    "",
+    "只有通过以上全部检查后，才输出最终 JSON。",
+  ].join("\n");
 }
 
 /** 构建主题约束提示 */

@@ -38,21 +38,34 @@ interface AiDesignPanelProps {
   onResetTemplate: () => void;
 }
 
-const AUDIENCE_OPTIONS: { value: Audience["type"]; label: string }[] = [
-  { value: "general", label: "普通读者" },
-  { value: "developer", label: "程序员/技术人" },
-  { value: "manager", label: "管理者/决策者" },
-  { value: "beginner", label: "小白/初学者" },
-];
-
-const COMPLEXITY_OPTIONS: {
-  value: DesignConstraints["complexity"];
+const AUDIENCE_OPTIONS: {
+  value: Audience["type"];
   label: string;
   desc: string;
 }[] = [
-  { value: "low", label: "简洁", desc: "最少组件，突出正文" },
-  { value: "medium", label: "适中", desc: "适度点缀，平衡阅读与视觉" },
-  { value: "high", label: "丰富", desc: "杂志级排版，全方位视觉增强" },
+  { value: "auto", label: "自动（推荐）", desc: "AI 自行判断读者阅读行为" },
+  { value: "general", label: "大众阅读", desc: "平实易懂，兼顾深度和可读性" },
+  { value: "quick", label: "快速浏览", desc: "多小标题、摘要、重点突出" },
+  { value: "deep", label: "深度阅读", desc: "长段落、完整论证、留白更多" },
+  { value: "learning", label: "学习研究", desc: "流程图、知识框、引用、总结" },
+  { value: "decision", label: "决策参考", desc: "数据、对比、结论优先" },
+  { value: "brand", label: "品牌传播", desc: "情绪感染、视觉冲击、CTA" },
+];
+
+const DESIGN_GOAL_OPTIONS: {
+  value: DesignConstraints["designGoal"];
+  label: string;
+  desc: string;
+}[] = [
+  { value: "auto", label: "自动（推荐）", desc: "AI 根据内容自行判断最佳目标" },
+  { value: "reading", label: "阅读优先", desc: "保持阅读流畅，组件仅强调重点" },
+  { value: "balanced", label: "平衡设计", desc: "阅读与视觉表现保持平衡" },
+  { value: "visual", label: "视觉优先", desc: "最大化视觉表现，强化节奏感" },
+  {
+    value: "infoDensity",
+    label: "信息密度",
+    desc: "表格、时间轴、对比，信息表达效率优先",
+  },
 ];
 
 export function AiDesignPanel({
@@ -67,9 +80,9 @@ export function AiDesignPanel({
   isTemplatePreviewing,
   onResetTemplate,
 }: AiDesignPanelProps) {
-  const [audience, setAudience] = useState<Audience["type"]>("general");
-  const [complexity, setComplexity] =
-    useState<DesignConstraints["complexity"]>("medium");
+  const [audience, setAudience] = useState<Audience["type"]>("auto");
+  const [designGoal, setDesignGoal] =
+    useState<DesignConstraints["designGoal"]>("auto");
 
   const handleClose = useCallback(() => {
     if (isTemplatePreviewing) {
@@ -81,9 +94,10 @@ export function AiDesignPanel({
   const handleStartTemplate = () => {
     onResetTemplate();
     const audienceObj: Audience = { type: audience };
+    // SafetyLimit 只兜底异常生成，不作为目标数量；所有 Goal 统一上限 20
     const constraints: DesignConstraints = {
-      maxComponents: complexity === "low" ? 4 : complexity === "high" ? 12 : 8,
-      complexity,
+      safetyLimit: 20,
+      designGoal,
     };
     onGenerateTemplate(audienceObj, constraints);
   };
@@ -153,7 +167,7 @@ export function AiDesignPanel({
               >
                 {AUDIENCE_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>
-                    {opt.label}
+                    {opt.label} - {opt.desc}
                   </option>
                 ))}
               </select>
@@ -161,19 +175,19 @@ export function AiDesignPanel({
             <div className="ai-design-config-item">
               <label className="ai-design-config-label">
                 <SlidersHorizontal size={14} />
-                排版丰富度
+                设计目标
               </label>
               <select
                 className="ai-design-config-select"
-                value={complexity}
+                value={designGoal}
                 onChange={(e) =>
-                  setComplexity(
-                    e.target.value as DesignConstraints["complexity"],
+                  setDesignGoal(
+                    e.target.value as DesignConstraints["designGoal"],
                   )
                 }
                 disabled={templateLoading}
               >
-                {COMPLEXITY_OPTIONS.map((opt) => (
+                {DESIGN_GOAL_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>
                     {opt.label} - {opt.desc}
                   </option>
@@ -202,7 +216,7 @@ export function AiDesignPanel({
               <Sparkles size={32} />
               <p>点击「开始设计」生成杂志级排版</p>
               <p className="ai-layout-empty-hint">
-                可调整读者画像和排版丰富度来控制生成风格
+                可调整读者画像和设计目标来控制生成风格
               </p>
               <button
                 className="ai-design-start-btn"

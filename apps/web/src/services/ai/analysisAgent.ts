@@ -29,16 +29,23 @@ import {
 
 /** 读者画像（用户输入，AI 不推断） */
 export interface Audience {
-  /** 读者类型 */
-  type: "developer" | "manager" | "beginner" | "general";
+  /** 读者阅读行为类型 */
+  type:
+    | "auto"
+    | "general"
+    | "quick"
+    | "deep"
+    | "learning"
+    | "decision"
+    | "brand";
 }
 
 /** 设计约束 */
 export interface DesignConstraints {
-  /** 最多插入组件数（默认 8） */
-  maxComponents: number;
-  /** 复杂度（用户可调） */
-  complexity: "low" | "medium" | "high";
+  /** 安全上限，防止异常生成（不作为目标数量） */
+  safetyLimit: number;
+  /** 设计目标（用户可调） */
+  designGoal: "auto" | "reading" | "balanced" | "visual" | "infoDensity";
 }
 
 /** 单条插入建议 */
@@ -125,9 +132,10 @@ function buildPlanPrompt(
       `- ${p.type}（${p.label}）: ${p.whenToUse}\n  识别特征:\n${p.signatures.map((s) => `    · ${s}`).join("\n")}`,
   ).join("\n\n");
 
-  const audienceHint = audience
-    ? `\n\n## 读者画像\n目标读者：${audience.type === "developer" ? "程序员/技术人" : audience.type === "manager" ? "管理者/决策者" : audience.type === "beginner" ? "小白/初学者" : "普通读者"}\n请根据读者背景调整设计策略。`
-    : "";
+  const audienceHint =
+    audience && audience.type !== "auto"
+      ? `\n\n## 读者画像\n目标读者：${audience.type === "quick" ? "快速浏览型" : audience.type === "deep" ? "深度阅读型" : audience.type === "learning" ? "学习研究型" : audience.type === "decision" ? "决策参考型" : audience.type === "brand" ? "品牌传播型" : "大众阅读型"}\n请根据读者阅读行为调整设计策略。`
+      : "";
 
   // Phase 3: 主题约束
   const themeHint = themeLayout
@@ -463,8 +471,8 @@ export async function analyzeArticle(
   themeLayout?: LayoutPreference,
 ): Promise<AnalysisResult> {
   const effectiveConstraints: DesignConstraints = constraints ?? {
-    maxComponents: 8,
-    complexity: "medium",
+    safetyLimit: 20,
+    designGoal: "balanced",
   };
 
   // 阶段1：识别类型 + 画像 + 主题约束 → 槽位计划
@@ -524,10 +532,10 @@ export async function analyzeArticle(
   const executeContent = await callLLM(executePrompt, markdown, 0.5);
   const insertions = parseExecuteResponse(executeContent);
 
-  // 按约束裁剪
+  // 按安全上限裁剪（兜底约束，不是目标数量）
   const limitedInsertions = insertions.slice(
     0,
-    effectiveConstraints.maxComponents,
+    effectiveConstraints.safetyLimit,
   );
 
   return {
