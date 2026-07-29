@@ -69,15 +69,5 @@ export function renderExtrasCss(): string {
     `#wemd .mermaid .label {`,
     `  color: var(--wemd-text-normal) !important;`,
     `}`,
-
-    `/* === 滚动图 === */`,
-    `#wemd .imageflow-layer1 { margin-top: 1em; margin-bottom: 0.5em; border: 0; padding: 0; overflow: hidden; }`,
-    `#wemd .imageflow-layer2 { white-space: nowrap; width: 100%; overflow-x: scroll; }`,
-    `#wemd .imageflow-layer3 {`,
-    `  display: inline-block; word-wrap: break-word; white-space: normal;`,
-    `  vertical-align: top; width: 80%; margin-right: 10px; flex-shrink: 0;`,
-    `}`,
-    `#wemd .imageflow-img { display: block; width: 100%; height: auto; max-height: 300px; object-fit: contain; border-radius: 4px; }`,
-    `#wemd .imageflow-caption { text-align: center; margin-top: 0; padding-top: 0; }`,
   ].join("\n");
 }

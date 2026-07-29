@@ -17,27 +17,7 @@ import {
 } from "./designPatterns";
 import { type ArticleProfile } from "./articleProfile";
 import type { LayoutPreference } from "@wemd/core";
-
-/** 读者画像（用户输入，AI 不推断） */
-export interface Audience {
-  /** 读者阅读行为类型 */
-  type:
-    | "auto"
-    | "general"
-    | "quick"
-    | "deep"
-    | "learning"
-    | "decision"
-    | "brand";
-}
-
-/** 设计约束 */
-export interface DesignConstraints {
-  /** 安全上限，防止异常生成（不作为目标数量） */
-  safetyLimit: number;
-  /** 设计目标（用户可调） */
-  designGoal: "auto" | "reading" | "balanced" | "visual" | "infoDensity";
-}
+import type { Audience, DesignConstraints } from "./types";
 
 /** 单条插入建议 */
 export interface Insertion {
@@ -523,9 +503,8 @@ export async function analyzeArticle(
     layout?.preferredComponents.length
       ? `主题偏好组件：${layout.preferredComponents.join("、")}`
       : "",
-    effectiveConstraints.designGoal !== "auto" &&
-    effectiveConstraints.designGoal !== "balanced"
-      ? `设计目标：${effectiveConstraints.designGoal === "reading" ? "阅读优先" : effectiveConstraints.designGoal === "visual" ? "视觉优先" : "信息密度"}`
+    effectiveConstraints.designGoal !== "auto"
+      ? `设计目标：${effectiveConstraints.designGoal === "reading" ? "阅读优先" : effectiveConstraints.designGoal === "visual" ? "视觉优先" : effectiveConstraints.designGoal === "infoDensity" ? "信息密度" : "平衡设计"}`
       : "",
   ]
     .filter(Boolean)

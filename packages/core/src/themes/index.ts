@@ -19,3 +19,6 @@ export * from "./modern-editorial";
 export * from "./receipt";
 export * from "./sunset-film";
 export * from "./whitespace-gallery";
+
+export * from "./cssVarParser";
+export * from "./cssVariableExpander";

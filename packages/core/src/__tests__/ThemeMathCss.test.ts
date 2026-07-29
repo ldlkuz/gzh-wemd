@@ -1,12 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
   academicPaperTheme,
-  auroraGlassTheme,
   basicTheme,
-  bauhausTheme,
   codeGithubTheme,
   customDefaultTheme,
-  cyberpunkNeonTheme,
   clearGuideTheme,
   dataBlueprintTheme,
   easternNotesTheme,
@@ -14,21 +11,16 @@ import {
   luxuryGoldTheme,
   morandiForestTheme,
   modernEditorialTheme,
-  neoBrutalismTheme,
   receiptTheme,
   sunsetFilmTheme,
-  templateTheme,
   whitespaceGalleryTheme,
 } from "../themes";
 
 const themes = {
   academicPaperTheme,
-  auroraGlassTheme,
   basicTheme,
-  bauhausTheme,
   codeGithubTheme,
   customDefaultTheme,
-  cyberpunkNeonTheme,
   clearGuideTheme,
   dataBlueprintTheme,
   easternNotesTheme,
@@ -36,10 +28,8 @@ const themes = {
   luxuryGoldTheme,
   morandiForestTheme,
   modernEditorialTheme,
-  neoBrutalismTheme,
   receiptTheme,
   sunsetFilmTheme,
-  templateTheme,
   whitespaceGalleryTheme,
 };
 

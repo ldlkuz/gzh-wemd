@@ -1,0 +1,114 @@
+/* 只读主题徽章：显示在编辑器工具栏 AI 排版按钮旁边 */
+.current-theme-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 8px 0 10px;
+  border: 1px solid var(--border-light);
+  border-radius: 999px;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+  user-select: none;
+  position: relative;
+}
+
+.current-theme-badge:hover {
+  border-color: color-mix(
+    in srgb,
+    var(--accent-primary) 45%,
+    var(--border-light)
+  );
+  background: color-mix(in srgb, var(--accent-primary) 10%, var(--bg-primary));
+  color: var(--text-primary);
+}
+
+.current-theme-badge:active {
+  transform: scale(0.98);
+}
+
+/* 主色点 */
+.current-theme-badge__dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-tertiary);
+  color: var(--text-tertiary);
+  border: 1px solid var(--border-light);
+  flex-shrink: 0;
+}
+
+.current-theme-badge__label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  max-width: 180px;
+}
+
+.current-theme-badge__name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.current-theme-badge__tag {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-light);
+  line-height: 1.4;
+  flex-shrink: 0;
+}
+
+.current-theme-badge__chev {
+  color: var(--text-tertiary);
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+.current-theme-badge:hover .current-theme-badge__chev {
+  opacity: 1;
+  color: var(--accent-primary);
+}
+
+/* Tooltip 用 md-toolbar-btn 的 data-tooltip 风格同步 */
+.current-theme-badge::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+  padding: 4px 8px;
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.15s,
+    visibility 0.15s;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.current-theme-badge:hover::after {
+  opacity: 1;
+  visibility: visible;
+}

@@ -47,10 +47,11 @@ export const componentStylesMagazine = `/* === magazine-cover 杂志封面卡片
   margin: 24px 0;
   padding: 40px 24px;
   background: var(--wemd-bg-card, #ffffff);
-  border-radius: 18px;
+  border-radius: calc(var(--wemd-border-radius, 8px) + 10px);
   text-align: center;
   border: 1px solid var(--wemd-border-soft, #e8ebe8);
   box-sizing: border-box;
+  box-shadow: var(--wemd-shadow, none);
 }
 
 #wemd .wemd-magazine-cover .wemd-mc-title {
@@ -111,8 +112,8 @@ export const componentStylesMagazine = `/* === magazine-cover 杂志封面卡片
   margin: 24px 0;
   padding: 8px;
   background: var(--wemd-bg-card, #ffffff);
-  border-radius: 14px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  border-radius: calc(var(--wemd-border-radius, 8px) + 6px);
+  box-shadow: var(--wemd-shadow, 0 4px 12px rgba(0, 0, 0, 0.06));
   box-sizing: border-box;
 }
 
@@ -124,7 +125,7 @@ export const componentStylesMagazine = `/* === magazine-cover 杂志封面卡片
 #wemd .wemd-image-card .wemd-ic-image img {
   width: 100%;
   display: block;
-  border-radius: 10px;
+  border-radius: calc(var(--wemd-border-radius, 8px) + 2px);
   margin: 0;
   padding: 0;
 }
@@ -142,8 +143,8 @@ export const componentStylesMagazine = `/* === magazine-cover 杂志封面卡片
   margin: 16px 0;
   padding: 20px 22px;
   background: var(--wemd-bg-card, #ffffff);
-  border-radius: 14px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border-radius: calc(var(--wemd-border-radius, 8px) + 6px);
+  box-shadow: var(--wemd-shadow, 0 2px 8px rgba(0, 0, 0, 0.04));
   box-sizing: border-box;
   line-height: 1.8;
   font-size: 15px;
@@ -164,7 +165,7 @@ export const componentStylesMagazine = `/* === magazine-cover 杂志封面卡片
   margin: 28px 0;
   padding: 22px 24px;
   background: var(--wemd-primary, #07c160);
-  border-radius: 12px;
+  border-radius: calc(var(--wemd-border-radius, 8px) + 4px);
   text-align: center;
   box-sizing: border-box;
 }
@@ -195,9 +196,9 @@ export const componentStylesMagazine = `/* === magazine-cover 杂志封面卡片
   flex: 1;
   padding: 18px 12px;
   background: var(--wemd-bg-card, #ffffff);
-  border-radius: 12px;
+  border-radius: calc(var(--wemd-border-radius, 8px) + 4px);
   text-align: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--wemd-shadow, 0 2px 8px rgba(0, 0, 0, 0.04));
   font-size: 13px;
   line-height: 1.6;
   color: var(--wemd-text-soft, #888888);

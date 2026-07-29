@@ -62,7 +62,7 @@ export function AiThemeGenerator({
   /** 当前 Theme JSON 字符串（用于后续微调） */
   const currentJsonRef = useRef<string>("");
   /** 当前 definition 对象 */
-  const definitionRef = useRef<Record<string, unknown> | null>(null);
+  const definitionRef = useRef<ThemeDefinition | null>(null);
 
   const abortRef = useRef<AbortController | null>(null);
   const logRef = useRef<HTMLPreElement>(null);
@@ -76,14 +76,13 @@ export function AiThemeGenerator({
         definitionRef.current = parsed;
 
         const { renderTheme } = await import("@wemd/core");
-        const def = parsed as unknown as ThemeDefinition;
-        const css = renderTheme(def);
+        const css = renderTheme(parsed);
 
         onPreviewCss(css);
-        onGenerated(css, def);
+        onGenerated(css, parsed);
 
         // 建议名称
-        const name = def.meta?.name || "";
+        const name = parsed.meta?.name || "";
         if (name) onNameSuggestion(name);
 
         return true;

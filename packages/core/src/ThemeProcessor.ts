@@ -1,3 +1,5 @@
+import { expandCSSVariables } from "./themes/cssVariableExpander";
+
 const DATA_TOOL = "WeMD编辑器";
 const SECTION_ID = "wemd";
 
@@ -59,19 +61,60 @@ function addChildPositionClasses(html: string): string {
 /**
  * 为 toc-nav 目录组件的 li 添加序号 span（兼容微信内联）
  * 微信不支持 ::before 伪元素和 counter 计数器，需要直接把序号写进 HTML
+ *
+ * 用栈平衡匹配 toc-nav 的完整范围，避免非贪婪正则被内部嵌套的
+ * <section>（component-body / wemd-child-3 等）提前截断。
+ *
+ * 算法：在 toc-nav 开标签之后，用单指针 indexOf 逐位扫描最近的
+ *       <section 或 </section>。两个独立 regex 会导致 lastIndex
+ *       不同步 → depth 算错 → 块永不闭合 → 把后面的 li 也编号。
  */
 function addTocNumbers(html: string): string {
-  const tocNavRegex =
-    /<section[^>]*class="[^"]*wemd-toc-nav[^"]*"[^>]*>[\s\S]*?<\/section>/g;
+  const startRegex = /<section[^>]*class="[^"]*wemd-toc-nav[^"]*"[^>]*>/gi;
 
-  return html.replace(tocNavRegex, (match: string) => {
+  let result = "";
+  let lastIdx = 0;
+  let sm: RegExpExecArray | null;
+
+  while ((sm = startRegex.exec(html)) !== null) {
+    const startIdx = sm.index;
+    result += html.slice(lastIdx, startIdx);
+
+    // 单指针扫描：每次找最近的下一个 <section 或 </section>
+    let depth = 1;
+    let cursor = startRegex.lastIndex;
+
+    while (depth > 0 && cursor < html.length) {
+      const nextOpen = html.indexOf("<section", cursor);
+      const nextClose = html.indexOf("</section", cursor);
+
+      if (nextClose === -1) break;
+
+      if (nextOpen !== -1 && nextOpen < nextClose) {
+        depth++;
+        cursor = nextOpen + 8;
+      } else {
+        depth--;
+        cursor = nextClose + 10;
+      }
+    }
+
+    const block = html.slice(startIdx, cursor);
     let liIndex = 0;
-    return match.replace(/<li([^>]*)>/gi, (liMatch: string, attrs: string) => {
-      liIndex++;
-      const num = liIndex.toString().padStart(2, "0");
-      return `<li${attrs}><span class="toc-num">${num}</span>`;
-    });
-  });
+    const replaced = block.replace(
+      /<li([^>]*)>/gi,
+      (_m: string, attrs: string) => {
+        liIndex++;
+        const num = liIndex.toString().padStart(2, "0");
+        return `<li${attrs}><span class="toc-num">${num}</span>`;
+      },
+    );
+    result += replaced;
+    lastIdx = cursor;
+  }
+
+  result += html.slice(lastIdx);
+  return result;
 }
 
 const BLOCK_TAGS = [
@@ -230,30 +273,22 @@ export const processHtml = (
 
   let processedHtml = html;
   processedHtml = addChildPositionClasses(processedHtml);
+  // 统一为 toc-nav 注入序号 span：预览和微信导出共用，避免 ::before 在微信丢失
+  // 原"预览用 CSS counter + 导出用 span"双轨设计会导致微信导出时出现双重编号
+  // （addTocNumbers 的 span + inlineAllStylesManually 转换的 ::before span）
+  processedHtml = addTocNumbers(processedHtml);
   const wrappedHtml = `<section id="${SECTION_ID}">${processedHtml}</section>`;
 
   if (!inlineStyles) {
     return wrappedHtml;
   }
 
-  // 微信导出：添加 toc 序号（微信不支持 ::before 伪元素和 counter 计数器）
-  // 预览模式用 CSS counter，不走这里，避免双重编号
-  processedHtml = addTocNumbers(processedHtml);
-  const inlineWrappedHtml = `<section id="${SECTION_ID}">${processedHtml}</section>`;
+  const inlineWrappedHtml = wrappedHtml;
 
-  // 展开 CSS 变量：把 var(--wemd-*, fallback) 替换成 fallback 值
-  // juice 无法解析 CSS 自定义属性，带 var() 的属性会被跳过不内联
-  let resolvedCss = css;
-  let prevCss = "";
-  let iterations = 0;
-  while (prevCss !== resolvedCss && iterations < 10) {
-    prevCss = resolvedCss;
-    resolvedCss = resolvedCss.replace(
-      /var\(--wemd-[a-z0-9-]+,\s*([^()]*(?:\([^()]*\)[^()]*)*)\)/g,
-      (_match, fallback: string) => fallback.trim(),
-    );
-    iterations++;
-  }
+  // 展开 CSS 变量：把 var(--wemd-*) 引用替换为实际值
+  // juice（已被 inlineAllStylesManually 替代）和手动内联器都无法解析 CSS 自定义属性，
+  // 使用统一的 expandCSSVariables 完成：变量声明提取 + 递归引用解析 + 移除变量声明块
+  const resolvedCss = expandCSSVariables(css);
 
   // 使用手动 CSS 内联器，完全替代 juice
   // juice 浏览器版本存在严重 bug（slick/parser 返回 undefined 导致崩溃），

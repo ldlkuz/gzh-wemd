@@ -16,7 +16,7 @@
  */
 
 /** 默认主题色变量（微信绿，未定义变量的主题会自动 fallback 到这些值） */
-const defaultVars = `:root {
+const defaultVars = `#wemd {
   /* 主色三阶 */
   --wemd-primary: #07c160;
   --wemd-primary-dark: #0a8f4a;
@@ -248,16 +248,6 @@ export function getThemeVars(themeId: string): string {
 }
 
 /**
- * 全局默认色变量（在 :root 定义，作为最终 fallback）
+ * 全局默认色变量（在 #wemd 作用域定义，作为最终 fallback）
  */
 export const globalDefaultVars = defaultVars;
-
-/**
- * 所有主题色变量定义（用于注入到主题 CSS 头部）
- *
- * 输出格式：每套主题的变量定义拼接成一个字符串，
- * 由 builtInThemes.ts 在构造主题 CSS 时插入到主题 CSS 末尾。
- */
-export const allThemeVars = Object.entries(themeVars)
-  .map(([, css]) => css)
-  .join("\n\n");

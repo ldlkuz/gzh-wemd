@@ -24,10 +24,7 @@ import {
   generateTemplate,
   type TemplateGenerationResult,
 } from "../../services/template";
-import type {
-  Audience,
-  DesignConstraints,
-} from "../../services/ai/analysisAgent";
+import type { Audience, DesignConstraints } from "../../services/ai/types";
 import toast from "react-hot-toast";
 import "./MarkdownEditor.css";
 import { customKeymap } from "./editorShortcuts";

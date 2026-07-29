@@ -140,6 +140,27 @@ export interface ComponentStyleOverride {
 // Layer 4: Layout Preference
 // ============================================================
 
+/** 风格基调枚举（warm温暖/minimal极简/elegant优雅/rational理性/serious严肃/modern现代/playful活泼） */
+export type Tone =
+  | "warm"
+  | "minimal"
+  | "elegant"
+  | "rational"
+  | "serious"
+  | "modern"
+  | "playful";
+
+/** 所有合法 tone 值，供运行时校验使用 */
+export const VALID_TONES: Tone[] = [
+  "warm",
+  "minimal",
+  "elegant",
+  "rational",
+  "serious",
+  "modern",
+  "playful",
+];
+
 /** 给 AI 的排版建议 */
 export interface LayoutPreference {
   /** 偏好组件清单（组件 type 列表） */
@@ -147,7 +168,9 @@ export interface LayoutPreference {
   /** 排版密度 */
   density: "low" | "medium" | "high";
   /** 风格基调 */
-  tone: string[];
+  tone: Tone[];
+  /** 组件默认 variant 推荐（供 AI 排版参考，不影响渲染——渲染由 markdown 中的 variant 属性决定） */
+  defaultVariants?: Record<string, string>;
   /** @deprecated v2.0 起由 design 字段替代，保留以兼容旧主题 */
   magazineLevel?: "low" | "medium" | "high";
 }
@@ -159,7 +182,9 @@ export interface LayoutPreference {
 export interface ThemeDefinition {
   meta: ThemeMeta;
   tokens: DesignTokens;
-  components: Record<string, ComponentStyleOverride>;
+  /** 组件级覆盖（高级能力，仅用于彻底改变组件视觉语言，如玻璃拟态）。
+   * 内置主题默认不写此字段——组件自行消费 DesignTokens。 */
+  components?: Record<string, ComponentStyleOverride>;
   layout: LayoutPreference;
   /** 代码高亮主题：github（亮色）/ github-dark（暗色） */
   codeTheme?: "github" | "github-dark";

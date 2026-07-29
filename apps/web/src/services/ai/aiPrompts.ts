@@ -3,6 +3,7 @@
  *
  * Phase 3: 新增 Theme JSON 生成 prompt，替代旧 CSS 生成入口。
  */
+import type { ThemeDefinition } from "@wemd/core";
 
 // ============================================================
 // 文本转 Markdown
@@ -84,7 +85,7 @@ export function buildThemeJsonPrompt(): string {
     '    "preferredComponents": ["quote-card", "divider-fancy"],',
     '    "density": "low|medium|high",',
     '    "tone": ["warm|minimal|elegant|rational|serious|modern|playful"],',
-    '    "magazineLevel": "low|medium|high"',
+    '    "defaultVariants": { "share-card": "warm|minimal|tech" }',
     "  }",
     "}",
     "",
@@ -94,13 +95,15 @@ export function buildThemeJsonPrompt(): string {
     "3. heading preset: 默认 simple，强调用 left-border/bottom-border/top-border，活泼用 pill/boxed。presetColor 可选，用于指定边框色（默认使用 color）",
     "4. preferredComponents 从以下选：quote-card, divider-fancy, cta-card, code-frame, callout-pro, stats-block, timeline, follow-bar, numbered-heading, section-title, share-card, toc-nav, tag-label, styled-table, hero-banner, faq, magazine-cover, section-divider, image-card, full-quote, two-column-cards, end-card",
     "5. tone 选：warm(温暖), minimal(极简), elegant(优雅), rational(理性), serious(严肃), modern(现代), playful(活泼)",
+    "6. defaultVariants.share-card 根据 tone 选：warm/elegant/playful → warm；minimal/serious/rational → minimal；modern → tech",
+    "7. 不要输出 components 字段——组件视觉由组件自身消费 tokens 实现，Theme 只负责设计 Token",
   ].join("\n");
 }
 
 /**
  * 验证 AI 生成的 Theme JSON，返回合法对象或 null
  */
-export function validateThemeJson(raw: string): Record<string, unknown> | null {
+export function validateThemeJson(raw: string): ThemeDefinition | null {
   let text = raw.trim();
   if (text.startsWith("```")) {
     text = text.replace(/^```(?:json)?\s*\n?/, "").replace(/\n?```\s*$/, "");
@@ -124,9 +127,40 @@ export function validateThemeJson(raw: string): Record<string, unknown> | null {
         preferredComponents: ["quote-card", "divider-fancy"],
         density: "medium",
         tone: ["modern"],
-        magazineLevel: "medium",
       };
     }
+
+    // 校验 layout 字段结构
+    const layout = parsed.layout as Record<string, unknown>;
+    const validDensities = ["low", "medium", "high"];
+    if (!validDensities.includes(layout.density as string)) {
+      layout.density = "medium";
+    }
+    if (!Array.isArray(layout.tone)) {
+      layout.tone = ["modern"];
+    } else {
+      // 过滤非法 tone 值，保留合法枚举内的项（warm/minimal/elegant/rational/serious/modern/playful）
+      const validTones = [
+        "warm",
+        "minimal",
+        "elegant",
+        "rational",
+        "serious",
+        "modern",
+        "playful",
+      ];
+      layout.tone = (layout.tone as string[]).filter((t) =>
+        validTones.includes(t),
+      );
+      if ((layout.tone as string[]).length === 0) {
+        layout.tone = ["modern"];
+      }
+    }
+    if (!Array.isArray(layout.preferredComponents)) {
+      layout.preferredComponents = ["quote-card", "divider-fancy"];
+    }
+    // 移除已废弃的 magazineLevel 字段
+    delete layout.magazineLevel;
 
     const t = parsed.tokens.typography;
     if (!t.heading) t.heading = {};
@@ -151,7 +185,8 @@ export function validateThemeJson(raw: string): Record<string, unknown> | null {
       parsed.tokens.shadow = { enabled: false, value: "" };
     if (!t.codeFontFamily) t.codeFontFamily = "monospace";
 
-    if (!parsed.components) parsed.components = {};
+    // components 字段可选——仅当 AI 明确输出时保留，结构校验由 ThemeDefinition 类型保证。
+    // 不再强制补空对象，符合"Theme 只提供 Token，组件自行消费"的架构原则。
 
     return parsed;
   } catch {

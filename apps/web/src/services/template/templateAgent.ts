@@ -20,7 +20,7 @@ import { getParagraphCount } from "./contentExtractor";
 import { AI_GENERATABLE_COMPONENTS } from "./componentSchemas";
 
 import type { MagazineLevel, DesignIntent, ContentRole } from "./types";
-import type { Audience, DesignConstraints } from "../ai/analysisAgent";
+import type { Audience, DesignConstraints } from "../ai/types";
 
 /** AI 生成的原始响应结构（v2.0） */
 interface AiTemplateResponse {

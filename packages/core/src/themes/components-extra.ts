@@ -214,13 +214,15 @@ export const componentStylesExtra = `/* === WeMD 扩展组件样式（跟随主�
 }
 
 /* === hero-banner 顶部头图 Banner === */
+/* 设计约束：基础规则不做背景/字色，全部分派给 variant
+   - 语义变量：--hb-title 主标题色 / --hb-sub 副标题色，由各 variant 显式赋值
+   - 圆角基础值：calc(var(--wemd-border-radius, 8px) + 4px)，variant 可覆盖单边 */
 #wemd .wemd-hero-banner {
   margin: 0 0 32px 0;
   padding: 0;
-  border-radius: 12px;
+  border-radius: calc(var(--wemd-border-radius, 8px) + 4px);
   overflow: hidden;
   position: relative;
-  background: linear-gradient(135deg, var(--wemd-primary, #07c160) 0%, var(--wemd-primary-dark, #0a8f4a) 100%);
   min-height: 160px;
   display: flex;
   align-items: center;
@@ -235,21 +237,21 @@ export const componentStylesExtra = `/* === WeMD 扩展组件样式（跟随主�
   width: 100%;
 }
 
-/* 第一段作为主标题 */
+/* 第一段作为主标题（字色走语义变量 --hb-title） */
 #wemd .wemd-hero-banner .wemd-component-body > p:first-child {
-  margin: 0 0 8px 0;
+  margin: 0 0 10px 0;
   font-size: 26px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--hb-title, var(--wemd-text-strong, #1a1a1a));
   line-height: 1.3;
   letter-spacing: 1px;
 }
 
-/* 第二段作为副标题 */
+/* 第二段作为副标题（字色走语义变量 --hb-sub） */
 #wemd .wemd-hero-banner .wemd-component-body > p:nth-child(2) {
   margin: 0;
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--hb-sub, var(--wemd-text-soft, #888888));
   letter-spacing: 0.5px;
 }
 
@@ -391,26 +393,10 @@ export const componentStylesExtra = `/* === WeMD 扩展组件样式（跟随主�
   display: block;
 }
 
-/* 序号样式：用 span 包裹序号，兼容微信内联 */
+/* 序号样式：用 span 包裹序号，兼容微信内联
+   序号由 ThemeProcessor.addTocNumbers 注入到 DOM（预览和导出统一路径），
+   不再使用 ::before counter（微信会剥离伪元素，且会导致导出时双重编号） */
 #wemd .wemd-toc-nav .wemd-component-body li span.toc-num {
-  color: var(--wemd-primary, #07c160);
-  font-weight: 600;
-  font-family: "SF Mono", Monaco, monospace;
-  font-size: 13px;
-  margin-right: 8px;
-}
-
-/* 兼容旧版（counter 方式，预览用） */
-#wemd .wemd-toc-nav .wemd-component-body ul {
-  counter-reset: toc;
-}
-
-#wemd .wemd-toc-nav .wemd-component-body ul li {
-  counter-increment: toc;
-}
-
-#wemd .wemd-toc-nav .wemd-component-body ul li::before {
-  content: counter(toc, decimal-leading-zero);
   color: var(--wemd-primary, #07c160);
   font-weight: 600;
   font-family: "SF Mono", Monaco, monospace;

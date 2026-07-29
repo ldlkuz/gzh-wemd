@@ -205,10 +205,12 @@ export default function markdownItComponent(md: MarkdownIt): void {
     const hasCustomRenderer = componentName in MAGAZINE_RENDERERS;
     if (hasCustomRenderer) {
       // 杂志级组件：直接输出外层容器，不带 wemd-component-body
-      return `<section class="${cls}" data-component="${dataComponent}" data-props="${escapeHtmlAttr(dataProps)}">\n`;
+      // dataAttrsStr（data-variant 等）输出到外层，供 variant CSS 选择器匹配
+      return `<section class="${cls}" data-component="${dataComponent}" data-props="${escapeHtmlAttr(dataProps)}"${dataAttrsStr}>\n`;
     } else {
       // 普通组件：输出外层容器 + wemd-component-body
-      return `<section class="${cls}" data-component="${dataComponent}" data-props="${escapeHtmlAttr(dataProps)}">\n<section class="wemd-component-body"${dataAttrsStr}>\n`;
+      // dataAttrsStr 同时输出到外层和内层，统一 variant CSS 选择器模式为 [data-variant="xxx"]
+      return `<section class="${cls}" data-component="${dataComponent}" data-props="${escapeHtmlAttr(dataProps)}"${dataAttrsStr}>\n<section class="wemd-component-body"${dataAttrsStr}>\n`;
     }
   };
 

@@ -18,6 +18,7 @@ import {
   formatImageSize,
 } from "../../services/image/autoCompressImage";
 import { uploadEditorImage } from "../../services/image/imageUploadFlow";
+import { CurrentThemeBadge } from "./CurrentThemeBadge";
 import {
   blockTools,
   componentTemplates,
@@ -490,6 +491,9 @@ export function Toolbar({
           )}
         </button>
       )}
+
+      {/* 主题徽章：只读展示当前文章主题，点击跳转到文章主题面板 */}
+      <CurrentThemeBadge />
 
       {/* 分隔符 */}
       <div className="md-toolbar-divider" />

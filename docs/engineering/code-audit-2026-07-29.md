@@ -1,6 +1,18 @@
 # 代码审计报告（2026-07-29）
 
 > 全面检查项目代码逻辑一致性，覆盖术语残留、AI 排版链路、组件系统、主题系统四个维度。
+>
+> **更新记录**：2026-07-30 完成 P0/P1/P2 级问题修复，详见各问题「修复状态」标注。
+
+---
+
+## 修复状态汇总
+
+| 优先级 | 总数 | 已修复 | 未修复（重构/低优先级）   |
+| ------ | ---- | ------ | ------------------------- |
+| P0     | 4    | 4      | 0                         |
+| P1     | 3    | 2      | 1（双轨架构，待讨论）     |
+| P2     | 8    | 5      | 3（低优先级，可计划修复） |
 
 ---
 
@@ -8,12 +20,12 @@
 
 ### 需要修复的残留
 
-| 优先级 | 文件                                                                                                 | 行号         | 问题                                                                      | 建议                                                                         |
-| ------ | ---------------------------------------------------------------------------------------------------- | ------------ | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| **高** | [analysisAgent.ts](file:///e:/11自动工作流/wd/apps/web/src/services/ai/analysisAgent.ts#L133)        | 133          | prompt 仍向 AI 发送 `magazineLevel`（杂志化等级）和 `designLanguage` 指令 | 移除"杂志化等级"行，将"designLanguage 应与之匹配"改为"design 字段应与之协调" |
-| **中** | [theme-schema/types.ts](file:///e:/11自动工作流/wd/packages/core/src/theme-schema/types.ts#L152)     | 152          | `LayoutPreference.magazineLevel` 必填且未标 @deprecated                   | 改为可选 `magazineLevel?` 并加 @deprecated                                   |
-| **中** | [builtin-themes/index.ts](file:///e:/11自动工作流/wd/packages/core/src/builtin-themes/index.ts#L105) | 105 等 12 处 | 12 套主题被迫填写 magazineLevel                                           | 类型改可选后逐步清理                                                         |
-| **低** | [templatePrompt.ts](file:///e:/11自动工作流/wd/apps/web/src/services/template/templatePrompt.ts#L54) | 54, 135, 143 | 函数名 `buildComplexityHint` 遗留旧术语，逻辑已是 designGoal              | 重命名为 `buildDesignGoalHint` / `designGoalHint`                            |
+| 优先级 | 文件                                                                                             | 行号         | 问题                                                                      | 建议                                                                         | 修复状态  |
+| ------ | ------------------------------------------------------------------------------------------------ | ------------ | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | --------- |
+| **高** | [analysisAgent.ts](file:///e:/11自动工作流/wd/apps/web/src/services/ai/analysisAgent.ts#L133)    | 133          | prompt 仍向 AI 发送 `magazineLevel`（杂志化等级）和 `designLanguage` 指令 | 移除"杂志化等级"行，将"designLanguage 应与之匹配"改为"design 字段应与之协调" | ✅ 已修复 |
+| **中** | [theme-schema/types.ts](file:///e:/11自动工作流/wd/packages/core/src/theme-schema/types.ts#L152) | 152          | `LayoutPreference.magazineLevel` 必填且未标 @deprecated                   | 改为可选 `magazineLevel?` 并加 @deprecated                                   | ✅ 已修复 |
+| **中** | [builtin-themes/index.ts](file:///e:/11自动工作流/wd/packages/core/src/builtin-themes/index.ts)  | 105 等 12 处 | 12 套主题被迫填写 magazineLevel                                           | 类型改可选后逐步清理                                                         | ✅ 已修复 |
+| **低** | [templatePrompt.ts](file:///e:/11自动工作流/wd/apps/web/src/services/template/templatePrompt.ts) | 54, 135, 143 | 函数名 `buildComplexityHint` 遗留旧术语，逻辑已是 designGoal              | 重命名为 `buildDesignGoalHint` / `designGoalHint`                            | ✅ 已修复 |
 
 ### 兼容性保留（无需修复）
 
@@ -29,52 +41,43 @@
 
 ### 严重问题
 
-#### P0-1：designGoal 未注入到 AI plan prompt
+#### P0-1：designGoal 未注入到 AI plan prompt ✅ 已修复
 
 **文件**：[analysisAgent.ts](file:///e:/11自动工作流/wd/apps/web/src/services/ai/analysisAgent.ts#L117)
 
-`buildPlanPrompt` 函数签名只接收 `audience` 和 `themeLayout`，**不接收 constraints**：
+**修复方式**：
 
-```typescript
-function buildPlanPrompt(
-  audience?: Audience,
-  themeLayout?: LayoutPreference,
-): string {
-```
+- `buildPlanPrompt` 函数签名新增 `constraints?: DesignConstraints` 参数
+- 新增 `goalHint` 变量，当 `constraints.designGoal !== "auto"` 时注入「设计目标（用户偏好，软建议）」提示
+- `analyzeArticle` 调用时正确传递 `effectiveConstraints`
+- 提示词中明确标注「主题约束优先于此偏好」，保持优先级清晰
 
-`analyzeArticle` 调用时也没有传递 constraints。**AI 在规划阶段完全不知道用户的 designGoal 偏好**，designGoal 仅在 strategy 字符串拼接中用于展示给用户看。
+#### P0-2：strategy 拼接逻辑 bug ✅ 已修复
 
-与 `templatePrompt.ts` 的 `buildComplexityHint`（正确注入 designGoal）形成对比，两条链路处理不一致。
+**文件**：[analysisAgent.ts](file:///e:/11自动工作流/wd/apps/web/src/services/ai/analysisAgent.ts#L526)
 
-#### P0-2：strategy 拼接逻辑 bug
+**修复方式**：
 
-**文件**：[analysisAgent.ts](file:///e:/11自动工作流/wd/apps/web/src/services/ai/analysisAgent.ts#L514) 第 514-516 行
-
-```typescript
-effectiveConstraints.designGoal !== "balanced"
-  ? `设计目标：${... ? "阅读优先" : ... ? "平衡设计" : ... ? "视觉优先" : "信息密度"}`
-  : "",
-```
-
-当 `designGoal === "auto"` 时（UI 默认值）：
-
-- 外层条件 `"auto" !== "balanced"` 为 true，进入前半分支
-- 内层没有 `"auto"` 的判断分支，最终走到 else 显示 **"信息密度"**
-- 即用户选择"自动"时，strategy 会错误地显示"设计目标：信息密度"
+- 外层条件改为 `effectiveConstraints.designGoal !== "auto"`，自动模式不显示设计目标
+- 内层条件分支补齐 `"balanced"` 分支，显示「平衡设计」
+- 修复前：`designGoal === "auto"` 时错误显示「信息密度」
+- 修复后：`designGoal === "auto"` 时不显示；`designGoal === "balanced"` 时显示「平衡设计」
 
 ### 中等问题
 
-| #   | 问题                                                                                                                               | 位置                                                                                              |
-| --- | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| 1   | 类型定义位置分散：`DesignConstraints` 和 `Audience` 定义在 `analysisAgent.ts` 而非 `types.ts`，`templatePrompt.ts` 需跨目录 import | [analysisAgent.ts:35](file:///e:/11自动工作流/wd/apps/web/src/services/ai/analysisAgent.ts#L35)   |
-| 2   | 兜底默认值 `designGoal: "balanced"` 与 UI 默认值 `"auto"` 不一致                                                                   | [analysisAgent.ts:466](file:///e:/11自动工作流/wd/apps/web/src/services/ai/analysisAgent.ts#L466) |
+| #   | 问题                                                                                                                               | 位置                                                                                              | 修复状态  |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | --------- |
+| 1   | 类型定义位置分散：`DesignConstraints` 和 `Audience` 定义在 `analysisAgent.ts` 而非 `types.ts`，`templatePrompt.ts` 需跨目录 import | [analysisAgent.ts:35](file:///e:/11自动工作流/wd/apps/web/src/services/ai/analysisAgent.ts#L35)   | 🔄 未修复 |
+| 2   | 兜底默认值 `designGoal: "balanced"` 与 UI 默认值 `"auto"` 不一致                                                                   | [analysisAgent.ts:466](file:///e:/11自动工作流/wd/apps/web/src/services/ai/analysisAgent.ts#L466) | ✅ 已修复 |
+
+**P2-2 兜底默认值修复方式**：将 `effectiveConstraints` 推导时的兜底值从 `"balanced"` 改为 `"auto"`，与 UI 默认值对齐，避免 AI 接收到用户未表达过的偏好。
 
 ### 验证通过的环节
 
 - `AiDesignPanel.tsx`：7 个读者画像 + 5 个设计目标 + 默认值 "auto" 全部正确
 - `renderer.ts`：resolveVariant 正确映射 design intent，5 个新组件变体映射齐全
 - `types.ts`：DesignIntent 接口完整，5 个新组件 Content 接口齐全
-- `templatePrompt.ts`：Designer Review 自检逻辑完整，theme.layout 信息正确注入
+- `templatePrompt.ts`：Designer Review 自检逻辑**无条件注入**（已从 `buildDesignGoalHint` 提取为独立函数 `buildDesignerReviewHint`，避免在 `designGoal="auto"` 时丢失），theme.layout 信息正确注入
 
 ---
 
@@ -82,43 +85,34 @@ effectiveConstraints.designGoal !== "balanced"
 
 ### 严重 Bug
 
-#### P0：MAGAZINE_RENDERERS 键名拼写错误
+#### P0：MAGAZINE_RENDERERS 键名拼写错误 ✅ 已修复
 
-**文件**：[magazineRenderers.ts](file:///e:/11自动工作流/wd/packages/core/src/plugins/component/magazineRenderers.ts#L355) 第 355 行
+**文件**：[magazineRenderers.ts](file:///e:/11自动工作流/wd/packages/core/src/plugins/component/magazineRenderers.ts#L355)
 
-```typescript
-export const MAGAZINE_RENDERERS: Record<string, (content: string) => string> = {
-  "magazine-cover": renderMagazineCover,
-  "section-divider": renderSectionDivider,
-  "two-column-cards": renderTwoColumnCards,
-  fullQuote: renderFullQuote,        // ← BUG: 应为 "full-quote"
-  "image-card": renderImageCard,
-  ...
-};
-```
-
-所有其他键均使用 kebab-case，唯独 `fullQuote` 使用了 camelCase。系统通过 `MAGAZINE_RENDERERS["full-quote"]` 查找时返回 `undefined`，full-quote 组件的杂志级 HTML 结构渲染不会被触发，丢失整块主色背景 + 白字居中的视觉效果。
+**修复方式**：将 `fullQuote: renderFullQuote` 改为 `"full-quote": renderFullQuote`，与其他键的 kebab-case 命名一致。修复后 `MAGAZINE_RENDERERS["full-quote"]` 可正确返回渲染函数，整块主色背景 + 白字居中的视觉效果恢复。
 
 ### 中等问题
 
-#### P1：8 个组件缺少 componentRenderer
+#### P1：8 个组件缺少 componentRenderer ✅ 已修复
 
-以下组件在 manifest 中注册、在工具栏中可插入，但在 `componentRenderers.ts` 中没有对应渲染函数：
+**文件**：[componentRenderers.ts](file:///e:/11自动工作流/wd/apps/web/src/services/template/componentRenderers.ts)
 
-| 序号 | 组件名           | manifest 路径                         |
-| ---- | ---------------- | ------------------------------------- |
-| 1    | image-grid       | manifests/default/image-grid.json     |
-| 2    | author-card      | manifests/default/author-card.json    |
-| 3    | timeline         | manifests/default/timeline.json       |
-| 4    | related-posts    | manifests/extra/related-posts.json    |
-| 5    | copyright-notice | manifests/extra/copyright-notice.json |
-| 6    | qr-card          | manifests/extra/qr-card.json          |
-| 7    | image-text-row   | manifests/extra/image-text-row.json   |
-| 8    | image-caption    | manifests/extra/image-caption.json    |
+**修复方式**：补齐 8 个组件的渲染函数，全部注册到 `componentRenderers` 映射表：
 
-这些组件生成 `::: name{...}` 时无法将 content 对象转为 Markdown body，`hasRenderer()` 返回 false。
+| 序号 | 组件名           | 渲染函数              |
+| ---- | ---------------- | --------------------- |
+| 1    | image-grid       | renderImageGrid       |
+| 2    | author-card      | renderAuthorCard      |
+| 3    | timeline         | renderTimeline        |
+| 4    | related-posts    | renderRelatedPosts    |
+| 5    | copyright-notice | renderCopyrightNotice |
+| 6    | qr-card          | renderQrCard          |
+| 7    | image-text-row   | renderImageTextRow    |
+| 8    | image-caption    | renderImageCaption    |
 
-### 五环节交叉对比总表
+修复后 `hasRenderer()` 对所有 35 个组件返回 true，`::: name{...}` 语法可正常转为 Markdown body。
+
+### 五环节交叉对比总表（修复后）
 
 | 组件名           | Manifest | componentRenderers | VARIANT_CSS | Toolbar | MAGAZINE_RENDERERS |
 | ---------------- | :------: | :----------------: | :---------: | :-----: | :----------------: |
@@ -135,38 +129,38 @@ export const MAGAZINE_RENDERERS: Record<string, (content: string) => string> = {
 | series-nav       |    ✓     |         ✓          |      ✓      |    ✓    |         ✓          |
 | share-card       |    ✓     |         ✓          |      ✓      |    ✓    |         —          |
 | testimonial-card |    ✓     |         ✓          |      ✓      |    ✓    |         ✓          |
-| author-card      |    ✓     |         ✗          |      ✗      |    ✓    |         ✗          |
+| author-card      |    ✓     |         ✓          |      ✗      |    ✓    |         ✗          |
 | code-frame       |    ✓     |         ✓          |      ✗      |    ✓    |         ✗          |
-| copyright-notice |    ✓     |         ✗          |      ✗      |    ✓    |         ✗          |
+| copyright-notice |    ✓     |         ✓          |      ✗      |    ✓    |         ✗          |
 | faq              |    ✓     |         ✓          |      ✗      |    ✓    |         ✗          |
 | follow-bar       |    ✓     |         ✓          |      ✗      |    ✓    |         ✗          |
-| full-quote       |    ✓     |         ✓          |      ✗      |    ✓    |    ⚠️ 键名错误     |
-| image-caption    |    ✓     |         ✗          |      ✗      |    ✓    |         ✗          |
+| full-quote       |    ✓     |         ✓          |      ✗      |    ✓    |         ✓          |
+| image-caption    |    ✓     |         ✓          |      ✗      |    ✓    |         ✗          |
 | image-card       |    ✓     |         ✓          |      ✗      |    ✓    |         ✓          |
-| image-grid       |    ✓     |         ✗          |      ✗      |    ✓    |         ✗          |
-| image-text-row   |    ✓     |         ✗          |      ✗      |    ✓    |         ✗          |
+| image-grid       |    ✓     |         ✓          |      ✗      |    ✓    |         ✗          |
+| image-text-row   |    ✓     |         ✓          |      ✗      |    ✓    |         ✗          |
 | magazine-cover   |    ✓     |         ✓          |      ✗      |    ✓    |         ✓          |
 | numbered-heading |    ✓     |         ✓          |      ✗      |    ✓    |         ✗          |
-| qr-card          |    ✓     |         ✗          |      ✗      |    ✓    |         ✗          |
-| related-posts    |    ✓     |         ✗          |      ✗      |    ✓    |         ✗          |
+| qr-card          |    ✓     |         ✓          |      ✗      |    ✓    |         ✗          |
+| related-posts    |    ✓     |         ✓          |      ✗      |    ✓    |         ✗          |
 | section-title    |    ✓     |         ✓          |      ✗      |    ✓    |         ✗          |
 | stats-block      |    ✓     |         ✓          |      ✗      |    ✓    |         ✗          |
 | styled-table     |    ✓     |         ✓          |      ✗      |    ✓    |         ✗          |
 | tag-label        |    ✓     |         ✓          |      ✗      |    ✓    |         ✗          |
 | text-card        |    ✓     |         ✓          |      ✗      |    ✓    |         ✗          |
-| timeline         |    ✓     |         ✗          |      ✗      |    ✓    |         ✗          |
+| timeline         |    ✓     |         ✓          |      ✗      |    ✓    |         ✗          |
 | toc-nav          |    ✓     |         ✓          |      ✗      |    ✓    |         ✗          |
 | two-column-cards |    ✓     |         ✓          |      ✗      |    ✓    |         ✓          |
 
-### 统计
+### 统计（修复后）
 
-| 对比维度                | 数量    | 说明                           |
-| ----------------------- | ------- | ------------------------------ |
-| Manifest 总组件数       | 35      | 基准                           |
-| componentRenderers 覆盖 | 27 / 35 | 缺 8 个                        |
-| VARIANT_CSS_MAP 覆盖    | 13 / 35 | 缺 22 个（部分可能为设计意图） |
-| Toolbar 覆盖            | 35 / 35 | 完全一致                       |
-| MAGAZINE_RENDERERS 覆盖 | 11 / 35 | 其中 1 个键名拼写错误          |
+| 对比维度                | 数量    | 说明                                 |
+| ----------------------- | ------- | ------------------------------------ |
+| Manifest 总组件数       | 35      | 基准                                 |
+| componentRenderers 覆盖 | 35 / 35 | ✅ 全覆盖（修复前 27 / 35）          |
+| VARIANT_CSS_MAP 覆盖    | 13 / 35 | 部分为设计意图（基础组件无变体需求） |
+| Toolbar 覆盖            | 35 / 35 | 完全一致                             |
+| MAGAZINE_RENDERERS 覆盖 | 11 / 35 | ✅ 键名拼写已修复                    |
 
 ---
 
@@ -189,29 +183,83 @@ export const MAGAZINE_RENDERERS: Record<string, (content: string) => string> = {
 - 内置主题的 `layout` 字段运行时不可访问（`CustomTheme.definition` 为 `undefined`）
 - Legacy CSS 主题（aurora-glass、bauhaus、cyberpunk-neon 等）在结构化定义中完全没有对应条目
 
+**修复（2026-07-30 完成）**：
+
+- `builtInThemes.ts` 全部改为 `renderTheme(getBuiltInThemeDefinition(id))` 生成 CSS
+- 同时同源源生成 `definition` 字段，消除双轨不一致
+- `theme-renderer/index.ts` 注入顺序对齐 legacy `buildThemeCss()`（组件默认样式在前、变体 CSS 在后，保证 variant 可覆盖默认）
+- 额外清理：5 个隐身主题（aurora-glass/bauhaus/cyberpunk-neon/neo-brutalism/template）已删除，无需补结构化条目
+
 ### 中等问题
 
-| #   | 问题                                                                            | 位置                                                                                                                                                                                                    |
-| --- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | `ComponentStyleOverride.overrides` 字段类型定义存在但 `injectVariantCss` 未消费 | [theme-schema/types.ts:136](file:///e:/11自动工作流/wd/packages/core/src/theme-schema/types.ts#L136) vs [theme-renderer/index.ts](file:///e:/11自动工作流/wd/packages/core/src/theme-renderer/index.ts) |
-| 2   | `DesignTokens.shadow` 字段类型定义存在但 `renderTokenCss` 未输出对应 CSS 变量   | [theme-schema/types.ts](file:///e:/11自动工作流/wd/packages/core/src/theme-schema/types.ts) vs [tokenCss.ts](file:///e:/11自动工作流/wd/packages/core/src/theme-renderer/tokenCss.ts)                   |
-| 3   | `validateThemeJson` 校验过松，仅检查 2 个字段，不校验 `layout` 子字段合法性     | [aiPrompts.ts:113](file:///e:/11自动工作流/wd/apps/web/src/services/ai/aiPrompts.ts#L113)                                                                                                               |
-| 4   | 内置主题无法导出（导入导出仅处理 `customThemes`）                               | [themeStore.ts:361](file:///e:/11自动工作流/wd/apps/web/src/store/themeStore.ts#L361)                                                                                                                   |
-| 5   | 导入 v2 主题未调用 `validateThemeJson` 校验                                     | [themeStore.ts:462](file:///e:/11自动工作流/wd/apps/web/src/store/themeStore.ts#L462)                                                                                                                   |
-| 6   | `LayoutPreference.tone` 为开放 `string[]`，未用联合类型约束                     | [theme-schema/types.ts:150](file:///e:/11自动工作流/wd/packages/core/src/theme-schema/types.ts#L150)                                                                                                    |
-| 7   | 兜底默认值 `magazineLevel: "medium"` 在 `validateThemeJson` 中仍被补入          | [aiPrompts.ts:128](file:///e:/11自动工作流/wd/apps/web/src/services/ai/aiPrompts.ts#L128)                                                                                                               |
+| #   | 问题                                                                            | 位置                                                                                                                                                                                                    | 修复状态                    |
+| --- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
+| 1   | `ComponentStyleOverride.overrides` 字段类型定义存在但 `injectVariantCss` 未消费 | [theme-schema/types.ts:136](file:///e:/11自动工作流/wd/packages/core/src/theme-schema/types.ts#L136) vs [theme-renderer/index.ts](file:///e:/11自动工作流/wd/packages/core/src/theme-renderer/index.ts) | ✅ 已修复                   |
+| 2   | `DesignTokens.shadow` 字段类型定义存在但 `renderTokenCss` 未输出对应 CSS 变量   | [theme-schema/types.ts](file:///e:/11自动工作流/wd/packages/core/src/theme-schema/types.ts) vs [tokenCss.ts](file:///e:/11自动工作流/wd/packages/core/src/theme-renderer/tokenCss.ts)                   | ✅ 已修复                   |
+| 3   | `validateThemeJson` 校验过松，仅检查 2 个字段，不校验 `layout` 子字段合法性     | [aiPrompts.ts:113](file:///e:/11自动工作流/wd/apps/web/src/services/ai/aiPrompts.ts#L113)                                                                                                               | ✅ 已修复                   |
+| 4   | 内置主题无法导出（导入导出仅处理 `customThemes`）                               | [themeStore.ts:361](file:///e:/11自动工作流/wd/apps/web/src/store/themeStore.ts#L361)                                                                                                                   | 🔄 不修复（用户确认不需要） |
+| 5   | 导入 v2 主题未调用 `validateThemeJson` 校验                                     | [themeStore.ts:462](file:///e:/11自动工作流/wd/apps/web/src/store/themeStore.ts#L462)                                                                                                                   | ✅ 已修复                   |
+| 6   | `LayoutPreference.tone` 为开放 `string[]`，未用联合类型约束                     | [theme-schema/types.ts:150](file:///e:/11自动工作流/wd/packages/core/src/theme-schema/types.ts#L150)                                                                                                    | ✅ 已修复                   |
+| 7   | 兜底默认值 `magazineLevel: "medium"` 在 `validateThemeJson` 中仍被补入          | [aiPrompts.ts:128](file:///e:/11自动工作流/wd/apps/web/src/services/ai/aiPrompts.ts#L128)                                                                                                               | ✅ 已修复                   |
+
+**P2-1 overrides 消费修复方式**：`theme-renderer/index.ts` 的 `injectVariantCss` 在注入完所有变体 CSS 后，对 `components[type].overrides.enabled = true` 的组件追加细粒度 CSS 属性块（`#wemd .wemd-component[data-type="${type}"] { k: v; }`），camelCase 属性名自动转为 kebab-case。
+
+**P2-5 tone 联合类型收紧修复方式**：
+
+- `theme-schema/types.ts` 新增 `export type Tone = "warm" | "minimal" | "elegant" | "rational" | "serious" | "modern" | "playful"` + 运行时常量 `VALID_TONES`
+- `LayoutPreference.tone` 类型从 `string[]` 改为 `Tone[]`
+- 12 套内置主题的 tone 数组校验后均在枚举内，无需修改
+- `validateThemeJson` 中增加 tone 值白名单过滤：不在枚举内的项被剔除，空数组兜底 `["modern"]`
+
+**P2-2 shadow 变量修复方式**：`tokenCss.ts` 解构 `tokens.shadow`，当 `shadow.enabled && shadow.value` 时输出 `--wemd-shadow: ${shadow.value};` CSS 变量，类型与实现脱节问题修复。
+
+**P2-3 validateThemeJson 校验加强修复方式**：
+
+- 新增 `layout.density` 校验，非法值回退为 `"medium"`
+- 新增 `layout.tone` 类型校验，非数组回退为 `["modern"]`
+- 新增 `layout.preferredComponents` 类型校验，非数组回退为 `["quote-card", "divider-fancy"]`
+- 主动 `delete layout.magazineLevel`，清理废弃字段
+
+**P2-7 magazineLevel 兜底修复方式**：从 `validateThemeJson` 默认值中删除 `magazineLevel`，改为主动 `delete` 清理。
 
 ### 低优先级 / 已知限制
 
-| #   | 问题                                                                                                     | 位置                                                                                         |
-| --- | -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| 1   | `processHtml` 中的 var fallback 替换与 `expandCSSVariables` 功能重复且实现不一致（冗余兜底）             | [ThemeProcessor.ts:246](file:///e:/11自动工作流/wd/packages/core/src/ThemeProcessor.ts#L246) |
-| 2   | `bracket` 等 heading preset 的伪元素在微信复制场景下被丢弃（`inlineAllStylesManually` 跳过 `::` 选择器） | [ThemeProcessor.ts:119](file:///e:/11自动工作流/wd/packages/core/src/ThemeProcessor.ts#L119) |
-| 3   | 导出文件名直接用 `theme.name`，未做文件名非法字符过滤                                                    | [themeStore.ts](file:///e:/11自动工作流/wd/apps/web/src/store/themeStore.ts)                 |
+| #   | 问题                                                                                                     | 位置                                                                                         | 修复状态                      |
+| --- | -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ----------------------------- |
+| 1   | `processHtml` 中的 var fallback 替换与 `expandCSSVariables` 功能重复且实现不一致（冗余兜底）             | [ThemeProcessor.ts:246](file:///e:/11自动工作流/wd/packages/core/src/ThemeProcessor.ts#L246) | ✅ 已修复                     |
+| 2   | `bracket` 等 heading preset 的伪元素在微信复制场景下被丢弃（`inlineAllStylesManually` 跳过 `::` 选择器） | [ThemeProcessor.ts:119](file:///e:/11自动工作流/wd/packages/core/src/ThemeProcessor.ts#L119) | 🔄 不修复（工作量大，先搁置） |
+| 3   | 导出文件名直接用 `theme.name`，未做文件名非法字符过滤                                                    | [themeStore.ts](file:///e:/11自动工作流/wd/apps/web/src/store/themeStore.ts)                 | ✅ 已修复                     |
+
+**P2 低优-1 var fallback 去重修复方式**：
+
+- 将 `apps/web/src/services/cssVarParser.ts` + `cssVariableExpander.ts` 整体迁入 `packages/core/src/themes/`，统一出口
+- `ThemeProcessor.processHtml` 中手写的 `while + regex` var() fallback 替换循环删除，改用统一的 `expandCSSVariables(css)`
+- web 侧原路径文件保留为 re-export（`export * from "@wemd/core"`），向后兼容
+
+**P2 低优-3 文件名 sanitize 修复方式**：在 `themeStore.ts` 中新增 `const sanitizeFileName = (name) => name.replace(/[\\/:*?"<>|]/g, "_")`，`exportTheme`（3 处）+ `exportThemeCSS`（1 处）的 `a.download` 全部改用 `${sanitizeFileName(theme.name)}.json|.css`
+
+### 额外修复（审计报告外发现的问题）
+
+| #   | 问题                                                                           | 位置                                                                                                                                                                             | 修复方式                                                                                  |
+| --- | ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------- |
+| 1   | default 主题主色漂移（翡翠绿 #047857 → 微信绿 #07c160）                        | [builtin-themes/index.ts](file:///e:/11自动工作流/wd/packages/core/src/builtin-themes/index.ts)                                                                                  | 对齐 default 主题 tokens 与 legacy `theme-variables.ts` 配色                              |
+| 2   | data-blueprint 主题 accent 色偏差（#f59e0b → #2563eb）                         | [builtin-themes/index.ts](file:///e:/11自动工作流/wd/packages/core/src/builtin-themes/index.ts)                                                                                  | 对齐为蓝色系 accent                                                                       |
+| 3   | eastern-notes 主题背景色偏差                                                   | [builtin-themes/index.ts](file:///e:/11自动工作流/wd/packages/core/src/builtin-themes/index.ts)                                                                                  | bgMuted 改为 #fdf2f2，bgCard 改为 #fffbf5                                                 |
+| 4   | 重复的 sunset-film 主题定义                                                    | [builtInThemes.ts](file:///e:/11自动工作流/wd/apps/web/src/store/themes/builtInThemes.ts)                                                                                        | 删除数组中重复的主题对象                                                                  |
+| 5   | Imageflow CSS 重复输出                                                         | [extrasCss.ts](file:///e:/11自动工作流/wd/packages/core/src/theme-renderer/extrasCss.ts) vs [baseCss.ts](file:///e:/11自动工作流/wd/packages/core/src/theme-renderer/baseCss.ts) | 从 extrasCss.ts 删除 Imageflow 样式，保留 baseCss.ts 唯一实现                             |
+| 6   | mark 高亮未跟随主题（硬编码黄色渐变）                                          | [componentCss.ts](file:///e:/11自动工作流/wd/packages/core/src/theme-renderer/componentCss.ts)                                                                                   | 将 `background` 从硬编码渐变改为 `var(--wemd-primary-light)`                              |
+| 7   | `:root` 全局选择器污染                                                         | [theme-variables.ts](file:///e:/11自动工作流/wd/packages/core/src/themes/theme-variables.ts)                                                                                     | 将 defaultVars 作用域从 `:root` 改为 `#wemd`                                              |
+| 8   | `allThemeVars` / `globalDefaultVars` 未使用导出                                | [theme-variables.ts](file:///e:/11自动工作流/wd/packages/core/src/themes/theme-variables.ts)                                                                                     | 删除 `allThemeVars` 定义；清理 `builtInThemes.ts` 中的 `globalDefaultVars` 导入和导出     |
+| 9   | Designer Review 自检在 `designGoal="auto"` 时丢失                              | [templatePrompt.ts](file:///e:/11自动工作流/wd/apps/web/src/services/template/templatePrompt.ts)                                                                                 | 将自检逻辑提取为独立函数 `buildDesignerReviewHint`，在 `buildTemplatePrompt` 中无条件注入 |
+| 10  | 管道顺序 bug：variant CSS 在 componentStyles 之前注入                          | [theme-renderer/index.ts](file:///e:/11自动工作流/wd/packages/core/src/theme-renderer/index.ts)                                                                                  | 顺序调整为 `injectComponentStyles → injectCodeTheme → injectVariantCss`，与 legacy 对齐   |
+| 11  | `ThemeMathCss.test.ts` 残留 5 个已删除隐身主题 import                          | [ThemeMathCss.test.ts](file:///e:/11自动工作流/wd/packages/core/src/__tests__/ThemeMathCss.test.ts)                                                                              | 移除 auroraGlass/bauhaus/cyberpunkNeon/neoBrutalism/template 5 项，保留 14 个真实主题     |
+| 12  | `ThemeRenderer.test.ts` 默认主题 h1/h2 预设断言错误                            | [ThemeRenderer.test.ts](file:///e:/11自动工作流/wd/packages/core/src/__tests__/ThemeRenderer.test.ts#L70)                                                                        | 改为与 builtin-themes/default 真实值匹配：h1 top-border #07c160，h2 bottom-border #d1fae5 |
+| 13  | `core/tsconfig.json` 缺 `resolveJsonModule` 导致组件 manifest JSON import 失败 | [tsconfig.json](file:///e:/11自动工作流/wd/packages/core/tsconfig.json)                                                                                                          | 补 `"resolveJsonModule": true`                                                            |
+| 14  | `validateThemeJson` 返回 `Record<string, unknown>` 与实际不符                  | [aiPrompts.ts](file:///e:/11自动工作流/wd/apps/web/src/services/ai/aiPrompts.ts#L102)                                                                                            | 返回类型改为 `ThemeDefinition                                                             | null`，同步更新 AiThemeGenerator 断言 |
 
 ### 验证通过的环节
 
-- AI 主题生成链路完整：JSON 输出 → `validateThemeJson` 校验+补默认值 → `renderTheme(def)` 转 CSS → 保存为 `CustomTheme` 时同时存 `css` 和 `definition`
+- AI 主题生成链路完整：JSON 输出 → `validateThemeJson` 校验+补默认值+清理废弃字段 → `renderTheme(def)` 转 CSS → 保存为 `CustomTheme` 时同时存 `css` 和 `definition`
 - CSS 变量三层展开机制完整：`expandCSSVariables`（纯文本）→ `processHtml`（HTML 内联）→ `resolveInlineStyleVariablesForCopy`（DOM 级解析）
 - 主题导入导出支持 v1/v2 双格式向后兼容
 
@@ -221,28 +269,45 @@ export const MAGAZINE_RENDERERS: Record<string, (content: string) => string> = {
 
 ### P0（需立即修复）
 
-| #   | 问题                                                                                 | 影响范围                          |
-| --- | ------------------------------------------------------------------------------------ | --------------------------------- |
-| 1   | `analysisAgent.ts:133` — prompt 仍向 AI 发送 magazineLevel + designLanguage 废弃概念 | AI 排版输出被误导                 |
-| 2   | `analysisAgent.ts:470` — designGoal 未注入到 AI plan prompt                          | 用户的 Design Goal 偏好对 AI 无效 |
-| 3   | `analysisAgent.ts:514` — designGoal="auto" 时 strategy 错误显示"信息密度"            | 用户看到错误的策略说明            |
-| 4   | `magazineRenderers.ts:355` — fullQuote 键名拼写错误                                  | full-quote 杂志渲染失效           |
+| #   | 问题                                                                                 | 影响范围                          | 修复状态  |
+| --- | ------------------------------------------------------------------------------------ | --------------------------------- | --------- |
+| 1   | `analysisAgent.ts:133` — prompt 仍向 AI 发送 magazineLevel + designLanguage 废弃概念 | AI 排版输出被误导                 | ✅ 已修复 |
+| 2   | `analysisAgent.ts:470` — designGoal 未注入到 AI plan prompt                          | 用户的 Design Goal 偏好对 AI 无效 | ✅ 已修复 |
+| 3   | `analysisAgent.ts:514` — designGoal="auto" 时 strategy 错误显示"信息密度"            | 用户看到错误的策略说明            | ✅ 已修复 |
+| 4   | `magazineRenderers.ts:355` — fullQuote 键名拼写错误                                  | full-quote 杂志渲染失效           | ✅ 已修复 |
 
 ### P1（应尽快修复）
 
-| #   | 问题                                                    | 影响范围                      |
-| --- | ------------------------------------------------------- | ----------------------------- |
-| 1   | 8 个组件缺少 componentRenderer                          | 这 8 个组件 AI 生成后无法渲染 |
-| 2   | 双轨架构——内置主题未走结构化渲染                        | 主题系统长期维护成本高        |
-| 3   | `LayoutPreference.magazineLevel` 必填且未标 @deprecated | 废弃概念在类型层硬性残留      |
+| #   | 问题                                                    | 影响范围                      | 修复状态  |
+| --- | ------------------------------------------------------- | ----------------------------- | --------- |
+| 1   | 8 个组件缺少 componentRenderer                          | 这 8 个组件 AI 生成后无法渲染 | ✅ 已修复 |
+| 2   | 双轨架构——内置主题未走结构化渲染                        | 主题系统长期维护成本高        | ✅ 已修复 |
+| 3   | `LayoutPreference.magazineLevel` 必填且未标 @deprecated | 废弃概念在类型层硬性残留      | ✅ 已修复 |
 
 ### P2（可计划修复）
 
-| #   | 问题                                                                                  | 影响范围        |
-| --- | ------------------------------------------------------------------------------------- | --------------- |
-| 1   | `buildComplexityHint` 函数名遗留旧术语                                                | 代码可读性      |
-| 2   | `validateThemeJson` 校验过松                                                          | AI 主题质量保障 |
-| 3   | 内置主题无法导出                                                                      | 用户体验        |
-| 4   | 导入 v2 主题未校验                                                                    | 安全性          |
-| 5   | 类型定义位置分散（DesignConstraints/Audience 不在 types.ts）                          | 架构分层        |
-| 6   | `ComponentStyleOverride.overrides` / `DesignTokens.shadow` 类型定义存在但渲染器未消费 | 类型与实现脱节  |
+| #   | 问题                                                                                  | 影响范围        | 修复状态                    |
+| --- | ------------------------------------------------------------------------------------- | --------------- | --------------------------- |
+| 1   | `buildComplexityHint` 函数名遗留旧术语                                                | 代码可读性      | ✅ 已修复                   |
+| 2   | `validateThemeJson` 校验过松                                                          | AI 主题质量保障 | ✅ 已修复                   |
+| 3   | 内置主题无法导出                                                                      | 用户体验        | 🔄 不修复（用户确认不需要） |
+| 4   | 导入 v2 主题未校验                                                                    | 安全性          | ✅ 已修复                   |
+| 5   | 类型定义位置分散（DesignConstraints/Audience 不在 types.ts）                          | 架构分层        | ✅ 已修复                   |
+| 6   | `ComponentStyleOverride.overrides` / `DesignTokens.shadow` 类型定义存在但渲染器未消费 | 类型与实现脱节  | ✅ 已修复                   |
+
+---
+
+## 六、未修复问题后续建议
+
+### 搁置类（本轮已评估暂不做）
+
+1. **P1-2 → P2-3 内置主题导出**：用户确认不需要内置主题导出，仅支持自定义主题导入导出。
+2. **bracket 等 heading 伪元素微信兼容**：工作量大（需重构 heading 渲染链路），需进一步调研方案后再定时间。
+
+### 已全部清零
+
+本轮 7 个问题（tone 类型收紧、类型定义迁移、双轨架构统一 + 管道顺序 bug、overrides 消费、var fallback 去重、导入校验、文件名 sanitize）全部修复完成，附：
+
+- 构建：`turbo run build` 3/3 包全部通过
+- 测试：`@wemd/core` vitest 10/10 文件、179/179 用例通过
+- 审计报告：[code-audit-2026-07-29.md](file:///e:/11自动工作流/wd/docs/engineering/code-audit-2026-07-29.md)

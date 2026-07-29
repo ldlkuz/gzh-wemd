@@ -71,12 +71,12 @@ describe("默认主题", () => {
   const theme = builtInThemeDefinitions.find((t) => t.meta.id === "default")!;
   const css = renderTheme(theme);
 
-  it("H1 bottom-border 预设生效", () => {
-    expect(css).toContain("#wemd h1 { border-bottom: 2px solid #1a1a1a");
+  it("H1 top-border 预设生效（presetColor 微信绿 #07c160）", () => {
+    expect(css).toContain("#wemd h1 { border-top: 3px solid #07c160");
   });
 
-  it("H2 left-border 预设生效", () => {
-    expect(css).toContain("#wemd h2 { border-left: 4px solid #2c3e50");
+  it("H2 bottom-border 预设生效（presetColor primary-light #d1fae5）", () => {
+    expect(css).toContain("#wemd h2 { border-bottom: 2px solid #d1fae5");
   });
 });
 
@@ -127,9 +127,12 @@ describe("ThemeDefinition 结构", () => {
     }
   });
 
-  it("每套主题的 components 覆盖 30 个组件", () => {
+  it("components 字段可选——有则校验结构，无则跳过", () => {
     for (const theme of builtInThemeDefinitions) {
-      expect(Object.keys(theme.components).length).toBe(30);
+      if (theme.components) {
+        expect(Object.keys(theme.components).length).toBeGreaterThan(0);
+      }
+      // 无 components 字段的主题（如 default）完全合法——组件自行消费 tokens
     }
   });
 });

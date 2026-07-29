@@ -7,7 +7,7 @@
  *     ├─ renderTokenCss()          → #wemd { --wemd-* } 变量块
  *     ├─ renderTypographyCss()     → 段落/标题/列表排版
  *     ├─ renderComponentCss()      → 引用/代码/表格/图片/脚注
- *     ├─ injectVariantCss()        → 组件变体 CSS
+ *     ├─ injectVariantCss()        → 全部变体 CSS + 每个组件的 overrides/presetColor/css
  *     ├─ injectCodeTheme()         → 代码高亮主题（github / github-dark）
  *     ├─ injectComponentStyles()   → 30 个 WeMD 组件默认样式
  *     └─ renderExtrasCss()         → Callout / Mermaid / Imageflow
@@ -34,8 +34,17 @@ import { componentStylesMagazine } from "../themes/components-magazine";
 /**
  * 渲染完整的主题 CSS
  *
- * 按层拼接，顺序固定。组件默认样式在变体 CSS 之后但 extras 之前，
- * 确保变体能覆盖默认组件样式。
+ * 按层拼接，顺序与 legacy buildThemeCss 严格对齐：
+ *   1. renderBaseCss           基础重置（等价 basicTheme）
+ *   2. renderTokenCss          --wemd-* 变量（等价 themeVars）
+ *   3. renderTypographyCss     段落/标题/列表排版
+ *   4. renderComponentCss      引用/代码/表格/图片/脚注元素样式
+ *   5. injectCodeTheme         代码高亮主题（等价 codeTheme）
+ *   6. injectComponentStyles   30 个 WeMD 组件默认样式（Default+Extra+Faq+Magazine）
+ *   7. injectVariantCss        全部变体 CSS + overrides（在最末，保证变体覆盖默认）
+ *   8. renderExtrasCss         Callout / Mermaid / Imageflow
+ *
+ * 顺序依赖：componentStyles 必须在 variantCss 之前（否则 variant 被默认覆盖）。
  */
 export function renderTheme(theme: ThemeDefinition): string {
   const parts: string[] = [
@@ -43,9 +52,9 @@ export function renderTheme(theme: ThemeDefinition): string {
     renderTokenCss(theme.tokens),
     renderTypographyCss(theme.tokens),
     renderComponentCss(theme.tokens),
-    injectVariantCss(theme.components),
     injectCodeTheme(theme.codeTheme),
     injectComponentStyles(),
+    injectVariantCss(theme.components),
     renderExtrasCss(),
   ];
 
@@ -53,34 +62,40 @@ export function renderTheme(theme: ThemeDefinition): string {
 }
 
 /**
- * 从 components 配置中提取已启用的变体并注入 CSS
+ * 注入全部变体 CSS（与 legacy `getVariantCss()` 行为一致：无条件注入所有 variant）
+ * 保证用户在 UI 中手动切换组件 variant 时 CSS 已存在。
+ *
+ * 同时对 ThemeDefinition.components 里有自定义覆盖的组件，追加：
+ *   - overrides（CSS 属性细粒度覆盖，如 { fontSize: "20px", borderWidth: "3px" }）
+ *   - 未来扩展：presetColor / customCss 等
  */
 function injectVariantCss(
   components?: Record<string, ComponentStyleOverride>,
 ): string {
-  if (!components) return "";
-  const usedVariants = new Map<string, Set<string>>();
+  const cssParts: string[] = [];
 
-  for (const [compType, override] of Object.entries(components)) {
-    if (
-      override.enabled &&
-      override.variant &&
-      override.variant !== "default"
-    ) {
-      if (!usedVariants.has(compType)) usedVariants.set(compType, new Set());
-      usedVariants.get(compType)!.add(override.variant!);
+  // 1) 注入全部变体 CSS（与 legacy getVariantCss 等价）
+  for (const variants of Object.values(VARIANT_CSS_MAP)) {
+    for (const css of Object.values(variants)) {
+      cssParts.push(css);
     }
   }
 
-  if (usedVariants.size === 0) return "";
-
-  const cssParts: string[] = [];
-  for (const [compType, variants] of usedVariants) {
-    const variantMap = VARIANT_CSS_MAP[compType];
-    if (variantMap) {
-      for (const v of variants) {
-        if (variantMap[v]) cssParts.push(variantMap[v]);
-      }
+  // 2) 消费 ComponentStyleOverride.overrides：给每个组件追加细粒度 CSS 属性
+  if (components) {
+    for (const [compType, override] of Object.entries(components)) {
+      if (!override.enabled || !override.overrides) continue;
+      const declarations = Object.entries(override.overrides)
+        .map(([k, v]) => {
+          // camelCase 属性名转 kebab-case（如 fontSize → font-size）
+          const cssKey = k.replace(/[A-Z]/g, (ch) => `-${ch.toLowerCase()}`);
+          return `  ${cssKey}: ${v};`;
+        })
+        .join("\n");
+      if (!declarations) continue;
+      cssParts.push(
+        `#wemd .wemd-component[data-type="${compType}"] {\n${declarations}\n}`,
+      );
     }
   }
 

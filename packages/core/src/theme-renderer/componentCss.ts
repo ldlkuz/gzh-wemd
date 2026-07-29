@@ -83,7 +83,7 @@ export function renderComponentCss(_tokens: DesignTokens): string {
     `  text-decoration-thickness: 1px;`,
     `}`,
     `#wemd mark {`,
-    `  background: linear-gradient(135deg, #fff9c4, #fff59d);`,
+    `  background: var(--wemd-primary-light);`,
     `  color: var(--wemd-text-strong);`,
     `  padding: 2px 4px;`,
     `  border-radius: 3px;`,

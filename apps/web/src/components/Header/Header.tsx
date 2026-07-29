@@ -36,6 +36,7 @@ import { useUITheme } from "../../hooks/useUITheme";
 import { useWindowControls } from "../../hooks/useWindowControls";
 import { Modal, FloatingToolbarButton } from "../common";
 import { AI_SETTINGS_EVENT } from "../../services/ai/aiConfig";
+import { OPEN_THEME_PANEL_EVENT } from "../../services/theme/openThemePanelEvent";
 
 const DefaultLogoMark = () => (
   <svg
@@ -154,6 +155,13 @@ export function Header() {
     const handler = () => setShowAiSettingsModal(true);
     window.addEventListener(AI_SETTINGS_EVENT, handler);
     return () => window.removeEventListener(AI_SETTINGS_EVENT, handler);
+  }, []);
+
+  // 监听全局「打开文章主题面板」事件（由编辑器工具栏主题徽章触发）
+  useEffect(() => {
+    const handler = () => setShowThemePanel(true);
+    window.addEventListener(OPEN_THEME_PANEL_EVENT, handler);
+    return () => window.removeEventListener(OPEN_THEME_PANEL_EVENT, handler);
   }, []);
 
   // 切换标题栏显示/隐藏

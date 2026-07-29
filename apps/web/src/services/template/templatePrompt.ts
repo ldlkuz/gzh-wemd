@@ -7,8 +7,8 @@
  */
 import { COMPONENT_CONTENT_SCHEMAS } from "./componentSchemas";
 import type { LayoutPreference } from "@wemd/core";
-import type { DesignConstraints } from "../ai/analysisAgent";
-import type { Audience } from "../ai/analysisAgent";
+import type { DesignConstraints } from "../ai/types";
+import type { Audience } from "../ai/types";
 
 /** 构建读者画像提示 */
 function buildAudienceHint(audience: Audience): string {
@@ -80,13 +80,19 @@ function buildDesignGoalHint(constraints: DesignConstraints): string {
     "- 这是用户偏好，不是硬性指令。如果内容的天然结构更适合另一种布局方式，允许 AI 适当偏离。",
     "- 主题的设计语言优先级高于用户偏好。如果主题风格明显偏向某种布局哲学，优先遵循主题。",
     `- 组件数量安全上限：${constraints.safetyLimit} 个（仅防异常生成，不作为目标数量）`,
+  ].join("\n");
+}
+
+/** 构建 Designer Review 自检提示（无条件注入，与 designGoal 无关） */
+function buildDesignerReviewHint(): string {
+  return [
     "",
     "## 组件使用原则",
     "- 组件数量不是质量指标。判断标准：如果删除一个组件后整体阅读体验没有下降，它就不应该存在。",
     "- 每个组件都必须解决一个具体问题（强调/总结/流程/引用/时间轴/数据/案例）。",
     "- 纯装饰性组件只用于文首封面和文末收尾，正文中不做无意义的视觉填充。",
     "- 允许连续多段纯正文，允许整章没有任何组件，允许一个组件的语义跨越多段。",
-    `- 不要因为"已经 N 段没放组件了"而硬塞。空白也是排版语言。`,
+    `- 不要因为'已经 N 段没放组件了'而硬塞。空白也是排版语言。`,
     "- 每 2-4 段穿插 1 个视觉组件是舒适的节奏参考，但不是必须遵守的规则。",
     "",
     "## Designer Review（输出前自检）",
@@ -104,7 +110,12 @@ function buildDesignGoalHint(constraints: DesignConstraints): string {
 
 /** 构建主题约束提示 */
 function buildThemeHint(themeLayout: LayoutPreference): string {
-  return `\n\n## 主题约束（当前使用的品牌规范）\n- 风格基调：${themeLayout.tone.join("、")}\n- 排版密度：${themeLayout.density}\n- 主题偏好的组件：${themeLayout.preferredComponents.join("、")}\n\n注意：优先选择主题偏好的组件，tone 应与主题风格基调协调。`;
+  const variantHint = themeLayout.defaultVariants
+    ? `\n- 推荐 variant：${Object.entries(themeLayout.defaultVariants)
+        .map(([k, v]) => `${k}=${v}`)
+        .join("、")}`
+    : "";
+  return `\n\n## 主题约束（当前使用的品牌规范）\n- 风格基调：${themeLayout.tone.join("、")}\n- 排版密度：${themeLayout.density}\n- 主题偏好的组件：${themeLayout.preferredComponents.join("、")}${variantHint}\n\n注意：优先选择主题偏好的组件，tone 应与主题风格基调协调。variant 推荐仅作参考，最终渲染由 design 字段推导。`;
 }
 
 /** 构建可用组件列表文本 */
@@ -133,6 +144,7 @@ export function buildTemplatePrompt(
   const themeHint = themeLayout ? buildThemeHint(themeLayout) : "";
   const audienceHint = audience ? buildAudienceHint(audience) : "";
   const designGoalHint = constraints ? buildDesignGoalHint(constraints) : "";
+  const designerReviewHint = buildDesignerReviewHint();
   const componentSchemasText = buildComponentSchemasText();
 
   return [
@@ -141,6 +153,7 @@ export function buildTemplatePrompt(
     themeHint,
     audienceHint,
     designGoalHint,
+    designerReviewHint,
     "",
     "## 工作流程",
     "",

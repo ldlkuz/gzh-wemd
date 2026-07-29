@@ -8,10 +8,15 @@ import {
 } from "./themes/builtInThemes";
 import { convertCssToWeChatDarkMode, renderTheme } from "@wemd/core";
 import { generateCSS } from "../components/Theme/ThemeDesigner/generateCSS";
+import { validateThemeJson } from "../services/ai/aiPrompts";
 
 // 深色模式 CSS 转换缓存
 const darkCssCache = new Map<string, string>();
 const DARK_MARK = "/* wemd-wechat-dark-converted */";
+
+/** 文件名非法字符过滤（Windows /\:\*?"<>|，统一替换为下划线） */
+const sanitizeFileName = (name: string): string =>
+  name.replace(/[\\/:*?"<>|]/g, "_");
 
 const hashCss = (css: string): string => {
   let hash = 0;
@@ -379,7 +384,7 @@ export const useThemeStore = create<ThemeStore>((set, get) => ({
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `${theme.name}.json`;
+      a.download = `${sanitizeFileName(theme.name)}.json`;
       a.click();
       URL.revokeObjectURL(url);
       return;
@@ -399,7 +404,7 @@ export const useThemeStore = create<ThemeStore>((set, get) => ({
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `${theme.name}.json`;
+      a.download = `${sanitizeFileName(theme.name)}.json`;
       a.click();
       URL.revokeObjectURL(url);
       return;
@@ -410,7 +415,7 @@ export const useThemeStore = create<ThemeStore>((set, get) => ({
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${theme.name}.css`;
+    a.download = `${sanitizeFileName(theme.name)}.css`;
     a.click();
     URL.revokeObjectURL(url);
   },
@@ -433,7 +438,7 @@ export const useThemeStore = create<ThemeStore>((set, get) => ({
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${theme.name}.css`;
+    a.download = `${sanitizeFileName(theme.name)}.css`;
     a.click();
     URL.revokeObjectURL(url);
   },
@@ -463,11 +468,19 @@ export const useThemeStore = create<ThemeStore>((set, get) => ({
       // v2 格式：ThemeDefinition JSON
       if (data.version >= 2 && data.definition) {
         try {
-          const css = renderTheme(data.definition);
-          get().createTheme(finalName, "css", css, undefined, data.definition);
+          // 调用 validateThemeJson 校验并自动兜底默认值（防止手写 JSON 缺字段）
+          const validated = validateThemeJson(JSON.stringify(data.definition));
+          if (!validated) {
+            console.error(
+              "v2 主题 definition 字段校验失败（validateThemeJson 返回 null）",
+            );
+            return false;
+          }
+          const css = renderTheme(validated);
+          get().createTheme(finalName, "css", css, undefined, validated);
           return true;
         } catch (e) {
-          console.error("renderTheme 失败:", e);
+          console.error("v2 主题校验 / renderTheme 失败:", e);
           return false;
         }
       }

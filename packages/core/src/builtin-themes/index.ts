@@ -3,14 +3,15 @@
  *
  * 12 套可选主题 + 5 套 legacy（纯 CSS，兼容历史文章）
  *
- * 每套主题 = Meta + DesignTokens + ComponentOverrides + LayoutPreference
+ * 每套主题 = Meta + DesignTokens + LayoutPreference
+ * Theme 只提供设计 Token（颜色/字体/圆角/阴影），组件自行消费 var(--wemd-*)。
+ * 组件 variant 推荐写入 layout.defaultVariants，供 AI 排版参考。
  */
 import type { ThemeDefinition } from "../theme-schema/types";
 
 // ============================================================
-// 默认主题 · 翡翠刊读
-// 设计语言：深松墨承担标题层级，翡翠 #047857 作单一锚点强调，
-// 每级标题使用不同版式（刊头压线 / 章节底线 / 翡翠左锚 / 字距标签）
+// 默认主题 · 微信绿
+// 设计语言：经典微信绿主色，中性灰底，编辑式排版
 // 全程不用投影、外发光、渐变或伪元素装饰，保证微信兼容性。
 // ============================================================
 
@@ -18,26 +19,26 @@ const themeDefault: ThemeDefinition = {
   meta: {
     id: "default",
     name: "默认主题",
-    description: "翡翠刊读 · 深松墨配翡翠绿，编辑式排版，微信兼容稳定",
-    keywords: ["通用", "翡翠", "编辑", "清新"],
+    description: "微信绿 · 经典编辑式排版，微信兼容稳定",
+    keywords: ["通用", "微信绿", "编辑", "清新"],
     version: "2.0.0",
   },
   tokens: {
     color: {
-      primary: "#047857",
-      primaryDark: "#065f46",
-      primaryLight: "#cfe4d9",
-      secondary: "#065f46",
-      accent: "#047857",
+      primary: "#07c160",
+      primaryDark: "#0a8f4a",
+      primaryLight: "#d1fae5",
+      secondary: "#0a8f4a",
+      accent: "#07c160",
       background: "#ffffff",
-      bgSoft: "#f0f6f3",
+      bgSoft: "#f7f8fa",
       bgCard: "#ffffff",
-      bgMuted: "#f7f9f8",
-      textStrong: "#12241c",
-      textNormal: "#242a26",
-      textSoft: "#606b64",
-      border: "#e4e9e6",
-      borderSoft: "#f0f3f1",
+      bgMuted: "#f0fdf4",
+      textStrong: "#1a1a1a",
+      textNormal: "#334155",
+      textSoft: "#475569",
+      border: "#e2e8f0",
+      borderSoft: "#f0f0f0",
     },
     typography: {
       fontFamily:
@@ -48,37 +49,37 @@ const themeDefault: ThemeDefinition = {
       heading: {
         h1: {
           fontSize: 30,
-          color: "#12241c",
+          color: "#1a1a1a",
           marginTop: 10,
           marginBottom: 28,
           fontWeight: "800",
           preset: "top-border",
-          presetColor: "#047857",
+          presetColor: "#07c160",
           letterSpacing: -0.3,
         },
         h2: {
           fontSize: 22,
-          color: "#134034",
+          color: "#0a8f4a",
           marginTop: 42,
           marginBottom: 16,
           fontWeight: "700",
           preset: "bottom-border",
-          presetColor: "#cfe4d9",
+          presetColor: "#d1fae5",
           letterSpacing: 0.2,
         },
         h3: {
           fontSize: 18,
-          color: "#134034",
+          color: "#0a8f4a",
           marginTop: 30,
           marginBottom: 12,
           fontWeight: "600",
           preset: "left-border",
-          presetColor: "#047857",
+          presetColor: "#07c160",
           letterSpacing: 0.2,
         },
         h4: {
-          fontSize: 14,
-          color: "#047857",
+          fontSize: 15,
+          color: "#07c160",
           marginTop: 26,
           marginBottom: 10,
           fontWeight: "700",
@@ -92,7 +93,6 @@ const themeDefault: ThemeDefinition = {
     border: { radius: 8 },
     shadow: { enabled: false, value: "" },
   },
-  components: createDefaultComponents("warm"),
   layout: {
     preferredComponents: [
       "quote-card",
@@ -102,7 +102,7 @@ const themeDefault: ThemeDefinition = {
     ],
     density: "medium",
     tone: ["warm", "modern"],
-    magazineLevel: "medium",
+    defaultVariants: { "share-card": "warm" },
   },
 };
 
@@ -120,20 +120,20 @@ const themeDataBlueprint: ThemeDefinition = {
   },
   tokens: {
     color: {
-      primary: "#3b82f6",
-      primaryDark: "#1e40af",
-      primaryLight: "#dbeafe",
-      secondary: "#1e40af",
-      accent: "#f59e0b",
+      primary: "#0ea5e9",
+      primaryDark: "#0369a1",
+      primaryLight: "#e0f2fe",
+      secondary: "#0369a1",
+      accent: "#06b6d4",
       background: "#ffffff",
-      bgSoft: "#f0f7ff",
-      bgCard: "#ffffff",
-      bgMuted: "#f1f5f9",
-      textStrong: "#1e3a5f",
-      textNormal: "#334155",
+      bgSoft: "#f0f9ff",
+      bgCard: "#0c4a6e",
+      bgMuted: "#e0f2fe",
+      textStrong: "#082f49",
+      textNormal: "#1e293b",
       textSoft: "#475569",
-      border: "#c7d9ec",
-      borderSoft: "#e3eff7",
+      border: "#bae6fd",
+      borderSoft: "#e0f2fe",
     },
     typography: {
       fontFamily:
@@ -144,30 +144,32 @@ const themeDataBlueprint: ThemeDefinition = {
       heading: {
         h1: {
           fontSize: 28,
-          color: "#1e3a5f",
+          color: "#082f49",
           marginTop: 32,
           marginBottom: 18,
           fontWeight: "700",
           preset: "left-border",
+          presetColor: "#0ea5e9",
         },
         h2: {
           fontSize: 22,
-          color: "#1e40af",
+          color: "#0369a1",
           marginTop: 28,
           marginBottom: 14,
           fontWeight: "600",
           preset: "left-border",
+          presetColor: "#0ea5e9",
         },
         h3: {
           fontSize: 19,
-          color: "#3b82f6",
+          color: "#0ea5e9",
           marginTop: 24,
           marginBottom: 12,
           fontWeight: "600",
         },
         h4: {
           fontSize: 17,
-          color: "#60a5fa",
+          color: "#06b6d4",
           marginTop: 20,
           marginBottom: 10,
           fontWeight: "600",
@@ -179,7 +181,6 @@ const themeDataBlueprint: ThemeDefinition = {
     border: { radius: 6 },
     shadow: { enabled: false, value: "" },
   },
-  components: createDefaultComponents("tech"),
   layout: {
     preferredComponents: [
       "stats-block",
@@ -189,7 +190,7 @@ const themeDataBlueprint: ThemeDefinition = {
     ],
     density: "high",
     tone: ["rational", "serious"],
-    magazineLevel: "high",
+    defaultVariants: { "share-card": "tech" },
   },
   codeTheme: "github-dark",
 };
@@ -212,16 +213,16 @@ const themeEasternNotes: ThemeDefinition = {
       primaryDark: "#8b1a1f",
       primaryLight: "#f5d7d7",
       secondary: "#8b1a1f",
-      accent: "#c1272d",
+      accent: "#d4393f",
       background: "#faf3e8",
-      bgSoft: "#faf3e8",
-      bgCard: "#fef9f0",
-      bgMuted: "#f5ebe0",
+      bgSoft: "#f5e8d0",
+      bgCard: "#fffbf5",
+      bgMuted: "#fdf2f2",
       textStrong: "#3a2a1f",
-      textNormal: "#5a4a3a",
+      textNormal: "#5a4a3f",
       textSoft: "#6b5b4a",
       border: "#e5d5b8",
-      borderSoft: "#f0e6d4",
+      borderSoft: "#ede0cc",
     },
     typography: {
       fontFamily:
@@ -268,12 +269,11 @@ const themeEasternNotes: ThemeDefinition = {
     border: { radius: 2 },
     shadow: { enabled: false, value: "" },
   },
-  components: createDefaultComponents("warm"),
   layout: {
     preferredComponents: ["quote-card", "divider-fancy", "end-card"],
     density: "low",
     tone: ["warm", "elegant"],
-    magazineLevel: "low",
+    defaultVariants: { "share-card": "warm" },
   },
   codeTheme: "github-dark",
 };
@@ -339,7 +339,7 @@ const themeClearGuide: ThemeDefinition = {
         },
         h4: {
           fontSize: 16,
-          color: "#10b981",
+          color: "#f59e0b",
           marginTop: 18,
           marginBottom: 8,
           fontWeight: "600",
@@ -351,7 +351,6 @@ const themeClearGuide: ThemeDefinition = {
     border: { radius: 4 },
     shadow: { enabled: false, value: "" },
   },
-  components: createDefaultComponents("minimal"),
   layout: {
     preferredComponents: [
       "toc-nav",
@@ -361,7 +360,7 @@ const themeClearGuide: ThemeDefinition = {
     ],
     density: "medium",
     tone: ["rational", "minimal"],
-    magazineLevel: "medium",
+    defaultVariants: { "share-card": "minimal" },
   },
   codeTheme: "github-dark",
 };
@@ -384,7 +383,7 @@ const themeWhitespaceGallery: ThemeDefinition = {
       primaryDark: "#1f2937",
       primaryLight: "#f3f4f6",
       secondary: "#6b7280",
-      accent: "#374151",
+      accent: "#8b6f47",
       background: "#ffffff",
       bgSoft: "#fafafa",
       bgCard: "#ffffff",
@@ -439,44 +438,46 @@ const themeWhitespaceGallery: ThemeDefinition = {
     border: { radius: 0 },
     shadow: { enabled: false, value: "" },
   },
-  components: createDefaultComponents("minimal"),
   layout: {
     preferredComponents: ["divider-fancy", "image-card", "full-quote"],
     density: "low",
     tone: ["minimal", "elegant"],
-    magazineLevel: "low",
+    defaultVariants: { "share-card": "minimal" },
   },
   codeTheme: "github-dark",
 };
 
 // ============================================================
-// 学术论文（黑白严谨）
+// 学术论文（米白底 + 深墨蓝 + 深蓝卡片）
+// 设计语言：原"全黑严谨"在微信白底下过于沉重且 primary 与 textStrong 相同。
+// 改为米白底+深墨蓝字（可读），深蓝卡片承载学术权威感，
+// serif 字体 + 双横线标题预设保持学术克制。
 // ============================================================
 
 const themeAcademicPaper: ThemeDefinition = {
   meta: {
     id: "academic-paper",
     name: "学术论文",
-    description: "严谨的学术排版风格，适合论文、深度分析",
+    description: "米白底配深墨蓝，严谨克制，适合论文、深度分析",
     keywords: ["学术", "论文", "严谨", "深度"],
-    version: "1.0.0",
+    version: "2.0.0",
   },
   tokens: {
     color: {
-      primary: "#1a1a2e",
-      primaryDark: "#0f0f1a",
-      primaryLight: "#e8e8ee",
-      secondary: "#16213e",
-      accent: "#0f3460",
-      background: "#ffffff",
-      bgSoft: "#f8f9fa",
-      bgCard: "#ffffff",
-      bgMuted: "#f0f0f0",
-      textStrong: "#1a1a2e",
-      textNormal: "#333333",
-      textSoft: "#666666",
-      border: "#dddddd",
-      borderSoft: "#eeeeee",
+      primary: "#1e3a5f",
+      primaryDark: "#0f2540",
+      primaryLight: "#e3eaf2",
+      secondary: "#0f2540",
+      accent: "#8b0000",
+      background: "#fbfaf7",
+      bgSoft: "#f4f2ec",
+      bgCard: "#0f2540",
+      bgMuted: "#eeebe2",
+      textStrong: "#0f1b2d",
+      textNormal: "#2c3e50",
+      textSoft: "#5a6a7a",
+      border: "#c8c0a8",
+      borderSoft: "#e0dccf",
     },
     typography: {
       fontFamily:
@@ -487,7 +488,7 @@ const themeAcademicPaper: ThemeDefinition = {
       heading: {
         h1: {
           fontSize: 24,
-          color: "#1a1a2e",
+          color: "#0f1b2d",
           marginTop: 36,
           marginBottom: 18,
           fontWeight: "700",
@@ -495,22 +496,23 @@ const themeAcademicPaper: ThemeDefinition = {
         },
         h2: {
           fontSize: 20,
-          color: "#1a1a2e",
+          color: "#1e3a5f",
           marginTop: 28,
           marginBottom: 14,
           fontWeight: "600",
           preset: "bottom-border",
+          presetColor: "#1e3a5f",
         },
         h3: {
           fontSize: 17,
-          color: "#333333",
+          color: "#1e3a5f",
           marginTop: 22,
           marginBottom: 10,
           fontWeight: "600",
         },
         h4: {
           fontSize: 15,
-          color: "#555555",
+          color: "#5a6a7a",
           marginTop: 18,
           marginBottom: 8,
           fontWeight: "600",
@@ -522,12 +524,11 @@ const themeAcademicPaper: ThemeDefinition = {
     border: { radius: 0 },
     shadow: { enabled: false, value: "" },
   },
-  components: createDefaultComponents("minimal"),
   layout: {
     preferredComponents: ["stats-block", "styled-table", "toc-nav"],
     density: "medium",
     tone: ["serious", "rational"],
-    magazineLevel: "low",
+    defaultVariants: { "share-card": "minimal" },
   },
 };
 
@@ -604,26 +605,31 @@ const themeKnowledgeBase: ThemeDefinition = {
     border: { radius: 6 },
     shadow: { enabled: true, value: "0 1px 3px rgba(0,0,0,0.06)" },
   },
-  components: createDefaultComponents("minimal"),
   layout: {
     preferredComponents: ["toc-nav", "callout-pro", "code-frame", "quote-card"],
     density: "medium",
     tone: ["rational", "minimal"],
-    magazineLevel: "medium",
+    defaultVariants: { "share-card": "minimal" },
   },
 };
 
 // ============================================================
-// 黑金奢华（黑底金字）
+// 黑金奢华（暖米底 + 深棕卡片 + 金色贯穿）
+// 设计语言：微信约束下 #wemd 不能设 background-color，所以正文区是微信白底容器。
+// 解法：正文区用暖米白底+深棕字（可读且有奢华温度），
+//       卡片组件（bgCard）用深棕黑底+金字（黑金的"黑"在卡片块体现），
+//       金色贯穿所有装饰元素（标题/边框/阴影/分隔线）。
+// hero-banner 的 center/left variant 自带深色渐变，与深色卡片呼应。
 // ============================================================
 
 const themeLuxuryGold: ThemeDefinition = {
   meta: {
     id: "luxury-gold",
     name: "黑金奢华",
-    description: "黑底金色点缀，奢华高端，适合品牌营销、高端内容",
+    description:
+      "暖米底配深棕卡片，金色贯穿装饰，奢华高端，适合品牌营销、高端内容",
     keywords: ["奢华", "高端", "黑金", "品牌"],
-    version: "1.0.0",
+    version: "2.0.0",
   },
   tokens: {
     color: {
@@ -632,15 +638,15 @@ const themeLuxuryGold: ThemeDefinition = {
       primaryLight: "#fef3c7",
       secondary: "#c5a028",
       accent: "#d4af37",
-      background: "#0a0a0a",
-      bgSoft: "#1a1a1a",
-      bgCard: "#151515",
-      bgMuted: "#111111",
-      textStrong: "#f5f5f0",
-      textNormal: "#d4d4cc",
-      textSoft: "#a0a090",
-      border: "#333333",
-      borderSoft: "#4a4a4a",
+      background: "#faf6ed",
+      bgSoft: "#f5edd6",
+      bgCard: "#1a1410",
+      bgMuted: "#f0e6d0",
+      textStrong: "#1f1410",
+      textNormal: "#3d2818",
+      textSoft: "#7a6450",
+      border: "#d4af37",
+      borderSoft: "#e8d196",
     },
     typography: {
       fontFamily:
@@ -685,9 +691,8 @@ const themeLuxuryGold: ThemeDefinition = {
     },
     spacing: { pagePadding: 10, paragraphMargin: 10 },
     border: { radius: 2 },
-    shadow: { enabled: true, value: "0 4px 20px rgba(212,175,55,0.1)" },
+    shadow: { enabled: true, value: "0 4px 24px rgba(212,175,55,0.18)" },
   },
-  components: createDefaultComponents("warm"),
   layout: {
     preferredComponents: [
       "hero-banner",
@@ -697,7 +702,7 @@ const themeLuxuryGold: ThemeDefinition = {
     ],
     density: "high",
     tone: ["elegant", "warm"],
-    magazineLevel: "high",
+    defaultVariants: { "share-card": "warm" },
   },
 };
 
@@ -724,11 +729,11 @@ const themeMorandiForest: ThemeDefinition = {
       bgSoft: "#f4f2ef",
       bgCard: "#fdfcfa",
       bgMuted: "#efece8",
-      textStrong: "#3a3a3a",
-      textNormal: "#5a5a5a",
-      textSoft: "#8a8a8a",
-      border: "#ddd8d0",
-      borderSoft: "#ece8e2",
+      textStrong: "#2e3a2f",
+      textNormal: "#4a5a4b",
+      textSoft: "#7a807a",
+      border: "#c8c0b0",
+      borderSoft: "#e0d8c8",
     },
     typography: {
       fontFamily:
@@ -739,11 +744,12 @@ const themeMorandiForest: ThemeDefinition = {
       heading: {
         h1: {
           fontSize: 28,
-          color: "#3a3a3a",
+          color: "#2e3a2f",
           marginTop: 36,
           marginBottom: 20,
           fontWeight: "600",
           preset: "bottom-border",
+          presetColor: "#7a9a7e",
         },
         h2: {
           fontSize: 22,
@@ -752,17 +758,18 @@ const themeMorandiForest: ThemeDefinition = {
           marginBottom: 14,
           fontWeight: "600",
           preset: "left-border",
+          presetColor: "#7a9a7e",
         },
         h3: {
           fontSize: 19,
-          color: "#5a5a5a",
+          color: "#5a7a5e",
           marginTop: 24,
           marginBottom: 12,
           fontWeight: "600",
         },
         h4: {
           fontSize: 17,
-          color: "#7a9a7e",
+          color: "#c4a882",
           marginTop: 20,
           marginBottom: 10,
           fontWeight: "600",
@@ -774,7 +781,6 @@ const themeMorandiForest: ThemeDefinition = {
     border: { radius: 4 },
     shadow: { enabled: false, value: "" },
   },
-  components: createDefaultComponents("warm"),
   layout: {
     preferredComponents: [
       "quote-card",
@@ -784,7 +790,7 @@ const themeMorandiForest: ThemeDefinition = {
     ],
     density: "low",
     tone: ["warm", "elegant"],
-    magazineLevel: "medium",
+    defaultVariants: { "share-card": "warm" },
   },
 };
 
@@ -830,6 +836,7 @@ const themeModernEditorial: ThemeDefinition = {
           marginBottom: 24,
           fontWeight: "700",
           preset: "bottom-border",
+          presetColor: "#0984e3",
           centered: true,
           letterSpacing: 2,
         },
@@ -840,20 +847,22 @@ const themeModernEditorial: ThemeDefinition = {
           marginBottom: 18,
           fontWeight: "600",
           preset: "left-border",
+          presetColor: "#0984e3",
         },
         h3: {
           fontSize: 20,
-          color: "#2d3436",
+          color: "#0984e3",
           marginTop: 28,
           marginBottom: 14,
           fontWeight: "600",
         },
         h4: {
           fontSize: 17,
-          color: "#636e72",
+          color: "#0984e3",
           marginTop: 24,
           marginBottom: 10,
           fontWeight: "600",
+          letterSpacing: 0.5,
         },
       },
       codeFontFamily: '"SF Mono", Monaco, Consolas, monospace',
@@ -862,7 +871,6 @@ const themeModernEditorial: ThemeDefinition = {
     border: { radius: 2 },
     shadow: { enabled: false, value: "" },
   },
-  components: createDefaultComponents("minimal"),
   layout: {
     preferredComponents: [
       "magazine-cover",
@@ -873,7 +881,7 @@ const themeModernEditorial: ThemeDefinition = {
     ],
     density: "high",
     tone: ["elegant", "serious"],
-    magazineLevel: "high",
+    defaultVariants: { "share-card": "minimal" },
   },
   codeTheme: "github-dark",
 };
@@ -896,16 +904,16 @@ const themeReceipt: ThemeDefinition = {
       primaryDark: "#1a1a1a",
       primaryLight: "#f0f0f0",
       secondary: "#636e72",
-      accent: "#2d3436",
-      background: "#faf8f5",
-      bgSoft: "#f5f0e8",
-      bgCard: "#fefcf8",
-      bgMuted: "#f0ebe0",
+      accent: "#c0392b",
+      background: "#faf6ed",
+      bgSoft: "#f5edd6",
+      bgCard: "#fffaeb",
+      bgMuted: "#f0e6c8",
       textStrong: "#2d3436",
-      textNormal: "#4a4a4a",
-      textSoft: "#888888",
-      border: "#d5d0c8",
-      borderSoft: "#e8e4de",
+      textNormal: "#3d4548",
+      textSoft: "#7a8085",
+      border: "#d4c89a",
+      borderSoft: "#e8d8a8",
     },
     typography: {
       fontFamily: '"Courier New", "Source Code Pro", "PingFang SC", monospace',
@@ -948,15 +956,14 @@ const themeReceipt: ThemeDefinition = {
       codeFontFamily: '"Courier New", Consolas, monospace',
     },
     spacing: { pagePadding: 6, paragraphMargin: 4 },
-    border: { radius: 0 },
-    shadow: { enabled: false, value: "" },
+    border: { radius: 2 },
+    shadow: { enabled: true, value: "0 1px 3px rgba(212,175,55,0.08)" },
   },
-  components: createDefaultComponents("minimal"),
   layout: {
     preferredComponents: ["quote-card", "divider-fancy", "numbered-heading"],
     density: "low",
     tone: ["playful", "minimal"],
-    magazineLevel: "low",
+    defaultVariants: { "share-card": "minimal" },
   },
 };
 
@@ -1034,7 +1041,6 @@ const themeSunsetFilm: ThemeDefinition = {
     border: { radius: 6 },
     shadow: { enabled: false, value: "" },
   },
-  components: createDefaultComponents("warm"),
   layout: {
     preferredComponents: [
       "quote-card",
@@ -1044,59 +1050,9 @@ const themeSunsetFilm: ThemeDefinition = {
     ],
     density: "medium",
     tone: ["warm", "elegant"],
-    magazineLevel: "medium",
+    defaultVariants: { "share-card": "warm" },
   },
 };
-
-// ============================================================
-// 工具函数
-// ============================================================
-
-/** 为内置主题生成默认的 components 配置（30 个组件全部 enabled） */
-function createDefaultComponents(
-  shareCardVariant: "warm" | "minimal" | "tech",
-): Record<string, { enabled: boolean; variant: string }> {
-  const comps: Record<string, { enabled: boolean; variant: string }> = {};
-  const allComponents = [
-    "quote-card",
-    "divider-fancy",
-    "cta-card",
-    "code-frame",
-    "callout-pro",
-    "stats-block",
-    "image-grid",
-    "author-card",
-    "timeline",
-    "follow-bar",
-    "qr-card",
-    "numbered-heading",
-    "section-title",
-    "image-text-row",
-    "hero-banner",
-    "share-card",
-    "related-posts",
-    "toc-nav",
-    "tag-label",
-    "image-caption",
-    "copyright-notice",
-    "styled-table",
-    "faq",
-    "magazine-cover",
-    "section-divider",
-    "image-card",
-    "text-card",
-    "full-quote",
-    "two-column-cards",
-    "end-card",
-  ];
-  for (const c of allComponents) {
-    comps[c] = {
-      enabled: true,
-      variant: c === "share-card" ? shareCardVariant : "default",
-    };
-  }
-  return comps;
-}
 
 // ============================================================
 // 导出

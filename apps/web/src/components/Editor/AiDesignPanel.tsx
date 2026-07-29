@@ -16,8 +16,8 @@ import {
 } from "lucide-react";
 import { Modal } from "../common/Modal";
 import type { TemplateGenerationResult } from "../../services/template";
-import type { Audience } from "../../services/ai/analysisAgent";
-import type { DesignConstraints } from "../../services/ai/analysisAgent";
+import type { Audience } from "../../services/ai/types";
+import type { DesignConstraints } from "../../services/ai/types";
 import { ARTICLE_TYPE_LABELS } from "./AiLayoutPanel";
 import "./AiDesignPanel.css";
 

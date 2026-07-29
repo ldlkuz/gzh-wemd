@@ -21,7 +21,16 @@ function toAlpha(hex: string, alpha: number): string {
 }
 
 export function renderTokenCss(tokens: DesignTokens): string {
-  const { color, typography, spacing, border } = tokens;
+  const { color, typography, spacing, border, shadow } = tokens;
+
+  const shadowLine =
+    shadow?.enabled && shadow.value ? `  --wemd-shadow: ${shadow.value};` : "";
+
+  const pa2 = toAlpha(color.primary, 0.02);
+  const pa4 = toAlpha(color.primary, 0.04);
+  const pa6 = toAlpha(color.primary, 0.06);
+  const pa8 = toAlpha(color.primary, 0.08);
+  const pa25 = toAlpha(color.primary, 0.25);
 
   return [
     `#wemd {`,
@@ -29,6 +38,12 @@ export function renderTokenCss(tokens: DesignTokens): string {
     `  --wemd-primary: ${color.primary};`,
     `  --wemd-primary-dark: ${color.primaryDark};`,
     `  --wemd-primary-light: ${color.primaryLight};`,
+    `  /* 主色派生半透明色（供渐变/阴影消费） */`,
+    `  --wemd-primary-alpha-2: ${pa2};`,
+    `  --wemd-primary-alpha-4: ${pa4};`,
+    `  --wemd-primary-alpha-6: ${pa6};`,
+    `  --wemd-primary-alpha-8: ${pa8};`,
+    `  --wemd-primary-alpha-25: ${pa25};`,
     `  /* 辅助色 + 点缀色 */`,
     `  --wemd-secondary: ${color.secondary};`,
     `  --wemd-accent: ${color.accent};`,
@@ -68,8 +83,11 @@ export function renderTokenCss(tokens: DesignTokens): string {
     `  --wemd-h4-margin-bottom: ${typography.heading.h4.marginBottom}px;`,
     `  /* 圆角 */`,
     `  --wemd-border-radius: ${border.radius}px;`,
+    shadowLine,
     `}`,
-  ].join("\n");
+  ]
+    .filter(Boolean)
+    .join("\n");
 }
 
 export const tokenCss = { renderTokenCss, toAlpha };
