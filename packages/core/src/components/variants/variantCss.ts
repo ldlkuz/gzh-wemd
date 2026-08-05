@@ -23,12 +23,12 @@ export const shareCardWarmCss = `/* === share-card 温暖变体 === */
   border-top: 2px solid var(--wemd-primary, #07c160);
   background: linear-gradient(180deg, transparent 0%, var(--wemd-primary-alpha-4, rgba(7, 193, 96, 0.04)) 100%);
 }
-#wemd .wemd-share-card[data-variant="warm"] .wemd-component-body > p:first-child {
+#wemd .wemd-share-card[data-variant="warm"] .wemd-component-body .wemd-child-1 {
   font-size: 15px;
   color: var(--wemd-text-strong, #1a1a1a);
   font-weight: 500;
 }
-#wemd .wemd-share-card[data-variant="warm"] .wemd-component-body > p:first-child strong {
+#wemd .wemd-share-card[data-variant="warm"] .wemd-component-body .wemd-child-1 strong {
   color: var(--wemd-primary, #07c160);
   font-weight: 600;
 }`;
@@ -40,7 +40,7 @@ export const shareCardMinimalCss = `/* === share-card 极简变体 === */
   text-align: center;
   border-top: 1px solid var(--wemd-border, #e2e8f0);
 }
-#wemd .wemd-share-card[data-variant="minimal"] .wemd-component-body > p:first-child {
+#wemd .wemd-share-card[data-variant="minimal"] .wemd-component-body .wemd-child-1 {
   font-size: 13px;
   color: var(--wemd-text-soft, #999999);
   letter-spacing: 0.5px;
@@ -55,7 +55,7 @@ export const shareCardTechCss = `/* === share-card 科技变体 === */
   border-radius: 12px;
   border: 1px solid var(--wemd-border, #e2e8f0);
 }
-#wemd .wemd-share-card[data-variant="tech"] .wemd-component-body > p:first-child {
+#wemd .wemd-share-card[data-variant="tech"] .wemd-component-body .wemd-child-1 {
   font-size: 14px;
   color: var(--wemd-text-soft, #666666);
   font-family: "SF Mono", Monaco, monospace;
@@ -253,8 +253,6 @@ export const dividerFancyDotsCss = `/* === divider-fancy 圆点 === */
  */
 export const heroBannerCenterCss = `/* === hero-banner 居中渐变 === */
 #wemd .wemd-hero-banner[data-variant="center"] {
-  --hb-title: #ffffff;
-  --hb-sub: rgba(255, 255, 255, 0.88);
   min-height: 180px;
   border-radius: calc(var(--wemd-border-radius, 8px) + 6px);
   background:
@@ -272,7 +270,7 @@ export const heroBannerCenterCss = `/* === hero-banner 居中渐变 === */
   padding: 44px 36px;
   text-align: center;
 }
-#wemd .wemd-hero-banner .wemd-component-body[data-variant="center"] > p:first-child {
+#wemd .wemd-hero-banner .wemd-component-body[data-variant="center"] .wemd-child-1 {
   font-size: 28px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
 }`;
@@ -284,8 +282,6 @@ export const heroBannerCenterCss = `/* === hero-banner 居中渐变 === */
  */
 export const heroBannerLeftCss = `/* === hero-banner 左对齐 === */
 #wemd .wemd-hero-banner[data-variant="left"] {
-  --hb-title: #ffffff;
-  --hb-sub: rgba(255, 255, 255, 0.72);
   min-height: 156px;
   justify-content: flex-start;
   /* 右弧左切：视觉像杂志的 "左边出血式" 导语卡片 */
@@ -303,11 +299,11 @@ export const heroBannerLeftCss = `/* === hero-banner 左对齐 === */
   padding: 36px 32px 36px 28px;
   text-align: left;
 }
-#wemd .wemd-hero-banner .wemd-component-body[data-variant="left"] > p:first-child {
+#wemd .wemd-hero-banner .wemd-component-body[data-variant="left"] .wemd-child-1 {
   font-size: 24px;
   letter-spacing: 0.8px;
 }
-#wemd .wemd-hero-banner .wemd-component-body[data-variant="left"] > p:nth-child(2) {
+#wemd .wemd-hero-banner .wemd-component-body[data-variant="left"] .wemd-child-2 {
   font-size: 13px;
 }`;
 
@@ -317,8 +313,6 @@ export const heroBannerLeftCss = `/* === hero-banner 左对齐 === */
  */
 export const heroBannerMinimalCss = `/* === hero-banner 极简 === */
 #wemd .wemd-hero-banner[data-variant="minimal"] {
-  --hb-title: var(--wemd-text-strong, #1a1a1a);
-  --hb-sub: var(--wemd-text-soft, #888888);
   min-height: auto;
   border-radius: calc(var(--wemd-border-radius, 8px) + 2px);
   border: 1px solid var(--wemd-border, #e2e8f0);
@@ -337,12 +331,12 @@ export const heroBannerMinimalCss = `/* === hero-banner 极简 === */
   padding: 30px 28px 26px 28px;
   text-align: center;
 }
-#wemd .wemd-hero-banner .wemd-component-body[data-variant="minimal"] > p:first-child {
+#wemd .wemd-hero-banner .wemd-component-body[data-variant="minimal"] .wemd-child-1 {
   font-size: 22px;
   letter-spacing: 0.6px;
   color: var(--wemd-text-strong, #1a1a1a);
 }
-#wemd .wemd-hero-banner .wemd-component-body[data-variant="minimal"] > p:nth-child(2) {
+#wemd .wemd-hero-banner .wemd-component-body[data-variant="minimal"] .wemd-child-2 {
   font-size: 13px;
 }`;
 
@@ -395,7 +389,7 @@ export const calloutProMinimalCss = `/* === callout-pro 极简图标 === */
 #wemd .wemd-callout-pro[data-variant="minimal"]::before {
   display: none;
 }
-#wemd .wemd-callout-pro .wemd-component-body[data-variant="minimal"] > p:first-child {
+#wemd .wemd-callout-pro .wemd-component-body[data-variant="minimal"] .wemd-child-1 {
   font-size: 15px;
   color: var(--wemd-text-strong, #1e293b);
 }`;

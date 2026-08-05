@@ -1,0 +1,133 @@
+{
+  "id": "toc-nav-mse6m3gw",
+  "type": "toc-nav",
+  "name": "Toc Nav",
+  "status": "draft",
+  "currentVersion": 6,
+  "approvedVersion": null,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "toc-nav",
+      "variant": "toc-nav-default",
+      "variantCss": "#wemd .wemd-toc-nav[data-variant=\"toc-nav-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:52:30.613Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: toc-nav",
+      "instruction": "管道生成基础外观: toc-nav",
+      "sourceHtml": "<nav class=\"wemd-toc-nav\" data-variant=\"toc-nav-default\">\n  <div class=\"wemd-toc-title\">目录</div>\n  <ul class=\"wemd-toc-list\">\n    <li class=\"wemd-toc-item\">第一章：引言</li>\n    <li class=\"wemd-toc-item\">第二章：核心概念</li>\n    <li class=\"wemd-toc-item\">第三章：实践方法</li>\n  </ul>\n</nav>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 2,
+      "component": "toc-nav",
+      "variant": "toc-nav-default",
+      "variantCss": "#wemd .wemd-toc-nav[data-variant=\"toc-nav-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:55:30.788Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: toc-nav",
+      "parentVersion": 1,
+      "instruction": "管道生成基础外观: toc-nav",
+      "sourceHtml": "<nav class=\"wemd-toc-nav\" data-variant=\"toc-nav-default\">\n  <div class=\"wemd-toc-title\">目录</div>\n  <ul class=\"wemd-toc-list\">\n    <li class=\"wemd-toc-item\">第一章：引言</li>\n    <li class=\"wemd-toc-item\">第二章：核心概念</li>\n    <li class=\"wemd-toc-item\">第三章：实践方法</li>\n  </ul>\n</nav>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 3,
+      "component": "toc-nav",
+      "variant": "toc-nav-default",
+      "variantCss": "#wemd .wemd-toc-nav[data-variant=\"toc-nav-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:56:08.303Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: toc-nav",
+      "parentVersion": 2,
+      "instruction": "管道生成基础外观: toc-nav",
+      "sourceHtml": "<nav class=\"wemd-toc-nav\" data-variant=\"toc-nav-default\">\n  <div class=\"wemd-toc-title\">目录</div>\n  <ul class=\"wemd-toc-list\">\n    <li class=\"wemd-toc-item\">第一章：引言</li>\n    <li class=\"wemd-toc-item\">第二章：核心概念</li>\n    <li class=\"wemd-toc-item\">第三章：实践方法</li>\n  </ul>\n</nav>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 4,
+      "component": "toc-nav",
+      "variant": "toc-nav-default",
+      "variantCss": "#wemd .wemd-toc-nav[data-variant=\"toc-nav-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:59:34.066Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: toc-nav",
+      "parentVersion": 3,
+      "instruction": "管道生成基础外观: toc-nav",
+      "sourceHtml": "<nav class=\"wemd-toc-nav\" data-variant=\"toc-nav-default\">\n  <div class=\"wemd-toc-title\">目录</div>\n  <ul class=\"wemd-toc-list\">\n    <li class=\"wemd-toc-item\">第一章：引言</li>\n    <li class=\"wemd-toc-item\">第二章：核心概念</li>\n    <li class=\"wemd-toc-item\">第三章：实践方法</li>\n  </ul>\n</nav>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 5,
+      "component": "toc-nav",
+      "variant": "toc-nav-default",
+      "variantCss": "#wemd .wemd-toc-nav[data-variant=\"toc-nav-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T14:52:18.937Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: toc-nav",
+      "parentVersion": 4,
+      "instruction": "管道生成基础外观: toc-nav",
+      "sourceHtml": "<nav class=\"wemd-toc-nav\" data-variant=\"toc-nav-default\">\n  <div class=\"wemd-toc-title\">目录</div>\n  <ul class=\"wemd-toc-list\">\n    <li class=\"wemd-toc-item\">第一章：引言</li>\n    <li class=\"wemd-toc-item\">第二章：核心概念</li>\n    <li class=\"wemd-toc-item\">第三章：实践方法</li>\n  </ul>\n</nav>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 6,
+      "component": "toc-nav",
+      "variant": "toc-nav-default",
+      "variantCss": "#wemd .wemd-toc-nav[data-variant=\"toc-nav-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T15:07:19.348Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: toc-nav",
+      "parentVersion": 5,
+      "instruction": "管道生成基础外观: toc-nav",
+      "sourceHtml": "<nav class=\"wemd-toc-nav\" data-variant=\"toc-nav-default\">\n  <div class=\"wemd-toc-title\">目录</div>\n  <ul class=\"wemd-toc-list\">\n    <li class=\"wemd-toc-item\">第一章：引言</li>\n    <li class=\"wemd-toc-item\">第二章：核心概念</li>\n    <li class=\"wemd-toc-item\">第三章：实践方法</li>\n  </ul>\n</nav>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": null,
+  "decisions": []
+}

@@ -329,6 +329,7 @@ export async function generateTemplate(
   themeLayout?: import("@wemd/core").LayoutPreference,
   audience?: Audience,
   constraints?: DesignConstraints,
+  brandText?: string,
 ): Promise<TemplateGenerationResult> {
   const totalParagraphs = getParagraphCount(markdown);
 
@@ -348,6 +349,7 @@ export async function generateTemplate(
     themeLayout,
     audience,
     constraints,
+    brandText,
   );
   const aiContent = await callLLM(systemPrompt, markdown, 0.6);
 

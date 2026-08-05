@@ -81,15 +81,21 @@ function componentRule(
   const info = matchComponentOpen(lineStart);
   if (!info) return false;
 
-  // 向下查找闭合行 `:::`
+  // 向下查找闭合行 `:::`，支持嵌套组件
   let closeLine = -1;
+  let depth = 1;
   for (let line = startLine + 1; line < endLine; line++) {
     const ls = state.bMarks[line] + state.tShift[line];
     const le = state.eMarks[line];
     const content = state.src.slice(ls, le);
-    if (isComponentClose(content)) {
-      closeLine = line;
-      break;
+    if (matchComponentOpen(content)) {
+      depth++;
+    } else if (isComponentClose(content)) {
+      depth--;
+      if (depth === 0) {
+        closeLine = line;
+        break;
+      }
     }
   }
 

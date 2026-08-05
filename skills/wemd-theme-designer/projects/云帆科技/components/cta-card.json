@@ -1,0 +1,133 @@
+{
+  "id": "cta-card-mse6m3in",
+  "type": "cta-card",
+  "name": "Cta Card",
+  "status": "draft",
+  "currentVersion": 6,
+  "approvedVersion": null,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "cta-card",
+      "variant": "cta-card-default",
+      "variantCss": "#wemd .wemd-cta-card[data-variant=\"cta-card-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:52:30.675Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: cta-card",
+      "instruction": "管道生成基础外观: cta-card",
+      "sourceHtml": "<div class=\"wemd-cta-card\" data-variant=\"cta-card-default\">\n  <h3 class=\"wemd-cta-title\">立即报名</h3>\n  <p class=\"wemd-cta-subtitle\">限时优惠，名额有限</p>\n  <p class=\"wemd-cta-body\">加入我们，开启你的学习之旅</p>\n  <a class=\"wemd-cta-button\" href=\"#\">立即报名 →</a>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 2,
+      "component": "cta-card",
+      "variant": "cta-card-default",
+      "variantCss": "#wemd .wemd-cta-card[data-variant=\"cta-card-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:55:30.845Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: cta-card",
+      "parentVersion": 1,
+      "instruction": "管道生成基础外观: cta-card",
+      "sourceHtml": "<div class=\"wemd-cta-card\" data-variant=\"cta-card-default\">\n  <h3 class=\"wemd-cta-title\">立即报名</h3>\n  <p class=\"wemd-cta-subtitle\">限时优惠，名额有限</p>\n  <p class=\"wemd-cta-body\">加入我们，开启你的学习之旅</p>\n  <a class=\"wemd-cta-button\" href=\"#\">立即报名 →</a>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 3,
+      "component": "cta-card",
+      "variant": "cta-card-default",
+      "variantCss": "#wemd .wemd-cta-card[data-variant=\"cta-card-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:56:08.331Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: cta-card",
+      "parentVersion": 2,
+      "instruction": "管道生成基础外观: cta-card",
+      "sourceHtml": "<div class=\"wemd-cta-card\" data-variant=\"cta-card-default\">\n  <h3 class=\"wemd-cta-title\">立即报名</h3>\n  <p class=\"wemd-cta-subtitle\">限时优惠，名额有限</p>\n  <p class=\"wemd-cta-body\">加入我们，开启你的学习之旅</p>\n  <a class=\"wemd-cta-button\" href=\"#\">立即报名 →</a>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 4,
+      "component": "cta-card",
+      "variant": "cta-card-default",
+      "variantCss": "#wemd .wemd-cta-card[data-variant=\"cta-card-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:59:34.099Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: cta-card",
+      "parentVersion": 3,
+      "instruction": "管道生成基础外观: cta-card",
+      "sourceHtml": "<div class=\"wemd-cta-card\" data-variant=\"cta-card-default\">\n  <h3 class=\"wemd-cta-title\">立即报名</h3>\n  <p class=\"wemd-cta-subtitle\">限时优惠，名额有限</p>\n  <p class=\"wemd-cta-body\">加入我们，开启你的学习之旅</p>\n  <a class=\"wemd-cta-button\" href=\"#\">立即报名 →</a>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 5,
+      "component": "cta-card",
+      "variant": "cta-card-default",
+      "variantCss": "#wemd .wemd-cta-card[data-variant=\"cta-card-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T14:52:19.194Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: cta-card",
+      "parentVersion": 4,
+      "instruction": "管道生成基础外观: cta-card",
+      "sourceHtml": "<div class=\"wemd-cta-card\" data-variant=\"cta-card-default\">\n  <h3 class=\"wemd-cta-title\">立即报名</h3>\n  <p class=\"wemd-cta-subtitle\">限时优惠，名额有限</p>\n  <p class=\"wemd-cta-body\">加入我们，开启你的学习之旅</p>\n  <a class=\"wemd-cta-button\" href=\"#\">立即报名 →</a>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 6,
+      "component": "cta-card",
+      "variant": "cta-card-default",
+      "variantCss": "#wemd .wemd-cta-card[data-variant=\"cta-card-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T15:07:19.394Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: cta-card",
+      "parentVersion": 5,
+      "instruction": "管道生成基础外观: cta-card",
+      "sourceHtml": "<div class=\"wemd-cta-card\" data-variant=\"cta-card-default\">\n  <h3 class=\"wemd-cta-title\">立即报名</h3>\n  <p class=\"wemd-cta-subtitle\">限时优惠，名额有限</p>\n  <p class=\"wemd-cta-body\">加入我们，开启你的学习之旅</p>\n  <a class=\"wemd-cta-button\" href=\"#\">立即报名 →</a>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": null,
+  "decisions": []
+}

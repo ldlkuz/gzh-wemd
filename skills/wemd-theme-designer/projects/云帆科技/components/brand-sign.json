@@ -1,0 +1,133 @@
+{
+  "id": "brand-sign-mse6m3lt",
+  "type": "brand-sign",
+  "name": "Brand Sign",
+  "status": "draft",
+  "currentVersion": 6,
+  "approvedVersion": null,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "brand-sign",
+      "variant": "brand-sign-default",
+      "variantCss": "#wemd .wemd-brand-sign[data-variant=\"brand-sign-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:52:30.788Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: brand-sign",
+      "instruction": "管道生成基础外观: brand-sign",
+      "sourceHtml": "<div class=\"wemd-brand-sign\" data-variant=\"brand-sign-default\">\n  <div class=\"wemd-brand-logo\"></div>\n  <div class=\"wemd-brand-info\">\n    <div class=\"wemd-brand-name\">品牌名称</div>\n    <div class=\"wemd-brand-desc\">用心打造每一款产品</div>\n  </div>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 2,
+      "component": "brand-sign",
+      "variant": "brand-sign-default",
+      "variantCss": "#wemd .wemd-brand-sign[data-variant=\"brand-sign-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:55:30.984Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: brand-sign",
+      "parentVersion": 1,
+      "instruction": "管道生成基础外观: brand-sign",
+      "sourceHtml": "<div class=\"wemd-brand-sign\" data-variant=\"brand-sign-default\">\n  <div class=\"wemd-brand-logo\"></div>\n  <div class=\"wemd-brand-info\">\n    <div class=\"wemd-brand-name\">品牌名称</div>\n    <div class=\"wemd-brand-desc\">用心打造每一款产品</div>\n  </div>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 3,
+      "component": "brand-sign",
+      "variant": "brand-sign-brand-featured",
+      "variantCss": "#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-featured\"] {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n  padding: 1.25em;\n  border-top: 2px solid #2563EB;\n  margin-top: 2em;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-featured\"] .wemd-brand-logo {\n  width: 48px;\n  height: 48px;\n  border-radius: 8px;\n  background: #2563EB;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-featured\"] .wemd-brand-name {\n  font-weight: 600;\n  color: #1A1A2E;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-featured\"] .wemd-brand-desc {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-04T04:56:08.249Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: brand-sign-brand-featured",
+      "parentVersion": 2,
+      "instruction": "管道生成: brand-sign-brand-featured",
+      "sourceHtml": "<div class=\"wemd-brand-sign\" data-variant=\"brand-sign-brand-featured\">\n  <div class=\"wemd-brand-logo\"></div>\n  <div class=\"wemd-brand-info\">\n    <div class=\"wemd-brand-name\">品牌名称</div>\n    <div class=\"wemd-brand-desc\">用心打造每一款产品</div>\n  </div>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 4,
+      "component": "brand-sign",
+      "variant": "brand-sign-brand-featured",
+      "variantCss": "#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-featured\"] {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n  padding: 1.25em;\n  border-top: 2px solid #2563EB;\n  margin-top: 2em;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-featured\"] .wemd-brand-logo {\n  width: 48px;\n  height: 48px;\n  border-radius: 8px;\n  background: #2563EB;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-featured\"] .wemd-brand-name {\n  font-weight: 600;\n  color: #1A1A2E;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-featured\"] .wemd-brand-desc {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-04T04:59:34.018Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: brand-sign-brand-featured",
+      "parentVersion": 3,
+      "instruction": "管道生成: brand-sign-brand-featured",
+      "sourceHtml": "<div class=\"wemd-brand-sign\" data-variant=\"brand-sign-brand-featured\">\n  <div class=\"wemd-brand-logo\"></div>\n  <div class=\"wemd-brand-info\">\n    <div class=\"wemd-brand-name\">品牌名称</div>\n    <div class=\"wemd-brand-desc\">用心打造每一款产品</div>\n  </div>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 5,
+      "component": "brand-sign",
+      "variant": "brand-sign-brand-featured",
+      "variantCss": "#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-featured\"] {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n  padding: 1.25em;\n  border-top: 2px solid #2563EB;\n  margin-top: 2em;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-featured\"] .wemd-brand-logo {\n  width: 48px;\n  height: 48px;\n  border-radius: 8px;\n  background: #2563EB;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-featured\"] .wemd-brand-name {\n  font-weight: 600;\n  color: #1A1A2E;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-featured\"] .wemd-brand-desc {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-04T14:52:18.842Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: brand-sign-brand-featured",
+      "parentVersion": 4,
+      "instruction": "管道生成: brand-sign-brand-featured",
+      "sourceHtml": "<div class=\"wemd-brand-sign\" data-variant=\"brand-sign-brand-featured\">\n  <div class=\"wemd-brand-logo\"></div>\n  <div class=\"wemd-brand-info\">\n    <div class=\"wemd-brand-name\">品牌名称</div>\n    <div class=\"wemd-brand-desc\">用心打造每一款产品</div>\n  </div>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 6,
+      "component": "brand-sign",
+      "variant": "brand-sign-brand-featured",
+      "variantCss": "#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-featured\"] {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n  padding: 1.25em;\n  border-top: 2px solid #2563EB;\n  margin-top: 2em;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-featured\"] .wemd-brand-logo {\n  width: 48px;\n  height: 48px;\n  border-radius: 8px;\n  background: #2563EB;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-featured\"] .wemd-brand-name {\n  font-weight: 600;\n  color: #1A1A2E;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-featured\"] .wemd-brand-desc {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-04T15:07:19.296Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: brand-sign-brand-featured",
+      "parentVersion": 5,
+      "instruction": "管道生成: brand-sign-brand-featured",
+      "sourceHtml": "<div class=\"wemd-brand-sign\" data-variant=\"brand-sign-brand-featured\">\n  <div class=\"wemd-brand-logo\"></div>\n  <div class=\"wemd-brand-info\">\n    <div class=\"wemd-brand-name\">品牌名称</div>\n    <div class=\"wemd-brand-desc\">用心打造每一款产品</div>\n  </div>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": null,
+  "decisions": []
+}

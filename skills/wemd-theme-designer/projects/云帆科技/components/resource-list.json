@@ -1,0 +1,133 @@
+{
+  "id": "resource-list-mse6m3lz",
+  "type": "resource-list",
+  "name": "Resource List",
+  "status": "draft",
+  "currentVersion": 6,
+  "approvedVersion": null,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "resource-list",
+      "variant": "resource-list-default",
+      "variantCss": "#wemd .wemd-resource-list[data-variant=\"resource-list-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:52:30.796Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: resource-list",
+      "instruction": "管道生成基础外观: resource-list",
+      "sourceHtml": "<div class=\"wemd-resource-list\" data-variant=\"resource-list-default\">\n  <h3 class=\"wemd-resource-title\">配套资料包</h3>\n  <div class=\"wemd-resource-items\">\n    <div class=\"wemd-resource-item\">\n      <span class=\"wemd-resource-type\">📄</span>\n      <div class=\"wemd-resource-info\">\n        <span class=\"wemd-resource-name\">Vue3 入门讲义 PDF</span>\n        <span class=\"wemd-resource-meta\">PDF / 12MB</span>\n      </div>\n    </div>\n    <div class=\"wemd-resource-item\">\n      <span class=\"wemd-resource-type\">📦</span>\n      <div class=\"wemd-resource-info\">\n        <span class=\"wemd-resource-name\">配套源码压缩包</span>\n        <span class=\"wemd-resource-meta\">ZIP / 38MB</span>\n      </div>\n    </div>\n  </div>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 2,
+      "component": "resource-list",
+      "variant": "resource-list-default",
+      "variantCss": "#wemd .wemd-resource-list[data-variant=\"resource-list-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:55:30.991Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: resource-list",
+      "parentVersion": 1,
+      "instruction": "管道生成基础外观: resource-list",
+      "sourceHtml": "<div class=\"wemd-resource-list\" data-variant=\"resource-list-default\">\n  <h3 class=\"wemd-resource-title\">配套资料包</h3>\n  <div class=\"wemd-resource-items\">\n    <div class=\"wemd-resource-item\">\n      <span class=\"wemd-resource-type\">📄</span>\n      <div class=\"wemd-resource-info\">\n        <span class=\"wemd-resource-name\">Vue3 入门讲义 PDF</span>\n        <span class=\"wemd-resource-meta\">PDF / 12MB</span>\n      </div>\n    </div>\n    <div class=\"wemd-resource-item\">\n      <span class=\"wemd-resource-type\">📦</span>\n      <div class=\"wemd-resource-info\">\n        <span class=\"wemd-resource-name\">配套源码压缩包</span>\n        <span class=\"wemd-resource-meta\">ZIP / 38MB</span>\n      </div>\n    </div>\n  </div>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 3,
+      "component": "resource-list",
+      "variant": "resource-list-default",
+      "variantCss": "#wemd .wemd-resource-list[data-variant=\"resource-list-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:56:08.394Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: resource-list",
+      "parentVersion": 2,
+      "instruction": "管道生成基础外观: resource-list",
+      "sourceHtml": "<div class=\"wemd-resource-list\" data-variant=\"resource-list-default\">\n  <h3 class=\"wemd-resource-title\">配套资料包</h3>\n  <div class=\"wemd-resource-items\">\n    <div class=\"wemd-resource-item\">\n      <span class=\"wemd-resource-type\">📄</span>\n      <div class=\"wemd-resource-info\">\n        <span class=\"wemd-resource-name\">Vue3 入门讲义 PDF</span>\n        <span class=\"wemd-resource-meta\">PDF / 12MB</span>\n      </div>\n    </div>\n    <div class=\"wemd-resource-item\">\n      <span class=\"wemd-resource-type\">📦</span>\n      <div class=\"wemd-resource-info\">\n        <span class=\"wemd-resource-name\">配套源码压缩包</span>\n        <span class=\"wemd-resource-meta\">ZIP / 38MB</span>\n      </div>\n    </div>\n  </div>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 4,
+      "component": "resource-list",
+      "variant": "resource-list-default",
+      "variantCss": "#wemd .wemd-resource-list[data-variant=\"resource-list-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:59:34.187Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: resource-list",
+      "parentVersion": 3,
+      "instruction": "管道生成基础外观: resource-list",
+      "sourceHtml": "<div class=\"wemd-resource-list\" data-variant=\"resource-list-default\">\n  <h3 class=\"wemd-resource-title\">配套资料包</h3>\n  <div class=\"wemd-resource-items\">\n    <div class=\"wemd-resource-item\">\n      <span class=\"wemd-resource-type\">📄</span>\n      <div class=\"wemd-resource-info\">\n        <span class=\"wemd-resource-name\">Vue3 入门讲义 PDF</span>\n        <span class=\"wemd-resource-meta\">PDF / 12MB</span>\n      </div>\n    </div>\n    <div class=\"wemd-resource-item\">\n      <span class=\"wemd-resource-type\">📦</span>\n      <div class=\"wemd-resource-info\">\n        <span class=\"wemd-resource-name\">配套源码压缩包</span>\n        <span class=\"wemd-resource-meta\">ZIP / 38MB</span>\n      </div>\n    </div>\n  </div>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 5,
+      "component": "resource-list",
+      "variant": "resource-list-default",
+      "variantCss": "#wemd .wemd-resource-list[data-variant=\"resource-list-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T14:52:19.294Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: resource-list",
+      "parentVersion": 4,
+      "instruction": "管道生成基础外观: resource-list",
+      "sourceHtml": "<div class=\"wemd-resource-list\" data-variant=\"resource-list-default\">\n  <h3 class=\"wemd-resource-title\">配套资料包</h3>\n  <div class=\"wemd-resource-items\">\n    <div class=\"wemd-resource-item\">\n      <span class=\"wemd-resource-type\">📄</span>\n      <div class=\"wemd-resource-info\">\n        <span class=\"wemd-resource-name\">Vue3 入门讲义 PDF</span>\n        <span class=\"wemd-resource-meta\">PDF / 12MB</span>\n      </div>\n    </div>\n    <div class=\"wemd-resource-item\">\n      <span class=\"wemd-resource-type\">📦</span>\n      <div class=\"wemd-resource-info\">\n        <span class=\"wemd-resource-name\">配套源码压缩包</span>\n        <span class=\"wemd-resource-meta\">ZIP / 38MB</span>\n      </div>\n    </div>\n  </div>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 6,
+      "component": "resource-list",
+      "variant": "resource-list-default",
+      "variantCss": "#wemd .wemd-resource-list[data-variant=\"resource-list-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T15:07:19.468Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: resource-list",
+      "parentVersion": 5,
+      "instruction": "管道生成基础外观: resource-list",
+      "sourceHtml": "<div class=\"wemd-resource-list\" data-variant=\"resource-list-default\">\n  <h3 class=\"wemd-resource-title\">配套资料包</h3>\n  <div class=\"wemd-resource-items\">\n    <div class=\"wemd-resource-item\">\n      <span class=\"wemd-resource-type\">📄</span>\n      <div class=\"wemd-resource-info\">\n        <span class=\"wemd-resource-name\">Vue3 入门讲义 PDF</span>\n        <span class=\"wemd-resource-meta\">PDF / 12MB</span>\n      </div>\n    </div>\n    <div class=\"wemd-resource-item\">\n      <span class=\"wemd-resource-type\">📦</span>\n      <div class=\"wemd-resource-info\">\n        <span class=\"wemd-resource-name\">配套源码压缩包</span>\n        <span class=\"wemd-resource-meta\">ZIP / 38MB</span>\n      </div>\n    </div>\n  </div>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": null,
+  "decisions": []
+}

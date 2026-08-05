@@ -1,0 +1,453 @@
+{
+  "id": "brand-sign-msdcv0za",
+  "type": "brand-sign",
+  "name": "Brand Sign",
+  "status": "draft",
+  "currentVersion": 22,
+  "approvedVersion": null,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "brand-sign",
+      "variant": "brand-sign-brand-default",
+      "variantCss": "#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n  padding: 1.25em;\n  border-top: 2px solid #3B82F6;\n  margin-top: 2em;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-logo {\n  width: 48px;\n  height: 48px;\n  border-radius: 8px;\n  background: #3B82F6;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-name {\n  font-weight: 600;\n  color: #1A1A2E;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-desc {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-03T14:59:38.809Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: brand-sign-brand-default",
+      "instruction": "管道生成: brand-sign-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 2,
+      "component": "brand-sign",
+      "variant": "brand-sign-brand-default",
+      "variantCss": "#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n  padding: 1.25em;\n  border-top: 2px solid #3B82F6;\n  margin-top: 2em;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-logo {\n  width: 48px;\n  height: 48px;\n  border-radius: 8px;\n  background: #3B82F6;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-name {\n  font-weight: 600;\n  color: #1A1A2E;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-desc {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-03T14:59:49.680Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: brand-sign-brand-default",
+      "parentVersion": 1,
+      "instruction": "管道生成: brand-sign-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 3,
+      "component": "brand-sign",
+      "variant": "brand-sign-brand-default",
+      "variantCss": "#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n  padding: 1.25em;\n  border-top: 2px solid #3B82F6;\n  margin-top: 2em;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-logo {\n  width: 48px;\n  height: 48px;\n  border-radius: 8px;\n  background: #3B82F6;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-name {\n  font-weight: 600;\n  color: #1A1A2E;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-desc {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-03T15:21:03.944Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: brand-sign-brand-default",
+      "parentVersion": 2,
+      "instruction": "管道生成: brand-sign-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 4,
+      "component": "brand-sign",
+      "variant": "brand-sign-brand-default",
+      "variantCss": "#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n  padding: 1.25em;\n  border-top: 2px solid #3B82F6;\n  margin-top: 2em;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-logo {\n  width: 48px;\n  height: 48px;\n  border-radius: 8px;\n  background: #3B82F6;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-name {\n  font-weight: 600;\n  color: #1A1A2E;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-desc {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-03T15:34:48.100Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: brand-sign-brand-default",
+      "parentVersion": 3,
+      "instruction": "管道生成: brand-sign-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 5,
+      "component": "brand-sign",
+      "variant": "brand-sign-brand-default",
+      "variantCss": "#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n  padding: 1.25em;\n  border-top: 2px solid #3B82F6;\n  margin-top: 2em;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-logo {\n  width: 48px;\n  height: 48px;\n  border-radius: 8px;\n  background: #3B82F6;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-name {\n  font-weight: 600;\n  color: #1A1A2E;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-desc {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-03T15:34:52.705Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: brand-sign-brand-default",
+      "parentVersion": 4,
+      "instruction": "管道生成: brand-sign-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 6,
+      "component": "brand-sign",
+      "variant": "brand-sign-brand-default",
+      "variantCss": "#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n  padding: 1.25em;\n  border-top: 2px solid #3B82F6;\n  margin-top: 2em;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-logo {\n  width: 48px;\n  height: 48px;\n  border-radius: 8px;\n  background: #3B82F6;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-name {\n  font-weight: 600;\n  color: #1A1A2E;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-desc {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-03T15:34:54.515Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: brand-sign-brand-default",
+      "parentVersion": 5,
+      "instruction": "管道生成: brand-sign-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 7,
+      "component": "brand-sign",
+      "variant": "brand-sign-brand-default",
+      "variantCss": "#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n  padding: 1.25em;\n  border-top: 2px solid #3B82F6;\n  margin-top: 2em;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-logo {\n  width: 48px;\n  height: 48px;\n  border-radius: 8px;\n  background: #3B82F6;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-name {\n  font-weight: 600;\n  color: #1A1A2E;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-desc {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-03T15:35:37.819Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: brand-sign-brand-default",
+      "parentVersion": 6,
+      "instruction": "管道生成: brand-sign-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 8,
+      "component": "brand-sign",
+      "variant": "brand-sign-brand-default",
+      "variantCss": "#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n  padding: 1.25em;\n  border-top: 2px solid #3B82F6;\n  margin-top: 2em;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-logo {\n  width: 48px;\n  height: 48px;\n  border-radius: 8px;\n  background: #3B82F6;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-name {\n  font-weight: 600;\n  color: #1A1A2E;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-desc {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-03T15:59:32.115Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: brand-sign-brand-default",
+      "parentVersion": 7,
+      "instruction": "管道生成: brand-sign-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 9,
+      "component": "brand-sign",
+      "variant": "brand-sign-brand-default",
+      "variantCss": "#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n  padding: 1.25em;\n  border-top: 2px solid #3B82F6;\n  margin-top: 2em;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-logo {\n  width: 48px;\n  height: 48px;\n  border-radius: 8px;\n  background: #3B82F6;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-name {\n  font-weight: 600;\n  color: #1A1A2E;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-desc {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-03T16:11:55.422Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: brand-sign-brand-default",
+      "parentVersion": 8,
+      "instruction": "管道生成: brand-sign-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 10,
+      "component": "brand-sign",
+      "variant": "brand-sign-brand-default",
+      "variantCss": "#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n  padding: 1.25em;\n  border-top: 2px solid #3B82F6;\n  margin-top: 2em;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-logo {\n  width: 48px;\n  height: 48px;\n  border-radius: 8px;\n  background: #3B82F6;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-name {\n  font-weight: 600;\n  color: #1A1A2E;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-desc {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-03T16:11:56.872Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: brand-sign-brand-default",
+      "parentVersion": 9,
+      "instruction": "管道生成: brand-sign-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 11,
+      "component": "brand-sign",
+      "variant": "brand-sign-brand-default",
+      "variantCss": "#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n  padding: 1.25em;\n  border-top: 2px solid #3B82F6;\n  margin-top: 2em;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-logo {\n  width: 48px;\n  height: 48px;\n  border-radius: 8px;\n  background: #3B82F6;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-name {\n  font-weight: 600;\n  color: #1A1A2E;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-desc {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-03T16:12:01.529Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: brand-sign-brand-default",
+      "parentVersion": 10,
+      "instruction": "管道生成: brand-sign-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 12,
+      "component": "brand-sign",
+      "variant": "brand-sign-brand-default",
+      "variantCss": "#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n  padding: 1.25em;\n  border-top: 2px solid #3B82F6;\n  margin-top: 2em;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-logo {\n  width: 48px;\n  height: 48px;\n  border-radius: 8px;\n  background: #3B82F6;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-name {\n  font-weight: 600;\n  color: #1A1A2E;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-desc {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-03T16:12:09.838Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: brand-sign-brand-default",
+      "parentVersion": 11,
+      "instruction": "管道生成: brand-sign-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 13,
+      "component": "brand-sign",
+      "variant": "brand-sign-brand-default",
+      "variantCss": "#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n  padding: 1.25em;\n  border-top: 2px solid #3B82F6;\n  margin-top: 2em;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-logo {\n  width: 48px;\n  height: 48px;\n  border-radius: 8px;\n  background: #3B82F6;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-name {\n  font-weight: 600;\n  color: #1A1A2E;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-desc {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-03T16:12:15.686Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: brand-sign-brand-default",
+      "parentVersion": 12,
+      "instruction": "管道生成: brand-sign-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 14,
+      "component": "brand-sign",
+      "variant": "brand-sign-brand-default",
+      "variantCss": "#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n  padding: 1.25em;\n  border-top: 2px solid #3B82F6;\n  margin-top: 2em;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-logo {\n  width: 48px;\n  height: 48px;\n  border-radius: 8px;\n  background: #3B82F6;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-name {\n  font-weight: 600;\n  color: #1A1A2E;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-desc {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-03T16:12:27.829Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: brand-sign-brand-default",
+      "parentVersion": 13,
+      "instruction": "管道生成: brand-sign-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 15,
+      "component": "brand-sign",
+      "variant": "brand-sign-brand-default",
+      "variantCss": "#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n  padding: 1.25em;\n  border-top: 2px solid #3B82F6;\n  margin-top: 2em;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-logo {\n  width: 48px;\n  height: 48px;\n  border-radius: 8px;\n  background: #3B82F6;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-name {\n  font-weight: 600;\n  color: #1A1A2E;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-desc {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-03T16:36:38.756Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: brand-sign-brand-default",
+      "parentVersion": 14,
+      "instruction": "管道生成: brand-sign-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 16,
+      "component": "brand-sign",
+      "variant": "brand-sign-brand-default",
+      "variantCss": "#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n  padding: 1.25em;\n  border-top: 2px solid #3B82F6;\n  margin-top: 2em;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-logo {\n  width: 48px;\n  height: 48px;\n  border-radius: 8px;\n  background: #3B82F6;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-name {\n  font-weight: 600;\n  color: #1A1A2E;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-desc {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-03T16:37:08.266Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: brand-sign-brand-default",
+      "parentVersion": 15,
+      "instruction": "管道生成: brand-sign-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 17,
+      "component": "brand-sign",
+      "variant": "brand-sign-brand-default",
+      "variantCss": "#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n  padding: 1.25em;\n  border-top: 2px solid #3B82F6;\n  margin-top: 2em;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-logo {\n  width: 48px;\n  height: 48px;\n  border-radius: 8px;\n  background: #3B82F6;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-name {\n  font-weight: 600;\n  color: #1A1A2E;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-desc {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-03T16:37:43.078Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: brand-sign-brand-default",
+      "parentVersion": 16,
+      "instruction": "管道生成: brand-sign-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 18,
+      "component": "brand-sign",
+      "variant": "brand-sign-brand-default",
+      "variantCss": "#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n  padding: 1.25em;\n  border-top: 2px solid #3B82F6;\n  margin-top: 2em;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-logo {\n  width: 48px;\n  height: 48px;\n  border-radius: 8px;\n  background: #3B82F6;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-name {\n  font-weight: 600;\n  color: #1A1A2E;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-desc {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-03T16:49:22.503Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: brand-sign-brand-default",
+      "parentVersion": 17,
+      "instruction": "管道生成: brand-sign-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 19,
+      "component": "brand-sign",
+      "variant": "brand-sign-brand-default",
+      "variantCss": "#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n  padding: 1.25em;\n  border-top: 2px solid #3B82F6;\n  margin-top: 2em;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-logo {\n  width: 48px;\n  height: 48px;\n  border-radius: 8px;\n  background: #3B82F6;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-name {\n  font-weight: 600;\n  color: #1A1A2E;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-desc {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-03T16:51:21.177Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: brand-sign-brand-default",
+      "parentVersion": 18,
+      "instruction": "管道生成: brand-sign-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 20,
+      "component": "brand-sign",
+      "variant": "brand-sign-brand-default",
+      "variantCss": "#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n  padding: 1.25em;\n  border-top: 2px solid #3B82F6;\n  margin-top: 2em;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-logo {\n  width: 48px;\n  height: 48px;\n  border-radius: 8px;\n  background: #3B82F6;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-name {\n  font-weight: 600;\n  color: #1A1A2E;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-desc {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-03T16:56:21.063Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: brand-sign-brand-default",
+      "parentVersion": 19,
+      "instruction": "管道生成: brand-sign-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 21,
+      "component": "brand-sign",
+      "variant": "brand-sign-brand-default",
+      "variantCss": "#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n  padding: 1.25em;\n  border-top: 2px solid #3B82F6;\n  margin-top: 2em;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-logo {\n  width: 48px;\n  height: 48px;\n  border-radius: 8px;\n  background: #3B82F6;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-name {\n  font-weight: 600;\n  color: #1A1A2E;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-desc {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-03T17:17:38.571Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: brand-sign-brand-default",
+      "parentVersion": 20,
+      "instruction": "管道生成: brand-sign-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 22,
+      "component": "brand-sign",
+      "variant": "brand-sign-brand-default",
+      "variantCss": "#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n  padding: 1.25em;\n  border-top: 2px solid #3B82F6;\n  margin-top: 2em;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-logo {\n  width: 48px;\n  height: 48px;\n  border-radius: 8px;\n  background: #3B82F6;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-name {\n  font-weight: 600;\n  color: #1A1A2E;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-desc {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-03T17:46:03.942Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: brand-sign-brand-default",
+      "parentVersion": 21,
+      "instruction": "管道生成: brand-sign-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": null,
+  "decisions": []
+}

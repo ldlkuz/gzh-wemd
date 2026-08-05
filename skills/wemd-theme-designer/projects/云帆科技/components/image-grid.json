@@ -1,0 +1,133 @@
+{
+  "id": "image-grid-mse6m3nc",
+  "type": "image-grid",
+  "name": "Image Grid",
+  "status": "draft",
+  "currentVersion": 6,
+  "approvedVersion": null,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "image-grid",
+      "variant": "image-grid-default",
+      "variantCss": "#wemd .wemd-image-grid[data-variant=\"image-grid-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:52:30.844Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: image-grid",
+      "instruction": "管道生成基础外观: image-grid",
+      "sourceHtml": "<div class=\"wemd-image-grid\" data-variant=\"image-grid-default\">\n  <div class=\"wemd-grid-img\" style=\"background:#e8f4f8;height:100px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#999\">🖼️</div>\n  <div class=\"wemd-grid-img\" style=\"background:#f0e6ff;height:100px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#999\">🖼️</div>\n  <div class=\"wemd-grid-img\" style=\"background:#fff3e0;height:100px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#999\">🖼️</div>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 2,
+      "component": "image-grid",
+      "variant": "image-grid-default",
+      "variantCss": "#wemd .wemd-image-grid[data-variant=\"image-grid-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:55:31.141Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: image-grid",
+      "parentVersion": 1,
+      "instruction": "管道生成基础外观: image-grid",
+      "sourceHtml": "<div class=\"wemd-image-grid\" data-variant=\"image-grid-default\">\n  <div class=\"wemd-grid-img\" style=\"background:#e8f4f8;height:100px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#999\">🖼️</div>\n  <div class=\"wemd-grid-img\" style=\"background:#f0e6ff;height:100px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#999\">🖼️</div>\n  <div class=\"wemd-grid-img\" style=\"background:#fff3e0;height:100px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#999\">🖼️</div>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 3,
+      "component": "image-grid",
+      "variant": "image-grid-default",
+      "variantCss": "#wemd .wemd-image-grid[data-variant=\"image-grid-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:56:08.425Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: image-grid",
+      "parentVersion": 2,
+      "instruction": "管道生成基础外观: image-grid",
+      "sourceHtml": "<div class=\"wemd-image-grid\" data-variant=\"image-grid-default\">\n  <div class=\"wemd-grid-img\" style=\"background:#e8f4f8;height:100px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#999\">🖼️</div>\n  <div class=\"wemd-grid-img\" style=\"background:#f0e6ff;height:100px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#999\">🖼️</div>\n  <div class=\"wemd-grid-img\" style=\"background:#fff3e0;height:100px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#999\">🖼️</div>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 4,
+      "component": "image-grid",
+      "variant": "image-grid-default",
+      "variantCss": "#wemd .wemd-image-grid[data-variant=\"image-grid-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:59:34.233Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: image-grid",
+      "parentVersion": 3,
+      "instruction": "管道生成基础外观: image-grid",
+      "sourceHtml": "<div class=\"wemd-image-grid\" data-variant=\"image-grid-default\">\n  <div class=\"wemd-grid-img\" style=\"background:#e8f4f8;height:100px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#999\">🖼️</div>\n  <div class=\"wemd-grid-img\" style=\"background:#f0e6ff;height:100px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#999\">🖼️</div>\n  <div class=\"wemd-grid-img\" style=\"background:#fff3e0;height:100px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#999\">🖼️</div>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 5,
+      "component": "image-grid",
+      "variant": "image-grid-default",
+      "variantCss": "#wemd .wemd-image-grid[data-variant=\"image-grid-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T14:52:19.339Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: image-grid",
+      "parentVersion": 4,
+      "instruction": "管道生成基础外观: image-grid",
+      "sourceHtml": "<div class=\"wemd-image-grid\" data-variant=\"image-grid-default\">\n  <div class=\"wemd-grid-img\" style=\"background:#e8f4f8;height:100px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#999\">🖼️</div>\n  <div class=\"wemd-grid-img\" style=\"background:#f0e6ff;height:100px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#999\">🖼️</div>\n  <div class=\"wemd-grid-img\" style=\"background:#fff3e0;height:100px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#999\">🖼️</div>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 6,
+      "component": "image-grid",
+      "variant": "image-grid-default",
+      "variantCss": "#wemd .wemd-image-grid[data-variant=\"image-grid-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T15:07:19.509Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: image-grid",
+      "parentVersion": 5,
+      "instruction": "管道生成基础外观: image-grid",
+      "sourceHtml": "<div class=\"wemd-image-grid\" data-variant=\"image-grid-default\">\n  <div class=\"wemd-grid-img\" style=\"background:#e8f4f8;height:100px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#999\">🖼️</div>\n  <div class=\"wemd-grid-img\" style=\"background:#f0e6ff;height:100px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#999\">🖼️</div>\n  <div class=\"wemd-grid-img\" style=\"background:#fff3e0;height:100px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#999\">🖼️</div>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": null,
+  "decisions": []
+}

@@ -1,0 +1,133 @@
+{
+  "id": "numbered-heading-mse6m3h9",
+  "type": "numbered-heading",
+  "name": "Numbered Heading",
+  "status": "draft",
+  "currentVersion": 6,
+  "approvedVersion": null,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "numbered-heading",
+      "variant": "numbered-heading-default",
+      "variantCss": "#wemd .wemd-numbered-heading[data-variant=\"numbered-heading-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:52:30.624Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: numbered-heading",
+      "instruction": "管道生成基础外观: numbered-heading",
+      "sourceHtml": "<h2 class=\"wemd-numbered-heading\" data-variant=\"numbered-heading-default\">\n  <span class=\"wemd-numbered-index\">01</span>\n  <span class=\"wemd-numbered-title\">章节标题</span>\n</h2>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 2,
+      "component": "numbered-heading",
+      "variant": "numbered-heading-default",
+      "variantCss": "#wemd .wemd-numbered-heading[data-variant=\"numbered-heading-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:55:30.793Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: numbered-heading",
+      "parentVersion": 1,
+      "instruction": "管道生成基础外观: numbered-heading",
+      "sourceHtml": "<h2 class=\"wemd-numbered-heading\" data-variant=\"numbered-heading-default\">\n  <span class=\"wemd-numbered-index\">01</span>\n  <span class=\"wemd-numbered-title\">章节标题</span>\n</h2>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 3,
+      "component": "numbered-heading",
+      "variant": "numbered-heading-default",
+      "variantCss": "#wemd .wemd-numbered-heading[data-variant=\"numbered-heading-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:56:08.306Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: numbered-heading",
+      "parentVersion": 2,
+      "instruction": "管道生成基础外观: numbered-heading",
+      "sourceHtml": "<h2 class=\"wemd-numbered-heading\" data-variant=\"numbered-heading-default\">\n  <span class=\"wemd-numbered-index\">01</span>\n  <span class=\"wemd-numbered-title\">章节标题</span>\n</h2>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 4,
+      "component": "numbered-heading",
+      "variant": "numbered-heading-default",
+      "variantCss": "#wemd .wemd-numbered-heading[data-variant=\"numbered-heading-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:59:34.069Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: numbered-heading",
+      "parentVersion": 3,
+      "instruction": "管道生成基础外观: numbered-heading",
+      "sourceHtml": "<h2 class=\"wemd-numbered-heading\" data-variant=\"numbered-heading-default\">\n  <span class=\"wemd-numbered-index\">01</span>\n  <span class=\"wemd-numbered-title\">章节标题</span>\n</h2>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 5,
+      "component": "numbered-heading",
+      "variant": "numbered-heading-default",
+      "variantCss": "#wemd .wemd-numbered-heading[data-variant=\"numbered-heading-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T14:52:18.958Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: numbered-heading",
+      "parentVersion": 4,
+      "instruction": "管道生成基础外观: numbered-heading",
+      "sourceHtml": "<h2 class=\"wemd-numbered-heading\" data-variant=\"numbered-heading-default\">\n  <span class=\"wemd-numbered-index\">01</span>\n  <span class=\"wemd-numbered-title\">章节标题</span>\n</h2>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 6,
+      "component": "numbered-heading",
+      "variant": "numbered-heading-default",
+      "variantCss": "#wemd .wemd-numbered-heading[data-variant=\"numbered-heading-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T15:07:19.359Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: numbered-heading",
+      "parentVersion": 5,
+      "instruction": "管道生成基础外观: numbered-heading",
+      "sourceHtml": "<h2 class=\"wemd-numbered-heading\" data-variant=\"numbered-heading-default\">\n  <span class=\"wemd-numbered-index\">01</span>\n  <span class=\"wemd-numbered-title\">章节标题</span>\n</h2>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": null,
+  "decisions": []
+}

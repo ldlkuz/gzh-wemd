@@ -1,0 +1,133 @@
+{
+  "id": "magazine-cover-mse6m3ka",
+  "type": "magazine-cover",
+  "name": "Magazine Cover",
+  "status": "draft",
+  "currentVersion": 6,
+  "approvedVersion": null,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "magazine-cover",
+      "variant": "magazine-cover-default",
+      "variantCss": "#wemd .wemd-magazine-cover[data-variant=\"magazine-cover-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:52:30.733Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: magazine-cover",
+      "instruction": "管道生成基础外观: magazine-cover",
+      "sourceHtml": "<div class=\"wemd-magazine-cover\" data-variant=\"magazine-cover-default\">\n  <div class=\"wemd-cover-subtitle\">Summer Breeze</div>\n  <h2 class=\"wemd-cover-title\">盛夏时光</h2>\n  <div class=\"wemd-cover-divider\"></div>\n  <p class=\"wemd-cover-desc\">愿所有美好<br>如夏日微风一般如期而至。</p>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 2,
+      "component": "magazine-cover",
+      "variant": "magazine-cover-default",
+      "variantCss": "#wemd .wemd-magazine-cover[data-variant=\"magazine-cover-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:55:30.915Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: magazine-cover",
+      "parentVersion": 1,
+      "instruction": "管道生成基础外观: magazine-cover",
+      "sourceHtml": "<div class=\"wemd-magazine-cover\" data-variant=\"magazine-cover-default\">\n  <div class=\"wemd-cover-subtitle\">Summer Breeze</div>\n  <h2 class=\"wemd-cover-title\">盛夏时光</h2>\n  <div class=\"wemd-cover-divider\"></div>\n  <p class=\"wemd-cover-desc\">愿所有美好<br>如夏日微风一般如期而至。</p>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 3,
+      "component": "magazine-cover",
+      "variant": "magazine-cover-default",
+      "variantCss": "#wemd .wemd-magazine-cover[data-variant=\"magazine-cover-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:56:08.360Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: magazine-cover",
+      "parentVersion": 2,
+      "instruction": "管道生成基础外观: magazine-cover",
+      "sourceHtml": "<div class=\"wemd-magazine-cover\" data-variant=\"magazine-cover-default\">\n  <div class=\"wemd-cover-subtitle\">Summer Breeze</div>\n  <h2 class=\"wemd-cover-title\">盛夏时光</h2>\n  <div class=\"wemd-cover-divider\"></div>\n  <p class=\"wemd-cover-desc\">愿所有美好<br>如夏日微风一般如期而至。</p>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 4,
+      "component": "magazine-cover",
+      "variant": "magazine-cover-default",
+      "variantCss": "#wemd .wemd-magazine-cover[data-variant=\"magazine-cover-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:59:34.143Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: magazine-cover",
+      "parentVersion": 3,
+      "instruction": "管道生成基础外观: magazine-cover",
+      "sourceHtml": "<div class=\"wemd-magazine-cover\" data-variant=\"magazine-cover-default\">\n  <div class=\"wemd-cover-subtitle\">Summer Breeze</div>\n  <h2 class=\"wemd-cover-title\">盛夏时光</h2>\n  <div class=\"wemd-cover-divider\"></div>\n  <p class=\"wemd-cover-desc\">愿所有美好<br>如夏日微风一般如期而至。</p>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 5,
+      "component": "magazine-cover",
+      "variant": "magazine-cover-default",
+      "variantCss": "#wemd .wemd-magazine-cover[data-variant=\"magazine-cover-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T14:52:19.244Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: magazine-cover",
+      "parentVersion": 4,
+      "instruction": "管道生成基础外观: magazine-cover",
+      "sourceHtml": "<div class=\"wemd-magazine-cover\" data-variant=\"magazine-cover-default\">\n  <div class=\"wemd-cover-subtitle\">Summer Breeze</div>\n  <h2 class=\"wemd-cover-title\">盛夏时光</h2>\n  <div class=\"wemd-cover-divider\"></div>\n  <p class=\"wemd-cover-desc\">愿所有美好<br>如夏日微风一般如期而至。</p>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 6,
+      "component": "magazine-cover",
+      "variant": "magazine-cover-default",
+      "variantCss": "#wemd .wemd-magazine-cover[data-variant=\"magazine-cover-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T15:07:19.431Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: magazine-cover",
+      "parentVersion": 5,
+      "instruction": "管道生成基础外观: magazine-cover",
+      "sourceHtml": "<div class=\"wemd-magazine-cover\" data-variant=\"magazine-cover-default\">\n  <div class=\"wemd-cover-subtitle\">Summer Breeze</div>\n  <h2 class=\"wemd-cover-title\">盛夏时光</h2>\n  <div class=\"wemd-cover-divider\"></div>\n  <p class=\"wemd-cover-desc\">愿所有美好<br>如夏日微风一般如期而至。</p>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": null,
+  "decisions": []
+}

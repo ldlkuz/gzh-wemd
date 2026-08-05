@@ -1,0 +1,133 @@
+{
+  "id": "end-card-mse6m3le",
+  "type": "end-card",
+  "name": "End Card",
+  "status": "draft",
+  "currentVersion": 6,
+  "approvedVersion": null,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "end-card",
+      "variant": "end-card-default",
+      "variantCss": "#wemd .wemd-end-card[data-variant=\"end-card-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:52:30.773Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: end-card",
+      "instruction": "管道生成基础外观: end-card",
+      "sourceHtml": "<div class=\"wemd-end-card\" data-variant=\"end-card-default\">\n  <h2 class=\"wemd-end-title\">Thanks</h2>\n  <p class=\"wemd-end-subtitle\">感谢阅读 · 期待下次相遇</p>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 2,
+      "component": "end-card",
+      "variant": "end-card-default",
+      "variantCss": "#wemd .wemd-end-card[data-variant=\"end-card-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:55:30.972Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: end-card",
+      "parentVersion": 1,
+      "instruction": "管道生成基础外观: end-card",
+      "sourceHtml": "<div class=\"wemd-end-card\" data-variant=\"end-card-default\">\n  <h2 class=\"wemd-end-title\">Thanks</h2>\n  <p class=\"wemd-end-subtitle\">感谢阅读 · 期待下次相遇</p>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 3,
+      "component": "end-card",
+      "variant": "end-card-default",
+      "variantCss": "#wemd .wemd-end-card[data-variant=\"end-card-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:56:08.386Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: end-card",
+      "parentVersion": 2,
+      "instruction": "管道生成基础外观: end-card",
+      "sourceHtml": "<div class=\"wemd-end-card\" data-variant=\"end-card-default\">\n  <h2 class=\"wemd-end-title\">Thanks</h2>\n  <p class=\"wemd-end-subtitle\">感谢阅读 · 期待下次相遇</p>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 4,
+      "component": "end-card",
+      "variant": "end-card-default",
+      "variantCss": "#wemd .wemd-end-card[data-variant=\"end-card-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:59:34.178Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: end-card",
+      "parentVersion": 3,
+      "instruction": "管道生成基础外观: end-card",
+      "sourceHtml": "<div class=\"wemd-end-card\" data-variant=\"end-card-default\">\n  <h2 class=\"wemd-end-title\">Thanks</h2>\n  <p class=\"wemd-end-subtitle\">感谢阅读 · 期待下次相遇</p>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 5,
+      "component": "end-card",
+      "variant": "end-card-default",
+      "variantCss": "#wemd .wemd-end-card[data-variant=\"end-card-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T14:52:19.285Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: end-card",
+      "parentVersion": 4,
+      "instruction": "管道生成基础外观: end-card",
+      "sourceHtml": "<div class=\"wemd-end-card\" data-variant=\"end-card-default\">\n  <h2 class=\"wemd-end-title\">Thanks</h2>\n  <p class=\"wemd-end-subtitle\">感谢阅读 · 期待下次相遇</p>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 6,
+      "component": "end-card",
+      "variant": "end-card-default",
+      "variantCss": "#wemd .wemd-end-card[data-variant=\"end-card-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T15:07:19.462Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: end-card",
+      "parentVersion": 5,
+      "instruction": "管道生成基础外观: end-card",
+      "sourceHtml": "<div class=\"wemd-end-card\" data-variant=\"end-card-default\">\n  <h2 class=\"wemd-end-title\">Thanks</h2>\n  <p class=\"wemd-end-subtitle\">感谢阅读 · 期待下次相遇</p>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": null,
+  "decisions": []
+}

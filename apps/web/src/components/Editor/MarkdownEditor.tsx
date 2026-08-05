@@ -481,12 +481,17 @@ export function MarkdownEditor({
       const themeId = useThemeStore.getState().themeId;
       const builtInDef = getBuiltInThemeDefinition(themeId);
       const themeLayout = builtInDef?.layout;
+      // AI 主题的品牌语言（brand.md）
+      const customThemes = useThemeStore.getState().customThemes;
+      const customTheme = customThemes.find((t) => t.id === themeId);
+      const brandText = customTheme?.brandText;
       const result = await generateTemplate(
         activeText,
         undefined,
         themeLayout,
         audience,
         constraints,
+        brandText,
       );
       setTemplateResult(result);
     } catch (e) {

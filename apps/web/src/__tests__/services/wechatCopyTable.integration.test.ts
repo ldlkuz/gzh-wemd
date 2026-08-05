@@ -11,10 +11,15 @@ vi.mock("react-hot-toast", () => ({
   default: { success: vi.fn(), error: vi.fn() },
 }));
 
-vi.mock("@wemd/core", () => ({
-  createMarkdownParser: () => ({ render: mocked.parserRender }),
-  processHtml: mocked.processHtml,
-}));
+vi.mock("@wemd/core", async () => {
+  const actual =
+    await vi.importActual<typeof import("@wemd/core")>("@wemd/core");
+  return {
+    ...actual,
+    createMarkdownParser: () => ({ render: mocked.parserRender }),
+    processHtml: mocked.processHtml,
+  };
+});
 
 vi.mock("../../utils/linkFootnote", () => ({
   convertLinksToFootnotes: (html: string) => html,

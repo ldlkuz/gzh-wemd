@@ -20,11 +20,25 @@ function toAlpha(hex: string, alpha: number): string {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-export function renderTokenCss(tokens: DesignTokens): string {
+export function renderTokenCss(
+  tokens: DesignTokens,
+  assets?: Map<string, string>,
+): string {
   const { color, typography, spacing, border, shadow } = tokens;
 
   const shadowLine =
     shadow?.enabled && shadow.value ? `  --wemd-shadow: ${shadow.value};` : "";
+
+  // 资源图片 CSS 变量（Phase 4）
+  const assetLines: string[] = [];
+  if (assets && assets.size > 0) {
+    assetLines.push("  /* 主题资源图片 */");
+    for (const [key, dataUrl] of assets) {
+      // 将 key 转为合法的 CSS 变量名（如 hero-bg → hero-bg）
+      const safeKey = key.replace(/[^a-zA-Z0-9_-]/g, "-");
+      assetLines.push(`  --wemd-asset-${safeKey}: url(${dataUrl});`);
+    }
+  }
 
   const pa2 = toAlpha(color.primary, 0.02);
   const pa4 = toAlpha(color.primary, 0.04);
@@ -84,6 +98,7 @@ export function renderTokenCss(tokens: DesignTokens): string {
     `  /* 圆角 */`,
     `  --wemd-border-radius: ${border.radius}px;`,
     shadowLine,
+    assetLines.join("\n"),
     `}`,
   ]
     .filter(Boolean)

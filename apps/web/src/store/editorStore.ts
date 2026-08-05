@@ -96,10 +96,9 @@ interface EditorStore {
 }
 
 export const defaultMarkdown = `::: magazine-cover
-# 从入门到进阶：2025 年度效率工具指南
-
+从入门到进阶：2025 年度效率工具指南
 SUPERCHARGE YOUR WORKFLOW
-
+---
 告别选择困难，这 6 款神器让你的效率翻倍
 :::
 

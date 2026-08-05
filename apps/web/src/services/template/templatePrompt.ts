@@ -115,7 +115,51 @@ function buildThemeHint(themeLayout: LayoutPreference): string {
         .map(([k, v]) => `${k}=${v}`)
         .join("、")}`
     : "";
-  return `\n\n## 主题约束（当前使用的品牌规范）\n- 风格基调：${themeLayout.tone.join("、")}\n- 排版密度：${themeLayout.density}\n- 主题偏好的组件：${themeLayout.preferredComponents.join("、")}${variantHint}\n\n注意：优先选择主题偏好的组件，tone 应与主题风格基调协调。variant 推荐仅作参考，最终渲染由 design 字段推导。`;
+
+  // 格式化 preferredComponents：字符串直接输出，对象带 reason 则输出 "组件名: 理由"
+  const componentsDesc = themeLayout.preferredComponents
+    .map((pc) => {
+      if (typeof pc === "string") return `  - ${pc}`;
+      return pc.reason
+        ? `  - ${pc.name}：${pc.reason}（AI 自定义造型）`
+        : `  - ${pc.name}`;
+    })
+    .join("\n");
+
+  const reasonHint = themeLayout.preferredComponents.some(
+    (pc) => typeof pc === "object" && pc.reason,
+  )
+    ? "\n  注意：带有自定义造型说明的组件，AI 已为其定义了 variantCss，排版时优先使用这些组件以发挥其造型效果"
+    : "";
+
+  return [
+    "",
+    "## 主题约束（当前使用的品牌规范）",
+    `- 风格基调：${themeLayout.tone.join("、")}`,
+    `- 排版密度：${themeLayout.density}`,
+    `- 主题偏好的组件：`,
+    componentsDesc,
+    variantHint,
+    reasonHint,
+    "",
+    "注意：优先选择主题偏好的组件，tone 应与主题风格基调协调。variant 推荐仅作参考，最终渲染由 design 字段推导。",
+  ].join("\n");
+}
+
+/** 构建品牌语言提示（Phase 5：brand.md 注入） */
+function buildBrandHint(brandText: string): string {
+  return [
+    "",
+    "## 品牌语言规范（必须遵守，优先级高于通用规则）",
+    brandText,
+    "",
+    "品牌规范定义了该主题的视觉语言、组件语义和排版哲学。",
+    "排版时必须严格遵循品牌规范中的指引，包括但不限于：",
+    "- 推荐的组件使用方式",
+    "- 组件定制造型（variant）的语义描述",
+    "- 风格基调和情绪表达",
+    "- 排版节奏和密度偏好",
+  ].join("\n");
 }
 
 /** 构建可用组件列表文本 */
@@ -140,8 +184,10 @@ export function buildTemplatePrompt(
   themeLayout?: LayoutPreference,
   audience?: Audience,
   constraints?: DesignConstraints,
+  brandText?: string,
 ): string {
   const themeHint = themeLayout ? buildThemeHint(themeLayout) : "";
+  const brandHint = brandText ? buildBrandHint(brandText) : "";
   const audienceHint = audience ? buildAudienceHint(audience) : "";
   const designGoalHint = constraints ? buildDesignGoalHint(constraints) : "";
   const designerReviewHint = buildDesignerReviewHint();
@@ -151,6 +197,7 @@ export function buildTemplatePrompt(
     '你是一个资深公众号版式设计师。你的任务不是"排版"，而是"设计"——理解文章内容，逐段判断什么内容值得强调、用什么方式呈现。',
     "",
     themeHint,
+    brandHint,
     audienceHint,
     designGoalHint,
     designerReviewHint,

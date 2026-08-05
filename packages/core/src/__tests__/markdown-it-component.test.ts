@@ -146,6 +146,45 @@ describe("markdown-it-component 语法解析", () => {
     expect(html).toContain("wemd-quote-card");
   });
 
+  it("组件嵌套：text-card 内嵌套 full-quote", () => {
+    const md = [
+      "::: text-card",
+      "引言段落",
+      "",
+      "::: full-quote",
+      "金句内容",
+      ":::",
+      "",
+      "后续正文段落",
+      ":::",
+    ].join("\n");
+    const html = parser.render(md);
+    // text-card 外层容器存在
+    expect(html).toContain('data-component="text-card"');
+    // full-quote 内层容器存在（嵌套）
+    expect(html).toContain('data-component="full-quote"');
+    // 内容均渲染
+    expect(html).toContain("引言段落");
+    expect(html).toContain("金句内容");
+    expect(html).toContain("后续正文段落");
+    // full-quote 在 text-card 内部
+    const textCardIdx = html.indexOf('data-component="text-card"');
+    const fullQuoteIdx = html.indexOf('data-component="full-quote"');
+    expect(fullQuoteIdx).toBeGreaterThan(textCardIdx);
+  });
+
+  it("组件嵌套：未闭合外层的嵌套组件仍可解析内层", () => {
+    // 外层 text-card 未闭合时，text-card 不解析，
+    // 但内层 full-quote 是合法闭合的，应正常解析
+    const md = "::: text-card\n::: full-quote\n未闭合\n:::";
+    const html = parser.render(md);
+    // text-card 不应解析（外层未闭合时 depth 不等于 0）
+    expect(html).not.toContain('data-component="text-card"');
+    // full-quote 应正常解析（内层合法闭合）
+    expect(html).toContain('data-component="full-quote"');
+    expect(html).toContain("未闭合");
+  });
+
   it("data-props 中的特殊字符被转义", () => {
     const md = '::: quote-card{author="a<b>c"}\n内容\n:::';
     const html = parser.render(md);

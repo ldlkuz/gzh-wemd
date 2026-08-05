@@ -1,0 +1,133 @@
+{
+  "id": "image-caption-mse6m3og",
+  "type": "image-caption",
+  "name": "Image Caption",
+  "status": "draft",
+  "currentVersion": 6,
+  "approvedVersion": null,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "image-caption",
+      "variant": "image-caption-default",
+      "variantCss": "#wemd .wemd-image-caption[data-variant=\"image-caption-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:52:30.884Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: image-caption",
+      "instruction": "管道生成基础外观: image-caption",
+      "sourceHtml": "<figure class=\"wemd-image-caption\" data-variant=\"image-caption-default\">\n  <div class=\"wemd-ic-img\" style=\"height:120px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px\">🖼️</div>\n  <figcaption class=\"wemd-ic-caption\">这是一张精美的示例图片，展示了产品的核心功能</figcaption>\n</figure>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 2,
+      "component": "image-caption",
+      "variant": "image-caption-default",
+      "variantCss": "#wemd .wemd-image-caption[data-variant=\"image-caption-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:55:31.201Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: image-caption",
+      "parentVersion": 1,
+      "instruction": "管道生成基础外观: image-caption",
+      "sourceHtml": "<figure class=\"wemd-image-caption\" data-variant=\"image-caption-default\">\n  <div class=\"wemd-ic-img\" style=\"height:120px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px\">🖼️</div>\n  <figcaption class=\"wemd-ic-caption\">这是一张精美的示例图片，展示了产品的核心功能</figcaption>\n</figure>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 3,
+      "component": "image-caption",
+      "variant": "image-caption-default",
+      "variantCss": "#wemd .wemd-image-caption[data-variant=\"image-caption-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:56:08.447Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: image-caption",
+      "parentVersion": 2,
+      "instruction": "管道生成基础外观: image-caption",
+      "sourceHtml": "<figure class=\"wemd-image-caption\" data-variant=\"image-caption-default\">\n  <div class=\"wemd-ic-img\" style=\"height:120px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px\">🖼️</div>\n  <figcaption class=\"wemd-ic-caption\">这是一张精美的示例图片，展示了产品的核心功能</figcaption>\n</figure>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 4,
+      "component": "image-caption",
+      "variant": "image-caption-default",
+      "variantCss": "#wemd .wemd-image-caption[data-variant=\"image-caption-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:59:34.295Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: image-caption",
+      "parentVersion": 3,
+      "instruction": "管道生成基础外观: image-caption",
+      "sourceHtml": "<figure class=\"wemd-image-caption\" data-variant=\"image-caption-default\">\n  <div class=\"wemd-ic-img\" style=\"height:120px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px\">🖼️</div>\n  <figcaption class=\"wemd-ic-caption\">这是一张精美的示例图片，展示了产品的核心功能</figcaption>\n</figure>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 5,
+      "component": "image-caption",
+      "variant": "image-caption-default",
+      "variantCss": "#wemd .wemd-image-caption[data-variant=\"image-caption-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T14:52:19.377Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: image-caption",
+      "parentVersion": 4,
+      "instruction": "管道生成基础外观: image-caption",
+      "sourceHtml": "<figure class=\"wemd-image-caption\" data-variant=\"image-caption-default\">\n  <div class=\"wemd-ic-img\" style=\"height:120px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px\">🖼️</div>\n  <figcaption class=\"wemd-ic-caption\">这是一张精美的示例图片，展示了产品的核心功能</figcaption>\n</figure>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 6,
+      "component": "image-caption",
+      "variant": "image-caption-default",
+      "variantCss": "#wemd .wemd-image-caption[data-variant=\"image-caption-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T15:07:19.530Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: image-caption",
+      "parentVersion": 5,
+      "instruction": "管道生成基础外观: image-caption",
+      "sourceHtml": "<figure class=\"wemd-image-caption\" data-variant=\"image-caption-default\">\n  <div class=\"wemd-ic-img\" style=\"height:120px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px\">🖼️</div>\n  <figcaption class=\"wemd-ic-caption\">这是一张精美的示例图片，展示了产品的核心功能</figcaption>\n</figure>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": null,
+  "decisions": []
+}

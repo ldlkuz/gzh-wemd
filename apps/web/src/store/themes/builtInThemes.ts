@@ -34,6 +34,22 @@ export interface CustomTheme {
   designerVariables?: DesignerVariables;
   /** 主题定义（Phase 2 新增，有则走 renderTheme 渲染管线） */
   definition?: ThemeDefinition;
+  /** Phase 3：Theme System 版本号 */
+  sdkVersion?: string;
+  /** Phase 3：预览缩略图（base64 data URL） */
+  preview?: string;
+  /** Phase 3：品牌语言说明（brand.md 内容） */
+  brandText?: string;
+  /** Phase 3：导入的主题包只读，不可编辑 */
+  readOnly?: boolean;
+  /** Phase 3：压缩包原始数据（用于重新导出） */
+  packageRaw?: Uint8Array;
+  /** Phase 3：资源图片映射（key → base64 data URL） */
+  assets?: Map<string, string>;
+  /** Phase 3：styles/components.css 内容 */
+  componentsCss?: string;
+  /** Phase 3：styles/extras.css 内容 */
+  extrasCss?: string;
 }
 
 /**

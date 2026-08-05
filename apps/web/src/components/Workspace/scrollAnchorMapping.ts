@@ -25,6 +25,8 @@ const buildAnchorPoints = (anchors: ScrollAnchor[]): AnchorPoint[] => {
       : left.line - right.line,
   );
 
+  if (points.length === 0) return [];
+
   // 哨兵锚点：确保 line=0 总是映射到 offset=0，避免顶部组件（如目录卡片）被滚动跳过
   const normalized: AnchorPoint[] = [{ line: 0, offset: 0 }];
   points.forEach((point) => {

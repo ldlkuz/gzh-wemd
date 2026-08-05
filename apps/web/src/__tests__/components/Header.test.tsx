@@ -106,8 +106,8 @@ describe("Header", () => {
     render(<Header />);
 
     expect(screen.getByText("WeMD")).toBeInTheDocument();
-    expect(screen.getByText("公众号 Markdown 排版编辑器")).toBeInTheDocument();
     expect(screen.getByText("复制到公众号")).toBeInTheDocument();
+    expect(screen.getByText("文章主题")).toBeInTheDocument();
   });
 
   it("toggles theme interaction", () => {

@@ -34,6 +34,20 @@ export function generateComponents(
   ${v.quoteTextCentered ? "text-align: center !important;" : ""}
 }
 
+/* 行内代码样式必须在代码块样式之前定义，确保手动内联器按顺序覆盖 */
+#wemd code {
+  color: var(--wemd-inline-code-color);
+  background: var(--wemd-inline-code-background);
+  padding: 2px 4px;
+  border-radius: ${v.inlineCodeStyle === "rounded" ? "12px" : v.inlineCodeStyle === "github" ? "4px" : "2px"};
+  font-size: 0.9em;
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+  white-space: normal;
+  letter-spacing: 0;
+  ${v.inlineCodeStyle === "github" ? "border: 1px solid rgba(0,0,0,0.06);" : ""}
+  ${v.inlineCodeStyle === "color-text" ? `background: transparent; font-weight: bold; border-bottom: 2px solid var(--wemd-primary-color-50);` : ""}
+}
+
 #wemd pre {
   margin: var(--wemd-paragraph-margin) 0;
   overflow-x: auto;
@@ -71,19 +85,6 @@ export function generateComponents(
 }
 
 ${getCodeThemeCSS(v.codeTheme)}
-
-#wemd code {
-  color: var(--wemd-inline-code-color);
-  background: var(--wemd-inline-code-background);
-  padding: 2px 4px;
-  border-radius: ${v.inlineCodeStyle === "rounded" ? "12px" : v.inlineCodeStyle === "github" ? "4px" : "2px"};
-  font-size: 0.9em;
-  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
-  white-space: normal;
-  letter-spacing: 0;
-  ${v.inlineCodeStyle === "github" ? "border: 1px solid rgba(0,0,0,0.06);" : ""}
-  ${v.inlineCodeStyle === "color-text" ? `background: transparent; font-weight: bold; border-bottom: 2px solid var(--wemd-primary-color-50);` : ""}
-}
 
 /* 代码块样式需要更高优先级覆盖行内代码样式 */
 #wemd pre code,

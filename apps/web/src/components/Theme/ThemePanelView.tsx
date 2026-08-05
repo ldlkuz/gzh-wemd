@@ -11,12 +11,16 @@ import {
   Trash2,
   Upload,
   X,
+  Clipboard,
+  Terminal,
 } from "lucide-react";
 import type { MutableRefObject } from "react";
+import { Modal } from "../common";
 import type {
   CustomTheme,
   ThemeDefinition,
 } from "../../store/themes/builtInThemes";
+import type { ValidationError } from "@wemd/core";
 import { ThemeDesigner, type DesignerVariables } from "./ThemeDesigner";
 import { ThemeLivePreview } from "./ThemeLivePreview";
 import { AiThemeGenerator } from "./AiThemeGenerator";
@@ -60,6 +64,7 @@ interface ThemePanelViewProps {
   onToggleExportMenu: () => void;
   onExportJson: () => void;
   onExportCss: () => void;
+  onExportZip: () => void;
   onDeleteClick: () => void;
   onSave: () => void;
   onApply: () => void;
@@ -69,6 +74,28 @@ interface ThemePanelViewProps {
   onPreviewCss: (css: string) => void;
   /** AI 建议主题名称 */
   onNameSuggestion: (name: string) => void;
+  // Phase 7: 导入相关
+  importMenuOpen: boolean;
+  importMenuRef: MutableRefObject<HTMLDivElement | null>;
+  onToggleImportMenu: () => void;
+  showPasteModal: boolean;
+  pasteJsonText: string;
+  onOpenPasteModal: () => void;
+  onPasteJsonTextChange: (value: string) => void;
+  onPasteJsonImport: () => void;
+  onClosePasteModal: () => void;
+  showImportErrors: boolean;
+  importErrors: ValidationError[];
+  onCloseImportErrors: () => void;
+  showOverrideModal: boolean;
+  overrideInfo: {
+    existingName: string;
+    existingVersion: string;
+    newVersion: string;
+  } | null;
+  onOverrideReplace: () => void;
+  onOverrideCopy: () => void;
+  onCloseOverrideModal: () => void;
 }
 
 export function ThemePanelView({
@@ -110,12 +137,31 @@ export function ThemePanelView({
   onToggleExportMenu,
   onExportJson,
   onExportCss,
+  onExportZip,
   onDeleteClick,
   onSave,
   onApply,
   onAiGenerated,
   onPreviewCss,
   onNameSuggestion,
+  // Phase 7
+  importMenuOpen,
+  importMenuRef,
+  onToggleImportMenu,
+  showPasteModal,
+  pasteJsonText,
+  onOpenPasteModal,
+  onPasteJsonTextChange,
+  onPasteJsonImport,
+  onClosePasteModal,
+  showImportErrors,
+  importErrors,
+  onCloseImportErrors,
+  showOverrideModal,
+  overrideInfo,
+  onOverrideReplace,
+  onOverrideCopy,
+  onCloseOverrideModal,
 }: ThemePanelViewProps) {
   if (!open) return null;
 
@@ -137,16 +183,44 @@ export function ThemePanelView({
             <button className="btn-new-theme" onClick={onCreateNew}>
               <Plus size={16} /> 新建自定义主题
             </button>
-            <button
-              className="btn-import-theme"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <Upload size={16} /> 导入主题
-            </button>
+            <div className="theme-import-menu" ref={importMenuRef}>
+              <button
+                className="btn-import-theme"
+                onClick={onToggleImportMenu}
+                aria-haspopup="menu"
+                aria-expanded={importMenuOpen}
+              >
+                <Upload size={16} /> 导入主题 <ChevronDown size={14} />
+              </button>
+              {importMenuOpen && (
+                <div className="theme-import-dropdown" role="menu">
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      onToggleImportMenu();
+                      fileInputRef.current?.click();
+                    }}
+                  >
+                    <Upload size={16} /> 从文件导入 (.json / .wemd-theme / .zip)
+                  </button>
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      onToggleImportMenu();
+                      onOpenPasteModal();
+                    }}
+                  >
+                    <Clipboard size={16} /> 粘贴 JSON 文本
+                  </button>
+                </div>
+              )}
+            </div>
             <input
               type="file"
               ref={fileInputRef}
-              accept=".json"
+              accept=".json,.wemd-theme,.zip"
               style={{ display: "none" }}
               onChange={async (e) => {
                 const file = e.target.files?.[0];
@@ -167,7 +241,19 @@ export function ThemePanelView({
                       className={`theme-item ${item.id === selectedThemeId ? "active" : ""}`}
                       onClick={() => onSelectTheme(item.id)}
                     >
-                      {item.name}
+                      {item.preview && (
+                        <img
+                          className="theme-item-preview"
+                          src={item.preview}
+                          alt=""
+                          width={40}
+                          height={40}
+                        />
+                      )}
+                      <span className="theme-item-name">{item.name}</span>
+                      {item.readOnly && (
+                        <span className="theme-item-badge">AI 主题</span>
+                      )}
                     </button>
                   ))}
                 </div>
@@ -219,6 +305,130 @@ export function ThemePanelView({
             )}
 
             <div className="theme-form">
+              {/* 粘贴 JSON 导入 Modal */}
+              {showPasteModal && (
+                <div className="tpm-paste-json-modal">
+                  <div className="tpm-paste-json-modal-content">
+                    <div className="tpm-paste-json-modal-header">
+                      <h3>粘贴 JSON 文本</h3>
+                      <button onClick={onClosePasteModal} aria-label="关闭">
+                        <X size={20} />
+                      </button>
+                    </div>
+                    <p className="tpm-paste-json-modal-hint">
+                      粘贴主题 manifest.json 内容，支持纯 JSON
+                      文本。校验通过后即可导入。
+                    </p>
+                    <textarea
+                      className="tpm-paste-json-textarea"
+                      value={pasteJsonText}
+                      onChange={(e) => onPasteJsonTextChange(e.target.value)}
+                      placeholder='{"sdkVersion": "1.0.0", "meta": {...}, ...}'
+                      spellCheck={false}
+                      rows={12}
+                    />
+                    <div className="tpm-paste-json-modal-actions">
+                      <button
+                        className="btn-secondary"
+                        onClick={onClosePasteModal}
+                      >
+                        取消
+                      </button>
+                      <button
+                        className="btn-primary"
+                        onClick={onPasteJsonImport}
+                        disabled={!pasteJsonText.trim()}
+                      >
+                        校验并导入
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* 导入错误详情 Modal */}
+              {showImportErrors && (
+                <div className="tpm-error-modal">
+                  <div className="tpm-error-modal-content">
+                    <div className="tpm-error-modal-header">
+                      <h3>导入失败</h3>
+                      <button onClick={onCloseImportErrors} aria-label="关闭">
+                        <X size={20} />
+                      </button>
+                    </div>
+                    <p className="tpm-error-modal-hint">
+                      主题包校验未通过，以下问题需要修复：
+                    </p>
+                    <div className="tpm-error-list">
+                      {importErrors.map((err, idx) => (
+                        <div key={idx} className="tpm-error-item">
+                          <span className="tpm-error-path">{err.path}</span>
+                          <span className="tpm-error-msg">{err.message}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="tpm-error-modal-actions">
+                      <button
+                        className="btn-secondary"
+                        onClick={() => {
+                          const text = importErrors
+                            .map((e) => `${e.path}: ${e.message}`)
+                            .join("\n");
+                          navigator.clipboard.writeText(text);
+                        }}
+                      >
+                        <Copy size={14} /> 复制全部错误信息
+                      </button>
+                      <button
+                        className="btn-primary"
+                        onClick={onCloseImportErrors}
+                      >
+                        知道了
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* 同名覆盖确认 Modal */}
+              {showOverrideModal && overrideInfo && (
+                <div className="tpm-override-modal">
+                  <div className="tpm-override-modal-content">
+                    <div className="tpm-override-modal-header">
+                      <h3>主题已存在</h3>
+                      <button onClick={onCloseOverrideModal} aria-label="关闭">
+                        <X size={20} />
+                      </button>
+                    </div>
+                    <p className="tpm-override-modal-hint">
+                      已存在主题 <strong>{overrideInfo.existingName}</strong>
+                      （版本 {overrideInfo.existingVersion}），导入的主题版本为{" "}
+                      {overrideInfo.newVersion}，是否覆盖？
+                    </p>
+                    <div className="tpm-override-modal-actions">
+                      <button
+                        className="btn-secondary"
+                        onClick={onCloseOverrideModal}
+                      >
+                        取消
+                      </button>
+                      <button
+                        className="btn-secondary"
+                        onClick={onOverrideCopy}
+                      >
+                        导入为副本
+                      </button>
+                      <button
+                        className="btn-primary"
+                        onClick={onOverrideReplace}
+                      >
+                        覆盖
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {isCreating && creationStep === "select-mode" && (
                 <div className="mode-selection">
                   <h3>选择创建方式</h3>
@@ -390,6 +600,15 @@ export function ThemePanelView({
                         >
                           <Download size={16} /> CSS（不支持可视化编辑）
                         </button>
+                        {selectedTheme?.readOnly && (
+                          <button
+                            type="button"
+                            role="menuitem"
+                            onClick={onExportZip}
+                          >
+                            <Download size={16} /> 主题包 (.wemd-theme)
+                          </button>
+                        )}
                       </div>
                     )}
                   </div>

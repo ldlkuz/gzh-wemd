@@ -1,0 +1,53 @@
+{
+  "id": "callout-msdcv733",
+  "type": "callout",
+  "name": "Callout",
+  "status": "draft",
+  "currentVersion": 2,
+  "approvedVersion": null,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "callout",
+      "variant": "callout-brand-default",
+      "variantCss": "#wemd .wemd-callout[data-variant=\"callout-brand-default\"] {\n  border-left: 4px solid #3B82F6;\n  background: #F8FAFC;\n  padding: 1em 1.25em;\n  border-radius: 0 8px 8px 0;\n  margin: 1.25em 0;\n}\n#wemd .wemd-callout[data-variant=\"callout-brand-default\"] .wemd-callout-title {\n  font-weight: 600;\n  color: #3B82F6;\n  margin-bottom: 0.25em;\n}\n#wemd .wemd-callout[data-variant=\"callout-brand-default\"] .wemd-callout-content {\n  color: #1A1A2E;\n  font-size: 0.95em;\n}",
+      "createdAt": "2026-08-03T14:59:46.724Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: callout-brand-default",
+      "instruction": "管道生成: callout-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 2,
+      "component": "callout",
+      "variant": "callout-brand-default",
+      "variantCss": "#wemd .wemd-callout[data-variant=\"callout-brand-default\"] {\n  border-left: 4px solid #3B82F6;\n  background: #F8FAFC;\n  padding: 1em 1.25em;\n  border-radius: 0 8px 8px 0;\n  margin: 1.25em 0;\n}\n#wemd .wemd-callout[data-variant=\"callout-brand-default\"] .wemd-callout-title {\n  font-weight: 600;\n  color: #3B82F6;\n  margin-bottom: 0.25em;\n}\n#wemd .wemd-callout[data-variant=\"callout-brand-default\"] .wemd-callout-content {\n  color: #1A1A2E;\n  font-size: 0.95em;\n}",
+      "createdAt": "2026-08-03T16:39:19.810Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: callout-brand-default",
+      "parentVersion": 1,
+      "instruction": "管道生成: callout-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": null,
+  "decisions": []
+}

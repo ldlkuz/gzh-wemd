@@ -29,4 +29,23 @@ describe("publishMeta", () => {
     expect(meta.title).toBe("正文标题");
     expect(meta.author).toBe("Alice");
   });
+
+  it("从 magazine-cover 组件提取标题", () => {
+    const markdown = [
+      "::: magazine-cover",
+      "从入门到进阶：2025 年度效率工具指南",
+      "SUPERCHARGE YOUR WORKFLOW",
+      "---",
+      "告别选择困难，这 6 款神器让你的效率翻倍",
+      ":::",
+    ].join("\n");
+    expect(extractHeadingTitleFromMarkdown(markdown)).toBe(
+      "从入门到进阶：2025 年度效率工具指南",
+    );
+  });
+
+  it("magazine-cover 组件无标题时回退到 H1", () => {
+    const markdown = ["::: magazine-cover", ":::", "", "# 正文标题"].join("\n");
+    expect(extractHeadingTitleFromMarkdown(markdown)).toBe("正文标题");
+  });
 });

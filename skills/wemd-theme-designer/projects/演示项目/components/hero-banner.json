@@ -1,0 +1,53 @@
+{
+  "id": "hero-banner-msdcv725",
+  "type": "hero-banner",
+  "name": "Hero Banner",
+  "status": "draft",
+  "currentVersion": 2,
+  "approvedVersion": null,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "hero-banner",
+      "variant": "hero-banner-brand-featured",
+      "variantCss": "#wemd .wemd-hero-banner[data-variant=\"hero-banner-brand-featured\"] {\n  background: linear-gradient(135deg, #3B82F6, rgb(19,90,206));\n  color: #fff;\n  padding: 2.5em 1.5em;\n  border-radius: 12px;\n  text-align: center;\n}\n#wemd .wemd-hero-banner[data-variant=\"hero-banner-brand-featured\"] .wemd-hero-title {\n  font-size: 1.75em;\n  font-weight: 700;\n  margin: 0 0 0.5em;\n  color: #fff;\n}\n#wemd .wemd-hero-banner[data-variant=\"hero-banner-brand-featured\"] .wemd-hero-subtitle {\n  font-size: 1em;\n  opacity: 0.9;\n  color: rgba(255,255,255,0.9);\n}",
+      "createdAt": "2026-08-03T14:59:46.698Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: hero-banner-brand-featured",
+      "instruction": "管道生成: hero-banner-brand-featured",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 2,
+      "component": "hero-banner",
+      "variant": "hero-banner-brand-featured",
+      "variantCss": "#wemd .wemd-hero-banner[data-variant=\"hero-banner-brand-featured\"] {\n  background: linear-gradient(135deg, #3B82F6, rgb(19,90,206));\n  color: #fff;\n  padding: 2.5em 1.5em;\n  border-radius: 12px;\n  text-align: center;\n}\n#wemd .wemd-hero-banner[data-variant=\"hero-banner-brand-featured\"] .wemd-hero-title {\n  font-size: 1.75em;\n  font-weight: 700;\n  margin: 0 0 0.5em;\n  color: #fff;\n}\n#wemd .wemd-hero-banner[data-variant=\"hero-banner-brand-featured\"] .wemd-hero-subtitle {\n  font-size: 1em;\n  opacity: 0.9;\n  color: rgba(255,255,255,0.9);\n}",
+      "createdAt": "2026-08-03T16:39:19.802Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: hero-banner-brand-featured",
+      "parentVersion": 1,
+      "instruction": "管道生成: hero-banner-brand-featured",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": null,
+  "decisions": []
+}

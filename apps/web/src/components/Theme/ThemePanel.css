@@ -124,7 +124,7 @@
   display: flex;
   flex-direction: column;
   background: var(--bg-secondary);
-  overflow: hidden;
+  overflow: visible;
 }
 
 .btn-new-theme {
@@ -760,3 +760,350 @@
   color: var(--accent-primary);
   margin-bottom: 8px;
 }
+
+/* ============================================
+   Phase 7: 导入下拉菜单
+   ============================================ */
+.theme-import-menu {
+  position: relative;
+}
+
+.theme-import-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 180px;
+  padding: 8px;
+  border-radius: var(--radius-md);
+  background: var(--bg-primary);
+  border: var(--border-width) solid var(--border-light);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 1200;
+  white-space: nowrap;
+  animation: importSlideIn 0.15s ease-out;
+}
+
+@keyframes importSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.theme-import-dropdown button {
+  border: none;
+  background: transparent;
+  text-align: left;
+  font-size: 13px;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.theme-import-dropdown button:hover {
+  background: var(--bg-secondary);
+  color: var(--accent-primary);
+}
+
+.theme-import-separator {
+  height: 1px;
+  background: var(--border-light);
+  margin: 4px 0;
+}
+
+/* ============================================
+   Phase 7: 主题列表项增强（预览缩略图 + 只读标记）
+   ============================================ */
+.theme-item-preview {
+  border-radius: 4px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.theme-item-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.theme-item-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #8b5cf6, #ec4899);
+  color: #fff;
+  flex-shrink: 0;
+  line-height: 1.4;
+}
+
+/* ============================================
+   Phase 7: 粘贴 JSON Modal（tpm- 前缀防全局污染）
+   ============================================ */
+.tpm-paste-json-modal {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  border-radius: var(--radius-xl);
+}
+
+.tpm-paste-json-modal-content {
+  background: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-xl);
+  width: 500px;
+  max-width: 90%;
+  padding: 24px;
+}
+
+.tpm-paste-json-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.tpm-paste-json-modal-header h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.tpm-paste-json-modal-header button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.tpm-paste-json-modal-header button:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.tpm-paste-json-modal-hint {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0 0 16px;
+}
+
+.tpm-paste-json-textarea {
+  width: 100%;
+  min-height: 200px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  font-family: "Consolas", "Monaco", monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  resize: vertical;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.tpm-paste-json-textarea:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px
+    color-mix(in srgb, var(--accent-primary) 20%, transparent);
+}
+
+.tpm-paste-json-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* ============================================
+   Phase 7: 导入错误详情 Modal（tpm- 前缀）
+   ============================================ */
+.tpm-error-modal {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  border-radius: var(--radius-xl);
+}
+
+.tpm-error-modal-content {
+  background: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-xl);
+  width: 500px;
+  max-width: 90%;
+  max-height: 70vh;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.tpm-error-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.tpm-error-modal-header h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+  color: #ef4444;
+}
+
+.tpm-error-modal-header button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.tpm-error-modal-header button:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.tpm-error-modal-hint {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0 0 16px;
+}
+
+.tpm-error-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.tpm-error-item {
+  display: flex;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(239, 68, 68, 0.06);
+  border: 1px solid rgba(239, 68, 68, 0.15);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.tpm-error-path {
+  font-family: "Consolas", "Monaco", monospace;
+  font-weight: 600;
+  color: #ef4444;
+  flex-shrink: 0;
+  min-width: 120px;
+}
+
+.tpm-error-msg {
+  color: var(--text-secondary);
+  flex: 1;
+}
+
+.tpm-error-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* ============================================
+   Phase 7: 同名覆盖确认 Modal（tpm- 前缀）
+   ============================================ */
+.tpm-override-modal {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  border-radius: var(--radius-xl);
+}
+
+.tpm-override-modal-content {
+  background: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-xl);
+  width: 420px;
+  max-width: 90%;
+  padding: 24px;
+}
+
+.tpm-override-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.tpm-override-modal-header h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.tpm-override-modal-header button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.tpm-override-modal-header button:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.tpm-override-modal-hint {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0 0 20px;
+  line-height: 1.6;
+}
+
+.tpm-override-modal-hint strong {
+  color: var(--text-primary);
+}
+
+.tpm-override-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+/* ============================================
+   Phase 8: 主题创建向导
+   ============================================ */

@@ -1,0 +1,453 @@
+{
+  "id": "divider-msdcv0z4",
+  "type": "divider",
+  "name": "Divider",
+  "status": "draft",
+  "currentVersion": 22,
+  "approvedVersion": null,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "divider",
+      "variant": "divider-brand-default",
+      "variantCss": "#wemd .wemd-divider[data-variant=\"divider-brand-default\"] {\n  border: none;\n  height: 1px;\n  background: linear-gradient(to right, transparent, #3B82F6, transparent);\n  margin: 2em 0;\n  opacity: 0.5;\n}",
+      "createdAt": "2026-08-03T14:59:38.802Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: divider-brand-default",
+      "instruction": "管道生成: divider-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 2,
+      "component": "divider",
+      "variant": "divider-brand-default",
+      "variantCss": "#wemd .wemd-divider[data-variant=\"divider-brand-default\"] {\n  border: none;\n  height: 1px;\n  background: linear-gradient(to right, transparent, #3B82F6, transparent);\n  margin: 2em 0;\n  opacity: 0.5;\n}",
+      "createdAt": "2026-08-03T14:59:49.675Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: divider-brand-default",
+      "parentVersion": 1,
+      "instruction": "管道生成: divider-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 3,
+      "component": "divider",
+      "variant": "divider-brand-default",
+      "variantCss": "#wemd .wemd-divider[data-variant=\"divider-brand-default\"] {\n  border: none;\n  height: 1px;\n  background: linear-gradient(to right, transparent, #3B82F6, transparent);\n  margin: 2em 0;\n  opacity: 0.5;\n}",
+      "createdAt": "2026-08-03T15:21:03.939Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: divider-brand-default",
+      "parentVersion": 2,
+      "instruction": "管道生成: divider-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 4,
+      "component": "divider",
+      "variant": "divider-brand-default",
+      "variantCss": "#wemd .wemd-divider[data-variant=\"divider-brand-default\"] {\n  border: none;\n  height: 1px;\n  background: linear-gradient(to right, transparent, #3B82F6, transparent);\n  margin: 2em 0;\n  opacity: 0.5;\n}",
+      "createdAt": "2026-08-03T15:34:48.096Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: divider-brand-default",
+      "parentVersion": 3,
+      "instruction": "管道生成: divider-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 5,
+      "component": "divider",
+      "variant": "divider-brand-default",
+      "variantCss": "#wemd .wemd-divider[data-variant=\"divider-brand-default\"] {\n  border: none;\n  height: 1px;\n  background: linear-gradient(to right, transparent, #3B82F6, transparent);\n  margin: 2em 0;\n  opacity: 0.5;\n}",
+      "createdAt": "2026-08-03T15:34:52.700Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: divider-brand-default",
+      "parentVersion": 4,
+      "instruction": "管道生成: divider-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 6,
+      "component": "divider",
+      "variant": "divider-brand-default",
+      "variantCss": "#wemd .wemd-divider[data-variant=\"divider-brand-default\"] {\n  border: none;\n  height: 1px;\n  background: linear-gradient(to right, transparent, #3B82F6, transparent);\n  margin: 2em 0;\n  opacity: 0.5;\n}",
+      "createdAt": "2026-08-03T15:34:54.507Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: divider-brand-default",
+      "parentVersion": 5,
+      "instruction": "管道生成: divider-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 7,
+      "component": "divider",
+      "variant": "divider-brand-default",
+      "variantCss": "#wemd .wemd-divider[data-variant=\"divider-brand-default\"] {\n  border: none;\n  height: 1px;\n  background: linear-gradient(to right, transparent, #3B82F6, transparent);\n  margin: 2em 0;\n  opacity: 0.5;\n}",
+      "createdAt": "2026-08-03T15:35:37.815Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: divider-brand-default",
+      "parentVersion": 6,
+      "instruction": "管道生成: divider-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 8,
+      "component": "divider",
+      "variant": "divider-brand-default",
+      "variantCss": "#wemd .wemd-divider[data-variant=\"divider-brand-default\"] {\n  border: none;\n  height: 1px;\n  background: linear-gradient(to right, transparent, #3B82F6, transparent);\n  margin: 2em 0;\n  opacity: 0.5;\n}",
+      "createdAt": "2026-08-03T15:59:32.112Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: divider-brand-default",
+      "parentVersion": 7,
+      "instruction": "管道生成: divider-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 9,
+      "component": "divider",
+      "variant": "divider-brand-default",
+      "variantCss": "#wemd .wemd-divider[data-variant=\"divider-brand-default\"] {\n  border: none;\n  height: 1px;\n  background: linear-gradient(to right, transparent, #3B82F6, transparent);\n  margin: 2em 0;\n  opacity: 0.5;\n}",
+      "createdAt": "2026-08-03T16:11:55.418Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: divider-brand-default",
+      "parentVersion": 8,
+      "instruction": "管道生成: divider-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 10,
+      "component": "divider",
+      "variant": "divider-brand-default",
+      "variantCss": "#wemd .wemd-divider[data-variant=\"divider-brand-default\"] {\n  border: none;\n  height: 1px;\n  background: linear-gradient(to right, transparent, #3B82F6, transparent);\n  margin: 2em 0;\n  opacity: 0.5;\n}",
+      "createdAt": "2026-08-03T16:11:56.869Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: divider-brand-default",
+      "parentVersion": 9,
+      "instruction": "管道生成: divider-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 11,
+      "component": "divider",
+      "variant": "divider-brand-default",
+      "variantCss": "#wemd .wemd-divider[data-variant=\"divider-brand-default\"] {\n  border: none;\n  height: 1px;\n  background: linear-gradient(to right, transparent, #3B82F6, transparent);\n  margin: 2em 0;\n  opacity: 0.5;\n}",
+      "createdAt": "2026-08-03T16:12:01.525Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: divider-brand-default",
+      "parentVersion": 10,
+      "instruction": "管道生成: divider-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 12,
+      "component": "divider",
+      "variant": "divider-brand-default",
+      "variantCss": "#wemd .wemd-divider[data-variant=\"divider-brand-default\"] {\n  border: none;\n  height: 1px;\n  background: linear-gradient(to right, transparent, #3B82F6, transparent);\n  margin: 2em 0;\n  opacity: 0.5;\n}",
+      "createdAt": "2026-08-03T16:12:09.835Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: divider-brand-default",
+      "parentVersion": 11,
+      "instruction": "管道生成: divider-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 13,
+      "component": "divider",
+      "variant": "divider-brand-default",
+      "variantCss": "#wemd .wemd-divider[data-variant=\"divider-brand-default\"] {\n  border: none;\n  height: 1px;\n  background: linear-gradient(to right, transparent, #3B82F6, transparent);\n  margin: 2em 0;\n  opacity: 0.5;\n}",
+      "createdAt": "2026-08-03T16:12:15.683Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: divider-brand-default",
+      "parentVersion": 12,
+      "instruction": "管道生成: divider-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 14,
+      "component": "divider",
+      "variant": "divider-brand-default",
+      "variantCss": "#wemd .wemd-divider[data-variant=\"divider-brand-default\"] {\n  border: none;\n  height: 1px;\n  background: linear-gradient(to right, transparent, #3B82F6, transparent);\n  margin: 2em 0;\n  opacity: 0.5;\n}",
+      "createdAt": "2026-08-03T16:12:27.824Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: divider-brand-default",
+      "parentVersion": 13,
+      "instruction": "管道生成: divider-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 15,
+      "component": "divider",
+      "variant": "divider-brand-default",
+      "variantCss": "#wemd .wemd-divider[data-variant=\"divider-brand-default\"] {\n  border: none;\n  height: 1px;\n  background: linear-gradient(to right, transparent, #3B82F6, transparent);\n  margin: 2em 0;\n  opacity: 0.5;\n}",
+      "createdAt": "2026-08-03T16:36:38.753Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: divider-brand-default",
+      "parentVersion": 14,
+      "instruction": "管道生成: divider-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 16,
+      "component": "divider",
+      "variant": "divider-brand-default",
+      "variantCss": "#wemd .wemd-divider[data-variant=\"divider-brand-default\"] {\n  border: none;\n  height: 1px;\n  background: linear-gradient(to right, transparent, #3B82F6, transparent);\n  margin: 2em 0;\n  opacity: 0.5;\n}",
+      "createdAt": "2026-08-03T16:37:08.262Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: divider-brand-default",
+      "parentVersion": 15,
+      "instruction": "管道生成: divider-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 17,
+      "component": "divider",
+      "variant": "divider-brand-default",
+      "variantCss": "#wemd .wemd-divider[data-variant=\"divider-brand-default\"] {\n  border: none;\n  height: 1px;\n  background: linear-gradient(to right, transparent, #3B82F6, transparent);\n  margin: 2em 0;\n  opacity: 0.5;\n}",
+      "createdAt": "2026-08-03T16:37:43.075Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: divider-brand-default",
+      "parentVersion": 16,
+      "instruction": "管道生成: divider-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 18,
+      "component": "divider",
+      "variant": "divider-brand-default",
+      "variantCss": "#wemd .wemd-divider[data-variant=\"divider-brand-default\"] {\n  border: none;\n  height: 1px;\n  background: linear-gradient(to right, transparent, #3B82F6, transparent);\n  margin: 2em 0;\n  opacity: 0.5;\n}",
+      "createdAt": "2026-08-03T16:49:22.498Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: divider-brand-default",
+      "parentVersion": 17,
+      "instruction": "管道生成: divider-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 19,
+      "component": "divider",
+      "variant": "divider-brand-default",
+      "variantCss": "#wemd .wemd-divider[data-variant=\"divider-brand-default\"] {\n  border: none;\n  height: 1px;\n  background: linear-gradient(to right, transparent, #3B82F6, transparent);\n  margin: 2em 0;\n  opacity: 0.5;\n}",
+      "createdAt": "2026-08-03T16:51:21.173Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: divider-brand-default",
+      "parentVersion": 18,
+      "instruction": "管道生成: divider-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 20,
+      "component": "divider",
+      "variant": "divider-brand-default",
+      "variantCss": "#wemd .wemd-divider[data-variant=\"divider-brand-default\"] {\n  border: none;\n  height: 1px;\n  background: linear-gradient(to right, transparent, #3B82F6, transparent);\n  margin: 2em 0;\n  opacity: 0.5;\n}",
+      "createdAt": "2026-08-03T16:56:21.059Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: divider-brand-default",
+      "parentVersion": 19,
+      "instruction": "管道生成: divider-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 21,
+      "component": "divider",
+      "variant": "divider-brand-default",
+      "variantCss": "#wemd .wemd-divider[data-variant=\"divider-brand-default\"] {\n  border: none;\n  height: 1px;\n  background: linear-gradient(to right, transparent, #3B82F6, transparent);\n  margin: 2em 0;\n  opacity: 0.5;\n}",
+      "createdAt": "2026-08-03T17:17:38.568Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: divider-brand-default",
+      "parentVersion": 20,
+      "instruction": "管道生成: divider-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 22,
+      "component": "divider",
+      "variant": "divider-brand-default",
+      "variantCss": "#wemd .wemd-divider[data-variant=\"divider-brand-default\"] {\n  border: none;\n  height: 1px;\n  background: linear-gradient(to right, transparent, #3B82F6, transparent);\n  margin: 2em 0;\n  opacity: 0.5;\n}",
+      "createdAt": "2026-08-03T17:46:03.938Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: divider-brand-default",
+      "parentVersion": 21,
+      "instruction": "管道生成: divider-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": null,
+  "decisions": []
+}

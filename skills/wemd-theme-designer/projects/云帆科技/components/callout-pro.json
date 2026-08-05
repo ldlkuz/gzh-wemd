@@ -1,0 +1,133 @@
+{
+  "id": "callout-pro-mse6m3hv",
+  "type": "callout-pro",
+  "name": "Callout Pro",
+  "status": "draft",
+  "currentVersion": 6,
+  "approvedVersion": null,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "callout-pro",
+      "variant": "callout-pro-default",
+      "variantCss": "#wemd .wemd-callout-pro[data-variant=\"callout-pro-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:52:30.647Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: callout-pro",
+      "instruction": "管道生成基础外观: callout-pro",
+      "sourceHtml": "<div class=\"wemd-callout-pro\" data-variant=\"callout-pro-default\">\n  <div class=\"wemd-callout-icon\">💡</div>\n  <div class=\"wemd-callout-body\">\n    <strong class=\"wemd-callout-title\">提示标题</strong>\n    <p class=\"wemd-callout-desc\">这是一个重要的提示信息。</p>\n  </div>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 2,
+      "component": "callout-pro",
+      "variant": "callout-pro-default",
+      "variantCss": "#wemd .wemd-callout-pro[data-variant=\"callout-pro-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:55:30.811Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: callout-pro",
+      "parentVersion": 1,
+      "instruction": "管道生成基础外观: callout-pro",
+      "sourceHtml": "<div class=\"wemd-callout-pro\" data-variant=\"callout-pro-default\">\n  <div class=\"wemd-callout-icon\">💡</div>\n  <div class=\"wemd-callout-body\">\n    <strong class=\"wemd-callout-title\">提示标题</strong>\n    <p class=\"wemd-callout-desc\">这是一个重要的提示信息。</p>\n  </div>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 3,
+      "component": "callout-pro",
+      "variant": "callout-pro-default",
+      "variantCss": "#wemd .wemd-callout-pro[data-variant=\"callout-pro-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:56:08.320Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: callout-pro",
+      "parentVersion": 2,
+      "instruction": "管道生成基础外观: callout-pro",
+      "sourceHtml": "<div class=\"wemd-callout-pro\" data-variant=\"callout-pro-default\">\n  <div class=\"wemd-callout-icon\">💡</div>\n  <div class=\"wemd-callout-body\">\n    <strong class=\"wemd-callout-title\">提示标题</strong>\n    <p class=\"wemd-callout-desc\">这是一个重要的提示信息。</p>\n  </div>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 4,
+      "component": "callout-pro",
+      "variant": "callout-pro-default",
+      "variantCss": "#wemd .wemd-callout-pro[data-variant=\"callout-pro-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:59:34.084Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: callout-pro",
+      "parentVersion": 3,
+      "instruction": "管道生成基础外观: callout-pro",
+      "sourceHtml": "<div class=\"wemd-callout-pro\" data-variant=\"callout-pro-default\">\n  <div class=\"wemd-callout-icon\">💡</div>\n  <div class=\"wemd-callout-body\">\n    <strong class=\"wemd-callout-title\">提示标题</strong>\n    <p class=\"wemd-callout-desc\">这是一个重要的提示信息。</p>\n  </div>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 5,
+      "component": "callout-pro",
+      "variant": "callout-pro-default",
+      "variantCss": "#wemd .wemd-callout-pro[data-variant=\"callout-pro-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T14:52:19.132Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: callout-pro",
+      "parentVersion": 4,
+      "instruction": "管道生成基础外观: callout-pro",
+      "sourceHtml": "<div class=\"wemd-callout-pro\" data-variant=\"callout-pro-default\">\n  <div class=\"wemd-callout-icon\">💡</div>\n  <div class=\"wemd-callout-body\">\n    <strong class=\"wemd-callout-title\">提示标题</strong>\n    <p class=\"wemd-callout-desc\">这是一个重要的提示信息。</p>\n  </div>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 6,
+      "component": "callout-pro",
+      "variant": "callout-pro-default",
+      "variantCss": "#wemd .wemd-callout-pro[data-variant=\"callout-pro-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T15:07:19.378Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: callout-pro",
+      "parentVersion": 5,
+      "instruction": "管道生成基础外观: callout-pro",
+      "sourceHtml": "<div class=\"wemd-callout-pro\" data-variant=\"callout-pro-default\">\n  <div class=\"wemd-callout-icon\">💡</div>\n  <div class=\"wemd-callout-body\">\n    <strong class=\"wemd-callout-title\">提示标题</strong>\n    <p class=\"wemd-callout-desc\">这是一个重要的提示信息。</p>\n  </div>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": null,
+  "decisions": []
+}

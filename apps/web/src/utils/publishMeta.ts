@@ -32,13 +32,27 @@ export function extractHeadingTitleFromMarkdown(markdown: string): string {
   let inFence = false;
   let firstHeading = "";
 
-  for (const line of lines) {
-    const trimmed = line.trim();
+  for (let i = 0; i < lines.length; i++) {
+    const trimmed = lines[i].trim();
     if (/^(```|~~~)/.test(trimmed)) {
       inFence = !inFence;
       continue;
     }
     if (inFence) continue;
+
+    // 从 magazine-cover 组件提取标题（第一行非空内容）
+    if (/^::: magazine-cover$/.test(trimmed)) {
+      for (let j = i + 1; j < lines.length; j++) {
+        const next = lines[j].trim();
+        if (next === ":::") break; // 未找到标题
+        if (next) {
+          const title = normalizeWechatTitle(next);
+          if (title) return title;
+          break;
+        }
+      }
+      continue;
+    }
 
     const match = trimmed.match(/^(#{1,6})\s+(.+?)\s*#*\s*$/);
     if (!match) continue;
@@ -59,7 +73,8 @@ export function resolvePublishMeta(
   const useTitle = meta.useTitle !== false;
   const useAuthor = meta.useAuthor !== false;
   const title = useTitle
-    ? normalizeWechatTitle(meta.title) || extractHeadingTitleFromMarkdown(markdown)
+    ? normalizeWechatTitle(meta.title) ||
+      extractHeadingTitleFromMarkdown(markdown)
     : "";
   const author = useAuthor ? normalizeWechatAuthor(meta.author) : "";
   return { title, author, useTitle, useAuthor };

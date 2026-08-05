@@ -33,14 +33,19 @@ vi.mock("mermaid", () => ({
   },
 }));
 
-vi.mock("@wemd/core", () => ({
-  createMarkdownParser: mocked.createMarkdownParserMock.mockImplementation(
-    () => ({
-      render: mocked.parserRender,
-    }),
-  ),
-  processHtml: mocked.processHtmlMock,
-}));
+vi.mock("@wemd/core", async () => {
+  const actual =
+    await vi.importActual<typeof import("@wemd/core")>("@wemd/core");
+  return {
+    ...actual,
+    createMarkdownParser: mocked.createMarkdownParserMock.mockImplementation(
+      () => ({
+        render: mocked.parserRender,
+      }),
+    ),
+    processHtml: mocked.processHtmlMock,
+  };
+});
 
 vi.mock("../../utils/mathJaxLoader", () => ({
   loadMathJax: vi.fn(),

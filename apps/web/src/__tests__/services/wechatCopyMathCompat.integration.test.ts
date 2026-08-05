@@ -17,12 +17,17 @@ vi.mock("react-hot-toast", () => ({
   },
 }));
 
-vi.mock("@wemd/core", () => ({
-  createMarkdownParser: () => ({
-    render: mocked.parserRender,
-  }),
-  processHtml: mocked.processHtml,
-}));
+vi.mock("@wemd/core", async () => {
+  const actual =
+    await vi.importActual<typeof import("@wemd/core")>("@wemd/core");
+  return {
+    ...actual,
+    createMarkdownParser: () => ({
+      render: mocked.parserRender,
+    }),
+    processHtml: mocked.processHtml,
+  };
+});
 
 vi.mock("../../utils/mathJaxLoader", () => ({
   loadMathJax: mocked.loadMathJax,

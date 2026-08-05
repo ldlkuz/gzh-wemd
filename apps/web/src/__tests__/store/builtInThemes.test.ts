@@ -1,22 +1,19 @@
 import { describe, expect, it } from "vitest";
-import {
-  clearGuideTheme,
-  dataBlueprintTheme,
-  easternNotesTheme,
-  modernEditorialTheme,
-  whitespaceGalleryTheme,
-} from "@wemd/core";
 import { builtInThemes } from "../../store/themes/builtInThemes";
-import { useThemeStore } from "../../store/themeStore";
 
 describe("built-in themes", () => {
-  it("注册编辑部手记主题并组合基础与代码样式", () => {
+  it("注册编辑部手记主题并验证结构化定义", () => {
     const theme = builtInThemes.find((item) => item.id === "modern-editorial");
 
     expect(theme).toBeTruthy();
     expect(theme?.name).toBe("编辑部手记");
     expect(theme?.isBuiltIn).toBe(true);
-    expect(theme?.css).toContain(modernEditorialTheme);
+    // Phase 3 升级：内置主题走 ThemeDefinition → renderTheme 管线
+    expect(theme?.definition).toBeTruthy();
+    expect(theme?.definition?.meta.id).toBe("modern-editorial");
+    expect(theme?.css).toBeTruthy();
+    expect(theme?.css?.length).toBeGreaterThan(1000);
+    // 渲染管线包含代码高亮主题
     expect(theme?.css).toContain("#wemd .hljs");
   });
 
@@ -37,18 +34,23 @@ describe("built-in themes", () => {
 
   it("注册四款可选的场景化主题", () => {
     const expectedThemes = [
-      ["data-blueprint", "数据蓝图", dataBlueprintTheme],
-      ["eastern-notes", "东方笺谱", easternNotesTheme],
-      ["clear-guide", "清晰指南", clearGuideTheme],
-      ["whitespace-gallery", "留白画册", whitespaceGalleryTheme],
+      ["data-blueprint", "数据蓝图"],
+      ["eastern-notes", "东方笺谱"],
+      ["clear-guide", "清晰指南"],
+      ["whitespace-gallery", "留白画册"],
     ] as const;
 
-    for (const [id, name, css] of expectedThemes) {
+    for (const [id, name] of expectedThemes) {
       const theme = builtInThemes.find((item) => item.id === id);
       expect(theme).toBeTruthy();
       expect(theme?.name).toBe(name);
       expect(theme?.isSelectable).not.toBe(false);
-      expect(theme?.css).toContain(css);
+      // Phase 3 升级：验证结构化定义
+      expect(theme?.definition).toBeTruthy();
+      expect(theme?.definition?.meta.id).toBe(id);
+      expect(theme?.css).toBeTruthy();
+      expect(theme?.css?.length).toBeGreaterThan(1000);
+      // 渲染管线包含代码高亮主题
       expect(theme?.css).toContain("#wemd .hljs");
     }
   });

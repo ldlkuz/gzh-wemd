@@ -1,0 +1,335 @@
+{
+  "id": "演示项目",
+  "name": "演示项目",
+  "profileType": "brand",
+  "status": "theme-ready",
+  "createdAt": "2026-08-03T06:05:46.748Z",
+  "updatedAt": "2026-08-03T16:39:19.818Z",
+  "profile": {
+    "name": "演示项目",
+    "profileType": "brand",
+    "createdAt": "2026-08-03T06:05:46.746Z"
+  },
+  "designBlueprint": {
+    "readingExperience": {
+      "tone": "专业稳重，保持信息传递的清晰与可信",
+      "rhythm": "medium",
+      "density": "medium",
+      "emotion": "专业平衡",
+      "visualWeight": "平衡",
+      "narrative": "逻辑清晰",
+      "whitespace": "充足"
+    },
+    "expression": {
+      "type": "brand",
+      "strategy": "品牌「通用」风格在公众号中的表达策略：Logo 置顶强化品牌认知，品牌色 克制使用保持专业感，辅助图形以 geometric 纹样点缀，整体传达「专业平衡」的品牌调性",
+      "logoUsage": "header-and-footer",
+      "sloganPlacement": "hero",
+      "patternStyle": "geometric",
+      "decorationLevel": "moderate",
+      "colorStrategy": "complementary"
+    },
+    "componentExpression": {
+      "mappedComponents": [
+        {
+          "component": "hero-banner",
+          "variant": "hero-banner-brand-featured",
+          "reason": "匹配通用风格",
+          "visualRole": "视觉焦点"
+        },
+        {
+          "component": "divider",
+          "variant": "divider-brand-default",
+          "reason": "匹配通用风格",
+          "visualRole": "内容支撑"
+        },
+        {
+          "component": "brand-sign",
+          "variant": "brand-sign-brand-default",
+          "reason": "匹配通用风格",
+          "visualRole": "内容支撑"
+        },
+        {
+          "component": "callout",
+          "variant": "callout-brand-default",
+          "reason": "匹配通用风格",
+          "visualRole": "内容支撑"
+        }
+      ],
+      "componentFlow": ["hero-banner", "divider", "brand-sign", "callout"],
+      "specialTreatments": [
+        {
+          "component": "hero-banner",
+          "treatment": "使用渐变背景 + 品牌色覆盖",
+          "cssHint": "background: linear-gradient(135deg, var(--wemd-primary), var(--wemd-primaryDark))"
+        }
+      ]
+    },
+    "visualLanguage": {
+      "colors": {
+        "primary": "#3B82F6",
+        "primaryLight": "rgb(119,190,255)",
+        "primaryDark": "rgb(19,90,206)",
+        "secondary": "rgb(130,246,59)",
+        "accent": "rgb(246,59,130)",
+        "background": "#FFFFFF",
+        "surface": "#F8FAFC",
+        "textPrimary": "#1A1A2E",
+        "textSecondary": "#64748B",
+        "textCaption": "#94A3B8",
+        "border": "#E2E8F0",
+        "divider": "#F1F5F9",
+        "success": "#10B981",
+        "warning": "#F59E0B"
+      },
+      "typography": {
+        "headingFont": "system-ui, -apple-system, sans-serif",
+        "bodyFont": "system-ui, -apple-system, sans-serif",
+        "h1Size": "1.5em",
+        "h2Size": "1.25em",
+        "h3Size": "1.15em",
+        "h4Size": "1.05em",
+        "bodySize": "15px",
+        "lineHeight": "1.75",
+        "headingWeight": "700"
+      },
+      "spacing": {
+        "unit": "em",
+        "paragraphSpacing": "1.5em",
+        "sectionSpacing": "2.5em",
+        "componentPadding": "1.25em",
+        "articleMargin": "0 auto"
+      },
+      "border": {
+        "radius": "6px",
+        "style": "solid",
+        "width": "1px",
+        "color": "#E2E8F0"
+      },
+      "shadow": {
+        "enabled": false,
+        "level": "soft",
+        "color": "rgba(0,0,0,0.08)"
+      }
+    },
+    "layoutStrategy": {
+      "pageStructure": "品牌封面+正文+数据区块+品牌签名结尾",
+      "paragraphStyle": "中短段落，层次分明",
+      "hierarchy": "h1 吸引注意，h2 清晰分割，h3 补充细节",
+      "componentFlow": "自然过渡，组件之间用 divider 分隔",
+      "preferredComponentCount": "4-6"
+    },
+    "logicVersion": "1.0.0",
+    "generatedAt": "2026-08-03T16:39:19.800Z",
+    "designMemory": {
+      "appliedPreferences": {
+        "patternDensity": "medium",
+        "decorationLevel": "moderate",
+        "cornerStyle": "rounded"
+      },
+      "filteredRejected": 0,
+      "reusedComponentStyles": 0
+    },
+    "brandSystem": {
+      "brandId": "演示项目-msdgf7y0",
+      "principles": ["品牌一致性", "用户体验优先", "内容可读性"],
+      "tokens": {
+        "colors": {
+          "--wemd-primary": "#3B82F6",
+          "--wemd-primaryLight": "rgb(119,190,255)",
+          "--wemd-primaryDark": "rgb(19,90,206)",
+          "--wemd-secondary": "rgb(130,246,59)",
+          "--wemd-accent": "rgb(246,59,130)",
+          "--wemd-background": "#FFFFFF",
+          "--wemd-surface": "#F8FAFC",
+          "--wemd-textPrimary": "#1A1A2E",
+          "--wemd-textSecondary": "#64748B",
+          "--wemd-textCaption": "#94A3B8",
+          "--wemd-border": "#E2E8F0",
+          "--wemd-divider": "#F1F5F9",
+          "--wemd-success": "#10B981",
+          "--wemd-warning": "#F59E0B"
+        },
+        "typography": {
+          "headingFont": "system-ui, -apple-system, sans-serif",
+          "bodyFont": "system-ui, -apple-system, sans-serif",
+          "h1Size": "1.5em",
+          "h2Size": "1.25em",
+          "h3Size": "1.15em",
+          "h4Size": "1.05em",
+          "bodySize": "15px",
+          "lineHeight": "1.75",
+          "headingWeight": "700"
+        },
+        "spacing": {
+          "paragraphSpacing": 1.5,
+          "sectionSpacing": 2.5,
+          "componentPadding": 1.25,
+          "articleMargin": 0
+        },
+        "radius": {
+          "sm": 4,
+          "md": 8,
+          "lg": 12,
+          "xl": 16
+        },
+        "border": {
+          "width": 1,
+          "style": "solid"
+        }
+      },
+      "assetPolicy": {
+        "logoUsage": "header-and-footer",
+        "brandMarkUsage": "small-components",
+        "patternOpacityMax": 0.15,
+        "patternCoverageMax": 0.3,
+        "sloganPlacement": "hero",
+        "colorStrategy": "complementary"
+      },
+      "componentRules": {
+        "density": "medium",
+        "tone": ["modern"],
+        "forbiddenFeatures": [
+          "box-shadow",
+          "position:fixed",
+          "position:sticky",
+          "::before",
+          "::after",
+          "filter"
+        ]
+      },
+      "profileType": "brand",
+      "generatedAt": "2026-08-03T16:39:19.800Z"
+    }
+  },
+  "themePackage": {
+    "zipPath": "E:\\11自动工作流\\wd\\skills\\wemd-theme-designer\\projects\\演示项目\\theme\\演示项目.wemd-theme",
+    "manifest": {
+      "sdkVersion": "1.0.0",
+      "meta": {
+        "name": "Generated Theme",
+        "description": "由 WeMD Design Pipeline 自动生成",
+        "keywords": [],
+        "author": "WeMD Pipeline",
+        "version": "1.0.0"
+      },
+      "tokens": {
+        "colors": {
+          "--wemd-primary": "#3B82F6",
+          "--wemd-primaryLight": "rgb(119,190,255)",
+          "--wemd-primaryDark": "rgb(19,90,206)",
+          "--wemd-secondary": "rgb(130,246,59)",
+          "--wemd-accent": "rgb(246,59,130)",
+          "--wemd-background": "#FFFFFF",
+          "--wemd-surface": "#F8FAFC",
+          "--wemd-textPrimary": "#1A1A2E",
+          "--wemd-textSecondary": "#64748B",
+          "--wemd-textCaption": "#94A3B8",
+          "--wemd-border": "#E2E8F0",
+          "--wemd-divider": "#F1F5F9",
+          "--wemd-success": "#10B981",
+          "--wemd-warning": "#F59E0B"
+        },
+        "typography": {
+          "headingFont": "system-ui, -apple-system, sans-serif",
+          "bodyFont": "system-ui, -apple-system, sans-serif",
+          "h1Size": "1.5em",
+          "h2Size": "1.25em",
+          "h3Size": "1.15em",
+          "h4Size": "1.05em",
+          "bodySize": "15px",
+          "lineHeight": "1.75",
+          "headingWeight": "700"
+        },
+        "spacing": {
+          "unit": "em",
+          "paragraphSpacing": "1.5em",
+          "sectionSpacing": "2.5em",
+          "componentPadding": "1.25em",
+          "articleMargin": "0 auto"
+        },
+        "border": {
+          "radius": "6px",
+          "style": "solid",
+          "width": "1px",
+          "color": "#E2E8F0"
+        }
+      },
+      "layout": {
+        "preferredComponents": [
+          {
+            "name": "hero-banner",
+            "reason": "匹配通用风格"
+          },
+          {
+            "name": "divider",
+            "reason": "匹配通用风格"
+          },
+          {
+            "name": "brand-sign",
+            "reason": "匹配通用风格"
+          },
+          {
+            "name": "callout",
+            "reason": "匹配通用风格"
+          }
+        ],
+        "density": "medium",
+        "tone": "专业稳重，保持信息传递的清晰与可信"
+      },
+      "components": [
+        {
+          "name": "hero-banner",
+          "variant": "hero-banner-brand-featured",
+          "variantCss": "#wemd .wemd-hero-banner[data-variant=\"hero-banner-brand-featured\"] {\n  background: linear-gradient(135deg, #3B82F6, rgb(19,90,206));\n  color: #fff;\n  padding: 2.5em 1.5em;\n  border-radius: 12px;\n  text-align: center;\n}\n#wemd .wemd-hero-banner[data-variant=\"hero-banner-brand-featured\"] .wemd-hero-title {\n  font-size: 1.75em;\n  font-weight: 700;\n  margin: 0 0 0.5em;\n  color: #fff;\n}\n#wemd .wemd-hero-banner[data-variant=\"hero-banner-brand-featured\"] .wemd-hero-subtitle {\n  font-size: 1em;\n  opacity: 0.9;\n  color: rgba(255,255,255,0.9);\n}"
+        },
+        {
+          "name": "divider",
+          "variant": "divider-brand-default",
+          "variantCss": "#wemd .wemd-divider[data-variant=\"divider-brand-default\"] {\n  border: none;\n  height: 1px;\n  background: linear-gradient(to right, transparent, #3B82F6, transparent);\n  margin: 2em 0;\n  opacity: 0.5;\n}"
+        },
+        {
+          "name": "brand-sign",
+          "variant": "brand-sign-brand-default",
+          "variantCss": "#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n  padding: 1.25em;\n  border-top: 2px solid #3B82F6;\n  margin-top: 2em;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-logo {\n  width: 48px;\n  height: 48px;\n  border-radius: 8px;\n  background: #3B82F6;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-name {\n  font-weight: 600;\n  color: #1A1A2E;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-desc {\n  font-size: 0.85em;\n  color: #64748B;\n}"
+        },
+        {
+          "name": "callout",
+          "variant": "callout-brand-default",
+          "variantCss": "#wemd .wemd-callout[data-variant=\"callout-brand-default\"] {\n  border-left: 4px solid #3B82F6;\n  background: #F8FAFC;\n  padding: 1em 1.25em;\n  border-radius: 0 8px 8px 0;\n  margin: 1.25em 0;\n}\n#wemd .wemd-callout[data-variant=\"callout-brand-default\"] .wemd-callout-title {\n  font-weight: 600;\n  color: #3B82F6;\n  margin-bottom: 0.25em;\n}\n#wemd .wemd-callout[data-variant=\"callout-brand-default\"] .wemd-callout-content {\n  color: #1A1A2E;\n  font-size: 0.95em;\n}"
+        }
+      ],
+      "assets": {
+        "images": [
+          {
+            "name": "logo-main",
+            "data": "<svg viewBox=\"0 0 120 40\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"40\" height=\"40\" rx=\"8\" fill=\"#3B82F6\"/><text x=\"48\" y=\"28\" font-family=\"system-ui\" font-size=\"20\" font-weight=\"700\" fill=\"#1A1A2E\">BRAND</text></svg>",
+            "type": "svg"
+          },
+          {
+            "name": "pattern-dot",
+            "data": "<svg viewBox=\"0 0 20 20\" xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"10\" cy=\"10\" r=\"2\" fill=\"#3B82F6\" opacity=\"0.3\"/></svg>",
+            "type": "svg"
+          },
+          {
+            "name": "divider-wave",
+            "data": "<svg viewBox=\"0 0 120 20\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0 10 Q30 0 60 10 Q90 20 120 10\" stroke=\"#3B82F6\" stroke-width=\"1.5\" fill=\"none\" opacity=\"0.4\"/></svg>",
+            "type": "svg"
+          }
+        ]
+      }
+    }
+  },
+  "designMemory": {
+    "decisions": [],
+    "componentStyles": {},
+    "preferences": {
+      "patternDensity": "medium",
+      "decorationLevel": "moderate",
+      "cornerStyle": "rounded"
+    },
+    "rejectedApproaches": []
+  },
+  "reviewRecords": [],
+  "decisionLog": []
+}

@@ -1,0 +1,53 @@
+{
+  "id": "brand-sign-msdcv72w",
+  "type": "brand-sign",
+  "name": "Brand Sign",
+  "status": "draft",
+  "currentVersion": 2,
+  "approvedVersion": null,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "brand-sign",
+      "variant": "brand-sign-brand-default",
+      "variantCss": "#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n  padding: 1.25em;\n  border-top: 2px solid #3B82F6;\n  margin-top: 2em;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-logo {\n  width: 48px;\n  height: 48px;\n  border-radius: 8px;\n  background: #3B82F6;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-name {\n  font-weight: 600;\n  color: #1A1A2E;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-desc {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-03T14:59:46.716Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: brand-sign-brand-default",
+      "instruction": "管道生成: brand-sign-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 2,
+      "component": "brand-sign",
+      "variant": "brand-sign-brand-default",
+      "variantCss": "#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n  padding: 1.25em;\n  border-top: 2px solid #3B82F6;\n  margin-top: 2em;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-logo {\n  width: 48px;\n  height: 48px;\n  border-radius: 8px;\n  background: #3B82F6;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-name {\n  font-weight: 600;\n  color: #1A1A2E;\n}\n#wemd .wemd-brand-sign[data-variant=\"brand-sign-brand-default\"] .wemd-brand-desc {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-03T16:39:19.807Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: brand-sign-brand-default",
+      "parentVersion": 1,
+      "instruction": "管道生成: brand-sign-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": null,
+  "decisions": []
+}

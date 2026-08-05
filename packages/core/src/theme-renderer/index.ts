@@ -7,13 +7,15 @@
  *     ├─ renderTokenCss()          → #wemd { --wemd-* } 变量块
  *     ├─ renderTypographyCss()     → 段落/标题/列表排版
  *     ├─ renderComponentCss()      → 引用/代码/表格/图片/脚注
- *     ├─ injectVariantCss()        → 全部变体 CSS + 每个组件的 overrides/presetColor/css
+ *     ├─ injectVariantCss()        → 全部变体 CSS + overrides + 轨道 B AI variantCss
  *     ├─ injectCodeTheme()         → 代码高亮主题（github / github-dark）
  *     ├─ injectComponentStyles()   → 30 个 WeMD 组件默认样式
- *     └─ renderExtrasCss()         → Callout / Mermaid / Imageflow
+ *     ├─ renderExtrasCss()         → Callout / Mermaid / Imageflow
+ *     └─ injectExtraCss()          → styles/components.css + extras.css（Phase 4）
  *
  *   → 拼接为完整 CSS 字符串
  */
+
 import type {
   ThemeDefinition,
   ComponentStyleOverride,
@@ -31,6 +33,16 @@ import { componentStylesExtra } from "../themes/components-extra";
 import { componentStylesFaq } from "../themes/components-faq";
 import { componentStylesMagazine } from "../themes/components-magazine";
 
+/** renderTheme 扩展选项（Phase 4） */
+export interface RenderThemeOptions {
+  /** styles/components.css 内容 */
+  componentsCss?: string;
+  /** styles/extras.css 内容 */
+  extrasCss?: string;
+  /** 资源图片映射（key → base64 data URL），注入为 --wemd-asset-xxx CSS 变量 */
+  assets?: Map<string, string>;
+}
+
 /**
  * 渲染完整的主题 CSS
  *
@@ -41,21 +53,26 @@ import { componentStylesMagazine } from "../themes/components-magazine";
  *   4. renderComponentCss      引用/代码/表格/图片/脚注元素样式
  *   5. injectCodeTheme         代码高亮主题（等价 codeTheme）
  *   6. injectComponentStyles   30 个 WeMD 组件默认样式（Default+Extra+Faq+Magazine）
- *   7. injectVariantCss        全部变体 CSS + overrides（在最末，保证变体覆盖默认）
+ *   7. injectVariantCss        全部变体 CSS + overrides + 轨道 B AI variantCss（在最末）
  *   8. renderExtrasCss         Callout / Mermaid / Imageflow
+ *   9. injectExtraCss          styles/components.css + extras.css（Phase 4）
  *
  * 顺序依赖：componentStyles 必须在 variantCss 之前（否则 variant 被默认覆盖）。
  */
-export function renderTheme(theme: ThemeDefinition): string {
+export function renderTheme(
+  theme: ThemeDefinition,
+  options?: RenderThemeOptions,
+): string {
   const parts: string[] = [
     renderBaseCss(),
-    renderTokenCss(theme.tokens),
+    renderTokenCss(theme.tokens, options?.assets),
     renderTypographyCss(theme.tokens),
     renderComponentCss(theme.tokens),
     injectCodeTheme(theme.codeTheme),
     injectComponentStyles(),
     injectVariantCss(theme.components),
     renderExtrasCss(),
+    injectExtraCss(options),
   ];
 
   return parts.filter(Boolean).join("\n\n");
@@ -67,7 +84,7 @@ export function renderTheme(theme: ThemeDefinition): string {
  *
  * 同时对 ThemeDefinition.components 里有自定义覆盖的组件，追加：
  *   - overrides（CSS 属性细粒度覆盖，如 { fontSize: "20px", borderWidth: "3px" }）
- *   - 未来扩展：presetColor / customCss 等
+ *   - variantCss（轨道 B：AI 自定义 variant 造型 CSS）
  */
 function injectVariantCss(
   components?: Record<string, ComponentStyleOverride>,
@@ -81,21 +98,30 @@ function injectVariantCss(
     }
   }
 
-  // 2) 消费 ComponentStyleOverride.overrides：给每个组件追加细粒度 CSS 属性
   if (components) {
+    // 2) 消费 ComponentStyleOverride.overrides：给每个组件追加细粒度 CSS 属性
     for (const [compType, override] of Object.entries(components)) {
-      if (!override.enabled || !override.overrides) continue;
-      const declarations = Object.entries(override.overrides)
-        .map(([k, v]) => {
-          // camelCase 属性名转 kebab-case（如 fontSize → font-size）
-          const cssKey = k.replace(/[A-Z]/g, (ch) => `-${ch.toLowerCase()}`);
-          return `  ${cssKey}: ${v};`;
-        })
-        .join("\n");
-      if (!declarations) continue;
-      cssParts.push(
-        `#wemd .wemd-component[data-type="${compType}"] {\n${declarations}\n}`,
-      );
+      if (!override.enabled) continue;
+      if (override.overrides) {
+        const declarations = Object.entries(override.overrides)
+          .map(([k, v]) => {
+            const cssKey = k.replace(/[A-Z]/g, (ch) => `-${ch.toLowerCase()}`);
+            return `  ${cssKey}: ${v};`;
+          })
+          .join("\n");
+        if (declarations) {
+          cssParts.push(
+            `#wemd .wemd-component[data-type="${compType}"] {\n${declarations}\n}`,
+          );
+        }
+      }
+    }
+
+    // 3) 注入 AI 自定义 variantCss（轨道 B）
+    for (const override of Object.values(components)) {
+      if (override.variantCss) {
+        cssParts.push(override.variantCss);
+      }
     }
   }
 
@@ -122,6 +148,23 @@ function injectComponentStyles(): string {
     componentStylesFaq,
     componentStylesMagazine,
   ].join("\n\n");
+}
+
+/**
+ * 注入扩展 CSS（Phase 4）
+ * - styles/components.css
+ * - styles/extras.css
+ */
+function injectExtraCss(options?: RenderThemeOptions): string {
+  if (!options) return "";
+  const parts: string[] = [];
+  if (options.componentsCss) {
+    parts.push("/* styles/components.css */\n" + options.componentsCss);
+  }
+  if (options.extrasCss) {
+    parts.push("/* styles/extras.css */\n" + options.extrasCss);
+  }
+  return parts.join("\n\n");
 }
 
 export {

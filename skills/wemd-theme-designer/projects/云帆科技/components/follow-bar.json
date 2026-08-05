@@ -1,0 +1,133 @@
+{
+  "id": "follow-bar-mse6m3j7",
+  "type": "follow-bar",
+  "name": "Follow Bar",
+  "status": "draft",
+  "currentVersion": 6,
+  "approvedVersion": null,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "follow-bar",
+      "variant": "follow-bar-default",
+      "variantCss": "#wemd .wemd-follow-bar[data-variant=\"follow-bar-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:52:30.697Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: follow-bar",
+      "instruction": "管道生成基础外观: follow-bar",
+      "sourceHtml": "<div class=\"wemd-follow-bar\" data-variant=\"follow-bar-default\">\n  <span class=\"wemd-follow-hint\">点击关注，获取更多干货</span>\n  <span class=\"wemd-follow-btn\">关注</span>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 2,
+      "component": "follow-bar",
+      "variant": "follow-bar-default",
+      "variantCss": "#wemd .wemd-follow-bar[data-variant=\"follow-bar-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:55:30.863Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: follow-bar",
+      "parentVersion": 1,
+      "instruction": "管道生成基础外观: follow-bar",
+      "sourceHtml": "<div class=\"wemd-follow-bar\" data-variant=\"follow-bar-default\">\n  <span class=\"wemd-follow-hint\">点击关注，获取更多干货</span>\n  <span class=\"wemd-follow-btn\">关注</span>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 3,
+      "component": "follow-bar",
+      "variant": "follow-bar-default",
+      "variantCss": "#wemd .wemd-follow-bar[data-variant=\"follow-bar-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:56:08.340Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: follow-bar",
+      "parentVersion": 2,
+      "instruction": "管道生成基础外观: follow-bar",
+      "sourceHtml": "<div class=\"wemd-follow-bar\" data-variant=\"follow-bar-default\">\n  <span class=\"wemd-follow-hint\">点击关注，获取更多干货</span>\n  <span class=\"wemd-follow-btn\">关注</span>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 4,
+      "component": "follow-bar",
+      "variant": "follow-bar-default",
+      "variantCss": "#wemd .wemd-follow-bar[data-variant=\"follow-bar-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T04:59:34.112Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: follow-bar",
+      "parentVersion": 3,
+      "instruction": "管道生成基础外观: follow-bar",
+      "sourceHtml": "<div class=\"wemd-follow-bar\" data-variant=\"follow-bar-default\">\n  <span class=\"wemd-follow-hint\">点击关注，获取更多干货</span>\n  <span class=\"wemd-follow-btn\">关注</span>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 5,
+      "component": "follow-bar",
+      "variant": "follow-bar-default",
+      "variantCss": "#wemd .wemd-follow-bar[data-variant=\"follow-bar-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T14:52:19.208Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: follow-bar",
+      "parentVersion": 4,
+      "instruction": "管道生成基础外观: follow-bar",
+      "sourceHtml": "<div class=\"wemd-follow-bar\" data-variant=\"follow-bar-default\">\n  <span class=\"wemd-follow-hint\">点击关注，获取更多干货</span>\n  <span class=\"wemd-follow-btn\">关注</span>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 6,
+      "component": "follow-bar",
+      "variant": "follow-bar-default",
+      "variantCss": "#wemd .wemd-follow-bar[data-variant=\"follow-bar-default\"] {\n  padding: 1em;\n  color: var(--wemd-textPrimary, #1A1A2E);\n}",
+      "createdAt": "2026-08-04T15:07:19.400Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成基础外观: follow-bar",
+      "parentVersion": 5,
+      "instruction": "管道生成基础外观: follow-bar",
+      "sourceHtml": "<div class=\"wemd-follow-bar\" data-variant=\"follow-bar-default\">\n  <span class=\"wemd-follow-hint\">点击关注，获取更多干货</span>\n  <span class=\"wemd-follow-btn\">关注</span>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": null,
+  "decisions": []
+}

@@ -1,0 +1,273 @@
+{
+  "id": "stats-block-msdcuqj0",
+  "type": "stats-block",
+  "name": "Stats Block",
+  "status": "draft",
+  "currentVersion": 13,
+  "approvedVersion": null,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "stats-block",
+      "variant": "stats-block-brand-default",
+      "variantCss": "#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 1em;\n  padding: 1.5em;\n  background: #F8FAFC;\n  border-radius: 10px;\n  border: 1px solid #E2E8F0;\n}\n#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] .wemd-stat-value {\n  font-size: 1.5em;\n  font-weight: 700;\n  color: #2563EB;\n}\n#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] .wemd-stat-label {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-03T14:59:25.263Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: stats-block-brand-default",
+      "instruction": "管道生成: stats-block-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 2,
+      "component": "stats-block",
+      "variant": "stats-block-brand-default",
+      "variantCss": "#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 1em;\n  padding: 1.5em;\n  background: #F8FAFC;\n  border-radius: 10px;\n  border: 1px solid #E2E8F0;\n}\n#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] .wemd-stat-value {\n  font-size: 1.5em;\n  font-weight: 700;\n  color: #2563EB;\n}\n#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] .wemd-stat-label {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-03T15:00:42.818Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: stats-block-brand-default",
+      "parentVersion": 1,
+      "instruction": "管道生成: stats-block-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 3,
+      "component": "stats-block",
+      "variant": "stats-block-brand-default",
+      "variantCss": "#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 1em;\n  padding: 1.5em;\n  background: #F8FAFC;\n  border-radius: 10px;\n  border: 1px solid #E2E8F0;\n}\n#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] .wemd-stat-value {\n  font-size: 1.5em;\n  font-weight: 700;\n  color: #2563EB;\n}\n#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] .wemd-stat-label {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-03T15:51:03.766Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: stats-block-brand-default",
+      "parentVersion": 2,
+      "instruction": "管道生成: stats-block-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 4,
+      "component": "stats-block",
+      "variant": "stats-block-brand-default",
+      "variantCss": "#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 1em;\n  padding: 1.5em;\n  background: #F8FAFC;\n  border-radius: 10px;\n  border: 1px solid #E2E8F0;\n}\n#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] .wemd-stat-value {\n  font-size: 1.5em;\n  font-weight: 700;\n  color: #2563EB;\n}\n#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] .wemd-stat-label {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-03T15:58:03.832Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: stats-block-brand-default",
+      "parentVersion": 3,
+      "instruction": "管道生成: stats-block-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 5,
+      "component": "stats-block",
+      "variant": "stats-block-brand-default",
+      "variantCss": "#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 1em;\n  padding: 1.5em;\n  background: #F8FAFC;\n  border-radius: 10px;\n  border: 1px solid #E2E8F0;\n}\n#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] .wemd-stat-value {\n  font-size: 1.5em;\n  font-weight: 700;\n  color: #2563EB;\n}\n#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] .wemd-stat-label {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-03T15:58:05.892Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: stats-block-brand-default",
+      "parentVersion": 4,
+      "instruction": "管道生成: stats-block-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 6,
+      "component": "stats-block",
+      "variant": "stats-block-brand-default",
+      "variantCss": "#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 1em;\n  padding: 1.5em;\n  background: #F8FAFC;\n  border-radius: 10px;\n  border: 1px solid #E2E8F0;\n}\n#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] .wemd-stat-value {\n  font-size: 1.5em;\n  font-weight: 700;\n  color: #2563EB;\n}\n#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] .wemd-stat-label {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-03T16:48:06.305Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: stats-block-brand-default",
+      "parentVersion": 5,
+      "instruction": "管道生成: stats-block-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 7,
+      "component": "stats-block",
+      "variant": "stats-block-brand-default",
+      "variantCss": "#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 1em;\n  padding: 1.5em;\n  background: #F8FAFC;\n  border-radius: 10px;\n  border: 1px solid #E2E8F0;\n}\n#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] .wemd-stat-value {\n  font-size: 1.5em;\n  font-weight: 700;\n  color: #2563EB;\n}\n#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] .wemd-stat-label {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-03T18:07:56.733Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: stats-block-brand-default",
+      "parentVersion": 6,
+      "instruction": "管道生成: stats-block-brand-default",
+      "sourceHtml": "<div class=\"wemd-stats-block\" data-variant=\"stats-block-brand-default\">\n  <div class=\"wemd-stat-item\">\n    <div class=\"wemd-stat-value\">99.9%</div>\n    <div class=\"wemd-stat-label\">可用率</div>\n  </div>\n  <div class=\"wemd-stat-item\">\n    <div class=\"wemd-stat-value\">10M+</div>\n    <div class=\"wemd-stat-label\">用户数</div>\n  </div>\n  <div class=\"wemd-stat-item\">\n    <div class=\"wemd-stat-value\">150+</div>\n    <div class=\"wemd-stat-label\">国家覆盖</div>\n  </div>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 8,
+      "component": "stats-block",
+      "variant": "stats-block-brand-default",
+      "variantCss": "#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 1em;\n  padding: 1.5em;\n  background: #F8FAFC;\n  border-radius: 10px;\n  border: 1px solid #E2E8F0;\n}\n#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] .wemd-stat-value {\n  font-size: 1.5em;\n  font-weight: 700;\n  color: #2563EB;\n}\n#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] .wemd-stat-label {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-04T04:52:30.566Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: stats-block-brand-default",
+      "parentVersion": 7,
+      "instruction": "管道生成: stats-block-brand-default",
+      "sourceHtml": "<div class=\"wemd-stats-block\" data-variant=\"stats-block-brand-default\">\n  <div class=\"wemd-stat-item\">\n    <div class=\"wemd-stat-value\">99.9%</div>\n    <div class=\"wemd-stat-label\">可用率</div>\n  </div>\n  <div class=\"wemd-stat-item\">\n    <div class=\"wemd-stat-value\">10M+</div>\n    <div class=\"wemd-stat-label\">用户数</div>\n  </div>\n  <div class=\"wemd-stat-item\">\n    <div class=\"wemd-stat-value\">150+</div>\n    <div class=\"wemd-stat-label\">国家覆盖</div>\n  </div>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 9,
+      "component": "stats-block",
+      "variant": "stats-block-brand-default",
+      "variantCss": "#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 1em;\n  padding: 1.5em;\n  background: #F8FAFC;\n  border-radius: 10px;\n  border: 1px solid #E2E8F0;\n}\n#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] .wemd-stat-value {\n  font-size: 1.5em;\n  font-weight: 700;\n  color: #2563EB;\n}\n#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] .wemd-stat-label {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-04T04:55:30.718Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: stats-block-brand-default",
+      "parentVersion": 8,
+      "instruction": "管道生成: stats-block-brand-default",
+      "sourceHtml": "<div class=\"wemd-stats-block\" data-variant=\"stats-block-brand-default\">\n  <div class=\"wemd-stat-item\">\n    <div class=\"wemd-stat-value\">99.9%</div>\n    <div class=\"wemd-stat-label\">可用率</div>\n  </div>\n  <div class=\"wemd-stat-item\">\n    <div class=\"wemd-stat-value\">10M+</div>\n    <div class=\"wemd-stat-label\">用户数</div>\n  </div>\n  <div class=\"wemd-stat-item\">\n    <div class=\"wemd-stat-value\">150+</div>\n    <div class=\"wemd-stat-label\">国家覆盖</div>\n  </div>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 10,
+      "component": "stats-block",
+      "variant": "stats-block-brand-default",
+      "variantCss": "#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 1em;\n  padding: 1.5em;\n  background: #F8FAFC;\n  border-radius: 10px;\n  border: 1px solid #E2E8F0;\n}\n#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] .wemd-stat-value {\n  font-size: 1.5em;\n  font-weight: 700;\n  color: #2563EB;\n}\n#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] .wemd-stat-label {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-04T04:56:08.263Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: stats-block-brand-default",
+      "parentVersion": 9,
+      "instruction": "管道生成: stats-block-brand-default",
+      "sourceHtml": "<div class=\"wemd-stats-block\" data-variant=\"stats-block-brand-default\">\n  <div class=\"wemd-stat-item\">\n    <div class=\"wemd-stat-value\">99.9%</div>\n    <div class=\"wemd-stat-label\">可用率</div>\n  </div>\n  <div class=\"wemd-stat-item\">\n    <div class=\"wemd-stat-value\">10M+</div>\n    <div class=\"wemd-stat-label\">用户数</div>\n  </div>\n  <div class=\"wemd-stat-item\">\n    <div class=\"wemd-stat-value\">150+</div>\n    <div class=\"wemd-stat-label\">国家覆盖</div>\n  </div>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 11,
+      "component": "stats-block",
+      "variant": "stats-block-brand-default",
+      "variantCss": "#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 1em;\n  padding: 1.5em;\n  background: #F8FAFC;\n  border-radius: 10px;\n  border: 1px solid #E2E8F0;\n}\n#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] .wemd-stat-value {\n  font-size: 1.5em;\n  font-weight: 700;\n  color: #2563EB;\n}\n#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] .wemd-stat-label {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-04T04:59:34.032Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: stats-block-brand-default",
+      "parentVersion": 10,
+      "instruction": "管道生成: stats-block-brand-default",
+      "sourceHtml": "<div class=\"wemd-stats-block\" data-variant=\"stats-block-brand-default\">\n  <div class=\"wemd-stat-item\">\n    <div class=\"wemd-stat-value\">99.9%</div>\n    <div class=\"wemd-stat-label\">可用率</div>\n  </div>\n  <div class=\"wemd-stat-item\">\n    <div class=\"wemd-stat-value\">10M+</div>\n    <div class=\"wemd-stat-label\">用户数</div>\n  </div>\n  <div class=\"wemd-stat-item\">\n    <div class=\"wemd-stat-value\">150+</div>\n    <div class=\"wemd-stat-label\">国家覆盖</div>\n  </div>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 12,
+      "component": "stats-block",
+      "variant": "stats-block-brand-default",
+      "variantCss": "#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 1em;\n  padding: 1.5em;\n  background: #F8FAFC;\n  border-radius: 10px;\n  border: 1px solid #E2E8F0;\n}\n#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] .wemd-stat-value {\n  font-size: 1.5em;\n  font-weight: 700;\n  color: #2563EB;\n}\n#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] .wemd-stat-label {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-04T14:52:18.856Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: stats-block-brand-default",
+      "parentVersion": 11,
+      "instruction": "管道生成: stats-block-brand-default",
+      "sourceHtml": "<div class=\"wemd-stats-block\" data-variant=\"stats-block-brand-default\">\n  <div class=\"wemd-stat-item\">\n    <div class=\"wemd-stat-value\">99.9%</div>\n    <div class=\"wemd-stat-label\">可用率</div>\n  </div>\n  <div class=\"wemd-stat-item\">\n    <div class=\"wemd-stat-value\">10M+</div>\n    <div class=\"wemd-stat-label\">用户数</div>\n  </div>\n  <div class=\"wemd-stat-item\">\n    <div class=\"wemd-stat-value\">150+</div>\n    <div class=\"wemd-stat-label\">国家覆盖</div>\n  </div>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 13,
+      "component": "stats-block",
+      "variant": "stats-block-brand-default",
+      "variantCss": "#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 1em;\n  padding: 1.5em;\n  background: #F8FAFC;\n  border-radius: 10px;\n  border: 1px solid #E2E8F0;\n}\n#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] .wemd-stat-value {\n  font-size: 1.5em;\n  font-weight: 700;\n  color: #2563EB;\n}\n#wemd .wemd-stats-block[data-variant=\"stats-block-brand-default\"] .wemd-stat-label {\n  font-size: 0.85em;\n  color: #64748B;\n}",
+      "createdAt": "2026-08-04T15:07:19.309Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: stats-block-brand-default",
+      "parentVersion": 12,
+      "instruction": "管道生成: stats-block-brand-default",
+      "sourceHtml": "<div class=\"wemd-stats-block\" data-variant=\"stats-block-brand-default\">\n  <div class=\"wemd-stat-item\">\n    <div class=\"wemd-stat-value\">99.9%</div>\n    <div class=\"wemd-stat-label\">可用率</div>\n  </div>\n  <div class=\"wemd-stat-item\">\n    <div class=\"wemd-stat-value\">10M+</div>\n    <div class=\"wemd-stat-label\">用户数</div>\n  </div>\n  <div class=\"wemd-stat-item\">\n    <div class=\"wemd-stat-value\">150+</div>\n    <div class=\"wemd-stat-label\">国家覆盖</div>\n  </div>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": null,
+  "decisions": []
+}

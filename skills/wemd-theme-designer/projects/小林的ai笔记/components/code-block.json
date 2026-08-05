@@ -1,0 +1,213 @@
+{
+  "id": "code-block-msddmdsv",
+  "type": "code-block",
+  "name": "Code Block",
+  "status": "draft",
+  "currentVersion": 10,
+  "approvedVersion": null,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "code-block",
+      "variant": "code-block-creator-default",
+      "variantCss": "#wemd .wemd-code-block[data-variant=\"code-block-creator-default\"] {\n  background: #1E293B;\n  color: #E2E8F0;\n  border-radius: 8px;\n  padding: 1.25em;\n  font-family: \"JetBrains Mono\", \"Fira Code\", monospace;\n  font-size: 0.85em;\n  overflow-x: auto;\n  margin: 1.25em 0;\n}",
+      "createdAt": "2026-08-03T15:20:55.138Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: code-block-creator-default",
+      "instruction": "管道生成: code-block-creator-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 2,
+      "component": "code-block",
+      "variant": "code-block-creator-default",
+      "variantCss": "#wemd .wemd-code-block[data-variant=\"code-block-creator-default\"] {\n  background: #1E293B;\n  color: #E2E8F0;\n  border-radius: 8px;\n  padding: 1.25em;\n  font-family: \"JetBrains Mono\", \"Fira Code\", monospace;\n  font-size: 0.85em;\n  overflow-x: auto;\n  margin: 1.25em 0;\n}",
+      "createdAt": "2026-08-03T15:34:38.854Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: code-block-creator-default",
+      "parentVersion": 1,
+      "instruction": "管道生成: code-block-creator-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 3,
+      "component": "code-block",
+      "variant": "code-block-creator-default",
+      "variantCss": "#wemd .wemd-code-block[data-variant=\"code-block-creator-default\"] {\n  background: #1E293B;\n  color: #E2E8F0;\n  border-radius: 8px;\n  padding: 1.25em;\n  font-family: \"JetBrains Mono\", \"Fira Code\", monospace;\n  font-size: 0.85em;\n  overflow-x: auto;\n  margin: 1.25em 0;\n}",
+      "createdAt": "2026-08-03T15:34:41.966Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: code-block-creator-default",
+      "parentVersion": 2,
+      "instruction": "管道生成: code-block-creator-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 4,
+      "component": "code-block",
+      "variant": "code-block-creator-default",
+      "variantCss": "#wemd .wemd-code-block[data-variant=\"code-block-creator-default\"] {\n  background: #1E293B;\n  color: #E2E8F0;\n  border-radius: 8px;\n  padding: 1.25em;\n  font-family: \"JetBrains Mono\", \"Fira Code\", monospace;\n  font-size: 0.85em;\n  overflow-x: auto;\n  margin: 1.25em 0;\n}",
+      "createdAt": "2026-08-03T15:35:34.023Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: code-block-creator-default",
+      "parentVersion": 3,
+      "instruction": "管道生成: code-block-creator-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 5,
+      "component": "code-block",
+      "variant": "code-block-creator-default",
+      "variantCss": "#wemd .wemd-code-block[data-variant=\"code-block-creator-default\"] {\n  background: #1E293B;\n  color: #E2E8F0;\n  border-radius: 8px;\n  padding: 1.25em;\n  font-family: \"JetBrains Mono\", \"Fira Code\", monospace;\n  font-size: 0.85em;\n  overflow-x: auto;\n  margin: 1.25em 0;\n}",
+      "createdAt": "2026-08-03T15:35:52.547Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: code-block-creator-default",
+      "parentVersion": 4,
+      "instruction": "管道生成: code-block-creator-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 6,
+      "component": "code-block",
+      "variant": "code-block-creator-default",
+      "variantCss": "#wemd .wemd-code-block[data-variant=\"code-block-creator-default\"] {\n  background: #1E293B;\n  color: #E2E8F0;\n  border-radius: 8px;\n  padding: 1.25em;\n  font-family: \"JetBrains Mono\", \"Fira Code\", monospace;\n  font-size: 0.85em;\n  overflow-x: auto;\n  margin: 1.25em 0;\n}",
+      "createdAt": "2026-08-03T16:38:21.394Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: code-block-creator-default",
+      "parentVersion": 5,
+      "instruction": "管道生成: code-block-creator-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 7,
+      "component": "code-block",
+      "variant": "code-block-creator-default",
+      "variantCss": "#wemd .wemd-code-block[data-variant=\"code-block-creator-default\"] {\n  background: #1E293B;\n  color: #E2E8F0;\n  border-radius: 8px;\n  padding: 1.25em;\n  font-family: \"JetBrains Mono\", \"Fira Code\", monospace;\n  font-size: 0.85em;\n  overflow-x: auto;\n  margin: 1.25em 0;\n}",
+      "createdAt": "2026-08-03T16:48:01.644Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: code-block-creator-default",
+      "parentVersion": 6,
+      "instruction": "管道生成: code-block-creator-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 8,
+      "component": "code-block",
+      "variant": "code-block-creator-default",
+      "variantCss": "#wemd .wemd-code-block[data-variant=\"code-block-creator-default\"] {\n  background: #1E293B;\n  color: #E2E8F0;\n  border-radius: 8px;\n  padding: 1.25em;\n  font-family: \"JetBrains Mono\", \"Fira Code\", monospace;\n  font-size: 0.85em;\n  overflow-x: auto;\n  margin: 1.25em 0;\n}",
+      "createdAt": "2026-08-03T16:49:19.605Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: code-block-creator-default",
+      "parentVersion": 7,
+      "instruction": "管道生成: code-block-creator-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 9,
+      "component": "code-block",
+      "variant": "code-block-creator-default",
+      "variantCss": "#wemd .wemd-code-block[data-variant=\"code-block-creator-default\"] {\n  background: #1E293B;\n  color: #E2E8F0;\n  border-radius: 8px;\n  padding: 1.25em;\n  font-family: \"JetBrains Mono\", \"Fira Code\", monospace;\n  font-size: 0.85em;\n  overflow-x: auto;\n  margin: 1.25em 0;\n}",
+      "createdAt": "2026-08-03T17:15:52.378Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: code-block-creator-default",
+      "parentVersion": 8,
+      "instruction": "管道生成: code-block-creator-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 10,
+      "component": "code-block",
+      "variant": "code-block-creator-default",
+      "variantCss": "#wemd .wemd-code-block[data-variant=\"code-block-creator-default\"] {\n  background: #1E293B;\n  color: #E2E8F0;\n  border-radius: 8px;\n  padding: 1.25em;\n  font-family: \"JetBrains Mono\", \"Fira Code\", monospace;\n  font-size: 0.85em;\n  overflow-x: auto;\n  margin: 1.25em 0;\n}",
+      "createdAt": "2026-08-03T17:16:12.967Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: code-block-creator-default",
+      "parentVersion": 9,
+      "instruction": "管道生成: code-block-creator-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": null,
+  "decisions": []
+}

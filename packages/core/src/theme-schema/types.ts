@@ -134,11 +134,23 @@ export interface ComponentStyleOverride {
   variant?: string;
   /** 覆盖的 CSS 声明（可选，用于精细化控制） */
   overrides?: Record<string, string>;
+  /** 轨道 B：AI 自定义 variant 的造型 CSS，选择器必须为 .wemd-xxx[data-variant="yyy"] 格式 */
+  variantCss?: string;
 }
 
 // ============================================================
 // Layer 4: Layout Preference
 // ============================================================
+
+/** 偏好组件条目：支持字符串（向后兼容）或对象格式（AI 主题推荐填写 reason） */
+export type PreferredComponent =
+  | string
+  | {
+      /** 组件名，必须 ∈ 合法组件全集 */
+      name: string;
+      /** 推荐理由（语义描述），≤50 字，让 AI 排版感知组件语义 */
+      reason?: string;
+    };
 
 /** 风格基调枚举（warm温暖/minimal极简/elegant优雅/rational理性/serious严肃/modern现代/playful活泼） */
 export type Tone =
@@ -163,8 +175,8 @@ export const VALID_TONES: Tone[] = [
 
 /** 给 AI 的排版建议 */
 export interface LayoutPreference {
-  /** 偏好组件清单（组件 type 列表） */
-  preferredComponents: string[];
+  /** 偏好组件清单（支持字符串或 {name, reason} 对象格式） */
+  preferredComponents: PreferredComponent[];
   /** 排版密度 */
   density: "low" | "medium" | "high";
   /** 风格基调 */
@@ -189,3 +201,67 @@ export interface ThemeDefinition {
   /** 代码高亮主题：github（亮色）/ github-dark（暗色） */
   codeTheme?: "github" | "github-dark";
 }
+
+// ============================================================
+// Theme Package Manifest（AI 生成主题包的完整结构）
+// ============================================================
+
+/** 图片资源 */
+export interface ImageAsset {
+  /** 资源 key，如 "hero-bg"、"quote-icon" */
+  key: string;
+  /** 图片源，base64 data URL 或 assets/ 开头的相对路径 */
+  src: string;
+}
+
+/** 主题包资源 */
+export interface ThemePackageAssets {
+  /** 图片资源列表 */
+  images?: ImageAsset[];
+}
+
+/** Theme Package Manifest —— AI 生成的主题包顶层结构 */
+export interface ThemePackageManifest extends ThemeDefinition {
+  /** Theme System 版本号，语义化格式，必须在 SUPPORTED_SDK_VERSIONS 范围内 */
+  sdkVersion: string;
+  /** 主题包资源（图片等） */
+  assets?: ThemePackageAssets;
+}
+
+// ============================================================
+// Validation（校验结果类型）
+// ============================================================
+
+/** 问题严重级别 */
+export type Severity = "error" | "warning";
+
+/** 校验错误 */
+export interface ValidationError {
+  /** 错误路径，JSON Pointer 风格，如 "/tokens/color/primary" */
+  path: string;
+  /** 错误描述 */
+  message: string;
+  /** 期望值（可选） */
+  expected?: string;
+  /** 严重级别，默认 error */
+  severity?: Severity;
+  /** 修复方向（AI 可直接执行） */
+  fix?: string;
+}
+
+/** 校验成功结果 */
+export interface ValidationSuccess<T> {
+  ok: true;
+  value: T;
+  /** 校验通过时可能携带的 warning 列表 */
+  errors?: ValidationError[];
+}
+
+/** 校验失败结果 */
+export interface ValidationFailure {
+  ok: false;
+  errors: ValidationError[];
+}
+
+/** 校验结果（成功或失败） */
+export type ValidationResult<T> = ValidationSuccess<T> | ValidationFailure;

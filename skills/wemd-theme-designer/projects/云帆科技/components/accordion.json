@@ -1,0 +1,273 @@
+{
+  "id": "accordion-msdcuqk0",
+  "type": "accordion",
+  "name": "Accordion",
+  "status": "draft",
+  "currentVersion": 13,
+  "approvedVersion": null,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "accordion",
+      "variant": "accordion-brand-default",
+      "variantCss": "#wemd .wemd-accordion[data-variant=\"accordion-brand-default\"] {\n  padding: 1em;\n  color: #1A1A2E;\n}",
+      "createdAt": "2026-08-03T14:59:25.298Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: accordion-brand-default",
+      "instruction": "管道生成: accordion-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 2,
+      "component": "accordion",
+      "variant": "accordion-brand-default",
+      "variantCss": "#wemd .wemd-accordion[data-variant=\"accordion-brand-default\"] {\n  padding: 1em;\n  color: #1A1A2E;\n}",
+      "createdAt": "2026-08-03T15:00:42.847Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: accordion-brand-default",
+      "parentVersion": 1,
+      "instruction": "管道生成: accordion-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 3,
+      "component": "accordion",
+      "variant": "accordion-brand-default",
+      "variantCss": "#wemd .wemd-accordion[data-variant=\"accordion-brand-default\"] {\n  padding: 1em;\n  color: #1A1A2E;\n}",
+      "createdAt": "2026-08-03T15:51:03.816Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: accordion-brand-default",
+      "parentVersion": 2,
+      "instruction": "管道生成: accordion-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 4,
+      "component": "accordion",
+      "variant": "accordion-brand-default",
+      "variantCss": "#wemd .wemd-accordion[data-variant=\"accordion-brand-default\"] {\n  padding: 1em;\n  color: #1A1A2E;\n}",
+      "createdAt": "2026-08-03T15:58:03.851Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: accordion-brand-default",
+      "parentVersion": 3,
+      "instruction": "管道生成: accordion-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 5,
+      "component": "accordion",
+      "variant": "accordion-brand-default",
+      "variantCss": "#wemd .wemd-accordion[data-variant=\"accordion-brand-default\"] {\n  padding: 1em;\n  color: #1A1A2E;\n}",
+      "createdAt": "2026-08-03T15:58:05.910Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: accordion-brand-default",
+      "parentVersion": 4,
+      "instruction": "管道生成: accordion-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 6,
+      "component": "accordion",
+      "variant": "accordion-brand-default",
+      "variantCss": "#wemd .wemd-accordion[data-variant=\"accordion-brand-default\"] {\n  padding: 1em;\n  color: #1A1A2E;\n}",
+      "createdAt": "2026-08-03T16:48:06.323Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: accordion-brand-default",
+      "parentVersion": 5,
+      "instruction": "管道生成: accordion-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 7,
+      "component": "accordion",
+      "variant": "accordion-brand-default",
+      "variantCss": "#wemd .wemd-accordion[data-variant=\"accordion-brand-default\"] {\n  padding: 1em;\n  color: #1A1A2E;\n}",
+      "createdAt": "2026-08-03T18:07:56.761Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: accordion-brand-default",
+      "parentVersion": 6,
+      "instruction": "管道生成: accordion-brand-default",
+      "sourceHtml": "<div class=\"wemd-accordion\" data-variant=\"accordion-brand-default\">\n  <p>accordion 组件预览</p>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 8,
+      "component": "accordion",
+      "variant": "accordion-brand-default",
+      "variantCss": "#wemd .wemd-accordion[data-variant=\"accordion-brand-default\"] {\n  padding: 1em;\n  color: #1A1A2E;\n}",
+      "createdAt": "2026-08-04T04:52:30.602Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: accordion-brand-default",
+      "parentVersion": 7,
+      "instruction": "管道生成: accordion-brand-default",
+      "sourceHtml": "<div class=\"wemd-accordion\" data-variant=\"accordion-brand-default\">\n  <details class=\"wemd-accordion-item\">\n    <summary class=\"wemd-accordion-header\">产品功能概述</summary>\n    <div class=\"wemd-accordion-body\">我们提供全方位的解决方案，覆盖从数据采集到智能分析的完整链路。</div>\n  </details>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 9,
+      "component": "accordion",
+      "variant": "accordion-brand-default",
+      "variantCss": "#wemd .wemd-accordion[data-variant=\"accordion-brand-default\"] {\n  padding: 1em;\n  color: #1A1A2E;\n}",
+      "createdAt": "2026-08-04T04:55:30.777Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: accordion-brand-default",
+      "parentVersion": 8,
+      "instruction": "管道生成: accordion-brand-default",
+      "sourceHtml": "<div class=\"wemd-accordion\" data-variant=\"accordion-brand-default\">\n  <details class=\"wemd-accordion-item\">\n    <summary class=\"wemd-accordion-header\">产品功能概述</summary>\n    <div class=\"wemd-accordion-body\">我们提供全方位的解决方案，覆盖从数据采集到智能分析的完整链路。</div>\n  </details>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 10,
+      "component": "accordion",
+      "variant": "accordion-brand-default",
+      "variantCss": "#wemd .wemd-accordion[data-variant=\"accordion-brand-default\"] {\n  padding: 1em;\n  color: #1A1A2E;\n}",
+      "createdAt": "2026-08-04T04:56:08.297Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: accordion-brand-default",
+      "parentVersion": 9,
+      "instruction": "管道生成: accordion-brand-default",
+      "sourceHtml": "<div class=\"wemd-accordion\" data-variant=\"accordion-brand-default\">\n  <details class=\"wemd-accordion-item\">\n    <summary class=\"wemd-accordion-header\">产品功能概述</summary>\n    <div class=\"wemd-accordion-body\">我们提供全方位的解决方案，覆盖从数据采集到智能分析的完整链路。</div>\n  </details>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 11,
+      "component": "accordion",
+      "variant": "accordion-brand-default",
+      "variantCss": "#wemd .wemd-accordion[data-variant=\"accordion-brand-default\"] {\n  padding: 1em;\n  color: #1A1A2E;\n}",
+      "createdAt": "2026-08-04T04:59:34.062Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: accordion-brand-default",
+      "parentVersion": 10,
+      "instruction": "管道生成: accordion-brand-default",
+      "sourceHtml": "<div class=\"wemd-accordion\" data-variant=\"accordion-brand-default\">\n  <details class=\"wemd-accordion-item\">\n    <summary class=\"wemd-accordion-header\">产品功能概述</summary>\n    <div class=\"wemd-accordion-body\">我们提供全方位的解决方案，覆盖从数据采集到智能分析的完整链路。</div>\n  </details>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 12,
+      "component": "accordion",
+      "variant": "accordion-brand-default",
+      "variantCss": "#wemd .wemd-accordion[data-variant=\"accordion-brand-default\"] {\n  padding: 1em;\n  color: #1A1A2E;\n}",
+      "createdAt": "2026-08-04T14:52:18.920Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: accordion-brand-default",
+      "parentVersion": 11,
+      "instruction": "管道生成: accordion-brand-default",
+      "sourceHtml": "<div class=\"wemd-accordion\" data-variant=\"accordion-brand-default\">\n  <details class=\"wemd-accordion-item\">\n    <summary class=\"wemd-accordion-header\">产品功能概述</summary>\n    <div class=\"wemd-accordion-body\">我们提供全方位的解决方案，覆盖从数据采集到智能分析的完整链路。</div>\n  </details>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 13,
+      "component": "accordion",
+      "variant": "accordion-brand-default",
+      "variantCss": "#wemd .wemd-accordion[data-variant=\"accordion-brand-default\"] {\n  padding: 1em;\n  color: #1A1A2E;\n}",
+      "createdAt": "2026-08-04T15:07:19.345Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: accordion-brand-default",
+      "parentVersion": 12,
+      "instruction": "管道生成: accordion-brand-default",
+      "sourceHtml": "<div class=\"wemd-accordion\" data-variant=\"accordion-brand-default\">\n  <details class=\"wemd-accordion-item\">\n    <summary class=\"wemd-accordion-header\">产品功能概述</summary>\n    <div class=\"wemd-accordion-body\">我们提供全方位的解决方案，覆盖从数据采集到智能分析的完整链路。</div>\n  </details>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": null,
+  "decisions": []
+}

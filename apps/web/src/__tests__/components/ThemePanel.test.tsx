@@ -80,7 +80,8 @@ describe("ThemePanel", () => {
         duplicateTheme: mockDuplicateTheme,
         exportTheme: vi.fn(),
         exportThemeCSS: vi.fn(),
-        importTheme: vi.fn().mockResolvedValue(true),
+        exportThemePackage: vi.fn(),
+        importTheme: vi.fn().mockResolvedValue({ ok: true }),
       };
       return selector(state);
     });
@@ -172,6 +173,6 @@ describe("ThemePanel", () => {
 
     expect(screen.getByText("选择创建方式")).toBeInTheDocument();
     expect(screen.getByText("可视化设计")).toBeInTheDocument();
-    expect(screen.getByText("手写 CSS")).toBeInTheDocument();
+    expect(screen.getByText("AI 生成")).toBeInTheDocument();
   });
 });

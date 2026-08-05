@@ -1,0 +1,235 @@
+{
+  "readingExperience": {
+    "tone": "专业稳重，保持信息传递的清晰与可信",
+    "rhythm": "fast",
+    "density": "medium",
+    "emotion": "前沿科技感、活力创新、专业可信赖、前沿智能",
+    "visualWeight": "轻量锐利",
+    "narrative": "数据驱动",
+    "whitespace": "充足呼吸感"
+  },
+  "expression": {
+    "type": "brand",
+    "strategy": "品牌「科技、创新、专业、AI」风格在公众号中的表达策略：Logo 置顶强化品牌认知，品牌色 克制使用保持专业感，辅助图形以 geometric 纹样点缀，整体传达「前沿科技感、活力创新、专业可信赖、前沿智能」的品牌调性",
+    "logoUsage": "header-and-footer",
+    "sloganPlacement": "hero",
+    "patternStyle": "geometric",
+    "decorationLevel": "moderate",
+    "colorStrategy": "complementary"
+  },
+  "componentExpression": {
+    "mappedComponents": [
+      {
+        "component": "brand-sign",
+        "variant": "brand-sign-brand-featured",
+        "reason": "匹配科技风格",
+        "visualRole": "视觉焦点"
+      },
+      {
+        "component": "hero-banner",
+        "variant": "hero-banner-brand-default",
+        "reason": "匹配创新风格",
+        "visualRole": "内容支撑"
+      },
+      {
+        "component": "stats-block",
+        "variant": "stats-block-brand-default",
+        "reason": "匹配专业风格",
+        "visualRole": "内容支撑"
+      },
+      {
+        "component": "code-block",
+        "variant": "code-block-brand-default",
+        "reason": "匹配AI风格",
+        "visualRole": "内容支撑"
+      },
+      {
+        "component": "image-compare",
+        "variant": "image-compare-brand-default",
+        "reason": "匹配科技风格",
+        "visualRole": "内容支撑"
+      },
+      {
+        "component": "timeline",
+        "variant": "timeline-brand-default",
+        "reason": "匹配创新风格",
+        "visualRole": "内容支撑"
+      },
+      {
+        "component": "callout",
+        "variant": "callout-brand-default",
+        "reason": "匹配专业风格",
+        "visualRole": "内容支撑"
+      },
+      {
+        "component": "table",
+        "variant": "table-brand-default",
+        "reason": "匹配AI风格",
+        "visualRole": "内容支撑"
+      },
+      {
+        "component": "accordion",
+        "variant": "accordion-brand-default",
+        "reason": "匹配科技风格",
+        "visualRole": "内容支撑"
+      }
+    ],
+    "componentFlow": [
+      "brand-sign",
+      "hero-banner",
+      "stats-block",
+      "code-block",
+      "image-compare",
+      "timeline"
+    ],
+    "specialTreatments": [
+      {
+        "component": "hero-banner",
+        "treatment": "使用渐变背景 + 品牌色覆盖",
+        "cssHint": "background: linear-gradient(135deg, var(--wemd-primary), var(--wemd-primaryDark))"
+      }
+    ]
+  },
+  "visualLanguage": {
+    "colors": {
+      "primary": "#2563EB",
+      "primaryLight": "rgb(97,159,255)",
+      "primaryDark": "rgb(0,59,195)",
+      "secondary": "rgb(99,235,37)",
+      "accent": "rgb(235,37,99)",
+      "background": "#FFFFFF",
+      "surface": "#F8FAFC",
+      "textPrimary": "#1A1A2E",
+      "textSecondary": "#64748B",
+      "textCaption": "#94A3B8",
+      "border": "#E2E8F0",
+      "divider": "#F1F5F9",
+      "success": "#10B981",
+      "warning": "#F59E0B"
+    },
+    "typography": {
+      "headingFont": "system-ui, -apple-system, sans-serif",
+      "bodyFont": "system-ui, -apple-system, sans-serif",
+      "h1Size": "1.75em",
+      "h2Size": "1.35em",
+      "h3Size": "1.15em",
+      "h4Size": "1.05em",
+      "bodySize": "15px",
+      "lineHeight": "1.75",
+      "headingWeight": "700"
+    },
+    "spacing": {
+      "unit": "em",
+      "paragraphSpacing": "1.5em",
+      "sectionSpacing": "2.5em",
+      "componentPadding": "1.25em",
+      "articleMargin": "0 auto"
+    },
+    "border": {
+      "radius": "6px",
+      "style": "solid",
+      "width": "1px",
+      "color": "#E2E8F0"
+    },
+    "shadow": {
+      "enabled": false,
+      "level": "soft",
+      "color": "rgba(0,0,0,0.08)"
+    }
+  },
+  "layoutStrategy": {
+    "pageStructure": "封面大图+数据区块+正文交替",
+    "paragraphStyle": "短段落，多留白",
+    "hierarchy": "h1 大标题吸引注意，h2 清晰分割",
+    "preferredComponentCount": "5-7",
+    "componentFlow": "自然过渡，组件之间用 divider 分隔"
+  },
+  "logicVersion": "1.0.0",
+  "generatedAt": "2026-08-04T15:07:19.291Z",
+  "designMemory": {
+    "appliedPreferences": {
+      "patternDensity": "medium",
+      "decorationLevel": "moderate",
+      "cornerStyle": "rounded"
+    },
+    "filteredRejected": 0,
+    "reusedComponentStyles": 0
+  },
+  "brandSystem": {
+    "brandId": "云帆科技-mseskqyk",
+    "principles": [
+      "科技感与专业度并重",
+      "清晰的信息层级",
+      "专业可信赖",
+      "结构化信息呈现",
+      "突破常规的视觉表达"
+    ],
+    "tokens": {
+      "colors": {
+        "--wemd-primary": "#2563EB",
+        "--wemd-primaryLight": "rgb(97,159,255)",
+        "--wemd-primaryDark": "rgb(0,59,195)",
+        "--wemd-secondary": "rgb(99,235,37)",
+        "--wemd-accent": "rgb(235,37,99)",
+        "--wemd-background": "#FFFFFF",
+        "--wemd-surface": "#F8FAFC",
+        "--wemd-textPrimary": "#1A1A2E",
+        "--wemd-textSecondary": "#64748B",
+        "--wemd-textCaption": "#94A3B8",
+        "--wemd-border": "#E2E8F0",
+        "--wemd-divider": "#F1F5F9",
+        "--wemd-success": "#10B981",
+        "--wemd-warning": "#F59E0B"
+      },
+      "typography": {
+        "headingFont": "system-ui, -apple-system, sans-serif",
+        "bodyFont": "system-ui, -apple-system, sans-serif",
+        "h1Size": "1.75em",
+        "h2Size": "1.35em",
+        "h3Size": "1.15em",
+        "h4Size": "1.05em",
+        "bodySize": "15px",
+        "lineHeight": "1.75",
+        "headingWeight": "700"
+      },
+      "spacing": {
+        "paragraphSpacing": 1.5,
+        "sectionSpacing": 2.5,
+        "componentPadding": 1.25,
+        "articleMargin": 0
+      },
+      "radius": {
+        "sm": 4,
+        "md": 8,
+        "lg": 12,
+        "xl": 16
+      },
+      "border": {
+        "width": 1,
+        "style": "solid"
+      }
+    },
+    "assetPolicy": {
+      "logoUsage": "header-and-footer",
+      "brandMarkUsage": "small-components",
+      "patternOpacityMax": 0.15,
+      "patternCoverageMax": 0.3,
+      "sloganPlacement": "hero",
+      "colorStrategy": "complementary"
+    },
+    "componentRules": {
+      "density": "medium",
+      "tone": ["科技", "创新", "专业", "AI"],
+      "forbiddenFeatures": [
+        "box-shadow",
+        "position:fixed",
+        "position:sticky",
+        "::before",
+        "::after",
+        "filter"
+      ]
+    },
+    "profileType": "brand",
+    "generatedAt": "2026-08-04T15:07:19.292Z"
+  }
+}

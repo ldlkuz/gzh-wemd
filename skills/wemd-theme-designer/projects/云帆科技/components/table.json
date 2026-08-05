@@ -1,0 +1,273 @@
+{
+  "id": "table-msdcuqjv",
+  "type": "table",
+  "name": "Table",
+  "status": "draft",
+  "currentVersion": 13,
+  "approvedVersion": null,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "table",
+      "variant": "table-brand-default",
+      "variantCss": "#wemd .wemd-table[data-variant=\"table-brand-default\"] {\n  padding: 1em;\n  color: #1A1A2E;\n}",
+      "createdAt": "2026-08-03T14:59:25.293Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: table-brand-default",
+      "instruction": "管道生成: table-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 2,
+      "component": "table",
+      "variant": "table-brand-default",
+      "variantCss": "#wemd .wemd-table[data-variant=\"table-brand-default\"] {\n  padding: 1em;\n  color: #1A1A2E;\n}",
+      "createdAt": "2026-08-03T15:00:42.843Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: table-brand-default",
+      "parentVersion": 1,
+      "instruction": "管道生成: table-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 3,
+      "component": "table",
+      "variant": "table-brand-default",
+      "variantCss": "#wemd .wemd-table[data-variant=\"table-brand-default\"] {\n  padding: 1em;\n  color: #1A1A2E;\n}",
+      "createdAt": "2026-08-03T15:51:03.809Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: table-brand-default",
+      "parentVersion": 2,
+      "instruction": "管道生成: table-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 4,
+      "component": "table",
+      "variant": "table-brand-default",
+      "variantCss": "#wemd .wemd-table[data-variant=\"table-brand-default\"] {\n  padding: 1em;\n  color: #1A1A2E;\n}",
+      "createdAt": "2026-08-03T15:58:03.848Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: table-brand-default",
+      "parentVersion": 3,
+      "instruction": "管道生成: table-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 5,
+      "component": "table",
+      "variant": "table-brand-default",
+      "variantCss": "#wemd .wemd-table[data-variant=\"table-brand-default\"] {\n  padding: 1em;\n  color: #1A1A2E;\n}",
+      "createdAt": "2026-08-03T15:58:05.907Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: table-brand-default",
+      "parentVersion": 4,
+      "instruction": "管道生成: table-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 6,
+      "component": "table",
+      "variant": "table-brand-default",
+      "variantCss": "#wemd .wemd-table[data-variant=\"table-brand-default\"] {\n  padding: 1em;\n  color: #1A1A2E;\n}",
+      "createdAt": "2026-08-03T16:48:06.320Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: table-brand-default",
+      "parentVersion": 5,
+      "instruction": "管道生成: table-brand-default",
+      "sourceHtml": "",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 7,
+      "component": "table",
+      "variant": "table-brand-default",
+      "variantCss": "#wemd .wemd-table[data-variant=\"table-brand-default\"] {\n  padding: 1em;\n  color: #1A1A2E;\n}",
+      "createdAt": "2026-08-03T18:07:56.756Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: table-brand-default",
+      "parentVersion": 6,
+      "instruction": "管道生成: table-brand-default",
+      "sourceHtml": "<div class=\"wemd-table\" data-variant=\"table-brand-default\">\n  <p>table 组件预览</p>\n</div>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 8,
+      "component": "table",
+      "variant": "table-brand-default",
+      "variantCss": "#wemd .wemd-table[data-variant=\"table-brand-default\"] {\n  padding: 1em;\n  color: #1A1A2E;\n}",
+      "createdAt": "2026-08-04T04:52:30.597Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: table-brand-default",
+      "parentVersion": 7,
+      "instruction": "管道生成: table-brand-default",
+      "sourceHtml": "<table class=\"wemd-table\" data-variant=\"table-brand-default\">\n  <thead><tr><th>功能</th><th>基础版</th><th>专业版</th></tr></thead>\n  <tbody>\n    <tr><td>数据分析</td><td>✓</td><td>✓</td></tr>\n    <tr><td>API 接入</td><td>—</td><td>✓</td></tr>\n    <tr><td>技术支持</td><td>邮件</td><td>7×24 小时</td></tr>\n  </tbody>\n</table>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 9,
+      "component": "table",
+      "variant": "table-brand-default",
+      "variantCss": "#wemd .wemd-table[data-variant=\"table-brand-default\"] {\n  padding: 1em;\n  color: #1A1A2E;\n}",
+      "createdAt": "2026-08-04T04:55:30.774Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: table-brand-default",
+      "parentVersion": 8,
+      "instruction": "管道生成: table-brand-default",
+      "sourceHtml": "<table class=\"wemd-table\" data-variant=\"table-brand-default\">\n  <thead><tr><th>功能</th><th>基础版</th><th>专业版</th></tr></thead>\n  <tbody>\n    <tr><td>数据分析</td><td>✓</td><td>✓</td></tr>\n    <tr><td>API 接入</td><td>—</td><td>✓</td></tr>\n    <tr><td>技术支持</td><td>邮件</td><td>7×24 小时</td></tr>\n  </tbody>\n</table>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 10,
+      "component": "table",
+      "variant": "table-brand-default",
+      "variantCss": "#wemd .wemd-table[data-variant=\"table-brand-default\"] {\n  padding: 1em;\n  color: #1A1A2E;\n}",
+      "createdAt": "2026-08-04T04:56:08.293Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: table-brand-default",
+      "parentVersion": 9,
+      "instruction": "管道生成: table-brand-default",
+      "sourceHtml": "<table class=\"wemd-table\" data-variant=\"table-brand-default\">\n  <thead><tr><th>功能</th><th>基础版</th><th>专业版</th></tr></thead>\n  <tbody>\n    <tr><td>数据分析</td><td>✓</td><td>✓</td></tr>\n    <tr><td>API 接入</td><td>—</td><td>✓</td></tr>\n    <tr><td>技术支持</td><td>邮件</td><td>7×24 小时</td></tr>\n  </tbody>\n</table>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 11,
+      "component": "table",
+      "variant": "table-brand-default",
+      "variantCss": "#wemd .wemd-table[data-variant=\"table-brand-default\"] {\n  padding: 1em;\n  color: #1A1A2E;\n}",
+      "createdAt": "2026-08-04T04:59:34.058Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: table-brand-default",
+      "parentVersion": 10,
+      "instruction": "管道生成: table-brand-default",
+      "sourceHtml": "<table class=\"wemd-table\" data-variant=\"table-brand-default\">\n  <thead><tr><th>功能</th><th>基础版</th><th>专业版</th></tr></thead>\n  <tbody>\n    <tr><td>数据分析</td><td>✓</td><td>✓</td></tr>\n    <tr><td>API 接入</td><td>—</td><td>✓</td></tr>\n    <tr><td>技术支持</td><td>邮件</td><td>7×24 小时</td></tr>\n  </tbody>\n</table>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 12,
+      "component": "table",
+      "variant": "table-brand-default",
+      "variantCss": "#wemd .wemd-table[data-variant=\"table-brand-default\"] {\n  padding: 1em;\n  color: #1A1A2E;\n}",
+      "createdAt": "2026-08-04T14:52:18.914Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: table-brand-default",
+      "parentVersion": 11,
+      "instruction": "管道生成: table-brand-default",
+      "sourceHtml": "<table class=\"wemd-table\" data-variant=\"table-brand-default\">\n  <thead><tr><th>功能</th><th>基础版</th><th>专业版</th></tr></thead>\n  <tbody>\n    <tr><td>数据分析</td><td>✓</td><td>✓</td></tr>\n    <tr><td>API 接入</td><td>—</td><td>✓</td></tr>\n    <tr><td>技术支持</td><td>邮件</td><td>7×24 小时</td></tr>\n  </tbody>\n</table>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    },
+    {
+      "version": 13,
+      "component": "table",
+      "variant": "table-brand-default",
+      "variantCss": "#wemd .wemd-table[data-variant=\"table-brand-default\"] {\n  padding: 1em;\n  color: #1A1A2E;\n}",
+      "createdAt": "2026-08-04T15:07:19.340Z",
+      "createdBy": "ai",
+      "status": "draft",
+      "changeLog": "管道生成: table-brand-default",
+      "parentVersion": 12,
+      "instruction": "管道生成: table-brand-default",
+      "sourceHtml": "<table class=\"wemd-table\" data-variant=\"table-brand-default\">\n  <thead><tr><th>功能</th><th>基础版</th><th>专业版</th></tr></thead>\n  <tbody>\n    <tr><td>数据分析</td><td>✓</td><td>✓</td></tr>\n    <tr><td>API 接入</td><td>—</td><td>✓</td></tr>\n    <tr><td>技术支持</td><td>邮件</td><td>7×24 小时</td></tr>\n  </tbody>\n</table>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": null,
+  "decisions": []
+}
