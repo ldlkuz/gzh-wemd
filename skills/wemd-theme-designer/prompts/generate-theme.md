@@ -305,14 +305,51 @@ layoutStrategy:
 
 ---
 
-## 阶段 9：应用层实现（Application Layer）
+## 阶段 9：应用层实现 — 分批全量生成 44 个组件 CSS
 
+> **核心原则：44 个组件全部由 AI 生成，每个组件独立设计，不使用模板填充。**
+>
 > **输入：** 通过约束检查的 Design Blueprint
 > **实现依据：** [spec/application-layer.md](../spec/application-layer.md)
 
-### 9.1 选择实现方案
+### 9.0 为什么分批
 
-根据设计目标选择方案：
+44 个组件 × 平均 30 行 CSS ≈ 1300+ 行 CSS，单次推理存在 token 爆炸和注意力稀释问题。
+按 7 个原型组分 7 批生成，每批聚焦于 2-10 个组件的品牌化设计。
+
+### 9.1 原型组划分
+
+| 批次 | 原型组        | 组件                                                                                                                            | 数量 | 设计重点                                             |
+| ---- | ------------- | ------------------------------------------------------------------------------------------------------------------------------- | ---- | ---------------------------------------------------- |
+| 1    | `signature`   | hero-banner, magazine-cover, end-card, brand-sign                                                                               | 4    | 品牌渐变、Logo 放置、Slogan 排版、封面构图、结尾签名 |
+| 2    | `heading`     | numbered-heading, section-title, section-divider, toc-nav                                                                       | 4    | 标题层级、编号样式、目录结构、章节分隔视觉           |
+| 3    | `container`   | text-card, image-card, product-card, testimonial-card, author-card, quote-card, two-column-cards, cta-card, share-card, qr-card | 10   | 卡片框架、内容排版、图片处理、双列布局、行动号召     |
+| 4    | `data`        | stats-block, styled-table, table, timeline, resource-list, image-compare, image-grid, image-text-row, image-caption             | 9    | 数据展示、表格条纹、时间线连接线、网格布局、图片标注 |
+| 5    | `interactive` | callout, callout-pro, faq, accordion, steps, follow-bar                                                                         | 6    | 交互提示、展开指示器、步骤连接线、关注按钮           |
+| 6    | `code`        | code-block, code-frame                                                                                                          | 2    | 代码背景色、语法高亮色、header 栏、圆角处理          |
+| 7    | `divider`     | divider-fancy, divider, full-quote, pullquote, article-section, related-posts, series-nav, copyright-notice, tag-label          | 9    | 分割线样式、引用块装饰、标签圆角、导航链接、版权声明 |
+
+### 9.2 品牌基因共享 vs 组件差异
+
+**共享基因（所有组件统一）：**
+
+- 14 色调色板 → 所有 CSS 用 `var(--wemd-xxx)` 引用
+- 排版规范 → 标题/正文/代码字体统一
+- 间距系统 → 组件内外间距使用统一间距值
+- 装饰密度 → minimal/moderate/rich 全局一致
+- 圆角策略 → 卡片、按钮、提示框圆角统一
+
+**差异化体现在（每个组件对品牌基因的应用方式不同）：**
+
+- 主色应用方式：hero-banner → 渐变背景；stats-block → 数字强调色；callout → 左边框；steps → 连接线
+- 装饰策略：hero-banner → 品牌图案背景；timeline → 时间节点圆点；divider-fancy → 图标居中
+- 空间节奏：hero-banner → 大留白(2.5em)；tag-label → 紧凑(0.3em 0.8em)
+- 视觉层级：numbered-heading → 大号编号+标题；section-title → 纯文字+下划线
+- 内容结构：two-column-cards → 双列网格；stats-block → 三列等分；timeline → 垂直流式
+
+### 9.3 每批的通用规则
+
+#### 选择实现方案
 
 | 方案  | 名称            | 适用场景                               |
 | ----- | --------------- | -------------------------------------- |
@@ -321,17 +358,9 @@ layoutStrategy:
 | **D** | manifest.assets | 跨组件复用的品牌资源（Logo、通用装饰） |
 | **E** | 纯 CSS          | 渐变、阴影、边框、平铺纹理             |
 
-### 9.2 素材生成与复用
+#### 生成组件 HTML
 
-- **先检查素材工作区**：`{theme-name}/workspace/assets/`
-- **已有同名素材** → 直接复用，仅调整颜色变量
-- **无同名素材** → 从品牌元素/概念元素的视觉特征推理生成 SVG，保存到工作区
-
-### 9.3 生成组件 HTML
-
-生成组件 HTML 模板时，遵守以下规则：
-
-1. **装饰效果必须使用物理 DOM 元素**：如果组件需要视觉装饰（图标、标记、徽章、线条、角标等），直接在 HTML 中添加 `<span class="wemd-xxx-deco">` 元素。禁止通过 `::before`/`::after` 伪元素实现装饰效果。
+1. **装饰效果必须使用物理 DOM 元素**：直接在 HTML 中添加 `<span class="wemd-xxx-deco">` 元素。禁止通过 `::before`/`::after` 伪元素实现装饰效果。
 2. **装饰元素在 HTML 中要有实际内容**：如 `<span class="wemd-step-marker">★</span>`，不要留空再用 CSS 填充。
 3. **组件 HTML 必须包含 `data-variant` 属性**：格式为 `<... class="wemd-xxx" data-variant="yyy">`。
 
@@ -359,92 +388,365 @@ layoutStrategy:
 <!-- 然后 CSS 中写 .wemd-section-title::before { content: "..."; ... } -->
 ```
 
-### 9.4 生成 variantCss
+#### 生成 variantCss
 
-遵守规则：
+1. **选择器格式（强制）** — 主选择器必须是 `.wemd-{组件名}[data-variant="{变体名}"]`：
 
-1. 选择器格式：`.wemd-<组件名>[data-variant="<变体名>"]` 或 `.wemd-<组件名>[data-variant="<变体名>"] .wemd-xxx-deco`
-2. 用 `var(--wemd-primary)` 等主题变量（不用硬编码颜色）
-3. **严禁**：`::before`/`::after`、`:first-child`/`:nth-child` 等结构伪类、外链、`<style>`/`<script>`、`@keyframes`/`animation`、`backdrop-filter`、`position:fixed/sticky`
-4. **严禁在 CSS 中直接写 `url(assets/...)`**
-5. 小装饰 SVG 内联为 `url("data:image/svg+xml;utf8,...")`；跨组件复用的资源用 `manifest.assets` + `var(--wemd-asset-<key>)`
+   ```css
+   /* ✅ 正确 — 主选择器 */
+   .wemd-hero-banner[data-variant="bytedance-hero-neon"] { ... }
+
+   /* ✅ 正确 — 子元素选择器（普通组件） */
+   .wemd-hero-banner[data-variant="bytedance-hero-neon"] .wemd-component-body { ... }
+   .wemd-hero-banner[data-variant="bytedance-hero-neon"] .wemd-component-body .wemd-child-1 { ... }
+
+   /* ✅ 正确 — 子元素选择器（杂志级组件，使用固定子元素 class） */
+   .wemd-magazine-cover[data-variant="bytedance-cover"] .wemd-mc-title { ... }
+
+   /* ❌ 禁止 — :global() 语法（浏览器不认识，CSS 会整条丢弃） */
+   :global(.wemd-theme__xxx) .wemd-hero-banner { ... }
+   /* ❌ 禁止 — 裸选择器无 data-variant */
+   .wemd-hero-banner { ... }
+   ```
+
+2. **子元素 class 名必须使用主程序渲染器的固定 class**（见下方参考表），禁止自创 class 名
+
+3. **CSS 变量必须使用预定义的 31 个变量**，禁止自创变量名：
+   | 类别 | 允许的变量 |
+   |------|-----------|
+   | 主色 | `--wemd-primary`, `--wemd-primary-dark`, `--wemd-primary-light` |
+   | 主色透明 | `--wemd-primary-alpha-2`, `--wemd-primary-alpha-4`, `--wemd-primary-alpha-6`, `--wemd-primary-alpha-8`, `--wemd-primary-alpha-25` |
+   | 辅助色 | `--wemd-secondary`, `--wemd-accent` |
+   | 背景 | `--wemd-bg-soft`, `--wemd-bg-card`, `--wemd-bg-muted` |
+   | 文字 | `--wemd-text-strong`, `--wemd-text-normal`, `--wemd-text-soft` |
+   | 边框 | `--wemd-border`, `--wemd-border-soft` |
+   | 排版 | `--wemd-page-padding`, `--wemd-paragraph-margin`, `--wemd-font-size`, `--wemd-line-height`, `--wemd-letter-spacing` |
+   | 标题 | `--wemd-h1-font-size` ~ `--wemd-h4-font-size` + `color`/`margin-top`/`margin-bottom` |
+   | 圆角/阴影 | `--wemd-border-radius`, `--wemd-shadow` |
+   | 资源 | `--wemd-asset-{key}`（来自 manifest.assets） |
+
+   禁止使用：`--wemd-bg-gradient`、`--wemd-radius-md`、`--wemd-shadow-sm`、`--wemd-font-sans` 等不在白名单中的变量。渐变效果用 `linear-gradient(var(--wemd-primary), var(--wemd-primary-dark))` 组合表达。
+
+4. **严禁**：`::before`/`::after`、`content:`、`:first-child`/`:nth-child` 等结构伪类、`transition`/`animation`/`@keyframes`、`filter:`/`backdrop-filter:`、外链、`<style>`/`<script>`、`position:fixed/sticky`
+5. **严禁在 CSS 中直接写 `url(assets/...)`**
+6. 小装饰 SVG 内联为 `url("data:image/svg+xml;utf8,...")`；跨组件复用的资源用 `manifest.assets` + `var(--wemd-asset-<key>)`
+7. **CSS 必须覆盖组件 HTML 中的所有子元素 class**，不能只写容器样式
+
+#### 组件 HTML 结构参考表（CSS 选择器必须匹配这些 class）
+
+> 主程序渲染器生成的 DOM 结构是固定的，AI 生成的 CSS 必须针对这些 class 写选择器。
+
+**普通组件（33 个）** — 结构统一，子元素由 `wemd-component-body` 包裹，自动加 `wemd-child-N`：
+
+```html
+<section
+  class="wemd-component wemd-{type}"
+  data-component="{type}"
+  data-variant="xxx"
+>
+  <section class="wemd-component-body" data-variant="xxx">
+    <p class="wemd-child-1">第一段内容</p>
+    <p class="wemd-child-2">第二段内容</p>
+  </section>
+</section>
+```
+
+普通组件列表：hero-banner, quote-card, share-card, cta-card, callout, callout-pro, stats-block, toc-nav, divider-fancy, divider, numbered-heading, section-title, follow-bar, faq, accordion, steps, code-block, code-frame, styled-table, table, text-card, image-grid, author-card, timeline, related-posts, copyright-notice, qr-card, image-text-row, image-caption, tag-label, pullquote, article-section, image-compare
+
+CSS targeting 示例：
+
+```css
+.wemd-hero-banner[data-variant="xxx"] {
+  /* 容器 */
+}
+.wemd-hero-banner[data-variant="xxx"] .wemd-component-body {
+  /* 内容区 */
+}
+.wemd-hero-banner[data-variant="xxx"] .wemd-component-body .wemd-child-1 {
+  /* 第一段 */
+}
+```
+
+**杂志级组件（11 个）** — 各有专用子元素 class，无 `wemd-component-body`：
+
+| 组件 type          | 专用子元素 class                                                                                                                                                                                                                                                                |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `magazine-cover`   | `wemd-mc-title`, `wemd-mc-subtitle`, `wemd-mc-divider`, `wemd-mc-desc`                                                                                                                                                                                                          |
+| `section-divider`  | `wemd-sd-part`, `wemd-sd-title`                                                                                                                                                                                                                                                 |
+| `end-card`         | `wemd-ec-title`, `wemd-ec-subtitle`, `wemd-ec-deco`                                                                                                                                                                                                                             |
+| `full-quote`       | `wemd-fq-text`                                                                                                                                                                                                                                                                  |
+| `image-card`       | `wemd-ic-image`, `wemd-ic-caption`                                                                                                                                                                                                                                              |
+| `two-column-cards` | `wemd-tcc-wrapper`, `wemd-tcc-item`, `wemd-tcc-icon`, `wemd-tcc-title`, `wemd-tcc-desc`                                                                                                                                                                                         |
+| `product-card`     | `wemd-pc-image`, `wemd-pc-badge`, `wemd-pc-title`, `wemd-pc-subtitle`, `wemd-pc-description`, `wemd-pc-price-row`, `wemd-pc-price`, `wemd-pc-original`, `wemd-pc-meta-row`, `wemd-pc-rating`, `wemd-pc-sales`, `wemd-pc-stock`, `wemd-pc-button`, `wemd-pc-tags`, `wemd-pc-tag` |
+| `brand-sign`       | `wemd-bs-wrapper`, `wemd-bs-logo`, `wemd-bs-brand-name`, `wemd-bs-slogan`, `wemd-bs-subtext`                                                                                                                                                                                    |
+| `resource-list`    | `wemd-rl-title`, `wemd-rl-subtitle`, `wemd-rl-items`, `wemd-rl-item`, `wemd-rl-idx`, `wemd-rl-icon`, `wemd-rl-main`, `wemd-rl-item-title`, `wemd-rl-item-desc`, `wemd-rl-meta`, `wemd-rl-tag`                                                                                   |
+| `testimonial-card` | `wemd-tc-quote`, `wemd-tc-source`, `wemd-tc-avatar`, `wemd-tc-person`, `wemd-tc-person-meta`, `wemd-tc-name`, `wemd-tc-title`, `wemd-tc-company`, `wemd-tc-company-logo`                                                                                                        |
+| `series-nav`       | `wemd-sn-header`, `wemd-sn-name`, `wemd-sn-desc`, `wemd-sn-progress-bar`, `wemd-sn-nav`, `wemd-sn-prev`, `wemd-sn-next`, `wemd-sn-articles`, `wemd-sn-item`, `wemd-sn-item-idx`                                                                                                 |
+
+CSS targeting 示例：
+
+```css
+/* ✅ 正确 — 使用杂志组件的固定子元素 class */
+.wemd-magazine-cover[data-variant="xxx"] .wemd-mc-title { /* 标题 */ }
+.wemd-magazine-cover[data-variant="xxx"] .wemd-mc-subtitle { /* 副标题 */ }
+.wemd-brand-sign[data-variant="xxx"] .wemd-bs-logo { /* Logo */ }
+.wemd-end-card[data-variant="xxx"] .wemd-ec-title { /* 标题 */ }
+
+/* ❌ 禁止 — 自创 class 名（DOM 中不存在，CSS 会空转） */
+.wemd-hero-title { ... }
+.wemd-cover-kicker { ... }
+.wemd-end-slogan { ... }
+.wemd-sign-logo { ... }
+```
+
+### 9.4 分批提交方式
+
+每批生成完毕后，调用 `POST /api/projects/{项目名}/ai-save` 保存：
+
+**第 1 批（signature 组）— 携带 blueprint：**
+
+```json
+{
+  "blueprint": { "readingExperience": {...}, "expression": {...}, ... },
+  "batch": "signature",
+  "isLastBatch": false,
+  "components": [
+    { "type": "hero-banner", "variant": "xxx-hero-gradient", "variantCss": "...", "sourceHtml": "...", "instruction": "..." },
+    { "type": "magazine-cover", "variant": "xxx-cover", "variantCss": "...", "sourceHtml": "...", "instruction": "..." },
+    { "type": "end-card", "variant": "xxx-end", "variantCss": "...", "sourceHtml": "...", "instruction": "..." },
+    { "type": "brand-sign", "variant": "xxx-sign", "variantCss": "...", "sourceHtml": "...", "instruction": "..." }
+  ]
+}
+```
+
+**第 2-6 批（中间批次）— 不传 blueprint：**
+
+```json
+{
+  "batch": "heading",
+  "isLastBatch": false,
+  "components": [ ... 4 个组件 ... ]
+}
+```
+
+**第 7 批（divider 组，最后一批）：**
+
+```json
+{
+  "batch": "divider",
+  "isLastBatch": true,
+  "components": [ ... 9 个组件 ... ]
+}
+```
+
+> `isLastBatch: true` 会自动将项目状态切换为 `PREVIEW`。
+
+### 9.5 每个组件的输出要求
+
+| 字段          | 要求                                                            |
+| ------------- | --------------------------------------------------------------- |
+| `type`        | 必须来自 44 种合法组件                                          |
+| `variant`     | 品牌相关命名（如 `yunfan-hero-gradient`），同原型组内可共享前缀 |
+| `variantCss`  | 完整 CSS，`#wemd` 包裹 + `data-variant` 选择器，覆盖所有子元素  |
+| `sourceHtml`  | 组件 HTML，含 `data-variant` 属性 + 装饰 DOM 元素               |
+| `instruction` | 设计说明：品牌意图 + 设计决策 + 装饰选择理由                    |
+
+### 9.6 风格一致性保证
+
+生成后续批次时，参考已生成的组件 CSS，确保：
+
+- 主色应用方式一致（如 hero-banner 用渐变，其他组件的主色应用与之一脉相承）
+- 装饰风格一致（如品牌图案、圆角大小、阴影深度全局统一）
+- 排版节奏一致（标题字号、行高、间距遵循 Blueprint 的 typography 和 spacing 规范）
+- 不要出现两个组件"看起来一模一样"的情况 — 共享基因但各自独立设计
 
 ---
 
-## 阶段 10：编译器输出（Compiler Layer）
+## 阶段 10：自检
 
-> **输入：** Application Layer 的 variantCss + manifest 片段
-> **输出：** manifest.json + .wemd-theme 包
+> **注意：编译打包不再由 AI 完成，由 Service Layer 的 `POST /api/projects/:id/compile` 接口自动处理。**
 
-### 10.1 组装 manifest.json
+### 10.1 组件覆盖自检
 
-按 [spec/theme-package-spec.md](../spec/theme-package-spec.md) 的规范：
+对照 `prompts/self-check.md` 的自检清单逐项打勾确认：
 
-```
-sdkVersion: "1.0.0"
-meta: { id, name, description, keywords, version }
-tokens: { color(14字段), typography(h1-h4), spacing, border, shadow }
-components: { 4~6 个组件，每个配 variant + variantCss；其余 enabled:true }
-layout: { preferredComponents(含 reason), density, tone }
-assets: { images: [品牌 Logo / 装饰图形] }   （可选）
-codeTheme: "github" / "github-dark"   （可选）
-```
+- 44 个组件全部覆盖（无遗漏）
+- CSS 选择器格式正确（`#wemd .wemd-xxx[data-variant="yyy"]`）
+- 无违规属性（`::before`/`::after`/`animation`/`fixed`/`sticky`/`filter`）
+- 颜色使用 `var(--wemd-xxx)` 而非硬编码 hex/rgb
+- 装饰元素使用物理 DOM 而非伪元素
+- 每个组件的 CSS 覆盖了 HTML 中的所有子元素 class
 
-### 10.2 codeTheme 规则
+### 10.2 设计质量反馈
 
-- 主色深色背景（luminance < 0.5）→ `"github-dark"`
-- 主色浅色背景（luminance ≥ 0.5）→ `"github"`
+对照 [spec/feedback-layer.md](../spec/feedback-layer.md) 做最终质量评估：
 
----
+| 维度                | 评估内容                                               | 阈值         |
+| ------------------- | ------------------------------------------------------ | ------------ |
+| 品牌一致性          | Logo/Slogan/辅助图形/品牌色使用是否匹配策略            | ≥ 70/100     |
+| 阅读体验            | fontSize/spacing 是否与 density 匹配                   | ≥ 70/100     |
+| 组件覆盖与 CSS 质量 | 44 个组件全覆盖 + CSS 选择器格式/无违规属性/子元素覆盖 | 必须 44/44   |
+| 约束遵守            | CSS 是否无违规项                                       | 必须 100/100 |
 
-## 阶段 11：自检 + 质量反馈
-
-### 11.1 自检
-
-对照 `prompts/self-check.md` 的自检清单逐项打勾确认。
-
-### 11.2 设计质量反馈
-
-生成完成后，对照 [spec/feedback-layer.md](../spec/feedback-layer.md) 做最终质量评估：
-
-| 维度       | 评估内容                                    | 阈值         |
-| ---------- | ------------------------------------------- | ------------ |
-| 品牌一致性 | Logo/Slogan/辅助图形/品牌色使用是否匹配策略 | ≥ 70/100     |
-| 阅读体验   | fontSize/spacing 是否与 density 匹配        | ≥ 70/100     |
-| 组件覆盖   | 所有品牌元素→组件映射是否已实现             | ≥ 70/100     |
-| 约束遵守   | CSS 和 manifest 是否无违规项                | 必须 100/100 |
+> **F3 评分规则：** 未全覆盖 44 个组件时按比例 × 60 分（最多 60 分）；全覆盖后从 100 分起扣：选择器格式错误/伪元素/禁止定位/动画/滤镜/CSS 过短（<5行）各扣 3 分/个，硬编码颜色/子元素覆盖率低（<50%）各扣 1 分/个。
 
 **不通过则回退：**
 
 - 品牌/概念一致性问题 → 回退到阶段 4/5
-- 实现方案问题 → 回退到阶段 9
+- 组件设计问题 → 重新生成对应批次的组件
 - 约束问题 → 回退到阶段 8
 
 ---
 
-## 阶段 12：交付物
+## 阶段 11：编译打包
 
-向用户交付**三件套**：
+> **此阶段由 Service Layer 自动完成，AI Agent 只需调用接口。**
+
+调用 `POST /api/projects/{项目名}/compile`，Service Layer 会：
+
+1. 读取全部 44 个组件最新版本
+2. 校验全覆盖（缺少任何组件会报错，返回 missing 列表）
+3. 调用 Compiler Layer 生成 manifest.json
+4. 生成 brand.md（仅 Brand Profile）
+5. 打包为 `.wemd-theme` ZIP
+6. 状态更新为 `APPROVED`
+
+如果编译失败（组件缺失等），根据错误信息补充生成缺失的组件，再次调用 `/ai-save` 保存，然后重新编译。
+
+---
+
+## 阶段 12：组件级修改推理（驳回重生 / 用户修改指令应用）
+
+> **触发时机**：完整生成 44 个组件后（状态 `PREVIEW`），Theme Studio 用户在工作台对组件进行**审核驳回**或**发起组件级修改请求**时进入本阶段。
+>
+> 本阶段不是一次性流程，可能被触发 **多次**（每次用户驳回一个组件或发一个修改指令都进入）。
+>
+> 每次只修改**单一组件的单一版本**，绝不影响其他组件或其他版本的已有成果。
+
+---
+
+### 12.0 输入（必须同时拿到）
+
+| 输入项                        | 来源          | 含义                                                             |
+| ----------------------------- | ------------- | ---------------------------------------------------------------- |
+| `instruction`                 | Revision Task | 驳回意见 / 用户修改指令，明确要改什么、怎么改                    |
+| `baseVariantCss`              | Revision Task | 基准版本的 variantCss，**必须作为修改起点，不能凭空重写**        |
+| `baseSourceHtml`              | Revision Task | 基准版本的 sourceHtml（可按指令调整结构）                        |
+| `source`                      | Revision Task | `"review-reject"`（驳回重生）or `"user-modify"`（用户修改）      |
+| `baseVariant`                 | Revision Task | 原 variant 名（驳回重生强制保留）                                |
+| `design-blueprint.json`       | 项目文件      | 阶段 3~8 的品牌策略 / 调色板 / 排版 / 装饰策略（**一致性依据**） |
+| `components/{component}.json` | 项目文件      | 组件的所有历史版本 / decisions / review 记录                     |
+
+---
+
+### 12.1 两种 source 的处理模式
+
+#### 🟥 模式 A：审核驳回（`source = "review-reject"`）
+
+**核心目标**：解决驳回意见 + **不脱离整体方案**
+
+| 约束       | 要求                                                                                                                         |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| variant 名 | **强制保持原 `baseVariant` 不变**（如 `tech-gradient-dark` 不能改成 `tech-gradient-v2`），保证组件映射表仍可用               |
+| 修改目标   | **精确落实** 驳回意见中每条具体要求（如 "Logo 太小" → 把 `h1 img` width 从 `120px` → `160px`，同时加 `box-shadow` 增强识别） |
+| 风格一致性 | 颜色、字体、间距、圆角沿用 `design-blueprint.json` 中定义的 tokens，不能引入新的颜色/排版方案                                |
+| 修改率     | **20% ≤ 修改率 ≤ 80%**<br>- < 20%：驳回意见没落实<br>- > 80%：脱离原方案，等于重写，破坏一致性                               |
+| 输出       | 生成完整的新 `variantCss`（选择器结构保持一致，内部属性按需修改）+ 对应 `sourceHtml`（若意见涉及结构调整）                   |
+
+##### 模式 A 示例推理流程
 
 ```
-{slug}/
-├── manifest.json          # 可直接粘贴到 Validator 校验
-├── brand.md               # 仅 Brand Profile 且有简介/Slogan时才有
-└── {slug}.wemd-theme      # 压缩包，直接拖入 WeMD 或检测工具
+输入：
+  instruction: 审核驳回，请根据以下意见调整: Logo 太小，Slogan 不够醒目，缺少品牌渐变
+  baseVariantCss:
+    :global(.wemd-theme__tech-gradient-dark) { ... h1 img { width: 120px; } .slogan { font-size: 18px; } ... }
+
+推理：
+  1. 找 h1 img（Logo）规则: width:120px → 改成 160px，加 margin-bottom: 24px，加 brand-shadow
+  2. 找 .slogan: font-size 18px → 24px，font-weight 500→700，background: linear-gradient(primary, accent)
+  3. 其他所有规则保持不变（保持 60%-80% 的原内容）
+
+输出：
+  选择器和原结构一致，只有 h1 img 和 .slogan 两个规则块的属性变化
 ```
 
-> **brand.md（仅 Brand Profile 可选）：** 用中文写以下结构：
->
-> - **品牌语气**：从企业简介推导，2~4 句
-> - **排版偏好**：具体提到 2~4 个组件的使用场景
-> - **Slogan（如有）**：一句话
-> - **品牌关键词**：和 manifest.meta.keywords 一致
->
-> **Creator Profile 不写 brand.md。**
+---
 
-并附上一句话说明：
+#### 🟦 模式 B：用户修改（`source = "user-modify"`）
 
-> 主题已按「{关键词}」风格生成，可直接拖入 WeMD 导入使用。
+**核心目标**：严格执行用户指令 + **保持品牌识别延续**
+
+| 约束        | 要求                                                                                                                                                                |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| variant 名  | 允许 AI 重命名（如 `tech-gradient-dark` → `tech-gradient-v2`），但命名需延续原方案命名逻辑（前缀相同、后缀加版本号或语义描述），**禁止完全抛弃原命名体系**          |
+| 修改幅度    | 完全由 instruction 控制：<br>- 指令只要求小改动（如"把字改大"）→ 只改对应属性，其他不变<br>- 指令要求风格重构（如"改成极简风"）→ 大改但仍沿用 14 色调色板和排版方案 |
+| 设计 tokens | 颜色必须从 `design-blueprint.visualLanguage.colors` 中选（映射成 `var(--wemd-xxx)`），禁止引入 CSS 中未定义的硬编码颜色                                             |
+| 输出        | 完整的新 `variantCss` + 可选调整后的 `sourceHtml`                                                                                                                   |
+
+##### 模式 B 用户指令常见类型
+
+| 指令类型 | 示例                               | 修改原则                                       |
+| -------- | ---------------------------------- | ---------------------------------------------- |
+| 局部微调 | "把标题改大一点"、"去掉这个边框"   | 只改 1-3 条 CSS 规则，其余不动                 |
+| 配色调整 | "把主色换成蓝色调"、"改成深色模式" | 全局重映射颜色变量，但布局和组件结构不动       |
+| 风格转向 | "改成简约商务风"、"更有未来感"     | 大改装饰、阴影、间距，但不脱离调色板和排版方案 |
+| 结构调整 | "把 CTA 按钮移到 Slogan 下方"      | 改 sourceHtml 结构 + 重新对应 CSS 布局规则     |
+
+---
+
+### 12.2 通用不变规则（模式 A / B 都必须遵守）
+
+这些规则和**阶段 9 生成时的规则完全一致**，修改后版本必须满足：
+
+1. **选择器格式必须正确** — 根选择器必须是：
+
+   ```css
+   .wemd-{组件名}[data-variant="{variant}"] { /* ... */ }
+   .wemd-{组件名}[data-variant="{variant}"] .wemd-component-body .wemd-child-N { /* ... */ }
+   .wemd-{组件名}[data-variant="{variant}"] .wemd-mc-title { /* 杂志组件用固定子元素 class */ }
+   ```
+
+2. **禁止硬编码颜色** — 所有颜色必须使用预定义的 `var(--wemd-xxx)`（31 个白名单变量），**禁止** `#fff`、`rgb(...)`、`hsl(...)`、`color: red`，也禁止自创变量名
+
+3. **7 条禁止使用的 CSS 特性**（违反直接不合格）：
+   - ❌ `::before` / `::after` / `content:`
+   - ❌ `animation:` / `@keyframes` / `transition`（过渡动画）
+   - ❌ `filter:` / `backdrop-filter:`
+   - ❌ `position: fixed` / `position: sticky`
+   - ⚠️ `position: absolute`（除非 instruction 明确要求，否则避免）
+
+4. **子元素 class 名必须使用主程序渲染器的固定 class**（见阶段 9.3 组件 HTML 结构参考表），禁止自创 class 名。子元素覆盖充分 — 参考表中的 class 至少 70% 有对应的 CSS 规则。
+
+5. **CSS 行数下限** — 修改后版本的 CSS 至少保持原 baseVariantCss 的 **70% 行数**（除非 instruction 明确要求精简）。
+
+---
+
+### 12.3 自检清单（修改完成后逐项核对）
+
+- [ ] **指令落实度**：instruction 中每个明确要求（如"改大 Logo"、"改深色模式"）都有对应的 CSS/HTML 改动痕迹
+- [ ] **风格未漂移**：对比阶段 4-6 生成的方案，颜色（14 色）、字体、间距、命名体系都沿用，没有"突变"
+- [ ] **模式 A variant 名**：若 `source = "review-reject"`，输出 variantCss 的选择器名等于 baseVariant
+- [ ] **选择器规范**：选择器格式为 `.wemd-xxx[data-variant="yyy"]`，没有 `:global()`，没有裸选择器
+- [ ] **子元素 class 名**：所有子元素 class 使用主程序渲染器的固定 class（见阶段 9.3 参考表），没有自创 class
+- [ ] **CSS 变量**：只使用预定义的 31 个变量，没有自创变量名
+- [ ] **无硬编码颜色**：grep 检查 `#`、`rgb(`、`hsl(`、颜色单词（red/blue/white/black/green）都不在 CSS 中出现
+- [ ] **无 7 大禁用特性**：`::before` / `animation` / `filter` / `fixed` / `sticky` 都不出现
+- [ ] **CSS 完整性**：行数 ≥ 原 CSS 的 70%，子元素类至少 70% 覆盖
+- [ ] **可编译性**：CSS 语法完整（大括号闭合、冒号分号正确），能直接 POST 到 `/components/:type/versions` 保存
+
+全部勾完，才能提交保存为新版本。
+
+---
+
+### 12.4 修改摘要（instruction 附加信息）
+
+保存新版本时，将 `instruction` 字段写成：
+
+```
+{原 instruction} | AI 修改摘要：{具体改了哪几条，如 "Logo 120→160px；Slogan 18→24px+700+渐变；新增 brand-shadow"}
+```
+
+让用户在版本历史中一眼能看出"这个版本到底改了啥"。
 
 ---
 

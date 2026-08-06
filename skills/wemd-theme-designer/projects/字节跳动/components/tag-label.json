@@ -1,0 +1,40 @@
+{
+  "id": "tag-label-msh7pglu",
+  "type": "tag-label",
+  "name": "tag-label",
+  "status": "approved",
+  "currentVersion": 1,
+  "approvedVersion": 1,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "tag-label",
+      "variant": "bytedance-tag-pill",
+      "variantCss": ".wemd-tag-label[data-variant=\"bytedance-tag-pill\"] {\n  margin: 12px 0;\n  padding: 0;\n}\n.wemd-tag-label[data-variant=\"bytedance-tag-pill\"] .wemd-component-body {\n  padding: 0;\n}\n.wemd-tag-label[data-variant=\"bytedance-tag-pill\"] .wemd-component-body .wemd-child-1 {\n  display: inline-block;\n  background: var(--wemd-primary-light);\n  color: var(--wemd-primary);\n  font-size: 12px;\n  font-weight: 700;\n  padding: 4px 12px;\n  border-radius: 999px;\n  margin: 0 6px 0 0;\n}\n.wemd-tag-label[data-variant=\"bytedance-tag-pill\"] .wemd-component-body .wemd-child-2 {\n  display: inline-block;\n  background: var(--wemd-primary);\n  color: #ffffff;\n  font-size: 12px;\n  font-weight: 700;\n  padding: 4px 12px;\n  border-radius: 999px;\n  margin: 0 6px 0 0;\n}\n.wemd-tag-label[data-variant=\"bytedance-tag-pill\"] .wemd-component-body .wemd-child-3 {\n  display: inline-block;\n  background: var(--wemd-bg-muted);\n  color: var(--wemd-text-normal);\n  font-size: 12px;\n  font-weight: 700;\n  padding: 4px 12px;\n  border-radius: 999px;\n  margin: 0 6px 0 0;\n}",
+      "createdAt": "2026-08-06T07:46:25.751Z",
+      "createdBy": "ai",
+      "status": "approved",
+      "changeLog": "字节跳动标签：胶囊圆角标签，三种变体（浅红底红字、品牌红底白字、灰底黑字）",
+      "instruction": "字节跳动标签：胶囊圆角标签，三种变体（浅红底红字、品牌红底白字、灰底黑字）",
+      "sourceHtml": "<section class=\"wemd-tag-label\" data-variant=\"bytedance-tag-pill\">\n  <section class=\"wemd-component-body\" data-variant=\"bytedance-tag-pill\">\n    <p class=\"wemd-child-1\">#字节跳动</p>\n    <p class=\"wemd-child-2\">#产品矩阵</p>\n    <p class=\"wemd-child-3\">#全球化</p>\n  </section>\n</section>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": {
+    "component": "tag-label",
+    "status": "approved",
+    "reviewer": "ai",
+    "comments": ["AI 生成版本默认通过"],
+    "createdAt": "2026-08-06T07:58:20.288Z",
+    "decidedAt": "2026-08-06T07:58:20.288Z"
+  },
+  "decisions": []
+}

@@ -1,0 +1,40 @@
+{
+  "id": "hero-banner-msh7htq9",
+  "type": "hero-banner",
+  "name": "hero-banner",
+  "status": "approved",
+  "currentVersion": 1,
+  "approvedVersion": 1,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "hero-banner",
+      "variant": "bytedance-hero-neon",
+      "variantCss": ".wemd-hero-banner[data-variant=\"bytedance-hero-neon\"] {\n  background: linear-gradient(135deg, var(--wemd-primary), var(--wemd-primary-dark));\n  border-radius: var(--wemd-border-radius);\n  padding: 56px 32px 48px 32px;\n  margin: 0 0 24px 0;\n  text-align: center;\n  box-shadow: var(--wemd-shadow);\n  overflow: hidden;\n}\n.wemd-hero-banner[data-variant=\"bytedance-hero-neon\"] .wemd-component-body {\n  position: relative;\n  z-index: 2;\n}\n.wemd-hero-banner[data-variant=\"bytedance-hero-neon\"] .wemd-component-body .wemd-child-1 {\n  color: #ffffff;\n  font-size: 32px;\n  font-weight: 700;\n  line-height: 1.2;\n  letter-spacing: -0.5px;\n  margin: 0 0 12px 0;\n}\n.wemd-hero-banner[data-variant=\"bytedance-hero-neon\"] .wemd-component-body .wemd-child-2 {\n  color: rgba(255, 255, 255, 0.9);\n  font-size: 16px;\n  font-weight: 400;\n  line-height: 1.6;\n  margin: 0 0 24px 0;\n}\n.wemd-hero-banner[data-variant=\"bytedance-hero-neon\"] .wemd-component-body .wemd-child-3 {\n  display: inline-block;\n  background: #ffffff;\n  color: var(--wemd-primary);\n  font-size: 15px;\n  font-weight: 700;\n  padding: 10px 28px;\n  border-radius: 999px;\n  margin: 0;\n}",
+      "createdAt": "2026-08-06T07:40:29.509Z",
+      "createdBy": "ai",
+      "status": "approved",
+      "changeLog": "字节跳动品牌英雄横幅：抖音红渐变背景 + 居中超大白色主标题 + 半透明白色 Slogan 副标题 + 白底红字胶囊 CTA 按钮，整体活泼有活力",
+      "instruction": "字节跳动品牌英雄横幅：抖音红渐变背景 + 居中超大白色主标题 + 半透明白色 Slogan 副标题 + 白底红字胶囊 CTA 按钮，整体活泼有活力",
+      "sourceHtml": "<section class=\"wemd-hero-banner\" data-variant=\"bytedance-hero-neon\">\n  <section class=\"wemd-component-body\" data-variant=\"bytedance-hero-neon\">\n    <p class=\"wemd-child-1\">激发创造，丰富生活</p>\n    <p class=\"wemd-child-2\">字节跳动让每个人的创造力被看见</p>\n    <p class=\"wemd-child-3\">了解更多</p>\n  </section>\n</section>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": {
+    "component": "hero-banner",
+    "status": "approved",
+    "reviewer": "ai",
+    "comments": ["AI 生成版本默认通过"],
+    "createdAt": "2026-08-06T07:58:20.240Z",
+    "decidedAt": "2026-08-06T07:58:20.240Z"
+  },
+  "decisions": []
+}

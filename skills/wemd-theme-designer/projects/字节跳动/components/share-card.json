@@ -1,0 +1,40 @@
+{
+  "id": "share-card-msh7knw5",
+  "type": "share-card",
+  "name": "share-card",
+  "status": "approved",
+  "currentVersion": 1,
+  "approvedVersion": 1,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "share-card",
+      "variant": "bytedance-share-card",
+      "variantCss": ".wemd-share-card[data-variant=\"bytedance-share-card\"] {\n  background: var(--wemd-bg-soft);\n  border-radius: var(--wemd-border-radius);\n  padding: 20px 24px;\n  margin: 16px 0;\n  text-align: center;\n  border: 1px dashed var(--wemd-border);\n}\n.wemd-share-card[data-variant=\"bytedance-share-card\"] .wemd-component-body {\n  padding: 0;\n}\n.wemd-share-card[data-variant=\"bytedance-share-card\"] .wemd-component-body .wemd-child-1 {\n  color: var(--wemd-text-strong);\n  font-size: 15px;\n  font-weight: 700;\n  margin: 0 0 6px 0;\n}\n.wemd-share-card[data-variant=\"bytedance-share-card\"] .wemd-component-body .wemd-child-2 {\n  color: var(--wemd-text-soft);\n  font-size: 13px;\n  margin: 0;\n}\n.wemd-share-card[data-variant=\"bytedance-share-card\"] .wemd-component-body .wemd-child-3 {\n  display: inline-block;\n  background: var(--wemd-primary);\n  color: #ffffff;\n  font-size: 13px;\n  font-weight: 700;\n  padding: 6px 16px;\n  border-radius: 6px;\n  margin: 8px 0 0 0;\n}",
+      "createdAt": "2026-08-06T07:42:41.913Z",
+      "createdBy": "ai",
+      "status": "approved",
+      "changeLog": "字节跳动分享卡片：浅灰背景虚线边框 + 黑色标题 + 灰色说明 + 品牌红分享按钮",
+      "instruction": "字节跳动分享卡片：浅灰背景虚线边框 + 黑色标题 + 灰色说明 + 品牌红分享按钮",
+      "sourceHtml": "<section class=\"wemd-share-card\" data-variant=\"bytedance-share-card\">\n  <section class=\"wemd-component-body\" data-variant=\"bytedance-share-card\">\n    <p class=\"wemd-child-1\">觉得有用？分享给朋友</p>\n    <p class=\"wemd-child-2\">让更多人了解字节跳动的故事</p>\n    <p class=\"wemd-child-3\">分享给朋友</p>\n  </section>\n</section>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": {
+    "component": "share-card",
+    "status": "approved",
+    "reviewer": "ai",
+    "comments": ["AI 生成版本默认通过"],
+    "createdAt": "2026-08-06T07:58:20.279Z",
+    "decidedAt": "2026-08-06T07:58:20.279Z"
+  },
+  "decisions": []
+}

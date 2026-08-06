@@ -1,0 +1,15 @@
+{
+  "type": "pullquote",
+  "variant": "default",
+  "version": "1.0.0",
+  "label": "段中悬浮引言",
+  "description": "悬浮于段落之中用于强调的引言区块",
+  "author": "wemd",
+  "category": "Structure",
+  "semantic": "Quote",
+  "intent": "highlight",
+  "tags": ["引言", "引用"],
+  "tone": ["neutral", "editorial"],
+  "articleCategories": ["long-form", "editorial"],
+  "insertPosition": ["body"]
+}

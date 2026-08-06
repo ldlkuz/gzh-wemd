@@ -76,7 +76,7 @@
 | C2.3 color 14 色           | `primary`/`primaryDark`/`primaryLight`/`secondary`/`accent`/`background`/`bgSoft`/`bgCard`/`bgMuted`/`textStrong`/`textNormal`/`textSoft`/`border`/`borderSoft` |
 | C2.4 typography            | `fontFamily`/`fontSize`/`lineHeight`/`letterSpacing`/`codeFontFamily` + h1-h4 各 5 字段                                                                         |
 | C2.5 spacing/border/shadow | `pagePadding`(num)/`paragraphMargin`(num) / `radius`(num) / `enabled`(bool)+`value`(str)                                                                        |
-| C2.6 components            | variantCss 选择器格式 `.wemd-xxx[data-variant="yyy"]`                                                                                                           |
+| C2.6 components            | variantCss 选择器格式 `.wemd-xxx[data-variant="yyy"]`（可加 `#wemd` 前缀）                                                                                      |
 | C2.7 layout                | `preferredComponents` + `density`(low/medium/high) + `tone`(非空数组)                                                                                           |
 | C2.8 assets.images         | `key`(非空) + `src`(以 `data:` 或 `assets/` 开头)                                                                                                               |
 
@@ -111,7 +111,7 @@
 
 | 规则         | 说明                                                                           |
 | ------------ | ------------------------------------------------------------------------------ |
-| 合法组件     | 35 个（见下方清单）                                                            |
+| 合法组件     | 44 个（见下方清单）                                                            |
 | 合法 tone    | `warm` / `minimal` / `elegant` / `rational` / `serious` / `modern` / `playful` |
 | 合法 density | `low` / `medium` / `high`                                                      |
 | SDK 版本     | `"1.0.0"`                                                                      |
@@ -147,7 +147,7 @@
 
 ---
 
-## 5. 合法组件清单（35 个）
+## 5. 合法组件清单（44 个）
 
 **default 组（9 个）：**
 `quote-card`, `divider-fancy`, `cta-card`, `code-frame`, `callout-pro`, `stats-block`, `image-grid`, `author-card`, `timeline`
@@ -160,6 +160,9 @@
 
 **magazine 组（18 个，含跨组复用）：**
 `magazine-cover`, `section-divider`, `image-card`, `text-card`, `full-quote`, `two-column-cards`, `end-card`, `product-card`, `brand-sign`, `resource-list`, `testimonial-card`, `series-nav`, `share-card`, `quote-card`, `cta-card`, `divider-fancy`, `hero-banner`, `callout-pro`
+
+**extended 组（9 个）：**
+`article-section`, `code-block`, `callout`, `steps`, `accordion`, `pullquote`, `divider`, `table`, `image-compare`
 
 ---
 

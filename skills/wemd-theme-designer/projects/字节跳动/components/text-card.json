@@ -1,0 +1,40 @@
+{
+  "id": "text-card-msh7knug",
+  "type": "text-card",
+  "name": "text-card",
+  "status": "approved",
+  "currentVersion": 1,
+  "approvedVersion": 1,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "text-card",
+      "variant": "bytedance-card-standard",
+      "variantCss": ".wemd-text-card[data-variant=\"bytedance-card-standard\"] {\n  background: var(--wemd-bg-card);\n  border-radius: var(--wemd-border-radius);\n  padding: 24px 28px;\n  margin: 16px 0;\n  border: 1px solid var(--wemd-border-soft);\n  box-shadow: var(--wemd-shadow);\n}\n.wemd-text-card[data-variant=\"bytedance-card-standard\"] .wemd-component-body {\n  padding: 0;\n}\n.wemd-text-card[data-variant=\"bytedance-card-standard\"] .wemd-component-body .wemd-child-1 {\n  color: var(--wemd-text-strong);\n  font-size: 18px;\n  font-weight: 700;\n  margin: 0 0 12px 0;\n}\n.wemd-text-card[data-variant=\"bytedance-card-standard\"] .wemd-component-body .wemd-child-2,\n.wemd-text-card[data-variant=\"bytedance-card-standard\"] .wemd-component-body .wemd-child-3 {\n  color: var(--wemd-text-normal);\n  font-size: 15px;\n  line-height: 1.75;\n  margin: 0 0 8px 0;\n}",
+      "createdAt": "2026-08-06T07:42:41.851Z",
+      "createdBy": "ai",
+      "status": "approved",
+      "changeLog": "字节跳动文本卡片：白底圆角阴影 + 黑色加粗标题 + 灰色正文",
+      "instruction": "字节跳动文本卡片：白底圆角阴影 + 黑色加粗标题 + 灰色正文",
+      "sourceHtml": "<section class=\"wemd-text-card\" data-variant=\"bytedance-card-standard\">\n  <section class=\"wemd-component-body\" data-variant=\"bytedance-card-standard\">\n    <p class=\"wemd-child-1\">企业使命</p>\n    <p class=\"wemd-child-2\">字节跳动致力于通过技术创新，让信息更高效地流转，激发每个人的创造力，丰富人们的生活。</p>\n  </section>\n</section>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": {
+    "component": "text-card",
+    "status": "approved",
+    "reviewer": "ai",
+    "comments": ["AI 生成版本默认通过"],
+    "createdAt": "2026-08-06T07:58:20.291Z",
+    "decidedAt": "2026-08-06T07:58:20.291Z"
+  },
+  "decisions": []
+}

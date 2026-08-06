@@ -1,0 +1,40 @@
+{
+  "id": "styled-table-msh7m3xx",
+  "type": "styled-table",
+  "name": "styled-table",
+  "status": "approved",
+  "currentVersion": 1,
+  "approvedVersion": 1,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "styled-table",
+      "variant": "bytedance-table-clean",
+      "variantCss": ".wemd-styled-table[data-variant=\"bytedance-table-clean\"] {\n  margin: 16px 0;\n  background: var(--wemd-bg-card);\n  border-radius: var(--wemd-border-radius);\n  overflow: hidden;\n  border: 1px solid var(--wemd-border-soft);\n  box-shadow: var(--wemd-shadow);\n}\n.wemd-styled-table[data-variant=\"bytedance-table-clean\"] .wemd-component-body {\n  padding: 0;\n}\n.wemd-styled-table[data-variant=\"bytedance-table-clean\"] .wemd-component-body .wemd-child-1 {\n  background: var(--wemd-primary);\n  color: #ffffff;\n  font-size: 14px;\n  font-weight: 700;\n  padding: 12px 16px;\n  margin: 0;\n}\n.wemd-styled-table[data-variant=\"bytedance-table-clean\"] .wemd-component-body .wemd-child-2,\n.wemd-styled-table[data-variant=\"bytedance-table-clean\"] .wemd-component-body .wemd-child-3,\n.wemd-styled-table[data-variant=\"bytedance-table-clean\"] .wemd-component-body .wemd-child-4 {\n  color: var(--wemd-text-normal);\n  font-size: 14px;\n  padding: 12px 16px;\n  margin: 0;\n  border-bottom: 1px solid var(--wemd-border-soft);\n}",
+      "createdAt": "2026-08-06T07:43:49.368Z",
+      "createdBy": "ai",
+      "status": "approved",
+      "changeLog": "字节跳动样式表格：白底圆角阴影 + 品牌红表头白字 + 灰色细线分隔的行",
+      "instruction": "字节跳动样式表格：白底圆角阴影 + 品牌红表头白字 + 灰色细线分隔的行",
+      "sourceHtml": "<section class=\"wemd-styled-table\" data-variant=\"bytedance-table-clean\">\n  <section class=\"wemd-component-body\" data-variant=\"bytedance-table-clean\">\n    <p class=\"wemd-child-1\">产品 | 上线时间 | 月活用户</p>\n    <p class=\"wemd-child-2\">抖音 | 2016 | 6亿+</p>\n    <p class=\"wemd-child-3\">今日头条 | 2012 | 3亿+</p>\n    <p class=\"wemd-child-4\">剪映 | 2019 | 1亿+</p>\n  </section>\n</section>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": {
+    "component": "styled-table",
+    "status": "approved",
+    "reviewer": "ai",
+    "comments": ["AI 生成版本默认通过"],
+    "createdAt": "2026-08-06T07:58:20.284Z",
+    "decidedAt": "2026-08-06T07:58:20.284Z"
+  },
+  "decisions": []
+}

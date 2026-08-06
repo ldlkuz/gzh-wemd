@@ -1,0 +1,15 @@
+{
+  "type": "accordion",
+  "variant": "default",
+  "version": "1.0.0",
+  "label": "可折叠面板",
+  "description": "可展开收起内容的折叠问答面板",
+  "author": "wemd",
+  "category": "Interactive",
+  "semantic": "Collapse",
+  "intent": "guide",
+  "tags": ["折叠", "问答"],
+  "tone": ["neutral", "professional"],
+  "articleCategories": ["tutorial", "long-form"],
+  "insertPosition": ["body"]
+}

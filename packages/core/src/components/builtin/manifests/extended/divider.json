@@ -1,0 +1,15 @@
+{
+  "type": "divider",
+  "variant": "default",
+  "version": "1.0.0",
+  "label": "基础分隔线",
+  "description": "用于划分内容段落的基础分隔线",
+  "author": "wemd",
+  "category": "Structure",
+  "semantic": "Separator",
+  "intent": "separate",
+  "tags": ["分隔", "线条"],
+  "tone": ["neutral", "minimal"],
+  "articleCategories": ["long-form", "tutorial"],
+  "insertPosition": ["body"]
+}

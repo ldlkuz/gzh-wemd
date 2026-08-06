@@ -45,6 +45,16 @@ import fullQuoteManifest from "../builtin/manifests/magazine/full-quote.json";
 import twoColumnCardsManifest from "../builtin/manifests/magazine/two-column-cards.json";
 import endCardManifest from "../builtin/manifests/magazine/end-card.json";
 
+import articleSectionManifest from "../builtin/manifests/extended/article-section.json";
+import codeBlockManifest from "../builtin/manifests/extended/code-block.json";
+import calloutManifest from "../builtin/manifests/extended/callout.json";
+import stepsManifest from "../builtin/manifests/extended/steps.json";
+import accordionManifest from "../builtin/manifests/extended/accordion.json";
+import pullquoteManifest from "../builtin/manifests/extended/pullquote.json";
+import dividerManifest from "../builtin/manifests/extended/divider.json";
+import tableManifest from "../builtin/manifests/extended/table.json";
+import imageCompareManifest from "../builtin/manifests/extended/image-compare.json";
+
 // === 导入 CSS（保持现有 exports 兼容） ===
 import {
   componentStylesDefault,
@@ -123,6 +133,25 @@ export function registerBuiltInComponents(registry: ComponentRegistry): void {
     registry.register({
       manifest: manifest as ComponentManifest,
       css: componentStylesMagazine,
+    });
+  }
+
+  // extended 组（9 个扩展组件，暂共享 componentStylesExtra，后续可拆分）
+  const extendedManifests: ComponentManifest[] = [
+    articleSectionManifest,
+    codeBlockManifest,
+    calloutManifest,
+    stepsManifest,
+    accordionManifest,
+    pullquoteManifest,
+    dividerManifest,
+    tableManifest,
+    imageCompareManifest,
+  ];
+  for (const manifest of extendedManifests) {
+    registry.register({
+      manifest: manifest as ComponentManifest,
+      css: componentStylesExtra,
     });
   }
 }

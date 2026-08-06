@@ -4,16 +4,49 @@
 
 // ── 项目状态 ──
 export type ProjectStatus =
-  | "profile-collecting"
-  | "profile-confirmed"
-  | "designing"
-  | "blueprint-ready"
-  | "blueprint-approved"
-  | "compiling"
-  | "compiled"
-  | "reviewing"
-  | "approved"
-  | "locked";
+  | "NEW"          // 项目刚创建，等待 Theme Studio 填写资料
+  | "READY"        // 品牌资料已填写完成
+  | "GENERATING"   // AI Pipeline 执行中
+  | "PREVIEW"      // 生成完成，可预览和修改
+  | "APPROVED"     // 用户审核完成
+  | "EXPORTED";    // 已导出 .wemd-theme
+
+// ── 项目状态文件（state.json）──
+export interface ProjectState {
+  projectId: string;
+  status: ProjectStatus;
+  progress?: {
+    step: number;
+    total: number;
+    current: string;
+    percent: number;
+  };
+  pendingRevisionCount?: number;     // 待处理的组件修改任务数
+  nextAction?: string;               // 给 Skill 的下一步提示（如 "handle-revision-tasks"）
+  updatedAt: string;
+}
+
+// ── 组件修改任务（驳回重生 / 手动修改） ──
+export type RevisionSource = "review-reject" | "user-modify";
+
+export interface ComponentRevisionTask {
+  taskId: string;                    // rev_{ulid}
+  projectId: string;
+  component: string;                 // 组件类型
+  source: RevisionSource;            // 触发来源
+  instruction: string;               // 修改指令
+  baseVersion: number;               // 基于哪个版本修改
+  baseVariant: string;               // 原 variant 名（驳回重生保持不变）
+  baseVariantCss: string;            // 原 CSS
+  baseSourceHtml: string;            // 原 HTML
+  status: "pending" | "processing" | "completed" | "failed";
+  createdAt: string;
+  claimedBy?: "skill";
+  claimedAt?: string;
+  completedAt?: string;
+  outputVersion?: number;
+  error?: string;
+}
 
 // ── 项目主体 ──
 export interface DesignProject {
@@ -91,7 +124,7 @@ export interface ComponentVersion {
 export interface DesignTask {
   taskId: string;
   projectId: string;
-  type: "generate-theme" | "regenerate" | "modify-component" | "compile";
+  type: "generate-theme" | "regenerate" | "compile";
   input: Record<string, unknown>;
   status: "pending" | "processing" | "done" | "failed";
   createdAt: string;

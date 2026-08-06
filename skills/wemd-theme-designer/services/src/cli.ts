@@ -28,7 +28,6 @@ import {
 } from "./task-queue.ts";
 import { join } from "node:path";
 import { ulid, formatTime, colors } from "./utils.ts";
-import { runFullPipeline, generateSlug } from "./pipeline/orchestrator.ts";
 import {
   createComponentVersion,
   getComponentVersions,
@@ -87,9 +86,9 @@ const COMMANDS: Record<string, { desc: string; run: (args: string[]) => Promise<
         if (status.project) {
           const p = status.project;
           const statusColor =
-            p.status === "approved" || p.status === "locked"
+            p.status === "APPROVED" || p.status === "EXPORTED"
               ? colors.green
-              : p.status === "reviewing"
+              : p.status === "GENERATING" || p.status === "PREVIEW"
               ? colors.yellow
               : colors.cyan;
           console.log(
@@ -236,7 +235,7 @@ const COMMANDS: Record<string, { desc: string; run: (args: string[]) => Promise<
       if (action === "create") {
         const [projectId, type] = rest;
         if (!projectId || !type) {
-          console.log(colors.red("用法: task create <项目ID> <generate-theme|regenerate|modify-component|compile>"));
+          console.log(colors.red("用法: task create <项目ID> <generate-theme|regenerate|compile>"));
           return;
         }
         await createTask(projectId, type as any);
@@ -408,152 +407,6 @@ const COMMANDS: Record<string, { desc: string; run: (args: string[]) => Promise<
     },
   },
 
-  pipeline: {
-    desc: "运行完整设计管道  pipeline <projectId> [json]",
-    run: async (args) => {
-      const [projectId, ...extra] = args;
-      if (!projectId) {
-        console.log(colors.red("用法: pipeline <项目ID> [json]"));
-        console.log(colors.dim("  json: 用 JSON 字符串直接传递 profile 和 profileType（不传则读取项目）"));
-        return;
-      }
-
-      let profile: Record<string, unknown>;
-      let profileType: "brand" | "creator";
-      let designMemory: Record<string, unknown> | undefined;
-
-      if (extra.length > 0) {
-        // 从命令行 JSON 解析
-        try {
-          const input = JSON.parse(extra.join(" "));
-          profile = input.profile || {};
-          profileType = input.profileType || "brand";
-          console.log(colors.cyan(`\n运行管道 (CLI 输入): ${profileType}`));
-        } catch {
-          console.log(colors.red("JSON 解析失败，请提供有效的 JSON"));
-          return;
-        }
-      } else {
-        // 从项目读取
-        const project = await getProject(projectId);
-        if (!project) {
-          console.log(colors.red(`项目 "${projectId}" 不存在`));
-          return;
-        }
-        profile = project.profile || {};
-        profileType = project.profileType;
-        designMemory = project.designMemory as Record<string, unknown> | undefined;
-        console.log(colors.cyan(`\n运行管道: ${project.name} (${projectId}) [${profileType}]`));
-
-        if (designMemory) {
-          const dm = designMemory as any;
-          const styleCount = Object.keys(dm.componentStyles || {}).length;
-          const rejectedCount = (dm.rejectedApproaches || []).length;
-          if (styleCount > 0 || rejectedCount > 0) {
-            console.log(colors.dim(`  Design Memory: ${styleCount} 个已确认风格, ${rejectedCount} 个被拒绝方案`));
-          }
-        }
-      }
-
-      console.log(colors.bold("\n╔══════════════════════════════════════╗"));
-      console.log(colors.bold("║   WeMD 5 层设计管道 · 运行中         ║"));
-      console.log(colors.bold("╚══════════════════════════════════════╝\n"));
-
-      const result = await runFullPipeline(profile, profileType, designMemory as any, projectId);
-
-      console.log(colors.bold("\n╔══════════════════════════════════════╗"));
-      console.log(colors.bold(result.success ? "║   运行结果: ✓ 成功" : "║   运行结果: ✗ 失败"));
-      console.log(colors.bold("╚══════════════════════════════════════╝\n"));
-
-      if (result.blueprint) {
-        console.log(colors.green("  ✓ Blueprint 生成"));
-        console.log(`    阅读体验: ${(result.blueprint.readingExperience as any)?.emotion || "—"}`);
-        console.log(`    表达策略: ${(result.blueprint.expression as any)?.type || "—"}`);
-        console.log(`    组件映射: ${(result.blueprint.componentExpression as any)?.mappedComponents?.length || 0} 个`);
-
-        // 保存到项目
-        if (projectId && !(extra.length > 0)) {
-          const { saveBlueprint } = await import("./project-service.ts");
-          await saveBlueprint(projectId, result.blueprint);
-        }
-      }
-
-      if (result.constraintResult) {
-        const cr = result.constraintResult;
-        if (cr.errors.length > 0) {
-          console.log(colors.red(`\n  ✗ 约束错误 (${cr.errors.length}):`));
-          for (const e of cr.errors) {
-            console.log(`    · [${e.rule}] ${e.message}`);
-          }
-        }
-        if (cr.warnings.length > 0) {
-          console.log(colors.yellow(`\n  ⚠ 约束警告 (${cr.warnings.length}):`));
-          for (const w of cr.warnings) {
-            console.log(`    · [${w.rule}] ${w.message}`);
-          }
-        }
-        if (cr.errors.length === 0 && cr.warnings.length === 0) {
-          console.log(colors.green("  ✓ 约束检查全部通过"));
-        }
-      }
-
-      console.log(colors.cyan(`\n  Application Layer: ${result.variants.length} 个组件变体`));
-
-      if (result.compiled) {
-        console.log(colors.green("  ✓ 主题已编译"));
-        if (result.compiled.warnings.length > 0) {
-          console.log(colors.yellow(`  ⚠ 编译警告 (${result.compiled.warnings.length}):`));
-          for (const w of result.compiled.warnings) {
-            console.log(`    · ${w}`);
-          }
-        }
-
-        // 保存 compiled manifest 和 theme package 信息
-        if (projectId) {
-          const manifestPath = getProjectFilePath(projectId, "theme", "manifest.json");
-          await writeJSON(manifestPath, result.compiled.manifest);
-          console.log(colors.green(`  ✓ manifest.json 已保存`));
-
-          // 保存 theme package 信息到项目
-          if (result.compiled.zipPath) {
-            const { saveThemePackage } = await import("./project-service.ts");
-            await saveThemePackage(projectId, {
-              zipPath: result.compiled.zipPath,
-              manifest: result.compiled.manifest,
-            });
-            console.log(colors.green(`  ✓ 主题包已打包: ${result.compiled.zipPath}`));
-          }
-        }
-      }
-
-      if (result.feedback) {
-        const fb = result.feedback;
-        const scoreStr = Object.entries(fb.scores)
-          .map(([k, v]) => `${k}: ${v}`)
-          .join(", ");
-        console.log(colors.bold(`\n  Feedback Layer 质量评估:`));
-        console.log(`    评分: ${scoreStr}`);
-        console.log(`    结果: ${fb.passed ? colors.green("✓ 通过") : colors.yellow("△ 需改进")}`);
-        console.log(`    摘要: ${fb.summary}`);
-        if (fb.suggestions.length > 0) {
-          console.log(colors.dim("    建议:"));
-          for (const s of fb.suggestions) {
-            console.log(`      · ${s}`);
-          }
-        }
-      }
-
-      if (result.errors.length > 0 && !result.success) {
-        console.log(colors.red(`\n  ✗ 管道错误 (${result.errors.length}):`));
-        for (const err of result.errors) {
-          console.log(`    · ${err}`);
-        }
-      }
-
-      console.log(colors.bold(`\n=== 管道完成 ${result.success ? "✓" : "✗"} ===\n`));
-    },
-  },
-
   demo: {
     desc: "运行完整演示流程",
     run: async () => {
@@ -664,6 +517,23 @@ const COMMANDS: Record<string, { desc: string; run: (args: string[]) => Promise<
       startServer();
       console.log(colors.green("\n  ✓ 工作台已启动"));
       console.log(colors.dim("    按 Ctrl+C 停止服务"));
+
+      // 自动打开浏览器
+      const url = "http://127.0.0.1:3456";
+      try {
+        const { exec } = await import("node:child_process");
+        if (process.platform === "win32") {
+          exec(`start ${url}`);
+        } else if (process.platform === "darwin") {
+          exec(`open ${url}`);
+        } else {
+          exec(`xdg-open ${url}`);
+        }
+        console.log(colors.cyan(`  ✓ 浏览器已打开: ${url}`));
+      } catch {
+        console.log(colors.dim(`  请手动打开浏览器访问: ${url}`));
+      }
+
       // 保持进程存活
       await new Promise(() => {});
     },

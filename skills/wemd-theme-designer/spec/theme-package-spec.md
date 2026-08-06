@@ -13,7 +13,7 @@ my-theme.wemd-theme/
 ├── manifest.json          # 必填：主题包声明
 ├── styles/
 │   └── components.css     # 可选：组件样式微调
-├── brand.md               # 可选：品牌语言说明
+├── brand.md               # 必填：品牌语言说明/设计语言说明
 └── assets/
     └── images/            # 可选：图片资源（自动转为 base64 data URL）
 ```
@@ -225,7 +225,7 @@ AI 主题统一走**轨道 B**：所有组件造型通过 `variantCss` 字段自
 
 ## 六、brand.md 写作指南
 
-`brand.md` 是可选文件，内容会被注入 AI 排版 Prompt 的品牌规则块。
+`brand.md` 是必填文件（创作者路线），作为主题的**设计语言说明**，定义品牌风格的语气、排版偏好和视觉关键词。内容会被注入 AI 排版 Prompt 的品牌规则块。
 
 建议包含：
 
@@ -419,7 +419,7 @@ Design Blueprint (来自 Application Layer)
 **打包规则：**
 
 1. 根目录必须有 `manifest.json`
-2. `brand.md`（如有）与 manifest.json 同级
+2. `brand.md`（必填）与 manifest.json 同级
 3. 资源文件放在 `assets/images/` 下（仅方式 C 需要）
 4. 禁止包含 `__MACOSX` / `.DS_Store` 等垃圾文件
 5. 压缩格式：ZIP，扩展名 `.wemd-theme`
@@ -429,7 +429,7 @@ Design Blueprint (来自 Application Layer)
 ```
 {slug}.wemd-theme/
 ├── manifest.json          # 必填
-├── brand.md               # 可选（仅 Brand Profile）
+├── brand.md               # 必填：设计语言说明（主题语言）
 └── assets/
     └── images/            # 可选（仅方式 C 的资源）
         └── logo.svg

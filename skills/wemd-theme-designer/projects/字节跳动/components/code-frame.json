@@ -1,0 +1,40 @@
+{
+  "id": "code-frame-msh7nwz3",
+  "type": "code-frame",
+  "name": "code-frame",
+  "status": "approved",
+  "currentVersion": 1,
+  "approvedVersion": 1,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "code-frame",
+      "variant": "bytedance-codeframe-mac",
+      "variantCss": ".wemd-code-frame[data-variant=\"bytedance-codeframe-mac\"] {\n  background: #1a1a1a;\n  border-radius: 12px;\n  padding: 0;\n  margin: 16px 0;\n  overflow: hidden;\n  border: 1px solid #2a2a2a;\n}\n.wemd-code-frame[data-variant=\"bytedance-codeframe-mac\"] .wemd-component-body {\n  padding: 0;\n}\n.wemd-code-frame[data-variant=\"bytedance-codeframe-mac\"] .wemd-component-body .wemd-child-1 {\n  background: #2a2a2a;\n  color: var(--wemd-text-soft);\n  font-size: 12px;\n  font-weight: 500;\n  padding: 10px 16px;\n  margin: 0;\n  border-bottom: 1px solid #3a3a3a;\n}\n.wemd-code-frame[data-variant=\"bytedance-codeframe-mac\"] .wemd-component-body .wemd-child-2 {\n  color: #e5e7eb;\n  font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;\n  font-size: 13px;\n  line-height: 1.7;\n  padding: 16px 20px;\n  margin: 0;\n  white-space: pre;\n}",
+      "createdAt": "2026-08-06T07:45:13.651Z",
+      "createdBy": "ai",
+      "status": "approved",
+      "changeLog": "字节跳动代码框：Mac 风格深色背景圆角 + 顶部灰栏文件名 + 等宽字体代码",
+      "instruction": "字节跳动代码框：Mac 风格深色背景圆角 + 顶部灰栏文件名 + 等宽字体代码",
+      "sourceHtml": "<section class=\"wemd-code-frame\" data-variant=\"bytedance-codeframe-mac\">\n  <section class=\"wemd-component-body\" data-variant=\"bytedance-codeframe-mac\">\n    <p class=\"wemd-child-1\">● ● ● app.js</p>\n    <p class=\"wemd-child-2\">const app = createApp();\napp.listen(3000, () => {\n  console.log('Server running');\n});</p>\n  </section>\n</section>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": {
+    "component": "code-frame",
+    "status": "approved",
+    "reviewer": "ai",
+    "comments": ["AI 生成版本默认通过"],
+    "createdAt": "2026-08-06T07:58:20.223Z",
+    "decidedAt": "2026-08-06T07:58:20.223Z"
+  },
+  "decisions": []
+}

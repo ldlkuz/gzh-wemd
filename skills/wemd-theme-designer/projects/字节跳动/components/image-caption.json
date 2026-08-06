@@ -1,0 +1,40 @@
+{
+  "id": "image-caption-msh7m3z6",
+  "type": "image-caption",
+  "name": "image-caption",
+  "status": "approved",
+  "currentVersion": 1,
+  "approvedVersion": 1,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "image-caption",
+      "variant": "bytedance-caption-clean",
+      "variantCss": ".wemd-image-caption[data-variant=\"bytedance-caption-clean\"] {\n  margin: 16px 0;\n  text-align: center;\n}\n.wemd-image-caption[data-variant=\"bytedance-caption-clean\"] .wemd-component-body {\n  padding: 0;\n}\n.wemd-image-caption[data-variant=\"bytedance-caption-clean\"] .wemd-component-body .wemd-child-1 {\n  margin: 0 0 8px 0;\n}\n.wemd-image-caption[data-variant=\"bytedance-caption-clean\"] .wemd-component-body .wemd-child-2 {\n  color: var(--wemd-text-soft);\n  font-size: 13px;\n  margin: 0;\n  padding: 0 16px;\n}",
+      "createdAt": "2026-08-06T07:43:49.413Z",
+      "createdBy": "ai",
+      "status": "approved",
+      "changeLog": "字节跳动图片说明：居中布局 + 灰色小字说明",
+      "instruction": "字节跳动图片说明：居中布局 + 灰色小字说明",
+      "sourceHtml": "<section class=\"wemd-image-caption\" data-variant=\"bytedance-caption-clean\">\n  <section class=\"wemd-component-body\" data-variant=\"bytedance-caption-clean\">\n    <p class=\"wemd-child-1\"><img src=\"https://via.placeholder.com/600x360\" alt=\"图片\"/></p>\n    <p class=\"wemd-child-2\">字节跳动 2024 年度产品发布会现场</p>\n  </section>\n</section>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": {
+    "component": "image-caption",
+    "status": "approved",
+    "reviewer": "ai",
+    "comments": ["AI 生成版本默认通过"],
+    "createdAt": "2026-08-06T07:58:20.242Z",
+    "decidedAt": "2026-08-06T07:58:20.242Z"
+  },
+  "decisions": []
+}

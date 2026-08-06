@@ -1,0 +1,15 @@
+{
+  "type": "article-section",
+  "variant": "default",
+  "version": "1.0.0",
+  "label": "大章节标题",
+  "description": "用于划分文章大段内容的章节标题区块",
+  "author": "wemd",
+  "category": "Structure",
+  "semantic": "Heading",
+  "intent": "guide",
+  "tags": ["章节", "结构"],
+  "tone": ["neutral", "professional"],
+  "articleCategories": ["long-form", "tutorial"],
+  "insertPosition": ["body"]
+}

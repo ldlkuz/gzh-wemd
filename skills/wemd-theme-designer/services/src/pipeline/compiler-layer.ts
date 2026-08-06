@@ -26,21 +26,33 @@ export function compileTheme(
   const readingExp = blueprint.readingExperience as Record<string, unknown> | undefined;
   const profileType = blueprint.profileType as string | undefined;
 
-  // 1. 构建 manifest
+  // 1. 构建 manifest（对齐主程序 ThemePackageManifest schema）
+  const projectName = (blueprint.projectName as string) || "Generated Theme";
+  const keywordsRaw = brandExpr?.keywords;
+  // keywords 必须是非空字符串数组：blueprint 里可能是对象（{科技: "描述"}），需规范化
+  const keywords: string[] = Array.isArray(keywordsRaw)
+    ? keywordsRaw.filter((k): k is string => typeof k === "string" && k.length > 0)
+    : keywordsRaw && typeof keywordsRaw === "object"
+      ? Object.keys(keywordsRaw as Record<string, unknown>)
+      : [];
+  const keywordsFinal = keywords.length > 0 ? keywords : ["默认"];
+
   const manifest: Record<string, unknown> = {
     sdkVersion: "1.0.0",
     meta: {
-      name: (blueprint.projectName as string) || "Generated Theme",
+      id: slugify(projectName),
+      name: projectName,
       description: "由 WeMD Design Pipeline 自动生成",
-      keywords: (brandExpr?.keywords as string[]) || [],
+      keywords: keywordsFinal,
       author: "WeMD Pipeline",
       version: "1.0.0",
     },
     tokens: {
-      colors: formatColors(colors),
-      typography: visual?.typography || {},
-      spacing: visual?.spacing || {},
-      border: visual?.border || {},
+      color: colors,                          // 单数，直接用 blueprint 的 colors（已是 {primary: "#xxx"} 格式）
+      typography: buildTypography(visual?.typography as Record<string, unknown> | undefined, colors),
+      spacing: visual?.spacing || { pagePadding: 20, paragraphMargin: 14 },
+      border: visual?.border || { radius: 8 },
+      shadow: (visual?.shadow as Record<string, unknown>) || { enabled: true, value: "0 2px 8px rgba(0,0,0,0.08)" },
     },
     layout: {
       preferredComponents: mapped?.map((m) => ({
@@ -50,16 +62,20 @@ export function compileTheme(
       density: (readingExp?.density as string) || "medium",
       tone: (readingExp?.tone as string[]) || ["modern"],
     },
-    components: variants.map((v) => ({
-      name: v.component,
-      variant: v.variant,
-      variantCss: v.variantCss,
-    })),
+    components: Object.fromEntries(
+      variants.map((v) => [
+        v.component,
+        {
+          enabled: true,
+          variant: v.variant,
+          variantCss: v.variantCss,
+        },
+      ])
+    ),
     assets: {
       images: Object.entries(materials).map(([key, svg]) => ({
-        name: key,
-        data: svg,
-        type: "svg",
+        key: key,
+        src: svg.startsWith("data:") ? svg : `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`,
       })),
     },
   };
@@ -236,13 +252,48 @@ export async function packageThemeZip(
   return zipPath;
 }
 
-// ── 格式化颜色为 --wemd-xxx 格式 ──
-function formatColors(colors: Record<string, string>): Record<string, string> {
-  const formatted: Record<string, string> = {};
-  for (const [key, value] of Object.entries(colors)) {
-    formatted[`--wemd-${key}`] = value;
+// ── 构建 typography（对齐主程序 TypographyTokens schema）──
+function buildTypography(
+  v: Record<string, unknown> | undefined,
+  colors: Record<string, string>
+): Record<string, unknown> {
+  v = v || {};
+  const textStrong = colors.textStrong || "#1a1a1a";
+  const scale = (v.headingScale as Record<string, number>) || { h1: 28, h2: 22, h3: 18, h4: 16 };
+  const weight = (v.headingWeight as string) || "700";
+
+  // 构建 heading 对象：每个 h 级别一个完整对象
+  const heading: Record<string, Record<string, unknown>> = {};
+  const marginTopMap: Record<string, number> = { h1: 24, h2: 20, h3: 16, h4: 14 };
+  const marginBottomMap: Record<string, number> = { h1: 16, h2: 12, h3: 10, h4: 8 };
+  for (const h of ["h1", "h2", "h3", "h4"]) {
+    heading[h] = {
+      fontSize: scale[h] || 16,
+      color: textStrong,
+      marginTop: marginTopMap[h],
+      marginBottom: marginBottomMap[h],
+      fontWeight: weight,
+    };
   }
-  return formatted;
+
+  return {
+    fontFamily: v.fontFamily || v.familyValue || "-apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif",
+    fontSize: v.fontSize || "16px",
+    lineHeight: String(v.lineHeight ?? 1.75),   // 数字 → 字符串
+    letterSpacing: v.letterSpacing ?? 0.2,
+    heading,
+    codeFontFamily: "'JetBrains Mono', 'SF Mono', Consolas, monospace",
+  };
+}
+
+// ── 项目名转 slug（作为 meta.id）──
+function slugify(name: string): string {
+  // 中文保留，其他字符转 -
+  const slug = name
+    .toLowerCase()
+    .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return slug || "theme";
 }
 
 // ── 提取 variantCss 映射 ──

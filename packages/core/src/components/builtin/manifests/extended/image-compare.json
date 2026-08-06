@@ -1,0 +1,15 @@
+{
+  "type": "image-compare",
+  "variant": "default",
+  "version": "1.0.0",
+  "label": "图片对比",
+  "description": "用于并排展示对比效果的图片区块",
+  "author": "wemd",
+  "category": "Data",
+  "semantic": "Compare",
+  "intent": "showcase",
+  "tags": ["对比", "图片"],
+  "tone": ["neutral", "professional"],
+  "articleCategories": ["showcase", "tutorial"],
+  "insertPosition": ["body"]
+}

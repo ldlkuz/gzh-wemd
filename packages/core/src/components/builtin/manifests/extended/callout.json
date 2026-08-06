@@ -1,0 +1,15 @@
+{
+  "type": "callout",
+  "variant": "default",
+  "version": "1.0.0",
+  "label": "轻量提示框",
+  "description": "用于强调提示信息的轻量级callout区块",
+  "author": "wemd",
+  "category": "Interactive",
+  "semantic": "Note",
+  "intent": "guide",
+  "tags": ["提示", "注意"],
+  "tone": ["neutral", "friendly"],
+  "articleCategories": ["tutorial", "long-form"],
+  "insertPosition": ["body"]
+}

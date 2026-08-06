@@ -5,16 +5,49 @@
 
 // ── 项目状态 ──
 export type ProjectStatus =
-  | "profile-collecting"
-  | "profile-confirmed"
-  | "designing"
-  | "blueprint-ready"
-  | "blueprint-approved"
-  | "compiling"
-  | "compiled"
-  | "reviewing"
-  | "approved"
-  | "locked";
+  | "NEW"          // 项目刚创建，等待 Theme Studio 填写资料
+  | "READY"        // 品牌资料已填写完成
+  | "GENERATING"   // AI Pipeline 执行中
+  | "PREVIEW"      // 生成完成，可预览和修改
+  | "APPROVED"     // 用户审核完成
+  | "EXPORTED";    // 已导出 .wemd-theme
+
+// ── 项目状态文件（state.json）──
+export interface ProjectState {
+  projectId: string;
+  status: ProjectStatus;
+  progress?: {
+    step: number;
+    total: number;
+    current: string;
+    percent: number;
+  };
+  pendingRevisionCount?: number;     // 待处理的组件修改任务数
+  nextAction?: string;               // 给 Skill 的下一步提示（如 "handle-revision-tasks"）
+  updatedAt: string;
+}
+
+// ── 组件修改任务（驳回重生 / 手动修改都写这个） ──
+export type RevisionSource = "review-reject" | "user-modify";
+
+export interface ComponentRevisionTask {
+  taskId: string;                    // rev_{ulid}
+  projectId: string;
+  component: string;                 // 组件类型（如 hero-banner）
+  source: RevisionSource;            // 触发来源
+  instruction: string;               // 修改指令（驳回意见 / 用户指令）
+  baseVersion: number;               // 基于哪个版本修改
+  baseVariant: string;               // 原 variant 名（驳回重生保持不变，防止脱离整体方案）
+  baseVariantCss: string;            // 原 CSS（作为修改基准）
+  baseSourceHtml: string;            // 原 HTML（作为修改基准）
+  status: "pending" | "processing" | "completed" | "failed";
+  createdAt: string;
+  claimedBy?: "skill";               // 谁领取了任务
+  claimedAt?: string;
+  completedAt?: string;
+  outputVersion?: number;            // 生成的新版本号
+  error?: string;
+}
 
 // ── 项目主体 ──
 export interface DesignProject {

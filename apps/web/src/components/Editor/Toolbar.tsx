@@ -10,6 +10,7 @@ import {
   ListEnd,
   WrapText,
   LayoutTemplate,
+  FileText,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -18,6 +19,8 @@ import {
   formatImageSize,
 } from "../../services/image/autoCompressImage";
 import { uploadEditorImage } from "../../services/image/imageUploadFlow";
+import { useEditorStore } from "../../store/editorStore";
+import { resolveAppAssetPath } from "../../utils/assetPath";
 import { CurrentThemeBadge } from "./CurrentThemeBadge";
 import {
   blockTools,
@@ -251,6 +254,25 @@ export function Toolbar({
     });
   };
 
+  const handleLoadSampleArticle = async () => {
+    const loadingToastId = toast.loading("正在加载全组件范文...");
+    try {
+      // 使用相对路径，兼容 dev(http) 与打包后(file://)环境
+      const response = await fetch(resolveAppAssetPath("default-article.md"));
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      const markdown = await response.text();
+      useEditorStore.getState().setMarkdown(markdown);
+      toast.success("已加载全组件范文", { duration: 2000 });
+    } catch (error) {
+      console.error("加载范文失败:", error);
+      toast.error("加载范文失败，请检查文件是否存在");
+    } finally {
+      toast.dismiss(loadingToastId);
+    }
+  };
+
   return (
     <div className="md-toolbar">
       {/* 文本格式工具 */}
@@ -451,6 +473,15 @@ export function Toolbar({
         ) : (
           <Image size={16} />
         )}
+      </button>
+
+      {/* 加载全组件范文（主题渲染测试用） */}
+      <button
+        className="md-toolbar-btn"
+        onClick={handleLoadSampleArticle}
+        data-tooltip="加载全组件范文（主题渲染测试）"
+      >
+        <FileText size={16} />
       </button>
 
       {/* AI 转 Markdown */}

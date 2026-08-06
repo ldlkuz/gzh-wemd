@@ -1,0 +1,15 @@
+{
+  "type": "steps",
+  "variant": "default",
+  "version": "1.0.0",
+  "label": "步骤流程",
+  "description": "按顺序展示操作步骤的流程化区块",
+  "author": "wemd",
+  "category": "Interactive",
+  "semantic": "Guide",
+  "intent": "guide",
+  "tags": ["步骤", "教程"],
+  "tone": ["neutral", "professional"],
+  "articleCategories": ["tutorial"],
+  "insertPosition": ["body"]
+}

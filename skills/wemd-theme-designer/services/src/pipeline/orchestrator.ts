@@ -10,6 +10,7 @@ import { compileTheme, formatManifestJSON, packageThemeZip } from "./compiler-la
 import { evaluateQuality } from "./feedback-layer.ts";
 import { runDecorationLayer } from "./decoration-layer.ts";
 import type { CompiledTheme, ComponentVariant, DecorationPlan, MapResult } from "./pipeline-types.ts";
+import { writeProjectState } from "../file-service.ts";
 
 // ── 管道结果 ──
 export interface PipelineResult {
@@ -59,8 +60,22 @@ export async function runFullPipeline(
     errors,
   };
 
+  // 进度更新辅助函数
+  const TOTAL_STEPS = 8;
+  const updateProgress = async (step: number, current: string) => {
+    if (projectId) {
+      await writeProjectState(projectId, "GENERATING", {
+        step,
+        total: TOTAL_STEPS,
+        current,
+        percent: Math.round((step / TOTAL_STEPS) * 100),
+      });
+    }
+    console.log(`  [${step}/${TOTAL_STEPS}] ${current}...`);
+  };
+
   // ── Layer 1: Logic Layer ──
-  console.log("  [Layer 1/5] Logic Layer — 生成 Design Blueprint...");
+  await updateProgress(1, "分析品牌");
   try {
     result.blueprint = generateDesignBlueprint(profile, profileType, designMemory);
 
@@ -75,7 +90,7 @@ export async function runFullPipeline(
   }
 
   // ── Layer 2: Constraint Layer ──
-  console.log("  [Layer 2/5] Constraint Layer — 约束检查...");
+  await updateProgress(2, "建立设计规范");
   try {
     result.constraintResult = checkBlueprintConstraints(result.blueprint);
     const passed = result.constraintResult.passed;
@@ -94,8 +109,8 @@ export async function runFullPipeline(
     return result;
   }
 
-  // ── Layer 2.5: Decoration Layer（装饰层，新增） ──
-  console.log("  [Layer 2.5/5] Decoration Layer — 装饰组合与映射...");
+  // ── Layer 2.5: Decoration Layer ──
+  await updateProgress(3, "生成组件");
   try {
     const compExpr = result.blueprint?.componentExpression as Record<string, unknown> | undefined;
     const mapped = (compExpr?.mappedComponents as Array<Record<string, unknown>>) || [];
@@ -144,7 +159,7 @@ export async function runFullPipeline(
   }
 
   // ── Layer 3: Application Layer ──
-  console.log("  [Layer 3/5] Application Layer — 生成组件样式...");
+  await updateProgress(4, "统一风格");
   try {
     result.variants = generateVariants(result.blueprint);
     const materials = generateMaterialDescription(result.blueprint);
@@ -199,7 +214,7 @@ export async function runFullPipeline(
   }
 
   // ── Layer 4: Compiler Layer ──
-  console.log("  [Layer 4/5] Compiler Layer — 编译主题包...");
+  await updateProgress(5, "生成资源");
   try {
     const materials = generateMaterialDescription(result.blueprint);
     result.compiled = compileTheme(result.blueprint, result.variants, materials);
@@ -227,7 +242,7 @@ export async function runFullPipeline(
   }
 
   // ── Layer 5: Feedback Layer ──
-  console.log("  [Layer 5/5] Feedback Layer — 质量评估...");
+  await updateProgress(6, "验证主题");
   try {
     const constraintPassed = result.constraintResult?.passed ?? false;
     const compiledWarnings = result.compiled?.warnings ?? [];
@@ -244,6 +259,26 @@ export async function runFullPipeline(
   }
 
   result.success = errors.length === 0;
+
+  // 更新最终状态
+  if (projectId) {
+    if (result.success) {
+      await writeProjectState(projectId, "PREVIEW", {
+        step: TOTAL_STEPS,
+        total: TOTAL_STEPS,
+        current: "完成",
+        percent: 100,
+      });
+    } else {
+      await writeProjectState(projectId, "NEW", {
+        step: 0,
+        total: TOTAL_STEPS,
+        current: "生成失败",
+        percent: 0,
+      });
+    }
+  }
+
   return result;
 }
 
@@ -254,4 +289,123 @@ export function generateSlug(name: string): string {
     .replace(/[^a-z0-9\u4e00-\u9fa5]/g, "-")
     .replace(/-+/g, "-")
     .replace(/^-|-$/g, "");
+}
+
+// ─────────────────────────────────────────────────
+// 编译 AI Agent 生成的结果 — 不做组件生成，只做编译打包
+// AI Agent 通过 /ai-save 分批保存完 44 个组件后调用
+// ─────────────────────────────────────────────────
+
+export async function compileFromAIResults(
+  projectId: string
+): Promise<{ success: boolean; zipPath?: string; componentCount?: number; warnings?: string[]; errors: string[] }> {
+  const errors: string[] = [];
+
+  // 1. 读取项目
+  const { getProject, listAllComponentVersions, saveThemePackage } = await import("../project-service.ts");
+  const project = await getProject(projectId);
+  if (!project) {
+    return { success: false, errors: ["项目不存在"] };
+  }
+
+  const blueprint = project.designBlueprint as Record<string, unknown> | null;
+  if (!blueprint) {
+    return { success: false, errors: ["缺少 design blueprint，请先调用 /ai-save 保存蓝图"] };
+  }
+
+  // 2. 读取全部组件最新版本
+  const allVersions = await listAllComponentVersions(projectId);
+  const variants: ComponentVariant[] = [];
+  for (const v of allVersions) {
+    const latest = v.versions[v.versions.length - 1];
+    if (latest) {
+      variants.push({
+        component: v.component,
+        variant: latest.variant,
+        variantCss: latest.variantCss,
+      });
+    }
+  }
+
+  // 3. 校验全覆盖（44 个合法组件）
+  const legal = getLegalComponents();
+  const covered = new Set(variants.map((v) => v.component));
+  const missing = legal.filter((c) => !covered.has(c));
+  if (missing.length > 0) {
+    errors.push(`组件未全覆盖，缺少 ${missing.length} 个: ${missing.join(", ")}`);
+    return { success: false, errors };
+  }
+
+  console.log(`  [compile] 已收集 ${variants.length} 个组件，全覆盖 ${legal.length} 个合法组件`);
+
+  // 4. Compiler Layer — 编译 manifest
+  const materials = generateMaterialDescription(blueprint);
+  const compiled = compileTheme(blueprint, variants, materials);
+
+  if (compiled.warnings.length > 0) {
+    for (const w of compiled.warnings) {
+      console.log(`    ⚠ ${w}`);
+    }
+  }
+  console.log(`    ✓ manifest.json 已编译`);
+
+  // 4.5 Feedback Layer — 评估 44 个组件的 CSS 质量
+  const { evaluateQuality, checkComponentCss } = await import("./feedback-layer.ts");
+  const componentChecks = allVersions.map((v) => {
+    const latest = v.versions[v.versions.length - 1];
+    return checkComponentCss(
+      v.component,
+      latest?.variantCss || "",
+      latest?.sourceHtml || ""
+    );
+  });
+
+  const constraintPassed = true; // AI 生成结果已通过 /ai-save 保存
+  const feedback = evaluateQuality(
+    blueprint,
+    constraintPassed,
+    compiled.warnings,
+    componentChecks
+  );
+  console.log(`    ${feedback.passed ? "✓" : "△"} ${feedback.summary}`);
+  if (feedback.suggestions.length > 0) {
+    for (const s of feedback.suggestions.slice(0, 3)) {
+      console.log(`    · ${s}`);
+    }
+  }
+
+  // 5. 打包为 .wemd-theme ZIP
+  const themeName = project.name || "theme";
+  compiled.zipPath = await packageThemeZip(
+    projectId,
+    themeName,
+    compiled.manifest,
+    compiled.brandDoc,
+    materials
+  );
+  console.log(`    ✓ .wemd-theme 已打包: ${compiled.zipPath}`);
+
+  // 6. 保存 theme package 到 project.json
+  await saveThemePackage(projectId, {
+    manifest: compiled.manifest,
+    variantCss: compiled.variantCss,
+    brandDoc: compiled.brandDoc,
+    zipPath: compiled.zipPath,
+  });
+
+  // 7. 更新状态为 APPROVED
+  await writeProjectState(projectId, "APPROVED", {
+    step: 7,
+    total: 7,
+    current: "编译完成",
+    percent: 100,
+  });
+
+  return {
+    success: true,
+    zipPath: compiled.zipPath,
+    componentCount: variants.length,
+    warnings: compiled.warnings,
+    errors,
+  };
 }

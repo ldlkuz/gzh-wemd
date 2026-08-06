@@ -1,0 +1,40 @@
+{
+  "id": "timeline-msh7m3yb",
+  "type": "timeline",
+  "name": "timeline",
+  "status": "approved",
+  "currentVersion": 1,
+  "approvedVersion": 1,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "timeline",
+      "variant": "bytedance-timeline-dot",
+      "variantCss": ".wemd-timeline[data-variant=\"bytedance-timeline-dot\"] {\n  margin: 16px 0;\n  padding: 8px 0 8px 16px;\n  border-left: 2px solid var(--wemd-primary);\n}\n.wemd-timeline[data-variant=\"bytedance-timeline-dot\"] .wemd-component-body {\n  padding: 0;\n}\n.wemd-timeline[data-variant=\"bytedance-timeline-dot\"] .wemd-component-body .wemd-child-1,\n.wemd-timeline[data-variant=\"bytedance-timeline-dot\"] .wemd-component-body .wemd-child-3,\n.wemd-timeline[data-variant=\"bytedance-timeline-dot\"] .wemd-component-body .wemd-child-5 {\n  color: var(--wemd-primary);\n  font-size: 13px;\n  font-weight: 700;\n  margin: 0 0 4px 0;\n  padding-left: 12px;\n  position: relative;\n}\n.wemd-timeline[data-variant=\"bytedance-timeline-dot\"] .wemd-component-body .wemd-child-2,\n.wemd-timeline[data-variant=\"bytedance-timeline-dot\"] .wemd-component-body .wemd-child-4,\n.wemd-timeline[data-variant=\"bytedance-timeline-dot\"] .wemd-component-body .wemd-child-6 {\n  color: var(--wemd-text-normal);\n  font-size: 14px;\n  line-height: 1.7;\n  margin: 0 0 16px 0;\n  padding-left: 12px;\n}",
+      "createdAt": "2026-08-06T07:43:49.381Z",
+      "createdBy": "ai",
+      "status": "approved",
+      "changeLog": "字节跳动时间线：左侧品牌红粗竖线 + 品牌红年份 + 灰色事件描述",
+      "instruction": "字节跳动时间线：左侧品牌红粗竖线 + 品牌红年份 + 灰色事件描述",
+      "sourceHtml": "<section class=\"wemd-timeline\" data-variant=\"bytedance-timeline-dot\">\n  <section class=\"wemd-component-body\" data-variant=\"bytedance-timeline-dot\">\n    <p class=\"wemd-child-1\">2012</p>\n    <p class=\"wemd-child-2\">今日头条上线，开启个性化推荐时代</p>\n    <p class=\"wemd-child-3\">2016</p>\n    <p class=\"wemd-child-4\">抖音短视频上线，风靡全球</p>\n  </section>\n</section>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": {
+    "component": "timeline",
+    "status": "approved",
+    "reviewer": "ai",
+    "comments": ["AI 生成版本默认通过"],
+    "createdAt": "2026-08-06T07:58:20.293Z",
+    "decidedAt": "2026-08-06T07:58:20.293Z"
+  },
+  "decisions": []
+}

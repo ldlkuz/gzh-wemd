@@ -1,0 +1,15 @@
+{
+  "type": "table",
+  "variant": "default",
+  "version": "1.0.0",
+  "label": "基础表格",
+  "description": "用于展示结构化数据的基础表格区块",
+  "author": "wemd",
+  "category": "Data",
+  "semantic": "Table",
+  "intent": "inform",
+  "tags": ["表格", "数据"],
+  "tone": ["neutral", "professional"],
+  "articleCategories": ["tutorial", "long-form"],
+  "insertPosition": ["body"]
+}

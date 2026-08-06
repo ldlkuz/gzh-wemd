@@ -1,0 +1,40 @@
+{
+  "id": "image-compare-msh7m3yn",
+  "type": "image-compare",
+  "name": "image-compare",
+  "status": "approved",
+  "currentVersion": 1,
+  "approvedVersion": 1,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "image-compare",
+      "variant": "bytedance-compare-side",
+      "variantCss": ".wemd-image-compare[data-variant=\"bytedance-compare-side\"] {\n  margin: 16px 0;\n}\n.wemd-image-compare[data-variant=\"bytedance-compare-side\"] .wemd-component-body {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 12px;\n}\n.wemd-image-compare[data-variant=\"bytedance-compare-side\"] .wemd-component-body .wemd-child-1 {\n  flex: 1;\n  min-width: 45%;\n  background: var(--wemd-bg-soft);\n  border-radius: var(--wemd-border-radius);\n  padding: 8px;\n  margin: 0;\n  text-align: center;\n}\n.wemd-image-compare[data-variant=\"bytedance-compare-side\"] .wemd-component-body .wemd-child-2 {\n  flex: 1;\n  min-width: 45%;\n  background: var(--wemd-primary-light);\n  border-radius: var(--wemd-border-radius);\n  padding: 8px;\n  margin: 0;\n  text-align: center;\n}\n.wemd-image-compare[data-variant=\"bytedance-compare-side\"] .wemd-component-body .wemd-child-3 {\n  color: var(--wemd-text-soft);\n  font-size: 13px;\n  margin: 12px 0 0 0;\n  text-align: center;\n  width: 100%;\n}",
+      "createdAt": "2026-08-06T07:43:49.394Z",
+      "createdBy": "ai",
+      "status": "approved",
+      "changeLog": "字节跳动图片对比：flex 双列布局 + 灰底/浅红底对比 + 居中说明",
+      "instruction": "字节跳动图片对比：flex 双列布局 + 灰底/浅红底对比 + 居中说明",
+      "sourceHtml": "<section class=\"wemd-image-compare\" data-variant=\"bytedance-compare-side\">\n  <section class=\"wemd-component-body\" data-variant=\"bytedance-compare-side\">\n    <p class=\"wemd-child-1\">优化前：界面复杂，操作繁琐</p>\n    <p class=\"wemd-child-2\">优化后：简洁直观，一键搞定</p>\n    <p class=\"wemd-child-3\">UI 全面升级，提升用户体验</p>\n  </section>\n</section>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": {
+    "component": "image-compare",
+    "status": "approved",
+    "reviewer": "ai",
+    "comments": ["AI 生成版本默认通过"],
+    "createdAt": "2026-08-06T07:58:20.253Z",
+    "decidedAt": "2026-08-06T07:58:20.253Z"
+  },
+  "decisions": []
+}

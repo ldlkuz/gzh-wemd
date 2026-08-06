@@ -1,0 +1,40 @@
+{
+  "id": "cta-card-msh7knvy",
+  "type": "cta-card",
+  "name": "cta-card",
+  "status": "approved",
+  "currentVersion": 1,
+  "approvedVersion": 1,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "cta-card",
+      "variant": "bytedance-cta-bold",
+      "variantCss": ".wemd-cta-card[data-variant=\"bytedance-cta-bold\"] {\n  background: linear-gradient(135deg, var(--wemd-primary), var(--wemd-primary-dark));\n  border-radius: var(--wemd-border-radius);\n  padding: 32px 28px;\n  margin: 24px 0;\n  text-align: center;\n  box-shadow: var(--wemd-shadow);\n}\n.wemd-cta-card[data-variant=\"bytedance-cta-bold\"] .wemd-component-body {\n  padding: 0;\n}\n.wemd-cta-card[data-variant=\"bytedance-cta-bold\"] .wemd-component-body .wemd-child-1 {\n  color: #ffffff;\n  font-size: 22px;\n  font-weight: 700;\n  margin: 0 0 8px 0;\n}\n.wemd-cta-card[data-variant=\"bytedance-cta-bold\"] .wemd-component-body .wemd-child-2 {\n  color: rgba(255, 255, 255, 0.9);\n  font-size: 14px;\n  margin: 0 0 20px 0;\n}\n.wemd-cta-card[data-variant=\"bytedance-cta-bold\"] .wemd-component-body .wemd-child-3 {\n  display: inline-block;\n  background: #ffffff;\n  color: var(--wemd-primary);\n  font-size: 15px;\n  font-weight: 700;\n  padding: 10px 32px;\n  border-radius: 999px;\n  margin: 0;\n}",
+      "createdAt": "2026-08-06T07:42:41.906Z",
+      "createdBy": "ai",
+      "status": "approved",
+      "changeLog": "字节跳动 CTA 卡片：品牌红渐变背景 + 白色大标题 + 半透明白色说明 + 白底红字胶囊按钮",
+      "instruction": "字节跳动 CTA 卡片：品牌红渐变背景 + 白色大标题 + 半透明白色说明 + 白底红字胶囊按钮",
+      "sourceHtml": "<section class=\"wemd-cta-card\" data-variant=\"bytedance-cta-bold\">\n  <section class=\"wemd-component-body\" data-variant=\"bytedance-cta-bold\">\n    <p class=\"wemd-child-1\">加入字节跳动</p>\n    <p class=\"wemd-child-2\">与全球优秀人才一起，用技术激发创造</p>\n    <p class=\"wemd-child-3\">查看职位</p>\n  </section>\n</section>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": {
+    "component": "cta-card",
+    "status": "approved",
+    "reviewer": "ai",
+    "comments": ["AI 生成版本默认通过"],
+    "createdAt": "2026-08-06T07:58:20.227Z",
+    "decidedAt": "2026-08-06T07:58:20.227Z"
+  },
+  "decisions": []
+}

@@ -1,0 +1,40 @@
+{
+  "id": "article-section-msh7pgl4",
+  "type": "article-section",
+  "name": "article-section",
+  "status": "approved",
+  "currentVersion": 1,
+  "approvedVersion": 1,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "article-section",
+      "variant": "bytedance-article-section",
+      "variantCss": ".wemd-article-section[data-variant=\"bytedance-article-section\"] {\n  margin: 20px 0;\n  padding: 0;\n}\n.wemd-article-section[data-variant=\"bytedance-article-section\"] .wemd-component-body {\n  padding: 0;\n}\n.wemd-article-section[data-variant=\"bytedance-article-section\"] .wemd-component-body .wemd-child-1 {\n  color: var(--wemd-text-strong);\n  font-size: 16px;\n  line-height: 1.75;\n  margin: 0 0 12px 0;\n}\n.wemd-article-section[data-variant=\"bytedance-article-section\"] .wemd-component-body .wemd-child-2 {\n  color: var(--wemd-text-normal);\n  font-size: 15px;\n  line-height: 1.8;\n  margin: 0;\n}",
+      "createdAt": "2026-08-06T07:46:25.722Z",
+      "createdBy": "ai",
+      "status": "approved",
+      "changeLog": "字节跳动文章段落：黑色段落标题 + 灰色正文，标准排版",
+      "instruction": "字节跳动文章段落：黑色段落标题 + 灰色正文，标准排版",
+      "sourceHtml": "<section class=\"wemd-article-section\" data-variant=\"bytedance-article-section\">\n  <section class=\"wemd-component-body\" data-variant=\"bytedance-article-section\">\n    <p class=\"wemd-child-1\">全球化战略</p>\n    <p class=\"wemd-child-2\">字节跳动从成立之初就布局全球化，旗下产品已覆盖 150 多个国家和地区，月活用户超过 15 亿。通过本地化运营和技术创新，持续为全球用户创造价值。</p>\n  </section>\n</section>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": {
+    "component": "article-section",
+    "status": "approved",
+    "reviewer": "ai",
+    "comments": ["AI 生成版本默认通过"],
+    "createdAt": "2026-08-06T07:58:20.211Z",
+    "decidedAt": "2026-08-06T07:58:20.211Z"
+  },
+  "decisions": []
+}

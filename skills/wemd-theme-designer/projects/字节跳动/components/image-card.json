@@ -1,0 +1,40 @@
+{
+  "id": "image-card-msh7knun",
+  "type": "image-card",
+  "name": "image-card",
+  "status": "approved",
+  "currentVersion": 1,
+  "approvedVersion": 1,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "image-card",
+      "variant": "bytedance-image-framed",
+      "variantCss": ".wemd-image-card[data-variant=\"bytedance-image-framed\"] {\n  background: var(--wemd-bg-card);\n  border-radius: var(--wemd-border-radius);\n  overflow: hidden;\n  margin: 16px 0;\n  border: 1px solid var(--wemd-border-soft);\n  box-shadow: var(--wemd-shadow);\n}\n.wemd-image-card[data-variant=\"bytedance-image-framed\"] .wemd-ic-image {\n  width: 100%;\n  display: block;\n  margin: 0;\n}\n.wemd-image-card[data-variant=\"bytedance-image-framed\"] .wemd-ic-image img {\n  width: 100%;\n  height: auto;\n  display: block;\n}\n.wemd-image-card[data-variant=\"bytedance-image-framed\"] .wemd-ic-caption {\n  color: var(--wemd-text-soft);\n  font-size: 13px;\n  line-height: 1.6;\n  padding: 12px 16px;\n  margin: 0;\n  text-align: center;\n  border-top: 1px solid var(--wemd-border-soft);\n}",
+      "createdAt": "2026-08-06T07:42:41.859Z",
+      "createdBy": "ai",
+      "status": "approved",
+      "changeLog": "字节跳动图片卡片：白底圆角 overflow hidden + 图片填充 + 顶部细线 + 灰色居中说明",
+      "instruction": "字节跳动图片卡片：白底圆角 overflow hidden + 图片填充 + 顶部细线 + 灰色居中说明",
+      "sourceHtml": "<section class=\"wemd-image-card\" data-variant=\"bytedance-image-framed\">\n  <section class=\"wemd-ic-image\"><img src=\"https://via.placeholder.com/600x360\" alt=\"示例图片\"/></section>\n  <section class=\"wemd-ic-caption\">字节跳动全球总部办公空间</section>\n</section>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": {
+    "component": "image-card",
+    "status": "approved",
+    "reviewer": "ai",
+    "comments": ["AI 生成版本默认通过"],
+    "createdAt": "2026-08-06T07:58:20.244Z",
+    "decidedAt": "2026-08-06T07:58:20.244Z"
+  },
+  "decisions": []
+}

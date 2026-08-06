@@ -115,9 +115,9 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
   },
   {
     component: "follow-bar",
-    description: "关注引导条",
+    description: "关注引导条：引导文案 + 关注按钮",
     example: {
-      hint: "点击关注，获取更多干货",
+      text: "点击关注，获取更多干货",
       buttonText: "关注",
     },
   },
@@ -135,11 +135,13 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
   },
   {
     component: "timeline",
-    description: "时间线组件",
+    description: "时间线组件：标题 + 时间线条目列表（time + event）",
     example: {
+      title: "产品发展历程",
       items: [
-        { date: "2024-01", title: "事件一", desc: "描述" },
-        { date: "2024-02", title: "事件二", desc: "描述" },
+        { time: "2024-01", event: "项目立项，确定技术方向" },
+        { time: "2024-06", event: "v1.0 正式发布" },
+        { time: "2025-01", event: "用户突破 10 万" },
       ],
     },
   },
@@ -321,6 +323,82 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
       nextArticle: { index: 4, title: "计算属性与侦听器的妙用" },
     },
   },
+  // === 补充缺失的组件 schema ===
+  {
+    component: "image-grid",
+    description: "图片画廊/多图网格，展示多张图片",
+    propsExample: { variant: "grid" },
+    example: {
+      title: "夏日旅行记录",
+      images: [
+        "https://example.com/photo1.jpg",
+        "https://example.com/photo2.jpg",
+        "https://example.com/photo3.jpg",
+      ],
+    },
+  },
+  {
+    component: "author-card",
+    description: "作者卡片：头像 + 作者名 + 职位/头衔 + 简介",
+    propsExample: { variant: "compact" },
+    example: {
+      avatar: "https://example.com/avatar.jpg",
+      name: "张三",
+      title: "资深前端工程师",
+      bio: "专注前端工程化与可视化方向，分享实战经验。",
+    },
+  },
+  {
+    component: "related-posts",
+    description: "相关推荐文章列表，文末引导继续阅读",
+    propsExample: { variant: "list" },
+    example: {
+      title: "延伸阅读",
+      posts: [
+        { title: "Vue3 组合式 API 最佳实践", url: "https://example.com/1" },
+        { title: "TypeScript 进阶技巧", url: "https://example.com/2" },
+        { title: "前端性能优化指南", url: "https://example.com/3" },
+      ],
+    },
+  },
+  {
+    component: "copyright-notice",
+    description: "版权声明：版权年份 + 作者 + 许可协议，或自定义声明文本",
+    propsExample: { variant: "default" },
+    example: {
+      year: "2026",
+      author: "WeMD Team",
+      license: "转载请注明出处",
+    },
+  },
+  {
+    component: "qr-card",
+    description: "二维码卡片：二维码图片 + 标题 + 描述说明",
+    propsExample: { variant: "default" },
+    example: {
+      src: "https://example.com/qrcode.png",
+      title: "扫码关注公众号",
+      description: "获取更多优质内容，回复「福利」领取资料包",
+    },
+  },
+  {
+    component: "image-text-row",
+    description: "图文横排：图片 + 文字并排展示",
+    propsExample: { variant: "row" },
+    example: {
+      image: "https://example.com/cover.jpg",
+      text: "这里是图片对应的说明文字，与图片横向并排展示。",
+    },
+  },
+  {
+    component: "image-caption",
+    description: "图片说明：图片 + 斜体说明文字（caption 样式）",
+    propsExample: { variant: "default" },
+    example: {
+      src: "https://example.com/photo.jpg",
+      caption: "摄于 2026 年盛夏，海边日落",
+    },
+  },
 ];
 
 /** 按组件名获取 schema */
@@ -359,4 +437,8 @@ export const AI_GENERATABLE_COMPONENTS = [
   "resource-list",
   "testimonial-card",
   "series-nav",
+  // 补充可纯文本生成的组件（不含图片资源类）
+  "author-card",
+  "related-posts",
+  "copyright-notice",
 ];

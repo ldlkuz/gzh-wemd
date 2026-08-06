@@ -1,0 +1,40 @@
+{
+  "id": "testimonial-card-msh7knv2",
+  "type": "testimonial-card",
+  "name": "testimonial-card",
+  "status": "approved",
+  "currentVersion": 1,
+  "approvedVersion": 1,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "testimonial-card",
+      "variant": "bytedance-testimonial-quote",
+      "variantCss": ".wemd-testimonial-card[data-variant=\"bytedance-testimonial-quote\"] {\n  background: var(--wemd-bg-soft);\n  border-radius: var(--wemd-border-radius);\n  padding: 24px 28px;\n  margin: 16px 0;\n  border-left: 4px solid var(--wemd-primary);\n}\n.wemd-testimonial-card[data-variant=\"bytedance-testimonial-quote\"] .wemd-tc-quote {\n  color: var(--wemd-text-strong);\n  font-size: 16px;\n  font-style: italic;\n  line-height: 1.75;\n  margin: 0 0 16px 0;\n}\n.wemd-testimonial-card[data-variant=\"bytedance-testimonial-quote\"] .wemd-tc-source {\n  display: flex;\n  align-items: center;\n}\n.wemd-testimonial-card[data-variant=\"bytedance-testimonial-quote\"] .wemd-tc-avatar {\n  width: 40px;\n  height: 40px;\n  border-radius: 50%;\n  margin-right: 12px;\n  overflow: hidden;\n}\n.wemd-testimonial-card[data-variant=\"bytedance-testimonial-quote\"] .wemd-tc-avatar img {\n  width: 100%;\n  height: 100%;\n  display: block;\n}\n.wemd-testimonial-card[data-variant=\"bytedance-testimonial-quote\"] .wemd-tc-person {\n  flex: 1;\n}\n.wemd-testimonial-card[data-variant=\"bytedance-testimonial-quote\"] .wemd-tc-person-meta {\n  display: flex;\n  align-items: center;\n}\n.wemd-testimonial-card[data-variant=\"bytedance-testimonial-quote\"] .wemd-tc-name {\n  color: var(--wemd-text-strong);\n  font-size: 14px;\n  font-weight: 700;\n  margin-right: 8px;\n}\n.wemd-testimonial-card[data-variant=\"bytedance-testimonial-quote\"] .wemd-tc-title {\n  color: var(--wemd-text-soft);\n  font-size: 12px;\n}\n.wemd-testimonial-card[data-variant=\"bytedance-testimonial-quote\"] .wemd-tc-company {\n  color: var(--wemd-primary);\n  font-size: 12px;\n  font-weight: 500;\n  margin-top: 2px;\n}\n.wemd-testimonial-card[data-variant=\"bytedance-testimonial-quote\"] .wemd-tc-company-logo {\n  width: 24px;\n  height: 24px;\n  margin-left: 8px;\n}",
+      "createdAt": "2026-08-06T07:42:41.874Z",
+      "createdBy": "ai",
+      "status": "approved",
+      "changeLog": "字节跳动用户证言卡片：浅灰背景左侧品牌红边框 + 黑色斜体引文 + 圆形头像 + 黑色姓名 + 品牌红公司名",
+      "instruction": "字节跳动用户证言卡片：浅灰背景左侧品牌红边框 + 黑色斜体引文 + 圆形头像 + 黑色姓名 + 品牌红公司名",
+      "sourceHtml": "<section class=\"wemd-testimonial-card\" data-variant=\"bytedance-testimonial-quote\">\n  <section class=\"wemd-tc-quote\">\"飞书让我们的团队协作效率提升了 40%，跨时区沟通变得前所未有的顺畅。\"</section>\n  <section class=\"wemd-tc-source\">\n    <section class=\"wemd-tc-avatar\"><img src=\"https://via.placeholder.com/80x80\" alt=\"头像\"/></section>\n    <section class=\"wemd-tc-person\">\n      <section class=\"wemd-tc-person-meta\">\n        <section class=\"wemd-tc-name\">李明</section>\n        <section class=\"wemd-tc-title\">产品总监</section>\n      </section>\n      <section class=\"wemd-tc-company\">某科技公司</section>\n    </section>\n  </section>\n</section>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": {
+    "component": "testimonial-card",
+    "status": "approved",
+    "reviewer": "ai",
+    "comments": ["AI 生成版本默认通过"],
+    "createdAt": "2026-08-06T07:58:20.289Z",
+    "decidedAt": "2026-08-06T07:58:20.289Z"
+  },
+  "decisions": []
+}

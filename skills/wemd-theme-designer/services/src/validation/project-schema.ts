@@ -20,30 +20,22 @@ export interface ValidationResult {
 
 // ── 合法状态列表 ──
 const VALID_PROJECT_STATUSES: ProjectStatus[] = [
-  "profile-collecting",
-  "profile-confirmed",
-  "designing",
-  "blueprint-ready",
-  "blueprint-approved",
-  "compiling",
-  "compiled",
-  "reviewing",
-  "approved",
-  "locked",
+  "NEW",
+  "READY",
+  "GENERATING",
+  "PREVIEW",
+  "APPROVED",
+  "EXPORTED",
 ];
 
 // ── 合法状态流转（from → [to, ...]） ──
 const VALID_TRANSITIONS: Record<string, string[]> = {
-  "profile-collecting": ["profile-confirmed"],
-  "profile-confirmed": ["designing"],
-  designing: ["blueprint-ready"],
-  "blueprint-ready": ["blueprint-approved", "reviewing"],
-  "blueprint-approved": ["compiling", "reviewing"],
-  compiling: ["compiled"],
-  compiled: ["reviewing"],
-  reviewing: ["approved", "profile-collecting", "blueprint-ready", "blueprint-approved"],
-  approved: ["locked"],
-  locked: [],
+  NEW: ["READY"],
+  READY: ["GENERATING"],
+  GENERATING: ["PREVIEW", "NEW"],
+  PREVIEW: ["APPROVED", "GENERATING"],
+  APPROVED: ["EXPORTED", "PREVIEW"],
+  EXPORTED: [],
 };
 
 // ── 检查项目必填字段 ──

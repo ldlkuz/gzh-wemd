@@ -1,0 +1,11 @@
+{
+  "projectId": "字节跳动",
+  "status": "APPROVED",
+  "updatedAt": "2026-08-06T10:30:32.909Z",
+  "progress": {
+    "step": 7,
+    "total": 7,
+    "current": "编译完成",
+    "percent": 100
+  }
+}

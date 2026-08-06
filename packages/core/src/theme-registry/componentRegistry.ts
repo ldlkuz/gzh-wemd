@@ -7,7 +7,7 @@
  */
 
 // ============================================================
-// 合法组件全集（35 个，来源：builtin/index.ts + VARIANT_CSS_MAP）
+// 合法组件全集（44 个，来源：builtin/index.ts + VARIANT_CSS_MAP + 扩展组）
 // ============================================================
 
 export const LEGAL_COMPONENTS = [
@@ -51,6 +51,16 @@ export const LEGAL_COMPONENTS = [
   "resource-list",
   "testimonial-card",
   "series-nav",
+  // 扩展组（9）— 与已有组件互补的基础/通用变体
+  "article-section",
+  "code-block",
+  "callout",
+  "steps",
+  "accordion",
+  "pullquote",
+  "divider",
+  "table",
+  "image-compare",
 ] as const;
 
 export type LegalComponent = (typeof LEGAL_COMPONENTS)[number];
@@ -80,6 +90,16 @@ export const BUILTIN_PRESET_VARIANTS: Readonly<
   "resource-list": new Set(["files", "steps", "minimal"]),
   "testimonial-card": new Set(["classic", "casual", "featured"]),
   "series-nav": new Set(["progress", "toc", "breadcrumb"]),
+  // 扩展组（9）— 预设 variant，AI 主题可自定义 variant 名
+  "article-section": new Set(["default"]),
+  "code-block": new Set(["default"]),
+  callout: new Set(["default"]),
+  steps: new Set(["default"]),
+  accordion: new Set(["default"]),
+  pullquote: new Set(["default"]),
+  divider: new Set(["default"]),
+  table: new Set(["default"]),
+  "image-compare": new Set(["default"]),
 };
 
 // ============================================================

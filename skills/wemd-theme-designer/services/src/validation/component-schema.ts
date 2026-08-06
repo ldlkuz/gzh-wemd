@@ -18,11 +18,11 @@ const VALID_COMPONENT_STATUSES: ComponentStatus[] = [
 
 // ── 合法状态流转（from → [to, ...]） ──
 const VALID_COMPONENT_TRANSITIONS: Record<string, string[]> = {
-  "not-generated": ["draft"],
-  draft: ["reviewing", "revision-requested"],
+  "not-generated": ["draft", "approved"],
+  draft: ["reviewing", "revision-requested", "approved"],
   reviewing: ["approved", "revision-requested"],
-  "revision-requested": ["draft", "reviewing"],
-  approved: ["locked"],
+  "revision-requested": ["draft", "reviewing", "approved"],
+  approved: ["locked", "revision-requested"],
   locked: [],
 };
 

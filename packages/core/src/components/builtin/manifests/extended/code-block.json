@@ -1,0 +1,15 @@
+{
+  "type": "code-block",
+  "variant": "default",
+  "version": "1.0.0",
+  "label": "完整代码块",
+  "description": "支持语法高亮的完整代码展示区块",
+  "author": "wemd",
+  "category": "Data",
+  "semantic": "Code",
+  "intent": "guide",
+  "tags": ["代码", "技术"],
+  "tone": ["neutral", "professional"],
+  "articleCategories": ["tutorial"],
+  "insertPosition": ["body"]
+}

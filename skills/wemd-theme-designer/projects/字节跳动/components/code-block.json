@@ -1,0 +1,40 @@
+{
+  "id": "code-block-msh7nwyv",
+  "type": "code-block",
+  "name": "code-block",
+  "status": "approved",
+  "currentVersion": 1,
+  "approvedVersion": 1,
+  "contentSchema": {},
+  "assetRefs": [],
+  "versions": [
+    {
+      "version": 1,
+      "component": "code-block",
+      "variant": "bytedance-code-dark",
+      "variantCss": ".wemd-code-block[data-variant=\"bytedance-code-dark\"] {\n  background: #1a1a1a;\n  border-radius: var(--wemd-border-radius);\n  padding: 16px 20px;\n  margin: 16px 0;\n  overflow-x: auto;\n  border: 1px solid #2a2a2a;\n}\n.wemd-code-block[data-variant=\"bytedance-code-dark\"] .wemd-component-body {\n  padding: 0;\n}\n.wemd-code-block[data-variant=\"bytedance-code-dark\"] .wemd-component-body .wemd-child-1 {\n  color: var(--wemd-primary);\n  font-size: 12px;\n  font-weight: 700;\n  letter-spacing: 1.5px;\n  text-transform: uppercase;\n  margin: 0 0 8px 0;\n}\n.wemd-code-block[data-variant=\"bytedance-code-dark\"] .wemd-component-body .wemd-child-2 {\n  color: #e5e7eb;\n  font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;\n  font-size: 13px;\n  line-height: 1.7;\n  margin: 0;\n  white-space: pre;\n}",
+      "createdAt": "2026-08-06T07:45:13.643Z",
+      "createdBy": "ai",
+      "status": "approved",
+      "changeLog": "字节跳动代码块：深色背景圆角 + 品牌红大写语言标签 + 等宽字体代码",
+      "instruction": "字节跳动代码块：深色背景圆角 + 品牌红大写语言标签 + 等宽字体代码",
+      "sourceHtml": "<section class=\"wemd-code-block\" data-variant=\"bytedance-code-dark\">\n  <section class=\"wemd-component-body\" data-variant=\"bytedance-code-dark\">\n    <p class=\"wemd-child-1\">JAVASCRIPT</p>\n    <p class=\"wemd-child-2\">function greet(name) {\n  return `你好, ${name}!`;\n}\nconsole.log(greet(\"字节跳动\"));</p>\n  </section>\n</section>",
+      "publishHtml": "",
+      "assetRefs": [],
+      "compatibility": {
+        "status": "passed",
+        "warnings": [],
+        "errors": []
+      }
+    }
+  ],
+  "review": {
+    "component": "code-block",
+    "status": "approved",
+    "reviewer": "ai",
+    "comments": ["AI 生成版本默认通过"],
+    "createdAt": "2026-08-06T07:58:20.221Z",
+    "decidedAt": "2026-08-06T07:58:20.221Z"
+  },
+  "decisions": []
+}

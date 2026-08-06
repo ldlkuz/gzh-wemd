@@ -92,22 +92,9 @@ export const ALLOWED_CSS_PROPERTIES = new Set([
   "empty-cells",
   "caption-side",
 
-  // 内容
-  "content",
-  "quotes",
-  "counter-increment",
-  "counter-reset",
-
   // 交互
   "cursor",
   "pointer-events",
-
-  // 动画（仅支持 transition）
-  "transition",
-  "transition-property",
-  "transition-duration",
-  "transition-timing-function",
-  "transition-delay",
 
   // 变换（有限支持）
   "transform",

@@ -17,6 +17,8 @@ import type {
   ComponentReview,
   ComponentDecision,
   ComponentDesignMemory,
+  ComponentRevisionTask,
+  RevisionSource,
 } from "./types.ts";
 import {
   initProjectDir,
@@ -26,6 +28,14 @@ import {
   deleteProjectDir,
   getProjectFilePath,
   ensureDir,
+  readProjectState,
+  writeProjectState,
+  patchProjectState,
+  writeRevisionTask,
+  readRevisionTask as _readRevisionTask,
+  listRevisionTasks as _listRevisionTasks,
+  countPendingRevisionTasks,
+  deleteRevisionTask as _deleteRevisionTask,
 } from "./file-service.ts";
 import { ulid } from "./utils.ts";
 
@@ -42,7 +52,7 @@ export async function createProject(
     id,
     name,
     profileType,
-    status: "profile-collecting",
+    status: "NEW",
     createdAt: now,
     updatedAt: now,
     profile,
@@ -127,7 +137,7 @@ export async function saveBlueprint(
   if (!project) return null;
 
   project.designBlueprint = blueprint;
-  project.status = "blueprint-ready";
+  project.status = "GENERATING";
   project.updatedAt = new Date().toISOString();
   await Promise.all([
     writeJSON(getProjectFilePath(id, "project.json"), project),
@@ -145,7 +155,7 @@ export async function saveThemePackage(
   if (!project) return null;
 
   project.themePackage = themePackage;
-  project.status = "theme-ready";
+  project.status = "PREVIEW";
   project.updatedAt = new Date().toISOString();
   await writeJSON(getProjectFilePath(id, "project.json"), project);
   return project;
@@ -177,7 +187,7 @@ export async function submitForReview(
   };
 
   project.reviewRecords.push(review);
-  project.status = "reviewing";
+  project.status = "PREVIEW";
   project.updatedAt = new Date().toISOString();
   await writeJSON(getProjectFilePath(projectId, "project.json"), project);
   await writeJSON(
@@ -211,7 +221,7 @@ export async function approveReview(
   review.decidedAt = new Date().toISOString();
 
   project.status =
-    stage === "blueprint" ? "blueprint-approved" : "approved";
+    stage === "blueprint" ? "GENERATING" : "APPROVED";
   project.updatedAt = new Date().toISOString();
 
   // 记录决策日志
@@ -252,7 +262,7 @@ export async function rejectReview(
   review.decidedAt = new Date().toISOString();
 
   project.status =
-    stage === "blueprint" ? "profile-confirmed" : "blueprint-approved";
+    stage === "blueprint" ? "NEW" : "PREVIEW";
   project.updatedAt = new Date().toISOString();
 
   const log: DecisionLogEntry = {
@@ -285,6 +295,29 @@ export async function getProjectStatus(id: string): Promise<{
     exists: project !== null,
     path: getProjectFilePath(id, "project.json"),
   };
+}
+
+// ── 读取 state.json ──
+export async function getProjectState(
+  id: string
+): Promise<{ projectId: string; status: string; progress?: Record<string, unknown>; updatedAt: string } | null> {
+  return readProjectState(id);
+}
+
+// ── 更新 state.json ──
+export async function updateProjectState(
+  id: string,
+  status: string,
+  progress?: { step: number; total: number; current: string; percent: number }
+): Promise<void> {
+  await writeProjectState(id, status, progress);
+  // 同步更新 project.json 中的 status
+  const project = await getProject(id);
+  if (project) {
+    project.status = status as any;
+    project.updatedAt = new Date().toISOString();
+    await writeJSON(getProjectFilePath(id, "project.json"), project);
+  }
 }
 
 // ═══════════════════════════════════════════════
@@ -410,14 +443,15 @@ export async function addComponentVersion(
   const component = await getComponent(projectId, type);
   if (!component) return null;
 
+  const now = new Date().toISOString();
   const newVersion: ComponentVersionDetail = {
     version: component.currentVersion + 1,
     component: type,
     variant: data.variant,
     variantCss: data.variantCss,
-    createdAt: new Date().toISOString(),
+    createdAt: now,
     createdBy: data.createdBy || "ai",
-    status: "draft",
+    status: "approved",
     changeLog: data.instruction,
     parentVersion: component.currentVersion > 0 ? component.currentVersion : undefined,
     instruction: data.instruction,
@@ -433,7 +467,21 @@ export async function addComponentVersion(
 
   component.versions.push(newVersion);
   component.currentVersion = newVersion.version;
-  component.status = "draft";
+  // 默认通过：AI 生成的版本即视为已通过，只有用户主动驳回才标记为需修改
+  component.status = "approved";
+  component.approvedVersion = newVersion.version;
+  component.review = {
+    component: type,
+    status: "approved",
+    score: undefined,
+    reviewer: "ai",
+    comments: ["AI 生成版本默认通过"],
+    createdAt: now,
+    decidedAt: now,
+  };
+
+  // 版本清理：保留所有 approved/locked + 最近 3 个 draft/reviewing
+  await trimComponentVersions(projectId, type, component);
 
   await writeJSON(getProjectFilePath(projectId, "components", `${type}.json`), component);
 
@@ -445,6 +493,58 @@ export async function addComponentVersion(
 
   console.log(`  ✓ 组件 ${type} v${newVersion.version} 版本已添加: ${data.instruction}`);
   return newVersion;
+}
+
+// ── 版本清理：保留所有 approved/locked + 最近 3 个 draft/reviewing ──
+const MAX_DRAFT_VERSIONS = 3;
+
+async function trimComponentVersions(
+  projectId: string,
+  type: string,
+  component: BrandComponent,
+): Promise<void> {
+  const versions = component.versions;
+  if (versions.length <= MAX_DRAFT_VERSIONS) return;
+
+  // 分离已审核版本和草稿版本
+  const protectedStatuses = new Set(["approved", "locked"]);
+  const protectedVersions = versions.filter((v) =>
+    protectedStatuses.has(v.status),
+  );
+  const draftVersions = versions.filter(
+    (v) => !protectedStatuses.has(v.status),
+  );
+
+  // 草稿版本按版本号降序，保留最近 MAX_DRAFT_VERSIONS 个
+  const draftsToKeep = draftVersions
+    .sort((a, b) => b.version - a.version)
+    .slice(0, MAX_DRAFT_VERSIONS);
+  const draftsToRemove = draftVersions
+    .sort((a, b) => b.version - a.version)
+    .slice(MAX_DRAFT_VERSIONS);
+
+  if (draftsToRemove.length === 0) return;
+
+  // 删除多余草稿版本对应的 v*.json 文件
+  const { existsSync, unlinkSync } = await import("node:fs");
+  const versionDir = getProjectFilePath(projectId, "versions", type);
+  for (const v of draftsToRemove) {
+    const filePath = join(versionDir, `v${v.version}.json`);
+    if (existsSync(filePath)) {
+      try {
+        unlinkSync(filePath);
+        console.log(`  🗑 组件 ${type} v${v.version} 已清理（超出 ${MAX_DRAFT_VERSIONS} 个草稿上限）`);
+      } catch (err) {
+        console.warn(`  ! 无法删除 ${type} v${v.version}: ${err}`);
+      }
+    }
+  }
+
+  // 重组 versions 数组：保留的草稿 + 已审核版本，按版本号升序
+  const keepSet = new Set(draftsToKeep.map((v) => v.version));
+  component.versions = versions.filter(
+    (v) => protectedStatuses.has(v.status) || keepSet.has(v.version),
+  ).sort((a, b) => a.version - b.version);
 }
 
 // ── 更新组件审核状态 ──
@@ -474,6 +574,9 @@ export async function updateComponentReview(
   component.status = review.status;
   if (review.status === "approved") {
     component.approvedVersion = component.currentVersion;
+  } else if (review.status === "revision-requested" || review.status === "rejected") {
+    // 驳回时清空 approvedVersion，标记当前版本未通过
+    component.approvedVersion = null;
   }
 
   // 添加决策记录
@@ -681,4 +784,130 @@ export async function rollbackComponent(
   }
 
   return newVersion;
+}
+
+// ═══════════════════════════════════════════════
+// Revision Tasks（组件修改任务 CRUD）
+// ═══════════════════════════════════════════════
+
+// ── 创建组件修改任务（驳回重生 / 手动修改） ──
+export async function createRevisionTask(params: {
+  projectId: string;
+  source: RevisionSource;
+  component: string;
+  instruction: string;
+  baseVersion: number;
+  baseVariant: string;
+  baseVariantCss?: string;
+  baseSourceHtml?: string;
+}): Promise<ComponentRevisionTask> {
+  const {
+    projectId,
+    source,
+    component,
+    instruction,
+    baseVersion,
+    baseVariant,
+    baseVariantCss = "",
+    baseSourceHtml = "",
+  } = params;
+
+  const task: ComponentRevisionTask = {
+    taskId: `rev_${ulid()}`,
+    projectId,
+    component,
+    source,
+    instruction,
+    baseVersion,
+    baseVariant,
+    baseVariantCss,
+    baseSourceHtml,
+    status: "pending",
+    createdAt: new Date().toISOString(),
+  };
+
+  await writeRevisionTask(projectId, task as any);
+  await syncRevisionCount(projectId);
+  console.log(
+    `  ✓ 组件修改任务已创建 [${task.source}] ${component}: ${instruction.slice(0, 60)}`
+  );
+  return task;
+}
+
+// ── 读取单个任务 ──
+export async function getRevisionTask(
+  projectId: string,
+  taskId: string
+): Promise<ComponentRevisionTask | null> {
+  return _readRevisionTask<ComponentRevisionTask>(projectId, taskId);
+}
+
+// ── 列出所有任务（可按状态过滤） ──
+export async function listRevisionTasks(
+  projectId: string,
+  filter?: { status?: "pending" | "processing" | "completed" | "failed" }
+): Promise<ComponentRevisionTask[]> {
+  return _listRevisionTasks<ComponentRevisionTask>(projectId, filter);
+}
+
+// ── 领取任务（Skill 开始处理） ──
+export async function claimRevisionTask(
+  projectId: string,
+  taskId: string
+): Promise<ComponentRevisionTask | null> {
+  const task = await _readRevisionTask<ComponentRevisionTask>(projectId, taskId);
+  if (!task) return null;
+  if (task.status !== "pending") {
+    console.log(`  ! 任务 ${taskId} 状态为 ${task.status}，无法领取`);
+    return task;
+  }
+  task.status = "processing";
+  task.claimedBy = "skill";
+  task.claimedAt = new Date().toISOString();
+  await writeRevisionTask(projectId, task as any);
+  return task;
+}
+
+// ── 完成任务 ──
+export async function completeRevisionTask(params: {
+  projectId: string;
+  taskId: string;
+  success: boolean;
+  outputVersion?: number;
+  error?: string;
+}): Promise<ComponentRevisionTask | null> {
+  const { projectId, taskId, success, outputVersion, error } = params;
+  const task = await _readRevisionTask<ComponentRevisionTask>(projectId, taskId);
+  if (!task) return null;
+
+  task.status = success ? "completed" : "failed";
+  task.completedAt = new Date().toISOString();
+  if (outputVersion !== undefined) task.outputVersion = outputVersion;
+  if (error) task.error = error;
+
+  await writeRevisionTask(projectId, task as any);
+  await syncRevisionCount(projectId);
+  console.log(
+    `  ✓ 组件修改任务 ${taskId} ${success ? "完成" : "失败"}: ${task.component}`
+  );
+  return task;
+}
+
+// ── 删除任务 ──
+export async function deleteRevisionTask(
+  projectId: string,
+  taskId: string
+): Promise<boolean> {
+  const ok = await _deleteRevisionTask(projectId, taskId);
+  if (ok) await syncRevisionCount(projectId);
+  return ok;
+}
+
+// ── 同步 state.json 中的 pendingRevisionCount 和 nextAction ──
+async function syncRevisionCount(projectId: string): Promise<void> {
+  const count = await countPendingRevisionTasks(projectId);
+  await patchProjectState(projectId, {
+    pendingRevisionCount: count,
+    nextAction: count > 0 ? "handle-revision-tasks" : "",
+  });
 }

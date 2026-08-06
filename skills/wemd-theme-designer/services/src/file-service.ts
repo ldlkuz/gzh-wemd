@@ -28,6 +28,7 @@ export const PROJECT_SUBDIRS = [
   "versions",
   "components",
   "articles",
+  "tasks",
 ] as const;
 
 // ── 确保目录存在 ──
@@ -60,7 +61,71 @@ export async function initProjectDir(projectId: string): Promise<string> {
     PROJECT_SUBDIRS.map((d) => ensureDir(join(projectDir, d)))
   );
 
+  // 写入初始 state.json
+  const statePath = join(projectDir, "state.json");
+  if (!existsSync(statePath)) {
+    await writeJSON(statePath, {
+      projectId,
+      status: "NEW",
+      updatedAt: new Date().toISOString(),
+    });
+  }
+
   return projectDir;
+}
+
+// ── 读取项目状态 ──
+export async function readProjectState(
+  projectId: string
+): Promise<{
+  projectId: string;
+  status: string;
+  progress?: Record<string, unknown>;
+  pendingRevisionCount?: number;
+  nextAction?: string;
+  updatedAt: string;
+} | null> {
+  return readJSON(join(PROJECTS_DIR, projectId, "state.json"));
+}
+
+// ── 写入项目状态（兼容原始签名：status 必传，progress 可选） ──
+// 内部会合并已有字段，不会丢失 pendingRevisionCount / nextAction
+export async function writeProjectState(
+  projectId: string,
+  status: string,
+  progress?: { step: number; total: number; current: string; percent: number }
+): Promise<void> {
+  await patchProjectState(projectId, { status, progress });
+}
+
+// ── 精细更新项目状态（只传需修改的字段，其余保留） ──
+export async function patchProjectState(
+  projectId: string,
+  patch: Partial<{
+    status: string;
+    progress: { step: number; total: number; current: string; percent: number };
+    pendingRevisionCount: number;
+    nextAction: string;
+  }>
+): Promise<void> {
+  const statePath = join(PROJECTS_DIR, projectId, "state.json");
+  const existing = (await readJSON<Record<string, unknown>>(statePath)) || {
+    projectId,
+    status: "NEW",
+  };
+
+  const next = {
+    ...existing,
+    ...(patch.status !== undefined ? { status: patch.status } : {}),
+    ...(patch.progress !== undefined ? { progress: patch.progress } : {}),
+    ...(patch.pendingRevisionCount !== undefined
+      ? { pendingRevisionCount: patch.pendingRevisionCount }
+      : {}),
+    ...(patch.nextAction !== undefined ? { nextAction: patch.nextAction } : {}),
+    updatedAt: new Date().toISOString(),
+  };
+
+  await writeJSON(statePath, next);
 }
 
 // ── 读取 JSON 文件 ──
@@ -160,4 +225,65 @@ export async function listMaterials(
     }
   }
   return result;
+}
+
+// ═══════════════════════════════════════════════
+// Revision Tasks（组件修改任务）
+// ═══════════════════════════════════════════════
+
+function tasksDir(projectId: string): string {
+  return join(PROJECTS_DIR, projectId, "tasks");
+}
+
+function taskFilePath(projectId: string, taskId: string): string {
+  return join(tasksDir(projectId), `revision-${taskId}.json`);
+}
+
+export async function writeRevisionTask(
+  projectId: string,
+  task: Record<string, unknown>
+): Promise<void> {
+  await ensureDir(tasksDir(projectId));
+  await writeJSON(taskFilePath(projectId, String(task.taskId)), task);
+}
+
+export async function readRevisionTask<T = Record<string, unknown>>(
+  projectId: string,
+  taskId: string
+): Promise<T | null> {
+  return readJSON<T>(taskFilePath(projectId, taskId));
+}
+
+export async function listRevisionTasks<T = Record<string, unknown>>(
+  projectId: string,
+  filter?: { status?: "pending" | "processing" | "completed" | "failed" }
+): Promise<T[]> {
+  const dir = tasksDir(projectId);
+  if (!existsSync(dir)) return [];
+  const files = await readdir(dir);
+  const result: T[] = [];
+  for (const f of files) {
+    if (!f.startsWith("revision-") || !f.endsWith(".json")) continue;
+    const data = await readJSON<T>(join(dir, f));
+    if (!data) continue;
+    if (filter?.status && (data as any).status !== filter.status) continue;
+    result.push(data);
+  }
+  return result.sort((a: any, b: any) => (a.createdAt || "").localeCompare(b.createdAt || ""));
+}
+
+export async function countPendingRevisionTasks(projectId: string): Promise<number> {
+  const pending = await listRevisionTasks(projectId, { status: "pending" });
+  const processing = await listRevisionTasks(projectId, { status: "processing" });
+  return pending.length + processing.length;
+}
+
+export async function deleteRevisionTask(
+  projectId: string,
+  taskId: string
+): Promise<boolean> {
+  const path = taskFilePath(projectId, taskId);
+  if (!existsSync(path)) return false;
+  await unlink(path);
+  return true;
 }
