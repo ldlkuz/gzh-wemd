@@ -134,8 +134,15 @@ export interface ComponentStyleOverride {
   variant?: string;
   /** 覆盖的 CSS 声明（可选，用于精细化控制） */
   overrides?: Record<string, string>;
-  /** 轨道 B：AI 自定义 variant 的造型 CSS，选择器必须为 .wemd-xxx[data-variant="yyy"] 格式 */
+  /** 轨道 B：AI 自定义 variant 的造型 CSS */
   variantCss?: string;
+  /**
+   * 轨道 C：标记 variantCss 为自由 CSS（Phase 1 产出）
+   * 为 true 时，variantCss 中的选择器不受 WeMD class 约束，
+   * 需要在渲染前通过 CssTranslator 翻译为 WeMD 标准选择器。
+   * 翻译完成后此标记会被移除。
+   */
+  variantCssFree?: boolean;
 }
 
 // ============================================================

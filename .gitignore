@@ -24,3 +24,21 @@ AGENTS.md
 # Sandbox / temporary files
 sandbox/
 .git-commit-msg.txt
+
+# Debug / ad-hoc scripts (local absolute paths, not for sharing)
+check-theme.mjs
+test-browser.ps1
+packages/core/debug-svg.mjs
+packages/core/__debug_normalize.mjs
+packages/core/__debug_verify_import.mjs
+weixin-article-full.png.jpg
+全组件测试范文.md
+
+# Local AI tool config
+.trae/
+
+# Skill runtime artifacts (generated, not source)
+skills/wemd-theme-designer/output/
+skills/wemd-theme-designer/creative/
+skills/wemd-theme-designer/projects/
+skills/wemd-theme-designer/workspace/

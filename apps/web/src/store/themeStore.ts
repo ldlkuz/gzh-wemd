@@ -8,6 +8,7 @@ import {
 } from "./themes/builtInThemes";
 import {
   convertCssToWeChatDarkMode,
+  getBuiltInThemeDefinition,
   renderTheme,
   loadThemePackageFromJSON,
   loadThemePackageFromZip,
@@ -267,6 +268,15 @@ export const useThemeStore = create<ThemeStore>((set, get) => ({
       // 自定义主题：有 definition 则用 renderTheme + 扩展选项，否则用存储的 CSS
       const custom = state.customThemes.find((t) => t.id === themeId);
       if (custom?.definition) {
+        console.log(
+          "[getThemeCSS] custom.definition.components keys:",
+          Object.keys(custom.definition.components || {}),
+        );
+        console.log(
+          "[getThemeCSS] sample component variantCss length:",
+          custom.definition.components?.["hero-banner"]?.variantCss?.length ||
+            0,
+        );
         css = renderTheme(custom.definition, {
           componentsCss: custom.componentsCss,
           extrasCss: custom.extrasCss,
@@ -703,7 +713,24 @@ export const useThemeStore = create<ThemeStore>((set, get) => ({
         finalName = `${manifest.meta.name} (${suffix})`;
       }
 
+      // 调试：记录导入时的 components 字段
+      console.log(
+        "[importTheme] manifest.components keys:",
+        Object.keys(manifest.components || {}),
+      );
+      console.log(
+        "[importTheme] sample component:",
+        JSON.stringify(manifest.components?.["hero-banner"], null, 2),
+      );
+
       // 渲染 CSS：renderTheme 生成完整 CSS（含轨道 B AI variantCss + components.css）
+      // 排版由主程序统一控制：用内置默认主题的排版替换导入主题的排版
+      const defaultDef = getBuiltInThemeDefinition("default");
+      if (defaultDef?.tokens?.typography) {
+        manifest.tokens.typography = JSON.parse(
+          JSON.stringify(defaultDef.tokens.typography),
+        );
+      }
       const fullCss = renderTheme(manifest, {
         componentsCss: pkg.styles.componentsCss,
         extrasCss: pkg.styles.extrasCss,

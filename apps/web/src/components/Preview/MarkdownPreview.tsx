@@ -1,6 +1,10 @@
 import { useEffect, useState, useRef, useMemo } from "react";
 import mermaid from "mermaid";
-import { createMarkdownParser, processHtml } from "@wemd/core";
+import {
+  createMarkdownParser,
+  processHtml,
+  type ComponentStyleOverride,
+} from "@wemd/core";
 import { useEditorStore } from "../../store/editorStore";
 import { useThemeStore } from "../../store/themeStore";
 import { hasMathFormula, renderMathInElement } from "../../utils/katexRenderer";
@@ -53,6 +57,104 @@ const collectAnchors = (
   });
 };
 
+/**
+ * 根据主题的 components 定义或 Markdown 的 {variant="xxx"} 语法，
+ * 给 HTML 中每个组件元素注入 data-variant 属性，
+ * 使 AI 生成的 variantCss（使用 [data-variant] 选择器）能正确匹配。
+ *
+ * 数据来源优先级：
+ *   1. Markdown 中的 {variant="xxx"}（已由 markdown-it-component 解析为 data-variant 属性）
+ *   2. 主题的 component 定义中的 variant 配置
+ *
+ * 如果 HTML 已经包含 data-variant（来自 Markdown），则保留它，不覆盖。
+ * 如果 HTML 没有 data-variant，则从主题的组件定义中注入。
+ */
+/**
+ * 从 AI variantCss 中解析选择器使用的类名。
+ * 例如：从 `.wemd-hero[data-variant="bytewave"] { ... }` 中提取 `wemd-hero`
+ */
+function extractVariantCssClassName(variantCss: string): string | null {
+  // 匹配第一个选择器中的类名，如 .wemd-hero[data-variant="bytewave"]
+  // 注意：data-variant 属性可能有值（如 "bytewave"），所以用 [^\]]* 匹配属性内容
+  const match = variantCss.match(
+    /\.([a-zA-Z0-9_-]+)(?=\[data-variant[^\]]*\])/,
+  );
+  return match ? match[1] : null;
+}
+
+function injectComponentVariants(
+  html: string,
+  components?: Record<string, ComponentStyleOverride>,
+): string {
+  if (!components) {
+    console.log("[injectComponentVariants] components is undefined");
+    return html;
+  }
+
+  let result = html;
+  let totalInjections = 0;
+  for (const [compType, override] of Object.entries(components)) {
+    if (!override.enabled || !override.variant) continue;
+
+    const tagName = `wemd-${compType}`;
+    const regex = new RegExp(
+      `(<[a-zA-Z][^>]*?\\b${tagName}\\b[^>]*?)(\\s*/?\\s*>)`,
+      "g",
+    );
+
+    // 解析 AI variant CSS 的选择器类名，添加简写类名使 CSS 选择器能匹配
+    // 例如：AI 生成 `.wemd-hero[data-variant="bytewave"]`，但 HTML 类名是 `wemd-hero-banner`
+    // 需要额外添加 `wemd-hero` 类到 HTML 元素上
+    let extraClasses = "";
+    if (override.variantCss) {
+      const cssClassName = extractVariantCssClassName(override.variantCss);
+      const defaultClassName = `wemd-${compType}`;
+      if (cssClassName && cssClassName !== defaultClassName) {
+        extraClasses = ` ${cssClassName}`;
+        console.log(
+          `[injectComponentVariants] extra class "${cssClassName}" for ${tagName} (default: "${defaultClassName}")`,
+        );
+      }
+    }
+
+    const before = result;
+    result = result.replace(regex, (match, attrs, closing) => {
+      let modified = attrs;
+
+      // 检查 HTML 是否已有 data-variant（来自 Markdown 的 {variant="xxx"}）
+      // 如果已有，保留 Markdown 指定的 variant，不覆盖
+      if (!modified.includes("data-variant=")) {
+        modified += ` data-variant="${override.variant}"`;
+      }
+
+      // 如果 variant CSS 使用不同的类名，将其添加到 class 属性中
+      if (extraClasses) {
+        const classAttrRegex = /class="([^"]*)"/;
+        const classMatch = modified.match(classAttrRegex);
+        if (classMatch) {
+          const classes = classMatch[1].split(/\s+/);
+          const extraClass = extraClasses.trim();
+          if (!classes.includes(extraClass)) {
+            classes.push(extraClass);
+            modified = modified.replace(
+              classAttrRegex,
+              `class="${classes.join(" ")}"`,
+            );
+          }
+        }
+      }
+
+      return modified + closing;
+    });
+    if (result !== before) {
+      totalInjections++;
+    }
+  }
+
+  console.log(`[injectComponentVariants] total injections: ${totalInjections}`);
+  return result;
+}
+
 export function MarkdownPreview({ onScrollSyncReady }: MarkdownPreviewProps) {
   const { markdown } = useEditorStore();
   const { themeId: theme, customCSS, getThemeCSS } = useThemeStore();
@@ -94,15 +196,44 @@ export function MarkdownPreview({ onScrollSyncReady }: MarkdownPreviewProps) {
 
   useEffect(() => {
     const rawHtml = parser.render(markdown);
+
+    // 调试：检查 components 数据
+    console.log(
+      "[MarkdownPreview] components from definition:",
+      currentTheme?.definition?.components
+        ? Object.keys(currentTheme.definition.components)
+        : "undefined",
+    );
+    console.log(
+      "[MarkdownPreview] hero-banner variantCss:",
+      currentTheme?.definition?.components?.[
+        "hero-banner"
+      ]?.variantCss?.substring(0, 100),
+    );
+
+    // 注入 data-variant 属性，使 AI variantCss 选择器能匹配
+    const themedHtml = injectComponentVariants(
+      rawHtml,
+      currentTheme?.definition?.components,
+    );
+
     const previewHtml = linkToFootnoteEnabled
-      ? convertLinksToFootnotes(rawHtml)
-      : rawHtml;
+      ? convertLinksToFootnotes(themedHtml)
+      : themedHtml;
 
     // 预览模式不使用内联样式，直接注入 style 标签，大幅降低内存占用
     const styledHtml = processHtml(previewHtml, previewCss, false);
 
     setHtml(styledHtml);
-  }, [markdown, theme, customCSS, previewCss, parser, linkToFootnoteEnabled]);
+  }, [
+    markdown,
+    theme,
+    customCSS,
+    previewCss,
+    parser,
+    linkToFootnoteEnabled,
+    currentTheme,
+  ]);
 
   // KaTeX 渲染：轻量级、快速，解决内存问题
   // MathJax 仅在复制到微信时使用

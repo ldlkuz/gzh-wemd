@@ -399,6 +399,78 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
       caption: "摄于 2026 年盛夏，海边日落",
     },
   },
+  {
+    component: "image-compare",
+    description: "图片对比：前后两张图并排，用于展示变化/对比",
+    propsExample: { variant: "default" },
+    example: {
+      before: "https://example.com/before.jpg",
+      after: "https://example.com/after.jpg",
+      caption: "改造前 vs 改造后",
+    },
+  },
+  {
+    component: "table",
+    description: "原始数据表格：表头 + 多行数据，适合结构化数据对比",
+    propsExample: { variant: "default" },
+    example: {
+      title: "配置对比表",
+      headers: ["版本", "价格", "功能"],
+      rows: [
+        { cells: ["基础版", "¥99", "核心功能"] },
+        { cells: ["旗舰版", "¥199", "全部功能"] },
+      ],
+    },
+  },
+  {
+    component: "accordion",
+    description: "折叠面板：多个问答/条目，可折叠展开",
+    propsExample: { variant: "default" },
+    example: {
+      items: [
+        { title: "常见问题一", body: "这是答案内容。" },
+        { title: "常见问题二", body: "这是答案内容。" },
+      ],
+    },
+  },
+  {
+    component: "steps",
+    description: "步骤条：分步骤说明操作流程，带序号",
+    propsExample: { variant: "default" },
+    example: {
+      title: "使用步骤",
+      items: [
+        { title: "第一步", description: "说明文字" },
+        { title: "第二步", description: "说明文字" },
+      ],
+    },
+  },
+  {
+    component: "code-block",
+    description: "代码块：展示代码/命令片段，带语言高亮",
+    propsExample: { lang: "javascript" },
+    example: {
+      code: "console.log('hello')",
+      lang: "javascript",
+    },
+  },
+  {
+    component: "pullquote",
+    description: "拉取引用：页面居中的大号金句，突出展示",
+    propsExample: { variant: "default" },
+    example: {
+      text: "真正的好产品，是让它消失。",
+      source: "乔布斯",
+    },
+  },
+  {
+    component: "divider",
+    description: "分隔线：简单的内容分隔，可带文字",
+    propsExample: { variant: "default" },
+    example: {
+      text: "以上是第一部分",
+    },
+  },
 ];
 
 /** 按组件名获取 schema */
@@ -408,12 +480,16 @@ export function getComponentSchema(
   return COMPONENT_CONTENT_SCHEMAS.find((s) => s.component === component);
 }
 
-/** AI 可自动生成的组件（排除需要外部资源/用户决策的） */
+/** AI 可自动生成的组件（已覆盖主题全部组件，AI 可按文章表达自由选用） */
 export const AI_GENERATABLE_COMPONENTS = [
+  // 品牌锚点 / 头部
   "hero-banner",
+  "magazine-cover",
   "toc-nav",
+  "section-divider",
   "numbered-heading",
   "section-title",
+  // 内容增强
   "quote-card",
   "callout-pro",
   "stats-block",
@@ -424,21 +500,33 @@ export const AI_GENERATABLE_COMPONENTS = [
   "follow-bar",
   "divider-fancy",
   "article-section",
-  "magazine-cover",
-  "section-divider",
-  "image-card",
   "text-card",
   "full-quote",
   "two-column-cards",
   "end-card",
-  // 新增扩展组件
+  "pullquote",
+  "divider",
+  "accordion",
+  "steps",
+  "table",
+  "styled-table",
+  "code-frame",
+  "code-block",
+  // 图片类
+  "image-card",
+  "image-grid",
+  "image-caption",
+  "image-text-row",
+  "image-compare",
+  // 品牌/转化/辅助
   "product-card",
   "brand-sign",
   "resource-list",
   "testimonial-card",
   "series-nav",
-  // 补充可纯文本生成的组件（不含图片资源类）
   "author-card",
   "related-posts",
   "copyright-notice",
+  "qr-card",
+  "timeline",
 ];

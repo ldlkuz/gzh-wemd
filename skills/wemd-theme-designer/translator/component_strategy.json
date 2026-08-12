@@ -1,0 +1,77 @@
+{
+  "brand_anchor": [
+    {
+      "component": "magazine-cover",
+      "score": 10,
+      "reason": "母题'电影场记板'第一意象是'片场开场'。magazine-cover 作为全篇第一视觉，最适合承载场记板黑白条纹 + 片场号牌，建立'电影感开场'的权威第一印象。",
+      "metaphor_anchor": "clapperboard opening slate"
+    },
+    {
+      "component": "hero-banner",
+      "score": 9,
+      "reason": "母题含 viewfinder（取景框）与 cinematic 开场镜头。hero-banner 作为顶部头图，承载'取景框 + 开场镜头'意象，制造电影级视觉冲击。",
+      "metaphor_anchor": "viewfinder opening shot"
+    },
+    {
+      "component": "full-quote",
+      "score": 8,
+      "reason": "母题含 cinematic 叙事与银幕。full-quote 的整行引述承载'电影句幕/滚动的导演台词'意象，制造阅读停顿，强化影像叙事感。",
+      "metaphor_anchor": "cinematic subtitle line"
+    },
+    {
+      "component": "quote-card",
+      "score": 7,
+      "reason": "母题含 film perforation 与镜头语言。quote-card 承载'拍摄者金句/镜头对白'，用哑光黑 + 银幕白 + 反光条表达'台词写在片场'的匠人语录。",
+      "metaphor_anchor": "on-set filmmaker quote"
+    },
+    {
+      "component": "stats-block",
+      "score": 7,
+      "reason": "母题含片场号牌与金属刻度。stats-block 承载'拍摄参数/器材数据'（镜头数、光圈、快门），用金属反光的数字权威感表达'技术掌控'。",
+      "metaphor_anchor": "technical camera parameters"
+    },
+    {
+      "component": "styled-table",
+      "score": 6,
+      "reason": "母题含场记板与片场秩序。styled-table 承载'场次清单/拍摄日程表'，用几何边框 + 刻度线表达'片场场记'的专业秩序。",
+      "metaphor_anchor": "shooting schedule slate"
+    }
+  ],
+  "content": [
+    "numbered-heading",
+    "section-title",
+    "section-divider",
+    "text-card",
+    "image-card",
+    "image-text-row",
+    "image-grid",
+    "image-compare",
+    "image-caption",
+    "two-column-cards",
+    "resource-list",
+    "timeline",
+    "steps",
+    "faq",
+    "accordion",
+    "callout-pro",
+    "product-card",
+    "testimonial-card",
+    "author-card",
+    "end-card",
+    "share-card",
+    "cta-card",
+    "series-nav",
+    "related-posts",
+    "pullquote",
+    "tag-label",
+    "divider-fancy",
+    "code-frame",
+    "code-block",
+    "table",
+    "brand-sign",
+    "qr-card",
+    "follow-bar",
+    "toc-nav"
+  ],
+  "utility": ["divider", "copyright-notice", "article-section"]
+}

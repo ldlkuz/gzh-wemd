@@ -564,20 +564,12 @@ export function renderProductCard(rawContent: string): string {
  */
 export function renderBrandSign(rawContent: string): string {
   const paragraphs = parseParagraphs(rawContent);
-  let logoSrc = "";
   let brandName = "";
   let slogan = "";
   let style = "";
   let divider = false;
   let subText = "";
-
   let cursor = 0;
-  const p0 = paragraphs[0] || "";
-  const img = p0.match(/!\[([^\]]*)\]\(([^)]+)\)/);
-  if (img) {
-    logoSrc = img[2];
-    cursor = 1;
-  }
 
   const nameP = paragraphs[cursor] || "";
   const m = nameP.match(/\*\*([^*]+)\*\*/);
@@ -612,11 +604,9 @@ export function renderBrandSign(rawContent: string): string {
   const attrStyle = style ? ` data-style="${escapeHtmlAttr(style)}"` : "";
   const attrDivider = divider ? ' data-divider="true"' : "";
   const parts: string[] = [];
-  if (logoSrc) {
-    parts.push(
-      `<section class="wemd-bs-logo"><img src="${escapeHtmlAttr(logoSrc)}" alt="logo"></section>`,
-    );
-  }
+  // 渲染 .wemd-bs-logo 作为 Logo 容器：Logo 图由主题 CSS 的 --wemd-asset-logo 背景注入，
+  // 不显示首字母降级（避免无 Logo 时出现孤立字母徽章）。
+  parts.push(`<section class="wemd-bs-logo"></section>`);
   if (brandName) {
     parts.push(
       `<section class="wemd-bs-brand-name">${escapeHtml(brandName)}</section>`,
@@ -691,14 +681,33 @@ export function renderResourceList(rawContent: string): string {
   }
 
   const itemsHtml: string[] = [];
+  let fallbackIdx = 0;
   for (let i = listStartIdx; i < allLines.length; i++) {
     const line = allLines[i];
     if (!line) continue;
+
+    // 结构化格式：- [type|index] title  |D=desc  |M=meta  |T=tag  |U=url
     const itemMatch = line.match(/^-\s*\[([a-zA-Z]+)\|(\d+)\]\s*(.*)$/);
-    if (!itemMatch) continue;
-    const type = itemMatch[1] || "link";
-    const idx = Number(itemMatch[2]);
-    const rest = itemMatch[3].trim();
+    // 普通 Markdown 列表兜底：- **标题**：描述
+    const plainMatch = itemMatch
+      ? null
+      : line.match(/^-\s*\*\*(.*?)\*\*\s*[:：]\s*(.*)$/);
+
+    let type = "link";
+    let idx = 0;
+    let rest = "";
+    if (itemMatch) {
+      type = itemMatch[1] || "link";
+      idx = Number(itemMatch[2]);
+      rest = itemMatch[3].trim();
+    } else if (plainMatch) {
+      fallbackIdx += 1;
+      idx = fallbackIdx;
+      rest = `${plainMatch[1].trim()} |D=${plainMatch[2].trim()}`;
+    } else {
+      continue;
+    }
+
     // rest 格式：title  |D=desc  |M=meta  |T=tag  |U=url
     const seg = rest.split(/\s*\|(?=[DMTU]=)/);
     const titlePart = seg[0].trim();

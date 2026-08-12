@@ -10,7 +10,6 @@ import {
   materializeCounterPseudoContent,
   stripCounterPseudoRules,
 } from "./wechatCounterCompat";
-import { expandCSSVariables } from "./cssVariableExpander";
 import { normalizeCopyContainer } from "./wechatCopyNormalizer";
 import {
   renderHighRiskMathAsImages,
@@ -33,9 +32,9 @@ export interface WechatPublishHtmlResult {
 
 const buildCopyCss = (themeCss: string) => {
   if (!themeCss) return katexCss;
-  // 复制前展开 CSS 变量为具体值，消除微信清洗 var() 导致的样式丢失
-  const expandedCss = expandCSSVariables(themeCss);
-  return `${expandedCss}\n${katexCss}`;
+  // 不再在此展开 CSS 变量，交给 processHtml 统一处理，确保
+  // materializeCounterPseudoContent 等中间步骤能访问完整的 --wemd-* 变量声明
+  return `${themeCss}\n${katexCss}`;
 };
 
 const renderMacSignDotsToImages = (container: HTMLElement): void => {
@@ -163,7 +162,7 @@ export async function buildWechatPublishHtml(
       themedCss,
     );
     const styledHtml = processHtml(materializedHtml, sanitizedCss, true, false);
-    const resolvedHtml = resolveInlineStyleVariablesForCopy(styledHtml);
+    const resolvedHtml = resolveInlineStyleVariablesForCopy(styledHtml, css);
     const finalHtml = convertCheckboxesToEmoji(resolvedHtml);
 
     container.innerHTML = finalHtml;

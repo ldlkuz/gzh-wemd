@@ -711,6 +711,7 @@ function extractDefinedVars(tokens: unknown): Set<string> {
           defined.add(`wemd-${h}-color`);
           defined.add(`wemd-${h}-margin-top`);
           defined.add(`wemd-${h}-margin-bottom`);
+          defined.add(`wemd-${h}-font-weight`);
         }
       }
     }

@@ -607,10 +607,20 @@ export const brandSignInlineCss = `/* === brand-sign inline === */
   justify-content: flex-start;
   padding: 12px 0;
 }
-#wemd .wemd-brand-sign[data-variant="inline"] .wemd-bs-logo img {
+#wemd .wemd-brand-sign[data-variant="inline"] .wemd-bs-logo {
   width: 32px;
   height: 32px;
   border-radius: 8px;
+  background-image: var(--wemd-asset-logo, none);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--wemd-primary, #07c160);
 }
 #wemd .wemd-brand-sign[data-variant="inline"] .wemd-bs-brand-name {
   font-size: 15px;
@@ -634,12 +644,22 @@ export const brandSignStackedCss = `/* === brand-sign stacked === */
   border-radius: 14px;
   background: linear-gradient(180deg, var(--wemd-bg-card, #fff), var(--wemd-bg-soft, #f7f8fa));
 }
-#wemd .wemd-brand-sign[data-variant="stacked"] .wemd-bs-logo img {
+#wemd .wemd-brand-sign[data-variant="stacked"] .wemd-bs-logo {
   width: 56px;
   height: 56px;
   border-radius: 14px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
   margin-bottom: 10px;
+  background-image: var(--wemd-asset-logo, none);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--wemd-primary, #07c160);
 }
 #wemd .wemd-brand-sign[data-variant="stacked"] .wemd-bs-brand-name {
   font-size: 20px;
@@ -680,7 +700,7 @@ export const brandSignSignatureCss = `/* === brand-sign signature === */
   background: linear-gradient(180deg, var(--wemd-primary, #07c160), transparent);
   border-radius: 2px;
 }
-#wemd .wemd-brand-sign[data-variant="signature"] .wemd-bs-logo img {
+#wemd .wemd-brand-sign[data-variant="signature"] .wemd-bs-logo {
   display: none;
 }
 #wemd .wemd-brand-sign[data-variant="signature"] .wemd-bs-brand-name {

@@ -79,29 +79,110 @@ export function renderTheme(
 }
 
 /**
- * 注入全部变体 CSS（与 legacy `getVariantCss()` 行为一致：无条件注入所有 variant）
- * 保证用户在 UI 中手动切换组件 variant 时 CSS 已存在。
+ * 规范化 AI 生成的 variant CSS，确保所有选择器都有 #wemd 前缀。
  *
- * 同时对 ThemeDefinition.components 里有自定义覆盖的组件，追加：
+ * 默认组件样式使用 #wemd .wemd-hero-banner（优先级 0,1,1,0），
+ * 而 AI 生成的 variant CSS 通常使用 .wemd-hero-banner[data-variant="xxx"]（优先级 0,2,0）。
+ * ID 选择器 (#wemd) 的优先级高于类/属性选择器，导致默认样式覆盖 AI 自定义样式。
+ *
+ * 本函数为缺少 #wemd 前缀的选择器自动添加，使优先级提升到 0,1,2,0，确保 AI 样式生效。
+ */
+function normalizeVariantCss(css: string): string {
+  if (!css || css.includes("#wemd")) return css;
+
+  // 逐条规则处理：找到 selector { 模式
+  // 对每条规则，先剥离选择器中的注释用于判断，然后在原始选择器前添加 #wemd
+  return css.replace(/([^{}]+)\{/g, (match, selectorGroup: string) => {
+    const trimmed = selectorGroup.trim();
+
+    // 剥离选择器中的注释，用于判断规则类型
+    const cleanSelector = trimmed.replace(/\/\*[\s\S]*?\*\//g, "").trim();
+
+    // 跳过 @ 规则（如 @media、@keyframes）
+    if (cleanSelector.startsWith("@")) return match;
+    // 跳过已经有 #wemd 的规则
+    if (cleanSelector.startsWith("#wemd")) return match;
+
+    // 用干净的（无注释）选择器来分割逗号
+    // 然后在原始选择器字符串上定位每个选择器的位置并添加 #wemd
+    const parts = cleanSelector
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    // 在原始选择器中依次查找每个干净选择器，添加 #wemd 前缀
+    let resultSelector = trimmed;
+    for (const part of parts) {
+      if (!part) continue;
+      // 用 indexOf 在原始选择器中定位这个选择器
+      const idx = resultSelector.indexOf(part);
+      if (idx !== -1) {
+        // 检查是否已经添加了 #wemd 前缀
+        const before = resultSelector.substring(0, idx);
+        if (!before.endsWith("#wemd ")) {
+          resultSelector = before + "#wemd " + resultSelector.substring(idx);
+        }
+      }
+    }
+
+    return `${resultSelector} {`;
+  });
+}
+
+/**
+ * 注入变体 CSS
+ *
+ * 对 ThemeDefinition.components 里有自定义覆盖的组件，根据数据情况注入：
+ *   - 有 AI 自定义 variantCss（轨道 B）：只注入 AI CSS，不注入内置变体 CSS
+ *     （AI CSS 是完整的视觉替代，而非补丁，混合注入会导致样式冲突）
+ *   - 无 AI variantCss 但有 variant：注入选定变体的内置 CSS
  *   - overrides（CSS 属性细粒度覆盖，如 { fontSize: "20px", borderWidth: "3px" }）
- *   - variantCss（轨道 B：AI 自定义 variant 造型 CSS）
+ *
+ * 无组件定义时（向后兼容）：注入全部内置变体 CSS
  */
 function injectVariantCss(
   components?: Record<string, ComponentStyleOverride>,
 ): string {
   const cssParts: string[] = [];
 
-  // 1) 注入全部变体 CSS（与 legacy getVariantCss 等价）
-  for (const variants of Object.values(VARIANT_CSS_MAP)) {
-    for (const css of Object.values(variants)) {
-      cssParts.push(css);
-    }
-  }
-
   if (components) {
-    // 2) 消费 ComponentStyleOverride.overrides：给每个组件追加细粒度 CSS 属性
+    const compKeys = Object.keys(components);
+    const hasVariantCss = Object.values(components).some((c) => c.variantCss);
+    console.log(
+      `[injectVariantCss] components keys (${compKeys.length}):`,
+      compKeys.slice(0, 3),
+      "...",
+    );
+    console.log(`[injectVariantCss] has variantCss:`, hasVariantCss);
+
+    // 主题有明确的组件变体定义：只注入选中的变体
     for (const [compType, override] of Object.entries(components)) {
       if (!override.enabled) continue;
+
+      // 安全检查：variantCssFree 标记在渲染前应已被翻译引擎移除
+      if (override.variantCssFree) {
+        console.warn(
+          `[injectVariantCss] ${compType}: variantCssFree 标记仍存在，CSS 未翻译！`,
+          `请在 renderTheme() 前调用 translateThemeFreeCss()。`,
+        );
+      }
+
+      const variant = override.variant;
+      const builtInVariants = VARIANT_CSS_MAP[compType];
+
+      // 有 AI 自定义 variantCss 时：只注入 AI CSS，跳过内置变体 CSS
+      // AI CSS 是完整的视觉替代，混合内置 CSS 会导致样式冲突
+      if (override.variantCss) {
+        // 规范化：确保 AI CSS 选择器有 #wemd 前缀，避免被默认组件样式覆盖
+        cssParts.push(normalizeVariantCss(override.variantCss));
+      } else {
+        // 无 AI variantCss 时：注入选中变体的内置 CSS
+        if (variant && builtInVariants?.[variant]) {
+          cssParts.push(builtInVariants[variant]);
+        }
+      }
+
+      // 注入细粒度 CSS 属性覆盖（无论是否有 AI variantCss，都追加）
       if (override.overrides) {
         const declarations = Object.entries(override.overrides)
           .map(([k, v]) => {
@@ -116,11 +197,11 @@ function injectVariantCss(
         }
       }
     }
-
-    // 3) 注入 AI 自定义 variantCss（轨道 B）
-    for (const override of Object.values(components)) {
-      if (override.variantCss) {
-        cssParts.push(override.variantCss);
+  } else {
+    // 无组件定义时（向后兼容）：注入全部内置变体 CSS
+    for (const variants of Object.values(VARIANT_CSS_MAP)) {
+      for (const css of Object.values(variants)) {
+        cssParts.push(css);
       }
     }
   }

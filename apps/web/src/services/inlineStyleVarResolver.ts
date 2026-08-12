@@ -351,7 +351,23 @@ const resolveElementTreeVars = (
   children.forEach((child) => resolveElementTreeVars(child, currentCustomVars));
 };
 
-export const resolveInlineStyleVariablesForCopy = (html: string): string => {
+/**
+ * 从 CSS 文本中提取主题自定义属性（--wemd-*），供 var() 解析回退
+ */
+const extractThemeCustomProperties = (css: string): Map<string, string> => {
+  const vars = new Map<string, string>();
+  const regex = /(--wemd-[\w-]+)\s*:\s*([^;]+);/g;
+  let match: RegExpExecArray | null;
+  while ((match = regex.exec(css)) !== null) {
+    vars.set(match[1].trim(), match[2].trim());
+  }
+  return vars;
+};
+
+export const resolveInlineStyleVariablesForCopy = (
+  html: string,
+  css?: string,
+): string => {
   if (
     typeof window === "undefined" ||
     typeof document === "undefined" ||
@@ -371,6 +387,18 @@ export const resolveInlineStyleVariablesForCopy = (html: string): string => {
   host.style.colorScheme = "light";
   host.style.color = "#000000";
   const lightRootVars = applyLightRootVars(host);
+
+  // 提取主题 CSS 中的 --wemd-* 变量，作为内联 var() 解析的后备来源
+  // 确保即使 expandCSSVariables 遗漏了某些 var(--wemd-*) 引用，也能被正确解析
+  if (css) {
+    const themeVars = extractThemeCustomProperties(css);
+    themeVars.forEach((value, name) => {
+      if (!lightRootVars.has(name)) {
+        lightRootVars.set(name, value);
+      }
+    });
+  }
+
   host.innerHTML = html;
 
   // 临时移除 id="wemd"，阻断预览区暗色 <style> 通过 #wemd 选择器匹配到离屏容器

@@ -1,0 +1,38 @@
+{
+  "$schema": "ComponentStrategyState",
+  "description": "Stage 4 输出：组件策略状态。三分类结果，Brand Anchor 包含评分和理由。",
+
+  "type": "object",
+  "required": ["brand_anchor", "content", "utility"],
+
+  "properties": {
+    "brand_anchor": {
+      "type": "array",
+      "description": "品牌锚点组件，最多 6 个",
+      "items": {
+        "type": "object",
+        "required": ["component", "score", "reason"],
+        "properties": {
+          "component": { "type": "string", "description": "组件名称" },
+          "score": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10,
+            "description": "品牌表达评分"
+          },
+          "reason": { "type": "string", "description": "选择理由" }
+        }
+      }
+    },
+    "content": {
+      "type": "array",
+      "description": "内容组件列表",
+      "items": { "type": "string" }
+    },
+    "utility": {
+      "type": "array",
+      "description": "辅助组件列表",
+      "items": { "type": "string" }
+    }
+  }
+}

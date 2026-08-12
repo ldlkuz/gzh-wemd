@@ -51,3 +51,21 @@ export type {
   ValidationError,
   ValidationResult,
 } from "./theme-schema/types";
+
+// CSS 翻译引擎（AI 两阶段翻译系统）
+export {
+  ALL_COMPONENT_ELEMENTS,
+  describeElementsForPhase1,
+  describeMappingForPhase2,
+  translateComponentCss,
+  translateBatchCss,
+  translateThemeFreeCss,
+} from "./css-translator";
+
+export type {
+  ComponentElement,
+  ComponentElementsDef,
+  AiAdapter,
+  TranslationInput,
+  TranslationResult,
+} from "./css-translator";

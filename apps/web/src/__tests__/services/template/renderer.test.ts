@@ -278,6 +278,63 @@ describe("renderTemplate", () => {
     expect(result.markdown).toBe("");
     expect(result.coverage).toBe(1);
   });
+
+  it("未覆盖段落自动兜底为 article-section", () => {
+    // 只覆盖第 2 段，其余 1/3/4/5 段应被自动兜底
+    const template = makeTemplate({
+      layout: [
+        {
+          component: "article-section",
+          content: { fromParagraph: 2, toParagraph: 2 },
+        },
+      ],
+    });
+    const result = renderTemplate(template, sampleArticle);
+    expect(result.coverage).toBe(1);
+    // 兜底后所有段落内容都应保留
+    expect(result.markdown).toContain("第一段正文");
+    expect(result.markdown).toContain("第二段");
+    expect(result.markdown).toContain("第三段");
+    expect(result.markdown).toContain("第四段");
+    expect(result.warnings.some((w) => w.includes("兜底"))).toBe(true);
+  });
+
+  it("多段间隙分别兜底", () => {
+    // 覆盖 1 和 5 段，中间 2/3/4 段应合并为一段兜底
+    const template = makeTemplate({
+      layout: [
+        {
+          component: "article-section",
+          content: { fromParagraph: 1, toParagraph: 1 },
+        },
+        {
+          component: "article-section",
+          content: { fromParagraph: 5, toParagraph: 5 },
+        },
+      ],
+    });
+    const result = renderTemplate(template, sampleArticle);
+    expect(result.coverage).toBe(1);
+    expect(result.markdown).toContain("第一段正文");
+    expect(result.markdown).toContain("第二段");
+    expect(result.markdown).toContain("第三段");
+    expect(result.markdown).toContain("第四段");
+    expect(result.warnings.some((w) => w.includes("兜底"))).toBe(true);
+  });
+
+  it("全文已覆盖时不产生额外兜底", () => {
+    const template = makeTemplate({
+      layout: [
+        {
+          component: "article-section",
+          content: { fromParagraph: 1, toParagraph: 5 },
+        },
+      ],
+    });
+    const result = renderTemplate(template, sampleArticle);
+    expect(result.coverage).toBe(1);
+    expect(result.warnings.some((w) => w.includes("兜底"))).toBe(false);
+  });
 });
 
 describe("validateTemplate", () => {

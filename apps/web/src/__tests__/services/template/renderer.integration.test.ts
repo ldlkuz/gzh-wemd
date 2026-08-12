@@ -98,8 +98,10 @@ const template: TemplateJSON = {
 describe("Template Renderer 集成测试", () => {
   it("Renderer 输出的 Markdown 能被正确解析为组件 HTML", () => {
     const result = renderTemplate(template, sampleArticle);
-    expect(result.warnings).toHaveLength(0);
-    expect(result.coverage).toBeGreaterThan(0.5);
+    // 模板 article-section 只覆盖第5-10段，第1-4段由兜底逻辑自动补全
+    expect(result.warnings.some((w) => w.includes("兜底"))).toBe(true);
+    // 兜底后全文应 100% 覆盖
+    expect(result.coverage).toBe(1);
 
     const parser = createMarkdownParser({
       mathRenderer: "katex",
@@ -120,6 +122,10 @@ describe("Template Renderer 集成测试", () => {
     expect(html).toContain("睡了一晚");
     expect(html).toContain("出门前 15 分钟");
     expect(html).toContain("92%");
+    // 兜底补回的未覆盖段落（第1-4段）也应在 HTML 中出现
+    expect(html).toContain("七月如期而至");
+    expect(html).toContain("烦恼清零");
+    expect(html).toContain("好物清单");
   });
 
   it("渲染结果包含正确的 data-component 属性", () => {

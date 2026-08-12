@@ -255,6 +255,13 @@ const isHeadingElement = (node: HTMLElement): boolean => {
   );
 };
 
+/** 元素自身是否已声明非零水平内边距（作为卡片容器） */
+const hasOwnHorizontalPadding = (node: HTMLElement): boolean => {
+  const paddingLeft = node.style.getPropertyValue("padding-left").trim();
+  const paddingRight = node.style.getPropertyValue("padding-right").trim();
+  return !isZeroSpacing(paddingLeft) || !isZeroSpacing(paddingRight);
+};
+
 /**
  * 判断元素是否应使用 margin 而非 padding 迁移水平留白。
  * 含 border / background 的块级元素（标题、引用、代码块、提示块）需用 margin，
@@ -268,6 +275,13 @@ const shouldUseMarginForHorizontalOffset = (node: HTMLElement): boolean => {
   if (tagName === "HR") return true;
   if (node.classList.contains("callout")) return true;
   if (node.classList.contains("table-container")) return true;
+  // 组件容器（section.wemd-*）：
+  // - 自身带背景/边框/内边距的卡片（如 toc-nav）→ 用 margin 整体右移对齐正文，
+  //   保留自身 padding，避免卡片背景贴到页面最左。
+  // - 自身无 padding 的内容组件（如 text-card）→ 走 padding 迁移，让内部正文获得内边距。
+  if (tagName === "SECTION" && /(?:^|\s)wemd-/i.test(node.className)) {
+    return hasOwnHorizontalPadding(node);
+  }
   return false;
 };
 

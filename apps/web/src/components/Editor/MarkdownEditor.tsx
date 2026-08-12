@@ -480,10 +480,11 @@ export function MarkdownEditor({
       // 获取当前主题的 layout 偏好，传递给 AI
       const themeId = useThemeStore.getState().themeId;
       const builtInDef = getBuiltInThemeDefinition(themeId);
-      const themeLayout = builtInDef?.layout;
-      // AI 主题的品牌语言（brand.md）
       const customThemes = useThemeStore.getState().customThemes;
       const customTheme = customThemes.find((t) => t.id === themeId);
+      // 优先使用导入主题自身的 layout，其次回退到内置主题
+      const themeLayout = customTheme?.definition?.layout || builtInDef?.layout;
+      // AI 主题的品牌语言（brand.md）
       const brandText = customTheme?.brandText;
       const result = await generateTemplate(
         activeText,

@@ -155,6 +155,40 @@ pnpm --filter wemd-electron build:linux
 
 ---
 
+## AI 主题生成 Skill（wemd-theme-designer）
+
+内置一个开箱即用的 AI 主题设计 skill，配合 Theme SDK 平台，实现"输入品牌信息 → 自动产出完整主题包"的端到端流程。详见 [skills/wemd-theme-designer/README.md](skills/wemd-theme-designer/README.md)。
+
+### 它能做什么
+
+无需手动调 CSS。只需提供品牌信息（名称、介绍、关键词），AI 会像"杂志美术总监 + 设计系统工程师"一样自动产出：
+
+- **一套独特的视觉语言**（配色 / 字体 / 间距 / 形状 / 装饰方向）
+- **6 个深度设计的 Brand Anchor 组件**（其余 30+ 组件克制继承视觉语言）
+- **可直接导入 GZH-WeMD 的 `.wemd-theme` 主题包**
+
+### 核心机制：视觉母题（Visual Metaphor）
+
+区别于"通用 AI 主题生成器"的关键，也是避免不同品牌主题视觉雷同的解法：
+
+- 从品牌档案的**差异化信号**（行业 / 客户 / 人格 / `avoid` 避开方向 / 品牌故事）推导出具象的视觉隐喻
+- 例如"苍洱财税"的 `avoid:["internet startup style"]` + 研发费备查业务 → 推导出 **"税务局核查档案袋"**（红头文件、牛皮纸），而非千篇一律的"深蓝科技渐变"
+- 每个品牌产出 **3 个风格迥异的母题候选**，预览后由用户选择其一
+
+### 六阶段流程
+
+```text
+品牌输入 → 品牌解读 → 概念创意（母题） → 视觉设计 → 组件分析
+→ 组件映射 → CSS 编译 → 打包 .wemd-theme
+```
+
+### 质量保障
+
+- **打包前校验**：自动校验 CSS 选择器，拦截臆造 class 与嵌套 `var()` 雷区
+- **DOM 真源对齐**：通过脚本从主程序渲染器自动生成组件 DOM 结构参考，杜绝"预览与导出不一致"
+
+---
+
 ## 项目结构
 
 ```text
@@ -174,7 +208,12 @@ pnpm --filter wemd-electron build:linux
 │           └── theme-renderer/# 主题渲染管线
 ├── skills/
 │   └── wemd-theme-designer/ # AI 主题生成 skill
-├── wechat-plugin/        # 浏览器插件
+│       ├── README.md        # 能力、流程、使用说明
+│       ├── SKILL.md         # AI 执行规范（六阶段 Prompt 与状态机）
+│       ├── prompts/         # 六阶段 Prompt
+│       ├── reference/       # 输入输出格式、DOM 结构、打包规范
+│       ├── scripts/         # 打包 + CSS 校验 + DOM 快照脚本
+│       └── css-compiler/    # CSS 编译子阶段
 ├── docs/                 # 开发文档
 └── scripts/              # 构建脚本
 ```

@@ -1,0 +1,125 @@
+{
+  "$schema": "ComponentMappingState",
+  "description": "Stage 5 输出：组件映射状态。Brand Anchor 深度设计 + Content/Utility 策略与约束。",
+
+  "type": "object",
+  "required": ["brand_anchor", "content", "utility"],
+
+  "properties": {
+    "brand_anchor": {
+      "type": "object",
+      "description": "Brand Anchor 深度设计，key 为组件名称",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["design"],
+        "properties": {
+          "design": {
+            "type": "object",
+            "required": ["role", "direction", "character"],
+            "properties": {
+              "role": {
+                "type": "string",
+                "description": "在这个品牌中，这个组件承担什么视觉任务"
+              },
+              "direction": { "type": "string", "description": "设计方向描述" },
+              "character": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "视觉特征标签"
+              }
+            }
+          }
+        }
+      }
+    },
+    "content": {
+      "type": "object",
+      "required": ["inherit", "strategy", "component_rules"],
+      "properties": {
+        "inherit": { "type": "string", "const": "visual_language" },
+        "strategy": {
+          "type": "object",
+          "properties": {
+            "expression": {
+              "type": "string",
+              "enum": ["minimal", "low", "medium", "high"]
+            },
+            "readability": {
+              "type": "string",
+              "enum": ["low", "medium", "high"]
+            },
+            "decoration": {
+              "type": "string",
+              "enum": ["none", "restrained", "moderate", "strong"]
+            }
+          }
+        },
+        "component_rules": {
+          "type": "object",
+          "description": "组件级约束",
+          "additionalProperties": {
+            "type": "object",
+            "required": ["category", "inherit", "override"],
+            "properties": {
+              "category": { "type": "string", "const": "content" },
+              "inherit": { "type": "string", "const": "visual_language" },
+              "override": {
+                "type": "object",
+                "properties": {
+                  "emphasis": {
+                    "type": "string",
+                    "enum": ["minimal", "low", "medium", "high"]
+                  },
+                  "decoration": {
+                    "type": "string",
+                    "enum": ["none", "restrained", "moderate", "strong"]
+                  },
+                  "attention": {
+                    "type": "string",
+                    "enum": ["minimal", "low", "medium", "high"]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "utility": {
+      "type": "object",
+      "required": ["inherit", "strategy", "component_rules"],
+      "properties": {
+        "inherit": { "type": "string", "const": "visual_language" },
+        "strategy": {
+          "type": "object",
+          "properties": {
+            "expression": { "type": "string", "enum": ["minimal", "low"] },
+            "attention": { "type": "string", "enum": ["minimal", "low"] },
+            "decoration": { "type": "string", "enum": ["none", "minimal"] }
+          }
+        },
+        "component_rules": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": ["category", "inherit", "override"],
+            "properties": {
+              "category": { "type": "string", "const": "utility" },
+              "inherit": { "type": "string", "const": "visual_language" },
+              "override": {
+                "type": "object",
+                "properties": {
+                  "attention": { "type": "string", "enum": ["minimal", "low"] },
+                  "decoration": {
+                    "type": "string",
+                    "enum": ["none", "minimal"]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

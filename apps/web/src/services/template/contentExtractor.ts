@@ -73,6 +73,46 @@ export function calculateCoverage(
 }
 
 /**
+ * 找出未被任何 article-section 覆盖的段落范围（1-based，含两端）
+ *
+ * 相邻未覆盖段落会合并为连续区间，便于兜底追加 article-section。
+ * 返回空数组表示全文已被覆盖。
+ */
+export function findUncoveredRanges(
+  markdown: string,
+  ranges: Array<{ from: number; to: number }>,
+): Array<{ from: number; to: number }> {
+  const paragraphs = splitParagraphs(markdown);
+  const total = paragraphs.length;
+  if (total === 0) return [];
+
+  const covered = new Set<number>();
+  for (const range of ranges) {
+    const from = Math.max(1, Math.ceil(range.from));
+    const to = Math.min(total, Math.floor(range.to));
+    for (let i = from; i <= to; i++) {
+      covered.add(i);
+    }
+  }
+
+  const uncovered: Array<{ from: number; to: number }> = [];
+  let start = -1;
+  for (let i = 1; i <= total; i++) {
+    if (!covered.has(i)) {
+      if (start === -1) start = i;
+    } else if (start !== -1) {
+      uncovered.push({ from: start, to: i - 1 });
+      start = -1;
+    }
+  }
+  if (start !== -1) {
+    uncovered.push({ from: start, to: total });
+  }
+
+  return uncovered;
+}
+
+/**
  * 获取总段落数
  */
 export function getParagraphCount(markdown: string): number {

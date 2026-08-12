@@ -226,7 +226,6 @@ export interface ProductCardContent {
 
 /** brand-sign 品牌签名 Logo 小标 */
 export interface BrandSignContent {
-  logo?: string;
   brandName: string;
   slogan?: string;
   subText?: string;
@@ -359,6 +358,62 @@ export interface ImageTextRowContent {
 export interface ImageCaptionContent {
   src?: string;
   caption?: string;
+}
+
+/** image-compare 图片对比 */
+export interface ImageCompareContent {
+  before: string;
+  after: string;
+  caption?: string;
+}
+
+/** table 原始数据表格 */
+export interface TableRow {
+  cells: string[];
+}
+
+export interface TableContent {
+  title?: string;
+  headers?: string[];
+  rows: TableRow[];
+}
+
+/** accordion 折叠面板 */
+export interface AccordionItem {
+  title: string;
+  body: string;
+}
+
+export interface AccordionContent {
+  items: AccordionItem[];
+}
+
+/** steps 步骤说明 */
+export interface StepItem {
+  title: string;
+  description?: string;
+}
+
+export interface StepsContent {
+  title?: string;
+  items: StepItem[];
+}
+
+/** code-block 代码块 */
+export interface CodeBlockContent {
+  code: string;
+  lang?: string;
+}
+
+/** pullquote 拉取引用 */
+export interface PullquoteContent {
+  text: string;
+  source?: string;
+}
+
+/** divider 内容分隔线 */
+export interface DividerContent {
+  text?: string;
 }
 
 /** Renderer 输出结果 */

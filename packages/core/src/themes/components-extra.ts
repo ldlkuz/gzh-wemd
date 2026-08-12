@@ -712,11 +712,20 @@ export const componentStylesExtra = `/* === WeMD 扩展组件样式（跟随主�
   text-align: center;
 }
 
-#wemd .wemd-brand-sign .wemd-bs-logo img {
+#wemd .wemd-brand-sign .wemd-bs-logo {
   width: 44px;
   height: 44px;
   border-radius: 10px;
-  object-fit: cover;
+  background-image: var(--wemd-asset-logo, none);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--wemd-primary, #07c160);
 }
 
 #wemd .wemd-brand-sign .wemd-bs-brand-name {

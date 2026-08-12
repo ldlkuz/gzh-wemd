@@ -20,6 +20,7 @@ import {
   extractParagraphs,
   calculateCoverage,
   getParagraphCount,
+  findUncoveredRanges,
 } from "./contentExtractor";
 import {
   componentRenderers,
@@ -401,6 +402,34 @@ export function renderTemplate(
     if (markdown) {
       outputParts.push(markdown);
     }
+  }
+
+  // 渲染所有显式节点后，检查未覆盖正文段落，自动兜底为 article-section
+  // 保证正文一段都不丢（组件抽取不会导致正文丢失）
+  const uncoveredRanges = findUncoveredRanges(article, paragraphRanges);
+  if (uncoveredRanges.length > 0) {
+    for (const range of uncoveredRanges) {
+      const part = renderArticleSection(
+        {
+          component: ARTICLE_SECTION,
+          content: { fromParagraph: range.from, toParagraph: range.to },
+          design: getDefaultDesign(ARTICLE_SECTION),
+          reason: "正文覆盖兜底：自动补全未编排段落",
+        },
+        article,
+        total,
+        warnings,
+      );
+      if (part) {
+        outputParts.push(part.markdown);
+        paragraphRanges.push({ from: part.from, to: part.to });
+      }
+    }
+    warnings.push(
+      `补充 ${uncoveredRanges.length} 段未覆盖正文兜底（${uncoveredRanges
+        .map((r) => `第${r.from}-${r.to}段`)
+        .join("、")}）`,
+    );
   }
 
   const coverage = total > 0 ? calculateCoverage(article, paragraphRanges) : 1;

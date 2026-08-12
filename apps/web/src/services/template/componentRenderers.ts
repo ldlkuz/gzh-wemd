@@ -42,6 +42,13 @@ import type {
   ImageCaptionContent,
   CtaCardContent,
   TagLabelContent,
+  ImageCompareContent,
+  TableContent,
+  AccordionContent,
+  StepsContent,
+  CodeBlockContent,
+  PullquoteContent,
+  DividerContent,
 } from "./types";
 
 /**
@@ -247,6 +254,14 @@ export const componentRenderers: Record<string, ComponentRenderer> = {
   "qr-card": renderQrCard,
   "image-text-row": renderImageTextRow,
   "image-caption": renderImageCaption,
+  // 全 43 组件补齐：image-compare / table / accordion / steps / code-block / pullquote / divider
+  "image-compare": renderImageCompare,
+  table: renderTable,
+  accordion: renderAccordion,
+  steps: renderSteps,
+  "code-block": renderCodeBlock,
+  pullquote: renderPullquote,
+  divider: renderDivider,
 };
 
 /**
@@ -387,7 +402,6 @@ function renderProductCard(content: ProductCardContent): string {
  */
 function renderBrandSign(content: BrandSignContent): string {
   const lines: string[] = [];
-  if (content.logo) lines.push(`![brand-logo](${content.logo})`);
   lines.push(`**${content.brandName}**`);
   if (content.slogan) lines.push(content.slogan);
   const meta: string[] = [];
@@ -577,4 +591,72 @@ function renderImageCaption(content: ImageCaptionContent): string {
   if (content.src) lines.push(`![](${content.src})`);
   if (content.caption) lines.push(`*${content.caption}*`);
   return lines.join("\n\n");
+}
+
+/** image-compare 图片对比 */
+function renderImageCompare(content: ImageCompareContent): string {
+  const lines: string[] = [];
+  if (content.before) lines.push(`![](${content.before})`);
+  if (content.after) lines.push(`![](${content.after})`);
+  if (content.caption) lines.push(`*${content.caption}*`);
+  return lines.join("\n\n");
+}
+
+/** table 原始数据表格 */
+function renderTable(content: TableContent): string {
+  const lines: string[] = [];
+  if (content.title) lines.push(`**${content.title}**`);
+  lines.push("");
+  if (content.headers && content.headers.length > 0) {
+    lines.push(`| ${content.headers.join(" | ")} |`);
+    lines.push(`| ${content.headers.map(() => "---").join(" | ")} |`);
+  }
+  for (const row of content.rows || []) {
+    lines.push(`| ${row.cells.join(" | ")} |`);
+  }
+  return lines.join("\n");
+}
+
+/** accordion 折叠面板 */
+function renderAccordion(content: AccordionContent): string {
+  const lines: string[] = [];
+  for (const item of content.items || []) {
+    if (lines.length > 0) lines.push("");
+    lines.push(`**${item.title}**`);
+    lines.push("");
+    lines.push(item.body);
+  }
+  return lines.join("\n");
+}
+
+/** steps 步骤说明 */
+function renderSteps(content: StepsContent): string {
+  const lines: string[] = [];
+  if (content.title) lines.push(`**${content.title}**`);
+  lines.push("");
+  for (const item of content.items || []) {
+    lines.push(
+      `- **${item.title}**${item.description ? ` — ${item.description}` : ""}`,
+    );
+  }
+  return lines.join("\n");
+}
+
+/** code-block 代码块 */
+function renderCodeBlock(content: CodeBlockContent): string {
+  const lang = content.lang || "text";
+  return `\`\`\`${lang}\n${content.code || ""}\n\`\`\``;
+}
+
+/** pullquote 拉取引用 */
+function renderPullquote(content: PullquoteContent): string {
+  const lines: string[] = [];
+  lines.push(`> **${content.text}**`);
+  if (content.source) lines.push(`> —— ${content.source}`);
+  return lines.join("\n\n");
+}
+
+/** divider 内容分隔线 */
+function renderDivider(content: DividerContent): string {
+  return content.text ? `---${content.text}---` : "---";
 }
