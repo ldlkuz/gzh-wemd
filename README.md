@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  杂志级排版 · 44 组件系统 · AI 自动排版 · 多主题切换 · 一键发布到公众号
+  杂志级排版 · 39 组件系统 · AI 排版 · 12 套主题 · 一键发布到公众号
 </p>
 
 ---
@@ -18,20 +18,23 @@
 
 本项目基于 [WeMD](https://github.com/tenngoxars/WeMD) 二次开发，感谢原作者 [@tenngoxars](https://github.com/tenngoxars) 的开源贡献。
 
-WeMD 提供了优秀的微信公众号 Markdown 排版基础框架 —— 所见即所得的编辑体验、主题系统、丰富的排版组件、以及一键复制到公众号的核心能力。GZH-WeMD 在此基础上进行了大量扩展，核心新增如下：
+WeMD 提供了优秀的微信公众号 Markdown 排版基础框架 —— 所见即所得的编辑体验、主题系统、丰富的排版组件以及一键复制到公众号的核心能力。GZH-WeMD 在此基础上进行了大量扩展。
 
-### GZH-WeMD 新增能力
+---
 
-| 新增模块                   | 说明                                                                                                                                          |
-| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| **AI 排版引擎**            | 纯文本自动结构化 + 内容信号分析 + 自动组件选择 + Designer Review 自检，AI 像专业排版设计师一样决定组件类型、位置和数量                        |
-| **Design Intent 系统**     | 组件不再只是"插入"，而是携带设计意图（强调/过渡/总结/数据…），根据用户设计目标（阅读优先/平衡设计/视觉优先）和读者画像动态适配                |
-| **Variant 变体系统**       | 同一组件支持 3~4 套造型变体，主题可指定默认变体，AI 排版可按需覆盖，实现同一组件在不同场景下的多样化表现                                      |
-| **AI 主题生成**            | 描述风格关键词即可自动生成完整主题（配色、字体、间距、组件样式），支持导入/导出主题包                                                         |
-| **Design Goal + 读者画像** | 用户选择设计目标（阅读优先/平衡设计/视觉优先/信息密度）和读者画像（大众阅读/快速浏览/深度阅读/学习研究/决策参考/品牌传播），AI 据此调整策略   |
-| **扩展组件**               | 新增产品卡片、品牌签名、资料清单、名人推荐、系列导航等组件，覆盖电商、教育、品牌传播等场景                                                    |
-| **Theme SDK 平台**         | 标准化主题包格式（manifest.json + CSS + 资源文件），支持外部 AI 工具生成可直接导入的主题包；内置 wemd-theme-designer skill 自动生成完整主题包 |
-| **全组件范文一键加载**     | 工具栏新增"加载全组件范文"按钮，一键填充 44 个组件示范内容，方便主题渲染测试和效果预览                                                        |
+## 核心能力
+
+| 模块                    | 说明                                                                                                |
+| ----------------------- | --------------------------------------------------------------------------------------------------- |
+| **AI 设计版式**         | AI 分析全文内容，识别文章类型，给出组件插入建议（位置 / 组件 / 理由），可预览、采纳、跳过或批量应用 |
+| **AI 杂志排版**         | 一键生成完整的杂志级版式模板（Template JSON），应用后全文自动排版                                   |
+| **模板渲染系统**        | 结构化 Template JSON → 渲染管线，AI 输出经合法性校验，确保可直接消费                                |
+| **39 个排版组件**       | 覆盖卡片、数据、导航、引用、代码、图文、列表等常见公众号排版场景                                    |
+| **主题系统**            | 12 套内置主题 + 可视化主题设计器 + 导入/导出主题包（.wemd-theme）；支持深色模式                     |
+| **wemd-theme-designer** | 内置 AI 主题设计 skill，输入品牌信息即可自动产出可直接导入的完整主题包（.wemd-theme）               |
+| **一键发布到公众号**    | 富文本复制直接粘贴，或复制 HTML 配合插件；内置标题/作者元信息管理                                   |
+| **多图床**              | 阿里 OSS / 腾讯 COS / 七牛 / S3 / 微信官方，粘贴图片自动处理并上传                                  |
+| **文件系统模式**        | 以本地文件夹为工作区，支持历史记录、快捷同步与文件管理                                              |
 
 ---
 
@@ -47,74 +50,76 @@ WeMD 提供了优秀的微信公众号 Markdown 排版基础框架 —— 所见
 
 ---
 
-## AI 排版引擎
+## AI 排版
 
-核心亮点 —— 不只是"AI 帮你写"，而是"AI 帮你设计"。
-
-### 架构
+不只是"AI 帮你写"，而是"AI 帮你设计"。
 
 ```
 用户输入纯文本 / Markdown
          │
          ▼
-   AI 分析内容信号（数据/情绪/结论/过渡）
+   AI 分析内容信号（数据 / 情绪 / 结论 / 过渡）
          │
          ▼
-   AI 选择组件 + 设计意图（Design Intent）
+   AI 给出组件插入建议 / 生成完整版式模板
          │
          ▼
-   Theme 设计语言 × 用户设计目标 → 渲染排版
+   主题设计语言 × 排版方案 → 渲染
          │
          ▼
    一键复制到公众号
 ```
 
-### AI 能力
+### 能力
 
-| 能力            | 说明                                       |
-| --------------- | ------------------------------------------ |
-| 文本转 Markdown | 纯文本自动结构化，识别标题、列表、引用     |
-| AI 杂志排版     | 全文分析 → 自动选组件 → 生成杂志级排版     |
-| AI 主题生成     | 描述风格关键词，自动生成完整主题配色和样式 |
+- **AI 设计版式**：全文分析 → 识别文章类型 → 逐处给出组件插入建议，用户逐条预览 / 采纳 / 跳过，或批量应用
+- **AI 杂志排版**：一键生成完整版式模板（Template JSON），应用后全文结构化排版
+- **模板渲染系统**：Template JSON 经合法性校验后渲染，保证 AI 输出可被稳定消费
 
 ### 设计原则
 
-- **Theme 优先级最高**：主题的设计语言主导风格走向，用户偏好为软建议
-- **组件按需存在**：每个组件必须解决具体问题，删除测试判定去留
-- **Designer Review 自检**：AI 生成后自审查，剔除无意义组件
+- **主题优先级最高**：主题的设计语言主导风格走向，用户偏好为软建议
+- **组件按需存在**：每个组件必须解决具体问题
+- **AI 输出可校验**：生成的版式方案经过结构化校验，避免无效输出
 
 ---
 
 ## 组件系统
 
-44 个排版组件，覆盖公众号常见排版需求：
+39 个排版组件，覆盖公众号常见排版需求，按语言分组：
 
-- **signature 组（4）**：hero-banner、brand-sign、magazine-cover、end-card
-- **heading 组（4）**：numbered-heading、section-title、toc-nav、article-section
-- **container 组（10）**：text-card、image-card、image-grid、image-text-row、image-caption、image-compare、two-column-cards、quote-card、testimonial-card、author-card
-- **data 组（9）**：stats-block、timeline、styled-table、table、resource-list、series-nav、product-card、faq、accordion
-- **interactive 组（6）**：callout、callout-pro、cta-card、share-card、follow-bar、qr-card
-- **code 组（2）**：code-frame、code-block
-- **divider 组（9）**：divider-fancy、divider、section-divider、full-quote、pullquote、tag-label、copyright-notice、related-posts、steps
+- **default 组（9）**：引用卡、分隔线、CTA 卡、代码框、进阶提示、数据块、图片网格、作者卡、时间线
+- **extra 组（13）**：关注条、二维码卡、编号标题、章节标题、图文行、主 Banner、转发卡、相关阅读、目录导航、标签、图片说明、版权声明、样式表格
+- **magazine 组（7）**：杂志封面、章节分隔、图文卡、文字卡、整段引用、双栏卡片、结尾卡
+- **extended 组（9）**：文章区块、代码块、提示、步骤、手风琴、拉引语、分隔线、表格、图片对比
+- **faq 组（1）**：FAQ 问答
 
-每个组件支持多套变体（variant），主题可指定默认造型，AI 排版可按需覆盖。
+组件采用「骨架模板 + slot 填充」渲染，主题可通过模板骨架定制组件结构，保证预览与导出一致。
 
 ---
 
 ## 主题系统
 
-内置 14 套主题：商务 / 学术 / 科技 / 自然 / 极简 / 创意 等风格全覆盖，支持 AI 自动生成自定义主题。
+内置 12 套主题，覆盖商务 / 学术 / 科技 / 自然 / 极简 / 创意等风格：
+
+- 默认主题、数据蓝图、东方笺谱、清晰指南、留白画册、学术论文、知识库、黑金奢华、莫兰迪森林、编辑部手记、购物小票、落日胶片
+
+### 主题来源
+
+- **可视化设计器**：分项调整配色 / 字体 / 间距 / 标题 / 组件样式，实时预览
+- **导入主题包**：导入 `.wemd-theme` 主题包，支持同名主题覆盖
+- **wemd-theme-designer skill**：由 AI 根据品牌信息自动产出可导入的主题包
+
+### 技术要点
 
 - 设计令牌（Design Token）：颜色、字体、间距统一管理
-- 变体系统：同一组件多套造型，`data-variant` 切换
+- 模板骨架：主题可为组件定制 DOM 结构（slot 填充）
 - 深色模式：所有主题自动适配
 - 响应式：移动端自适应
 
 ---
 
 ## 公众号发布
-
-两种方式，同一份产物：
 
 - **复制到公众号**：富文本格式，直接粘贴到公众号编辑器
 - **复制 HTML**：配合浏览器插件，完整保留样式
@@ -129,9 +134,8 @@ WeMD 提供了优秀的微信公众号 Markdown 排版基础框架 —— 所见
 # 安装依赖
 pnpm install
 
-# 启动开发服务器
+# 启动 Web 开发服务器
 pnpm dev:web
-# 或双击 start-web.bat
 
 # 启动桌面端（Electron）
 pnpm dev:desktop
@@ -140,52 +144,22 @@ pnpm dev:desktop
 ### 构建
 
 ```bash
-# Web
+# 全量构建（Web + Electron）
+pnpm build
+
+# 仅 Web
 pnpm --filter @wemd/web build
-
-# Windows
-pnpm --filter wemd-electron build:win
-
-# macOS
-pnpm --filter wemd-electron build:mac
-
-# Linux
-pnpm --filter wemd-electron build:linux
 ```
+
+桌面端平台打包命令见 [apps/electron/README.md](apps/electron/README.md)。
 
 ---
 
-## AI 主题生成 Skill（wemd-theme-designer）
+## wemd-theme-designer Skill
 
-内置一个开箱即用的 AI 主题设计 skill，配合 Theme SDK 平台，实现"输入品牌信息 → 自动产出完整主题包"的端到端流程。详见 [skills/wemd-theme-designer/README.md](skills/wemd-theme-designer/README.md)。
+内置一个开箱即用的 AI 主题设计 skill，输入品牌信息即可产出可直接导入的完整主题包，实现端到端的主题生成流程。详见 [skills/wemd-theme-designer/README.md](skills/wemd-theme-designer/README.md)。
 
-### 它能做什么
-
-无需手动调 CSS。只需提供品牌信息（名称、介绍、关键词），AI 会像"杂志美术总监 + 设计系统工程师"一样自动产出：
-
-- **一套独特的视觉语言**（配色 / 字体 / 间距 / 形状 / 装饰方向）
-- **6 个深度设计的 Brand Anchor 组件**（其余 30+ 组件克制继承视觉语言）
-- **可直接导入 GZH-WeMD 的 `.wemd-theme` 主题包**
-
-### 核心机制：视觉母题（Visual Metaphor）
-
-区别于"通用 AI 主题生成器"的关键，也是避免不同品牌主题视觉雷同的解法：
-
-- 从品牌档案的**差异化信号**（行业 / 客户 / 人格 / `avoid` 避开方向 / 品牌故事）推导出具象的视觉隐喻
-- 例如"苍洱财税"的 `avoid:["internet startup style"]` + 研发费备查业务 → 推导出 **"税务局核查档案袋"**（红头文件、牛皮纸），而非千篇一律的"深蓝科技渐变"
-- 每个品牌产出 **3 个风格迥异的母题候选**，预览后由用户选择其一
-
-### 六阶段流程
-
-```text
-品牌输入 → 品牌解读 → 概念创意（母题） → 视觉设计 → 组件分析
-→ 组件映射 → CSS 编译 → 打包 .wemd-theme
-```
-
-### 质量保障
-
-- **打包前校验**：自动校验 CSS 选择器，拦截臆造 class 与嵌套 `var()` 雷区
-- **DOM 真源对齐**：通过脚本从主程序渲染器自动生成组件 DOM 结构参考，杜绝"预览与导出不一致"
+它能把品牌信息（名称、介绍、关键词）转化为一套独特的视觉语言、深度设计的 Brand Anchor 组件，以及可直接导入的 `.wemd-theme` 主题包，并通过打包前 CSS 校验与 DOM 真源对齐，杜绝"预览与导出不一致"。
 
 ---
 
@@ -193,29 +167,19 @@ pnpm --filter wemd-electron build:linux
 
 ```text
 ├── apps/
-│   ├── web/              # React + Vite 前端
+│   ├── web/              # React + Vite 前端（主程序）
 │   │   └── src/
-│   │       ├── components/  # UI 组件
-│   │       ├── services/    # AI、图片、微信复制等服务
+│   │       ├── components/  # UI 组件（编辑器 / 预览 / 主题 / 设置等）
+│   │       ├── services/    # AI、图片、模板、微信复制等服务
 │   │       ├── store/       # Zustand 状态管理
-│   │       └── hooks/
+│   │       └── hooks/       # 可复用 Hook
 │   └── electron/         # Electron 桌面端
 ├── packages/
-│   └── core/            # 核心库（Markdown 解析、主题、组件）
-│       └── src/
-│           ├── components/    # 组件注册表、变体
-│           ├── plugins/       # markdown-it 插件
-│           └── theme-renderer/# 主题渲染管线
+│   └── core/            # 核心库（Markdown 解析、主题、组件、模板）
 ├── skills/
 │   └── wemd-theme-designer/ # AI 主题生成 skill
-│       ├── README.md        # 能力、流程、使用说明
-│       ├── SKILL.md         # AI 执行规范（六阶段 Prompt 与状态机）
-│       ├── prompts/         # 六阶段 Prompt
-│       ├── reference/       # 输入输出格式、DOM 结构、打包规范
-│       ├── scripts/         # 打包 + CSS 校验 + DOM 快照脚本
-│       └── css-compiler/    # CSS 编译子阶段
-├── docs/                 # 开发文档
-└── scripts/              # 构建脚本
+├── docs/                # 开发文档
+└── scripts/             # 构建脚本
 ```
 
 ---
