@@ -1,0 +1,86 @@
+[
+  {
+    "id": "pseudo-element",
+    "pattern": "::(before|after|marker|selection|first-letter|first-line|placeholder|backdrop|spelling-error|grammar-error)",
+    "flags": "i",
+    "message": "微信会剥离伪元素，装饰会静默丢失。",
+    "fix": "删除或改用真实 <span> 子元素。"
+  },
+  {
+    "id": "structural-pseudo",
+    "pattern": ":(first-child|last-child|nth-child|nth-last-child|first-of-type|last-of-type|nth-of-type|nth-last-of-type|only-child|only-of-type|empty)\\b",
+    "flags": "i",
+    "message": "结构伪类在微信中支持不稳定，必须改用具体 class 选择器。",
+    "fix": "改用具体 class 选择器（骨架已物化 wemd-{abbr}-{name}）。"
+  },
+  {
+    "id": "external-link",
+    "pattern": "url\\s*\\(\\s*['\"]?\\s*https?:\\/\\/",
+    "flags": "i",
+    "message": "外部 url(http(s)://) 在公众号中会 404，禁止使用。",
+    "fix": "内联为 data: URI。"
+  },
+  {
+    "id": "forbidden-tag",
+    "pattern": "<(style|script)\\b",
+    "flags": "i",
+    "message": "样式/脚本标签不允许出现，CSS 产物只能含纯样式规则。",
+    "fix": "移除 <style>/<script> 标签。"
+  },
+  {
+    "id": "zip-asset",
+    "pattern": "url\\s*\\(\\s*['\"]?\\s*assets\\/[^'\")\\s]+['\"]?\\s*\\)",
+    "flags": "i",
+    "message": "CSS 中直接写 assets/ 路径导出后会 404。",
+    "fix": "用 var(--wemd-asset-<key>) 或内联 data:。"
+  },
+  {
+    "id": "position-fixed",
+    "pattern": "position\\s*:\\s*fixed",
+    "flags": "i",
+    "message": "position:fixed 在微信公众号中不支持，会被静默丢弃",
+    "fix": "移除 position:fixed，或改用 position:relative"
+  },
+  {
+    "id": "position-sticky",
+    "pattern": "position\\s*:\\s*sticky",
+    "flags": "i",
+    "message": "position:sticky 在微信公众号中不支持，会被静默丢弃",
+    "fix": "移除 position:sticky，或改用 position:relative"
+  },
+  {
+    "id": "keyframes",
+    "pattern": "@keyframes\\b",
+    "flags": "i",
+    "message": "@keyframes 在微信公众号中不支持，动画会被丢弃",
+    "fix": "移除 @keyframes 及对应的 animation 属性"
+  },
+  {
+    "id": "animation",
+    "pattern": "animation\\s*:",
+    "flags": "i",
+    "message": "animation 属性在微信公众号中不支持，动画不会播放",
+    "fix": "移除 animation 属性"
+  },
+  {
+    "id": "backdrop-filter",
+    "pattern": "backdrop-filter\\s*:",
+    "flags": "i",
+    "message": "backdrop-filter 在微信公众号中不支持，毛玻璃效果会丢失",
+    "fix": "移除 backdrop-filter，改用 background:rgba() 模拟半透明效果"
+  },
+  {
+    "id": "filter",
+    "pattern": "filter\\s*:",
+    "flags": "i",
+    "message": "filter 在微信公众号中支持有限，可能被丢弃",
+    "fix": "移除 filter，如需模糊效果请用 SVG 滤镜替代"
+  },
+  {
+    "id": "mix-blend-mode",
+    "pattern": "mix-blend-mode\\s*:",
+    "flags": "i",
+    "message": "mix-blend-mode 在微信公众号中不支持",
+    "fix": "移除 mix-blend-mode 属性"
+  }
+]

@@ -1,0 +1,84 @@
+{
+  "focal": {
+    "magazine-cover": {
+      "design": {
+        "role": "工坊封面：第一视觉印象，用像素格纸 + 油墨印章承载品牌身份与情绪",
+        "direction": "居中构图，标题区如同一张盖满墨章的工坊扉页：顶部一条油墨色条带（top-bar）模拟工坊挂牌，主标题用超大字重扮演像素招牌，副标题与分割线保持留白节奏，底部描述像手写落款。格纸底纹整体铺底但不抢标题",
+        "character": ["handcrafted", "bold", "centered", "stamp-sealed"]
+      }
+    },
+    "section-title": {
+      "design": {
+        "role": "章节分区标：把每章标题做成格纸上的工坊分区标",
+        "direction": "侧栏（side-rail）构图：左侧一个角标（corner）扮演格纸切角标签，右侧标题主体像写在像素格纸上的分区名；标题下方一条细规则（rule）作为格纸横线，提示内容从这里开始。整块保持格纸的网格秩序",
+        "character": ["grid", "technical", "structured", "restrained"]
+      }
+    },
+    "resource-list": {
+      "design": {
+        "role": "工具/素材清单：用 ink stamps 落款质感陈列 sprite sheets 与 palette swatches",
+        "direction": "纵向堆叠：头部一条油墨色条带（top-bar）作为清单挂牌，标题扮演清单抬头、副标题作说明；条目列表（items）像工坊货架上排列的工具与素材，每行以落款式色块标出，营造亲手整理过的陈列感",
+        "character": ["handcrafted", "inventory", "ordered", "warm"]
+      }
+    },
+    "styled-table": {
+      "design": {
+        "role": "像素调色板对照表：把参数对照做成工坊手写记录感",
+        "direction": "纵向堆叠：顶部油墨色条带（top-bar）作为表格挂牌，表格主体（table）像格纸上的手写参数记录，色块列扮演调色板 swatch，行分隔保持格纸网格秩序，整体克制不喧宾夺主",
+        "character": ["tabular", "grid", "handwritten", "authoritative"]
+      }
+    },
+    "image-grid": {
+      "design": {
+        "role": "精灵表网格陈列：直接呈现像素画的陈列感",
+        "direction": "网格（grid）构图，图片按像素精灵表（sprite sheet）的规整排列展开，每格像一张格纸上的像素贴片，边缘以 sharp 的硬边分隔强化像素感，浏览时如同检视工坊的素材墙",
+        "character": ["grid", "pixelated", "sharp", "gallery"]
+      }
+    }
+  },
+  "content": {
+    "inherit": "visual_language",
+    "strategy": {
+      "expression": "low",
+      "readability": "high",
+      "decoration": "restrained"
+    },
+    "component_rules": {
+      "numbered-heading": {
+        "category": "content",
+        "inherit": "visual_language",
+        "override": { "emphasis": "medium", "decoration": "restrained" }
+      },
+      "hero-banner": {
+        "category": "content",
+        "inherit": "visual_language",
+        "override": { "emphasis": "medium", "decoration": "restrained" }
+      },
+      "quote-card": {
+        "category": "content",
+        "inherit": "visual_language",
+        "override": { "emphasis": "medium", "decoration": "restrained" }
+      }
+    }
+  },
+  "utility": {
+    "inherit": "visual_language",
+    "strategy": {
+      "expression": "minimal",
+      "attention": "low",
+      "decoration": "minimal"
+    },
+    "component_rules": {
+      "divider": {
+        "category": "utility",
+        "inherit": "visual_language",
+        "override": { "attention": "minimal" }
+      },
+      "copyright-notice": {
+        "category": "utility",
+        "inherit": "visual_language",
+        "override": { "attention": "minimal", "decoration": "none" }
+      }
+    }
+  }
+}

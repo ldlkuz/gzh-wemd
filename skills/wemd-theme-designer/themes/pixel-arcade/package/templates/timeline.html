@@ -1,0 +1,8 @@
+<section class="wemd-component wemd-timeline" data-component="timeline">
+{{#if title}}<section class="wemd-tl-title">{{slot:title}}</section>{{/if}}
+{{#if items}}<section class="wemd-tl-events">
+{{#each items}}
+<section class="wemd-tl-item"><span class="wemd-tl-dot"></span><span class="wemd-tl-text">{{this.body}}</span></section>
+{{/each}}
+</section>{{/if}}
+</section>

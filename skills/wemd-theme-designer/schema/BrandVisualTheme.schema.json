@@ -162,11 +162,11 @@
     "components": {
       "type": "object",
       "description": "来自 themes/{theme-name}/states/component_mapping.json（皮）",
-      "required": ["brand_anchor", "content", "utility"],
+      "required": ["focal", "content", "utility"],
       "properties": {
-        "brand_anchor": {
+        "focal": {
           "type": "object",
-          "description": "key 为组件 id",
+          "description": "key 为组件 id（深度设计焦点集）",
           "additionalProperties": {
             "type": "object",
             "required": ["design"],

@@ -1,0 +1,62 @@
+{
+  "concept_name": "Pixel Arcade Nostalgia",
+  "core_concept": "用复古像素游戏的视觉语言，把独立游戏开发的内核——手工打磨、探索冒险、硬核极客——锚定成可感知的怀旧世界，让玩家与开发者在字里行间重拾街机与卡带的温度。",
+  "visual_metaphors": [
+    {
+      "metaphor_name": "深夜街机厅的 CRT 屏幕",
+      "reason": "combination of personality[nostalgic] + emotion[nostalgia/joy] + avoid[corporate] + audience[retro game enthusiasts]。怀旧与欢乐指向 CRT 显像管与街机厅氛围，成功避开 corporate 与 modern flat，直接唤起复古玩家的集体记忆。",
+      "visual_objects": [
+        "arcade cabinet",
+        "CRT glass",
+        "scanlines",
+        "coin slot",
+        "neon glow",
+        "high-score table"
+      ],
+      "material_language": [
+        "phosphor glow",
+        "curved glass",
+        "neon tube",
+        "abs plastic"
+      ],
+      "motion_character": "bright flickering"
+    },
+    {
+      "metaphor_name": "像素匠人的手作工坊",
+      "reason": "combination of personality[crafty/handcrafted] + 创作主题[独立游戏开发] + keywords[pixel/handcrafted]。‘工房’本义即手作工作室，把像素点阵当作手工工艺，突出开发者亲手打磨的匠人气质与 crafty 人格。",
+      "visual_objects": [
+        "pixel-grid graph paper",
+        "sprite sheets",
+        "palette swatches",
+        "hand tools",
+        "workbench",
+        "ink stamps"
+      ],
+      "material_language": ["grid paper", "ink", "wood", "solder", "chalk"],
+      "motion_character": "handcrafted pop-in"
+    },
+    {
+      "metaphor_name": "复古红白机卡带冒险地图",
+      "reason": "combination of personality[playful/bold] + emotion[discovery] + 创作主题[独立游戏] + audience[retro game enthusiasts]。把图文内容当作一张像素冒险地图，用关卡、生命数、道具来组织阅读节奏，呼应独立游戏的探索叙事与 bold 人格。",
+      "visual_objects": [
+        "8-bit level map",
+        "dungeon rooms",
+        "power-ups",
+        "lives counter",
+        "world map",
+        "boss gate"
+      ],
+      "material_language": [
+        "cartridge plastic",
+        "glossy sticker",
+        "ink",
+        "pixel tiles"
+      ],
+      "motion_character": "bouncy sequential"
+    }
+  ],
+  "emotional_direction": {
+    "primary": "nostalgia",
+    "secondary": "discovery"
+  }
+}

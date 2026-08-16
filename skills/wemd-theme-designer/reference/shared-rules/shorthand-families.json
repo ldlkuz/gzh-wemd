@@ -1,0 +1,161 @@
+[
+  {
+    "short": "margin",
+    "longhands": ["margin-top", "margin-right", "margin-bottom", "margin-left"]
+  },
+  {
+    "short": "padding",
+    "longhands": [
+      "padding-top",
+      "padding-right",
+      "padding-bottom",
+      "padding-left"
+    ]
+  },
+  {
+    "short": "inset",
+    "longhands": ["top", "right", "bottom", "left"]
+  },
+  {
+    "short": "border",
+    "longhands": [
+      "border-width",
+      "border-style",
+      "border-color",
+      "border-top",
+      "border-right",
+      "border-bottom",
+      "border-left",
+      "border-top-width",
+      "border-top-style",
+      "border-top-color",
+      "border-right-width",
+      "border-right-style",
+      "border-right-color",
+      "border-bottom-width",
+      "border-bottom-style",
+      "border-bottom-color",
+      "border-left-width",
+      "border-left-style",
+      "border-left-color"
+    ]
+  },
+  {
+    "short": "border-width",
+    "longhands": [
+      "border-top-width",
+      "border-right-width",
+      "border-bottom-width",
+      "border-left-width"
+    ]
+  },
+  {
+    "short": "border-style",
+    "longhands": [
+      "border-top-style",
+      "border-right-style",
+      "border-bottom-style",
+      "border-left-style"
+    ]
+  },
+  {
+    "short": "border-color",
+    "longhands": [
+      "border-top-color",
+      "border-right-color",
+      "border-bottom-color",
+      "border-left-color"
+    ]
+  },
+  {
+    "short": "border-top",
+    "longhands": ["border-top-width", "border-top-style", "border-top-color"]
+  },
+  {
+    "short": "border-right",
+    "longhands": [
+      "border-right-width",
+      "border-right-style",
+      "border-right-color"
+    ]
+  },
+  {
+    "short": "border-bottom",
+    "longhands": [
+      "border-bottom-width",
+      "border-bottom-style",
+      "border-bottom-color"
+    ]
+  },
+  {
+    "short": "border-left",
+    "longhands": ["border-left-width", "border-left-style", "border-left-color"]
+  },
+  {
+    "short": "border-radius",
+    "longhands": [
+      "border-top-left-radius",
+      "border-top-right-radius",
+      "border-bottom-right-radius",
+      "border-bottom-left-radius"
+    ]
+  },
+  {
+    "short": "outline",
+    "longhands": ["outline-width", "outline-style", "outline-color"]
+  },
+  {
+    "short": "flex",
+    "longhands": ["flex-grow", "flex-shrink", "flex-basis"]
+  },
+  {
+    "short": "gap",
+    "longhands": ["row-gap", "column-gap"]
+  },
+  {
+    "short": "place-items",
+    "longhands": ["align-items", "justify-items"]
+  },
+  {
+    "short": "place-content",
+    "longhands": ["align-content", "justify-content"]
+  },
+  {
+    "short": "font",
+    "longhands": [
+      "font-style",
+      "font-variant",
+      "font-weight",
+      "font-stretch",
+      "font-size",
+      "line-height",
+      "font-family"
+    ]
+  },
+  {
+    "short": "background",
+    "longhands": [
+      "background-image",
+      "background-position",
+      "background-size",
+      "background-repeat",
+      "background-origin",
+      "background-clip",
+      "background-attachment",
+      "background-color"
+    ]
+  },
+  {
+    "short": "list-style",
+    "longhands": ["list-style-type", "list-style-position", "list-style-image"]
+  },
+  {
+    "short": "text-decoration",
+    "longhands": [
+      "text-decoration-line",
+      "text-decoration-style",
+      "text-decoration-color",
+      "text-decoration-thickness"
+    ]
+  }
+]

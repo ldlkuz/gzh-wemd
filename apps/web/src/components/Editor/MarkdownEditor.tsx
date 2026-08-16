@@ -455,23 +455,21 @@ export function MarkdownEditor({
       setIsTemplatePreviewing(false);
     }
 
-    // 检测纯文本，自动转换为 Markdown
+    // 检测纯文本：排版内部自动准备 Markdown，但不污染编辑器原文。
+    // 转换结果仅用于排版生成，用户粘贴的原始文字保持不变，
+    // 预览/应用时才以排版结果切换编辑器内容。
     let activeText = text;
     const hasMarkdownSyntax =
       /^#{1,6}\s|^\s*[-*+]\s|^\s*\d+\.\s|`|\[.+\]\(.+\)|!\[|:::|\*\*|__/m.test(
         text,
       );
     if (!hasMarkdownSyntax) {
-      const toastId = toast.loading("检测到纯文本，正在自动转换为 Markdown...");
+      const toastId = toast.loading("检测到纯文本，正在为排版准备内容...");
       try {
         activeText = await textToMarkdown({ text, mode: "full" });
-        view.dispatch({
-          changes: { from: 0, to: view.state.doc.length, insert: activeText },
-        });
-        setMarkdown(activeText);
-        toast.success("已自动转换为 Markdown", { id: toastId });
+        toast.success("内容已就绪", { id: toastId });
       } catch (e) {
-        toast.error("Markdown 转换失败，使用原文继续", { id: toastId });
+        toast.error("内容准备失败，以原文排版", { id: toastId });
       }
     }
 

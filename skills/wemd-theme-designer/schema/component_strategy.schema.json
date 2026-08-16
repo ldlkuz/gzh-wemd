@@ -8,7 +8,7 @@
   "properties": {
     "brand_anchor": {
       "type": "array",
-      "description": "品牌锚点组件，最多 6 个",
+      "description": "品牌锚点组件（高预算深度设计候选池，软上限 ~6）",
       "items": {
         "type": "object",
         "required": ["component", "score", "reason"],

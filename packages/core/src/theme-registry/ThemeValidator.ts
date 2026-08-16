@@ -26,6 +26,14 @@ import {
   LEGAL_DENSITY_VALUES,
   SUPPORTED_SDK_VERSIONS,
 } from "./componentRegistry";
+import {
+  PSEUDO_ELEMENT_REGEX,
+  STRUCTURAL_PSEUDO_REGEX,
+  EXTERNAL_LINK_REGEX,
+  FORBIDDEN_TAG_REGEX,
+  ZIP_ASSET_URL_REGEX,
+  FORBIDDEN_CSS_PATTERNS,
+} from "../wechatCompat/whitelist";
 
 // ============================================================
 // Helpers
@@ -38,19 +46,6 @@ const CSS_COLOR_REGEX =
 
 const CSS_SIZE_REGEX =
   /^\d+(\.\d+)?(px|em|rem|%|vh|vw|pt|cm|mm|ch|ex|vmin|vmax)$/;
-
-const PSEUDO_ELEMENT_REGEX =
-  /::(before|after|marker|selection|first-letter|first-line|placeholder|backdrop|spelling-error|grammar-error)/i;
-
-const STRUCTURAL_PSEUDO_REGEX =
-  /:(first-child|last-child|nth-child|nth-last-child|first-of-type|last-of-type|nth-of-type|nth-last-of-type|only-child|only-of-type|empty)\b/i;
-
-const EXTERNAL_LINK_REGEX = /url\s*\(\s*['"]?\s*https?:\/\//i;
-
-const FORBIDDEN_TAG_REGEX = /<(style|script)\b/i;
-
-/** CSS 中直接写 url(assets/...) —— 导出到公众号后必然 404，必须替换成 var(--wemd-asset-xxx) 或内联 data: */
-const ZIP_ASSET_URL_REGEX = /url\s*\(\s*['"]?\s*assets\/[^'")\s]+['"]?\s*\)/i;
 
 /** SVG 恶意内容扫描规则 */
 const SVG_FORBIDDEN_PATTERNS: Array<{
@@ -129,49 +124,6 @@ function isValidStringArray(value: unknown): boolean {
 function isValidSemver(value: unknown): boolean {
   return typeof value === "string" && SEMVER_REGEX.test(value);
 }
-
-/** 微信公众号禁用的 CSS 属性/at-rule */
-const FORBIDDEN_CSS_PATTERNS: Array<{
-  regex: RegExp;
-  message: string;
-  fix: string;
-}> = [
-  {
-    regex: /position\s*:\s*fixed/i,
-    message: "position:fixed 在微信公众号中不支持，会被静默丢弃",
-    fix: "移除 position:fixed，或改用 position:relative",
-  },
-  {
-    regex: /position\s*:\s*sticky/i,
-    message: "position:sticky 在微信公众号中不支持，会被静默丢弃",
-    fix: "移除 position:sticky，或改用 position:relative",
-  },
-  {
-    regex: /@keyframes\b/i,
-    message: "@keyframes 在微信公众号中不支持，动画会被丢弃",
-    fix: "移除 @keyframes 及对应的 animation 属性",
-  },
-  {
-    regex: /animation\s*:/i,
-    message: "animation 属性在微信公众号中不支持，动画不会播放",
-    fix: "移除 animation 属性",
-  },
-  {
-    regex: /backdrop-filter\s*:/i,
-    message: "backdrop-filter 在微信公众号中不支持，毛玻璃效果会丢失",
-    fix: "移除 backdrop-filter，改用 background:rgba() 模拟半透明效果",
-  },
-  {
-    regex: /filter\s*:/i,
-    message: "filter 在微信公众号中支持有限，可能被丢弃",
-    fix: "移除 filter，如需模糊效果请用 SVG 滤镜替代",
-  },
-  {
-    regex: /mix-blend-mode\s*:/i,
-    message: "mix-blend-mode 在微信公众号中不支持",
-    fix: "移除 mix-blend-mode 属性",
-  },
-];
 
 /** 扫描 variantCss 内容中的安全与兼容性问题 */
 function scanVariantCss(css: string, path: string): ValidationError[] {

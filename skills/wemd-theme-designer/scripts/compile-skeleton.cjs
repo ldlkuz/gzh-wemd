@@ -24,13 +24,20 @@ const CORE_DIST = path.resolve(SKILL_ROOT, "../../packages/core/dist");
 // 主题名（默认 intelligent-precision，可通过命令行参数指定）
 const THEME_NAME = process.argv[2] || "intelligent-precision";
 
-// 主程序真源：abbr + slot 契约
+// 主程序真源：abbr + slot 契约 + 默认骨架（skill 只消费、不拥有，避免双源漂移）
 const {
   getBuiltinSlotDef,
   getComponentAbbr,
+  BUILTIN_SLOT_DEFS,
 } = require(path.join(CORE_DIST, "plugins/component/slotDefs.js"));
+const { getDefaultTemplate } = require(
+  path.join(CORE_DIST, "plugins/component/defaultTemplates.js"),
+);
 
 // 微信不支持的 CSS 特性（命中即拒绝，与主程序 validateSkeleton 一致）
+// 职责边界：这里是「骨架 HTML」级检查（作用对象是模板里的内联样式片段），
+// 只关注骨架安全底线（禁定位 / 禁伪元素）。CSS 产物级（整段样式是否兼容微信）
+// 请走 layer3-css-compat-validator 与主程序 whitelist，勿在本脚本重复扩展。
 const FORBIDDEN_POSITION = /position\s*:\s*(?:absolute|fixed)/gi;
 const FORBIDDEN_PSEUDO = /::(?:before|after|marker)/g;
 const SLOT_USAGE = /\{\{(?:slot:([\w-]+)|#if\s+([\w-]+)|#each\s+([\w-]+)|else)\}\}/g;
@@ -108,7 +115,7 @@ function renderRegion(region, abbr, slotDef, depth) {
       return `<section class="wemd-${abbr}-${key}">{{slot:${key}}}</section>`;
     }
     case "group": {
-      if (depth >= 1) return ""; // 嵌套深度 > 2 层，Validator 拦截
+      if (depth >= 2) return ""; // 嵌套深度 > 2 层，Validator 拦截
       const inner = (region.regions || [])
         .map((r) => renderRegion(r, abbr, slotDef, depth + 1))
         .filter(Boolean)
@@ -164,7 +171,7 @@ function validateIntent(skel) {
 
   const walk = (regions, depth) => {
     if (!Array.isArray(regions)) return { ok: false, reason: "regions 非数组" };
-    if (depth > 1) return { ok: false, reason: `group 嵌套超过 2 层` };
+    if (depth > 2) return { ok: false, reason: `group 嵌套超过 2 层` };
     for (const r of regions) {
       if (!r || typeof r !== "object") return { ok: false, reason: "region 非法" };
       const type = r.type;
@@ -224,6 +231,19 @@ function main() {
     }
   }
 
+  // 全量交付：为所有未自定义（含被丢弃）的组件补全默认骨架。
+  // 非焦点组件直接消费主程序 getDefaultTemplate（唯一真源），不复制逻辑，
+  // 保证主题包 templates/ 覆盖全部组件、交付物自洽可审查。
+  let inheritedCount = 0;
+  for (const def of BUILTIN_SLOT_DEFS) {
+    if (templates[def.id]) continue;
+    const defaultHtml = getDefaultTemplate(def.id);
+    if (defaultHtml) {
+      templates[def.id] = defaultHtml;
+      inheritedCount++;
+    }
+  }
+
   if (process.argv.includes("--print")) {
     console.log(JSON.stringify(templates, null, 2));
   } else {
@@ -231,7 +251,15 @@ function main() {
     fs.mkdirSync(outDir, { recursive: true });
     const outPath = path.join(outDir, "templates.json");
     fs.writeFileSync(outPath, JSON.stringify(templates, null, 2), "utf8");
-    console.log(`✅ 已编译 ${Object.keys(templates).length} 个组件骨架 → ${outPath}`);
+    console.log(
+      `✅ 已编译 ${Object.keys(templates).length} 个组件骨架 → ${outPath}`,
+    );
+    console.log(
+      `   ├─ ${Object.keys(skeletons).length} 个自定义骨架（来自 skeleton_intent）`,
+    );
+    console.log(
+      `   └─ ${inheritedCount} 个继承默认骨架（消费主程序 getDefaultTemplate）`,
+    );
   }
 
   if (dropped.length) {

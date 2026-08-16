@@ -4,300 +4,386 @@
     "role": "建立文章第一视觉印象",
     "content_type": ["text", "image"],
     "visual_capability": ["attention", "identity", "emotion", "editorial"],
-    "brand_expression_level": "high"
+    "brand_expression_level": "high",
+    "design_tier": "A",
+    "design_tier_note": "骨架设计（构图自由度高）"
   },
   {
     "id": "hero-banner",
     "role": "顶部头图，制造视觉冲击",
     "content_type": ["text", "image"],
     "visual_capability": ["attention", "identity", "emotion"],
-    "brand_expression_level": "high"
+    "brand_expression_level": "high",
+    "design_tier": "A",
+    "design_tier_note": "骨架设计（构图自由度高）"
   },
   {
     "id": "product-card",
     "role": "展示产品/商品信息",
     "content_type": ["text", "image", "data"],
     "visual_capability": ["identity", "emotion", "quality"],
-    "brand_expression_level": "high"
+    "brand_expression_level": "high",
+    "design_tier": "A",
+    "design_tier_note": "骨架设计（构图自由度高）"
   },
   {
     "id": "brand-sign",
     "role": "品牌签名，强化品牌认知",
     "content_type": ["text", "image"],
     "visual_capability": ["identity", "trust", "recognition"],
-    "brand_expression_level": "high"
+    "brand_expression_level": "high",
+    "design_tier": "A",
+    "design_tier_note": "骨架设计（构图自由度高）"
   },
   {
     "id": "cta-card",
     "role": "引导用户关注/行动",
     "content_type": ["text"],
     "visual_capability": ["attention", "emotion", "action"],
-    "brand_expression_level": "high"
+    "brand_expression_level": "high",
+    "design_tier": "A",
+    "design_tier_note": "骨架设计（构图自由度高）"
   },
   {
     "id": "quote-card",
     "role": "突出金句/核心观点",
     "content_type": ["text"],
     "visual_capability": ["emotion", "attention", "editorial"],
-    "brand_expression_level": "high"
+    "brand_expression_level": "high",
+    "design_tier": "A",
+    "design_tier_note": "骨架设计（构图自由度高）"
   },
   {
     "id": "testimonial-card",
     "role": "名人推荐/客户背书",
     "content_type": ["text", "image"],
     "visual_capability": ["trust", "emotion", "identity"],
-    "brand_expression_level": "high"
+    "brand_expression_level": "high",
+    "design_tier": "A",
+    "design_tier_note": "骨架设计（构图自由度高）"
   },
   {
     "id": "full-quote",
     "role": "整行引用，制造阅读停顿",
     "content_type": ["text"],
     "visual_capability": ["editorial", "emotion", "attention"],
-    "brand_expression_level": "high"
+    "brand_expression_level": "high",
+    "design_tier": "A",
+    "design_tier_note": "骨架设计（构图自由度高）"
   },
   {
     "id": "end-card",
     "role": "结尾致谢，温和收尾",
     "content_type": ["text"],
     "visual_capability": ["emotion", "identity", "recognition"],
-    "brand_expression_level": "high"
+    "brand_expression_level": "high",
+    "design_tier": "A",
+    "design_tier_note": "骨架设计（构图自由度高）"
   },
   {
     "id": "share-card",
     "role": "分享/转发引导",
     "content_type": ["text"],
     "visual_capability": ["action", "emotion", "identity"],
-    "brand_expression_level": "high"
+    "brand_expression_level": "high",
+    "design_tier": "A",
+    "design_tier_note": "骨架设计（构图自由度高）"
   },
   {
     "id": "qr-card",
     "role": "二维码引导",
     "content_type": ["text", "image"],
     "visual_capability": ["trust", "identity"],
-    "brand_expression_level": "medium"
+    "brand_expression_level": "medium",
+    "design_tier": "C",
+    "design_tier_note": "纯功能（系统默认）"
   },
   {
     "id": "follow-bar",
     "role": "关注引导条",
     "content_type": ["text"],
     "visual_capability": ["action", "identity"],
-    "brand_expression_level": "medium"
+    "brand_expression_level": "medium",
+    "design_tier": "C",
+    "design_tier_note": "纯功能（系统默认）"
   },
   {
     "id": "stats-block",
     "role": "数据统计，制造信息冲击",
     "content_type": ["text", "data"],
     "visual_capability": ["attention", "authority", "editorial"],
-    "brand_expression_level": "high"
+    "brand_expression_level": "high",
+    "design_tier": "A",
+    "design_tier_note": "骨架设计（构图自由度高）"
   },
   {
     "id": "callout-pro",
     "role": "强化提示，突出重要信息",
     "content_type": ["text"],
     "visual_capability": ["attention", "identity"],
-    "brand_expression_level": "medium"
+    "brand_expression_level": "medium",
+    "design_tier": "A",
+    "design_tier_note": "骨架设计（构图自由度高）"
   },
   {
     "id": "author-card",
     "role": "作者名片，建立信任",
     "content_type": ["text", "image"],
     "visual_capability": ["trust", "identity", "recognition"],
-    "brand_expression_level": "medium"
+    "brand_expression_level": "medium",
+    "design_tier": "C",
+    "design_tier_note": "纯功能（系统默认）"
   },
   {
     "id": "section-title",
     "role": "章节标题，建立内容层级",
     "content_type": ["text"],
     "visual_capability": ["identity", "editorial"],
-    "brand_expression_level": "medium"
+    "brand_expression_level": "medium",
+    "design_tier": "B",
+    "design_tier_note": "CSS 皮肤（结构固定）"
   },
   {
     "id": "numbered-heading",
     "role": "编号标题，结构化内容",
     "content_type": ["text"],
     "visual_capability": ["editorial", "identity"],
-    "brand_expression_level": "medium"
+    "brand_expression_level": "medium",
+    "design_tier": "B",
+    "design_tier_note": "CSS 皮肤（结构固定）"
   },
   {
     "id": "section-divider",
     "role": "章节分隔，标记内容转折",
     "content_type": ["text"],
     "visual_capability": ["editorial", "identity"],
-    "brand_expression_level": "medium"
+    "brand_expression_level": "medium",
+    "design_tier": "B",
+    "design_tier_note": "CSS 皮肤（结构固定）"
   },
   {
     "id": "image-card",
     "role": "展示图片，带说明",
     "content_type": ["text", "image"],
     "visual_capability": ["emotion", "identity"],
-    "brand_expression_level": "medium"
+    "brand_expression_level": "medium",
+    "design_tier": "B",
+    "design_tier_note": "CSS 皮肤（结构固定）"
   },
   {
     "id": "image-text-row",
     "role": "图文左右混排",
     "content_type": ["text", "image"],
     "visual_capability": ["emotion", "editorial"],
-    "brand_expression_level": "medium"
+    "brand_expression_level": "medium",
+    "design_tier": "A",
+    "design_tier_note": "骨架设计（构图自由度高）"
   },
   {
     "id": "image-grid",
     "role": "图片网格，展示多图",
     "content_type": ["image"],
     "visual_capability": ["emotion", "attention"],
-    "brand_expression_level": "medium"
+    "brand_expression_level": "medium",
+    "design_tier": "B",
+    "design_tier_note": "CSS 皮肤（结构固定）"
   },
   {
     "id": "image-compare",
     "role": "图片对比，展示前后/左右差异",
     "content_type": ["image"],
     "visual_capability": ["emotion", "editorial"],
-    "brand_expression_level": "medium"
+    "brand_expression_level": "medium",
+    "design_tier": "A",
+    "design_tier_note": "骨架设计（构图自由度高）"
   },
   {
     "id": "text-card",
     "role": "纯文本内容块，展示文字段落",
     "content_type": ["text"],
     "visual_capability": ["readability"],
-    "brand_expression_level": "medium"
+    "brand_expression_level": "medium",
+    "design_tier": "B",
+    "design_tier_note": "CSS 皮肤（结构固定）"
   },
   {
     "id": "image-caption",
     "role": "图片说明",
     "content_type": ["text", "image"],
     "visual_capability": ["readability"],
-    "brand_expression_level": "low"
+    "brand_expression_level": "low",
+    "design_tier": "B",
+    "design_tier_note": "CSS 皮肤（结构固定）"
   },
   {
     "id": "two-column-cards",
     "role": "两栏卡片，并列展示信息",
     "content_type": ["text", "image"],
     "visual_capability": ["identity", "editorial"],
-    "brand_expression_level": "medium"
+    "brand_expression_level": "medium",
+    "design_tier": "B",
+    "design_tier_note": "CSS 皮肤（结构固定）"
   },
   {
     "id": "resource-list",
     "role": "资料/步骤清单",
     "content_type": ["text", "data"],
     "visual_capability": ["editorial", "identity"],
-    "brand_expression_level": "medium"
+    "brand_expression_level": "medium",
+    "design_tier": "B",
+    "design_tier_note": "CSS 皮肤（结构固定）"
   },
   {
     "id": "timeline",
     "role": "时间线，展示时间顺序",
     "content_type": ["text", "data"],
     "visual_capability": ["editorial", "identity"],
-    "brand_expression_level": "medium"
+    "brand_expression_level": "medium",
+    "design_tier": "B",
+    "design_tier_note": "CSS 皮肤（结构固定）"
   },
   {
     "id": "styled-table",
     "role": "风格化表格",
     "content_type": ["text", "data"],
     "visual_capability": ["identity", "authority"],
-    "brand_expression_level": "medium"
+    "brand_expression_level": "medium",
+    "design_tier": "B",
+    "design_tier_note": "CSS 皮肤（结构固定）"
   },
   {
     "id": "table",
     "role": "原始数据表格",
     "content_type": ["text", "data"],
     "visual_capability": ["identity", "readability"],
-    "brand_expression_level": "low"
+    "brand_expression_level": "low",
+    "design_tier": "B",
+    "design_tier_note": "CSS 皮肤（结构固定）"
   },
   {
     "id": "faq",
     "role": "问答，解决常见问题",
     "content_type": ["text"],
     "visual_capability": ["readability"],
-    "brand_expression_level": "low"
+    "brand_expression_level": "low",
+    "design_tier": "C",
+    "design_tier_note": "纯功能（系统默认）"
   },
   {
     "id": "accordion",
     "role": "折叠面板，组织内容",
     "content_type": ["text"],
     "visual_capability": ["identity"],
-    "brand_expression_level": "medium"
+    "brand_expression_level": "medium",
+    "design_tier": "C",
+    "design_tier_note": "纯功能（系统默认）"
   },
   {
     "id": "steps",
     "role": "步骤说明，引导流程",
     "content_type": ["text"],
     "visual_capability": ["editorial", "identity"],
-    "brand_expression_level": "medium"
+    "brand_expression_level": "medium",
+    "design_tier": "B",
+    "design_tier_note": "CSS 皮肤（结构固定）"
   },
   {
     "id": "toc-nav",
     "role": "目录导航",
     "content_type": ["text"],
     "visual_capability": ["readability"],
-    "brand_expression_level": "low"
+    "brand_expression_level": "low",
+    "design_tier": "C",
+    "design_tier_note": "纯功能（系统默认）"
   },
   {
     "id": "series-nav",
     "role": "系列文章导航",
     "content_type": ["text"],
     "visual_capability": ["identity", "editorial"],
-    "brand_expression_level": "medium"
+    "brand_expression_level": "medium",
+    "design_tier": "B",
+    "design_tier_note": "CSS 皮肤（结构固定）"
   },
   {
     "id": "related-posts",
     "role": "相关文章推荐",
     "content_type": ["text"],
     "visual_capability": ["identity", "editorial"],
-    "brand_expression_level": "medium"
+    "brand_expression_level": "medium",
+    "design_tier": "B",
+    "design_tier_note": "CSS 皮肤（结构固定）"
   },
   {
     "id": "code-frame",
     "role": "代码框架，带标题/说明的代码",
     "content_type": ["code", "text"],
     "visual_capability": ["identity"],
-    "brand_expression_level": "medium"
+    "brand_expression_level": "medium",
+    "design_tier": "B",
+    "design_tier_note": "CSS 皮肤（结构固定）"
   },
   {
     "id": "code-block",
     "role": "代码块，展示纯代码片段",
     "content_type": ["code"],
     "visual_capability": ["identity"],
-    "brand_expression_level": "low"
+    "brand_expression_level": "low",
+    "design_tier": "C",
+    "design_tier_note": "纯功能（系统默认）"
   },
   {
     "id": "pullquote",
     "role": "拉取引用，强调核心引文",
     "content_type": ["text"],
     "visual_capability": ["emotion", "attention", "editorial"],
-    "brand_expression_level": "medium"
+    "brand_expression_level": "medium",
+    "design_tier": "B",
+    "design_tier_note": "CSS 皮肤（结构固定）"
   },
   {
     "id": "tag-label",
     "role": "标签，标记分类",
     "content_type": ["text"],
     "visual_capability": ["identity"],
-    "brand_expression_level": "low"
+    "brand_expression_level": "low",
+    "design_tier": "C",
+    "design_tier_note": "纯功能（系统默认）"
   },
   {
     "id": "divider-fancy",
     "role": "装饰分隔线",
     "content_type": [],
     "visual_capability": ["identity"],
-    "brand_expression_level": "medium"
+    "brand_expression_level": "medium",
+    "design_tier": "C",
+    "design_tier_note": "纯功能（系统默认）"
   },
   {
     "id": "divider",
     "role": "内容分隔线，标记内容切换",
     "content_type": [],
     "visual_capability": ["editorial"],
-    "brand_expression_level": "low"
+    "brand_expression_level": "low",
+    "design_tier": "C",
+    "design_tier_note": "纯功能（系统默认）"
   },
   {
     "id": "copyright-notice",
     "role": "版权声明",
     "content_type": ["text"],
     "visual_capability": [],
-    "brand_expression_level": "low"
+    "brand_expression_level": "low",
+    "design_tier": "C",
+    "design_tier_note": "纯功能（系统默认）"
   },
   {
     "id": "article-section",
     "role": "文章区块容器，组织内容区域",
     "content_type": ["text", "image"],
     "visual_capability": ["identity", "editorial"],
-    "brand_expression_level": "low"
+    "brand_expression_level": "low",
+    "design_tier": "B",
+    "design_tier_note": "CSS 皮肤（结构固定）"
   }
 ]

@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>像素工房 · pixel-arcade 主题设计工作台</title>
+<style>
+  /* ===== 工作台外壳（仅开发预览，不进主题包） ===== */
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #17171c;
+    color: #e8e6e1;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wb {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 28px 24px 64px;
+  }
+  /* 顶栏 */
+  .wb-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #2c2c34;
+    margin-bottom: 24px;
+  }
+  .wb-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .wb-logo {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--pk-primary,#e8590c), var(--pk-sec,#0b7285));
+    display: grid; place-items: center;
+    font-weight: 900; color: #fff; font-size: 18px;
+  }
+  .wb-brand h1 { margin: 0; font-size: 18px; letter-spacing: 0.02em; }
+  .wb-brand p { margin: 2px 0 0; font-size: 12px; color: #8b8b96; }
+  .wb-meta { text-align: right; font-size: 12px; color: #8b8b96; }
+
+  /* 布局：左设计资产 + 右手机预览 */
+  .wb-grid {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+  /* 左侧面板 */
+  .panel {
+    position: sticky;
+    top: 20px;
+    background: #1f1f26;
+    border: 1px solid #2c2c34;
+    border-radius: 14px;
+    padding: 20px;
+  }
+  .panel h2 {
+    margin: 0 0 4px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #9898a3;
+    text-transform: uppercase;
+  }
+  .panel .sub { margin: 0 0 16px; font-size: 13px; color: #cfcdc6; line-height: 1.6; }
+  .panel-sec { margin-bottom: 22px; }
+  .panel-sec:last-child { margin-bottom: 0; }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag {
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    background: #2a2a33;
+    color: #b9b7c0;
+    border: 1px solid #34343e;
+  }
+  /* 色板 */
+  .sw-group { margin-bottom: 12px; }
+  .sw-group:last-child { margin-bottom: 0; }
+  .sw-group-name { font-size: 11px; color: #8b8b96; margin-bottom: 6px; }
+  .sw-list { display: grid; grid-template-columns: 1fr; gap: 6px; }
+  .sw { display: flex; align-items: center; gap: 8px; }
+  .sw-chip { width: 22px; height: 22px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.12); flex: 0 0 auto; }
+  .sw-name { font-size: 11px; color: #cfcdc6; flex: 1; }
+  .sw-hex { font-size: 10px; color: #777783; font-family: "SF Mono", Consolas, monospace; }
+  /* 字体预览 */
+  .font-preview { font-size: 15px; line-height: 1.7; color: #e8e6e1; padding: 10px; background: #17171c; border-radius: 8px; }
+  .font-preview .fn { display: block; font-size: 10px; color: #777783; margin-bottom: 4px; font-family: -apple-system, sans-serif; }
+
+  /* 右侧手机预览 */
+  .phone {
+    background: #0d0d11;
+    border: 1px solid #2c2c34;
+    border-radius: 26px;
+    padding: 12px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+  .phone-notch {
+    width: 120px; height: 22px; margin: 0 auto 10px;
+    background: #17171c; border-radius: 20px;
+  }
+  .phone-screen {
+    max-width: 420px;
+    margin: 0 auto;
+    background: #f5efe0;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .article-head {
+    padding: 18px 16px 14px;
+    background: #f5efe0;
+    border-bottom: 1px solid #e4dcc8;
+  }
+  .article-head .a-brand { font-size: 11px; letter-spacing: 0.15em; color: #9a8f7d; text-transform: uppercase; }
+  .article-head .a-title { font-size: 17px; font-weight: 800; color: #2b2420; margin-top: 4px; line-height: 1.4; }
+  .article-head .a-meta { display: flex; gap: 8px; margin-top: 8px; }
+  .article-flow { padding: 14px 10px 24px; }
+  .article-flow > #wemd { padding: 0 calc(10px); }
+  .comp {
+    margin-bottom: 18px;
+    background: #24242c;
+    border: 1px solid #34343e;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .comp-head {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 12px;
+    background: #1b1b21;
+    border-bottom: 1px solid #2c2c34;
+  }
+  .tier {
+    font-size: 9px; font-weight: 800; letter-spacing: 0.1em;
+    padding: 2px 7px; border-radius: 4px;
+  }
+  .tier-focal { background: #e8590c; color: #fff; }
+  .tier-content { background: #0b7285; color: #fff; }
+  .tier-utility { background: #2a2a33; color: #b9b7c0; }
+  .comp-id { margin: 0; font-size: 12px; font-family: "SF Mono", Consolas, monospace; color: #cfcdc6; }
+  .comp-note { margin: 0; padding: 8px 12px; font-size: 11px; color: #8b8b96; line-height: 1.5; border-bottom: 1px dashed #34343e; }
+  .comp-body { background: #f5efe0; }
+  .comp-body #wemd, .comp-body [id="wemd"] { padding: 0 10px; }
+  .empty-tip { color: #777783; font-size: 12px; padding: 20px; text-align: center; }
+
+  /* 响应式 */
+  @media (max-width: 900px) {
+    .wb-grid { grid-template-columns: 1fr; }
+    .panel { position: static; }
+  }
+  /* 内联主题 CSS（编译产物） */
+  /* ============================================================
+     Theme: pixel-arcade
+     Generated by compileSkin.cjs (意图驱动 CSS)
+     本文件由 skin_intent.json 机械生成，请勿手改。
+     ============================================================ */
+  
+  
+  #wemd {
+    --wemd-bg-base: #f5efe0;
+    --wemd-bg-surface: #ece3cf;
+    --wemd-bg-card: #fffdf7;
+    --wemd-accent-primary: #e8590c;
+    --wemd-accent-secondary: #0b7285;
+    --wemd-accent-tertiary: #f08c00;
+    --wemd-text-strong: #2b2420;
+    --wemd-text-normal: #5c5348;
+    --wemd-text-soft: #9a8f7d;
+    --wemd-border: #dccfb4;
+    --wemd-border-strong: #b9a887;
+    --wemd-font-heading: "SF Mono", "Cascadia Code", Consolas, "Courier New", monospace;
+    --wemd-font-body: "SF Mono", "Cascadia Code", Consolas, "Courier New", monospace;
+    --wemd-space-component: 1.5rem;
+    --wemd-space-section: 3rem;
+    --wemd-space-block: 2rem;
+    --wemd-space-inline: 1.25rem;
+  }
+  
+  
+  #wemd * { box-sizing: border-box; margin: 0; }
+  
+  
+  /* --- magazine-cover（skin_intent） --- */
+  #wemd .wemd-magazine-cover {
+    padding: 2.5rem var(--wemd-space-inline);
+    border: 1px solid var(--wemd-border);
+    border-radius: 4px;
+  }
+  
+  #wemd .wemd-magazine-cover {
+    background:
+      linear-gradient(var(--wemd-border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--wemd-border) 1px, transparent 1px),
+      var(--wemd-bg-base);
+    background-size: 16px 16px, 16px 16px, auto;
+  }
+  
+  #wemd .wemd-mc-top-bar {
+    display: block;
+    width: 56px;
+    height: 3px;
+    background: var(--wemd-accent-primary);
+    margin-bottom: 0.75rem;
+  }
+  
+  #wemd .wemd-magazine-cover .wemd-mc-title {
+    font-family: var(--wemd-font-heading);
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1.4;
+    color: var(--wemd-text-strong);
+  }
+  
+  #wemd .wemd-magazine-cover .wemd-mc-subtitle {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--wemd-text-soft);
+  }
+  
+  #wemd .wemd-magazine-cover .wemd-mc-desc {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--wemd-text-soft);
+  }
+  
+  
+  /* --- section-title（skin_intent） --- */
+  #wemd .wemd-section-title {
+    padding: 1.5rem var(--wemd-space-inline);
+    border: 1px solid var(--wemd-border);
+    border-radius: 4px;
+  }
+  
+  #wemd .wemd-st-corner {
+    flex: 0 0 auto;
+    width: 10px;
+    height: 10px;
+    background: var(--wemd-accent-primary);
+  }
+  
+  #wemd .wemd-section-title .wemd-component-body {
+    font-family: var(--wemd-font-heading);
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--wemd-text-strong);
+  }
+  
+  #wemd .wemd-section-title .wemd-st-main {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+  }
+  
+  #wemd .wemd-section-title .wemd-st-rule {
+    margin-top: 0.75rem;
+    border: 0;
+    height: 1px;
+    background: var(--wemd-border);
+  }
+  
+  
+  /* --- resource-list（skin_intent） --- */
+  #wemd .wemd-resource-list {
+    padding: 1.5rem var(--wemd-space-inline);
+    border: 1px solid var(--wemd-border);
+    border-radius: 4px;
+  }
+  
+  #wemd .wemd-resource-list { background: var(--wemd-bg-surface); }
+  
+  #wemd .wemd-rl-top-bar {
+    display: block;
+    width: 56px;
+    height: 3px;
+    background: var(--wemd-accent-primary);
+    margin-bottom: 0.75rem;
+  }
+  
+  #wemd .wemd-resource-list .wemd-rl-title {
+    font-family: var(--wemd-font-heading);
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--wemd-text-strong);
+  }
+  
+  #wemd .wemd-resource-list .wemd-rl-subtitle {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--wemd-text-soft);
+  }
+  
+  #wemd .wemd-resource-list .wemd-rl-items { margin-top: 1rem; }
+  
+  #wemd .wemd-resource-list .wemd-rl-items-item {
+    padding: 0.75rem 0;
+    border-top: 1px solid var(--wemd-border);
+  }
+  
+  
+  /* --- styled-table（skin_intent） --- */
+  #wemd .wemd-styled-table {
+    padding: 1.5rem var(--wemd-space-inline);
+    border: 1px solid var(--wemd-border);
+    border-radius: 4px;
+  }
+  
+  #wemd .wemd-sbt-top-bar {
+    display: block;
+    width: 56px;
+    height: 3px;
+    background: var(--wemd-accent-primary);
+    margin-bottom: 0.75rem;
+  }
+  
+  #wemd .wemd-styled-table .wemd-sbt-table {
+    font-family: var(--wemd-font-heading);
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--wemd-text-strong);
+  }
+  
+  
+  /* --- image-grid（skin_intent） --- */
+  #wemd .wemd-image-grid {
+    padding: 1.5rem var(--wemd-space-inline);
+    border: 1px solid var(--wemd-border);
+    border-radius: 4px;
+  }
+  
+  #wemd .wemd-image-grid { background: var(--wemd-bg-surface); }
+</style>
+</head>
+<body>
+  <div class="wb">
+    <header class="wb-top">
+      <div class="wb-brand">
+        <div class="wb-logo">像</div>
+        <div>
+          <h1>像素工房</h1>
+          <p>pixel-arcade · Pixel Arcade Nostalgia</p>
+        </div>
+      </div>
+      <div class="wb-meta">母题：像素匠人的手作工坊</div>
+    </header>
+
+    <div class="wb-grid">
+      <!-- 左：设计资产 -->
+      <aside class="panel">
+        <section class="panel-sec">
+          <h2>概念母题</h2>
+          <p class="sub">用复古像素游戏的视觉语言，把独立游戏开发的内核——手工打磨、探索冒险、硬核极客——锚定成可感知的怀旧世界，让玩家与开发者在字里行间重拾街机与卡带的温度。</p>
+          <div class="tag-row">
+            <span class="tag">pixel</span><span class="tag">arcade</span><span class="tag">retro</span><span class="tag">crt</span><span class="tag">handcrafted</span>
+          </div>
+          <div class="tag-row" style="margin-top:8px">
+            <span class="tag">playful</span><span class="tag">nostalgic</span><span class="tag">crafty</span><span class="tag">bold</span>
+          </div>
+        </section>
+        <section class="panel-sec">
+          <h2>色彩 · Color</h2>
+          <div style="margin-top:10px"><div class="sw-group"><div class="sw-group-name">背景 · Background</div><div class="sw-list"><div class="sw"><span class="sw-chip" style="background:#f5efe0"></span><span class="sw-name">bg·base</span><code class="sw-hex">#f5efe0</code></div><div class="sw"><span class="sw-chip" style="background:#ece3cf"></span><span class="sw-name">bg·surface</span><code class="sw-hex">#ece3cf</code></div><div class="sw"><span class="sw-chip" style="background:#fffdf7"></span><span class="sw-name">bg·card</span><code class="sw-hex">#fffdf7</code></div></div></div><div class="sw-group"><div class="sw-group-name">强调 · Accent</div><div class="sw-list"><div class="sw"><span class="sw-chip" style="background:#e8590c"></span><span class="sw-name">accent·primary</span><code class="sw-hex">#e8590c</code></div><div class="sw"><span class="sw-chip" style="background:#0b7285"></span><span class="sw-name">accent·secondary</span><code class="sw-hex">#0b7285</code></div><div class="sw"><span class="sw-chip" style="background:#f08c00"></span><span class="sw-name">accent·tertiary</span><code class="sw-hex">#f08c00</code></div></div></div><div class="sw-group"><div class="sw-group-name">文字 · Text</div><div class="sw-list"><div class="sw"><span class="sw-chip" style="background:#2b2420"></span><span class="sw-name">text·strong</span><code class="sw-hex">#2b2420</code></div><div class="sw"><span class="sw-chip" style="background:#5c5348"></span><span class="sw-name">text·normal</span><code class="sw-hex">#5c5348</code></div><div class="sw"><span class="sw-chip" style="background:#9a8f7d"></span><span class="sw-name">text·soft</span><code class="sw-hex">#9a8f7d</code></div></div></div><div class="sw-group"><div class="sw-group-name">边框 · Border</div><div class="sw-list"><div class="sw"><span class="sw-chip" style="background:#dccfb4"></span><span class="sw-name">border</span><code class="sw-hex">#dccfb4</code></div><div class="sw"><span class="sw-chip" style="background:#b9a887"></span><span class="sw-name">border·strong</span><code class="sw-hex">#b9a887</code></div></div></div></div>
+        </section>
+        <section class="panel-sec">
+          <h2>字体 · Typography</h2>
+          <div class="font-preview" style="font-family:SF Mono", "Cascadia Code", Consolas, "Courier New", monospace">
+            <span class="fn">HEADING / 标题</span>
+            Pixel 工房 Abc 012
+          </div>
+        </section>
+      </aside>
+
+      <!-- 右：手机预览 -->
+      <main class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="article-head">
+            <div class="a-brand">像素工房</div>
+            <div class="a-title">用复古像素游戏的视觉语言，把独立游戏开发的内核——手…</div>
+            <div class="a-meta">
+              <span class="tag" style="background:#e8e0cc;color:#6b5b4e;border-color:#dccfb4">FOCAL × 6</span>
+            </div>
+          </div>
+          <div class="article-flow">
+            <article class="comp">
+  <header class="comp-head">
+    <span class="tier tier-focal">FOCAL</span>
+    <h3 class="comp-id">magazine-cover</h3>
+  </header>
+  <p class="comp-note">工坊封面：第一视觉印象，用像素格纸 + 油墨印章承载品牌身份与情绪</p>
+  <div class="comp-body"><div id="wemd"><section class="wemd-component wemd-magazine-cover wemd-mc-centered" data-component="magazine-cover">
+<span class="wemd-mc-top-bar"></span>
+<section class="wemd-mc-title">像素工房 · 独立游戏开发日志</section>
+<section class="wemd-mc-subtitle">PIXEL ARCADE DEV LOG</section>
+<section class="wemd-mc-divider"></section>
+<section class="wemd-mc-desc">用像素格纸记录每一帧的打磨：从精灵表、调色板到关卡设计，把硬核极客的匠心一点点攒成可玩的冒险世界。</section>
+</section></div></div>
+</article>
+<article class="comp">
+  <header class="comp-head">
+    <span class="tier tier-focal">FOCAL</span>
+    <h3 class="comp-id">section-title</h3>
+  </header>
+  <p class="comp-note">章节分区标：把每章标题做成格纸上的工坊分区标</p>
+  <div class="comp-body"><div id="wemd"><section class="wemd-component wemd-section-title wemd-st-stack" data-component="section-title">
+<section class="wemd-st-main wemd-st-side-rail">
+<span class="wemd-st-corner"></span>
+<div class="wemd-component-body">第一章 · 从像素种子到可玩世界</div>
+</section>
+<hr class="wemd-st-rule">
+</section></div></div>
+</article>
+<article class="comp">
+  <header class="comp-head">
+    <span class="tier tier-focal">FOCAL</span>
+    <h3 class="comp-id">numbered-heading</h3>
+  </header>
+  <div class="comp-body"><div id="wemd"><section class="wemd-component wemd-numbered-heading" data-component="numbered-heading">
+<div class="wemd-component-body">一、精灵表的诞生</div>
+</section></div></div>
+</article>
+<article class="comp">
+  <header class="comp-head">
+    <span class="tier tier-focal">FOCAL</span>
+    <h3 class="comp-id">resource-list</h3>
+  </header>
+  <p class="comp-note">工具/素材清单：用 ink stamps 落款质感陈列 sprite sheets 与 palette swatches</p>
+  <div class="comp-body"><div id="wemd"><section class="wemd-component wemd-resource-list wemd-rl-stack" data-component="resource-list">
+<section class="wemd-rl-header wemd-rl-stack">
+<span class="wemd-rl-top-bar"></span>
+<section class="wemd-rl-title">工坊素材 · 清单</section>
+<section class="wemd-rl-subtitle">逐项打磨，缺一不可</section>
+</section>
+<section class="wemd-rl-items">
+<div class="wemd-rl-items-item">
+<div class="wemd-rl-items-label">01</div>
+<div class="wemd-rl-items-title">精灵表（Sprite Sheet）</div>
+<div class="wemd-rl-items-desc">主角 4 方向 8 帧奔跑拆帧，统一 16×16 像素格</div>
+<div class="wemd-rl-items-meta">素材：2026 制作中</div>
+<div class="wemd-rl-items-tag">核心</div>
+</div>
+
+<div class="wemd-rl-items-item">
+<div class="wemd-rl-items-label">02</div>
+<div class="wemd-rl-items-title">调色板（Palette）</div>
+<div class="wemd-rl-items-desc">限定 16 色暖色系，保证不同场景的视觉一致性</div>
+<div class="wemd-rl-items-meta">素材：2026 制作中</div>
+<div class="wemd-rl-items-tag">核心</div>
+</div>
+
+<div class="wemd-rl-items-item">
+<div class="wemd-rl-items-label">03</div>
+<div class="wemd-rl-items-title">手柄键位映射</div>
+<div class="wemd-rl-items-desc">摇杆 + 跳跃 + 交互，匹配复古街机的手感</div>
+<div class="wemd-rl-items-meta">素材：2026 制作中</div>
+<div class="wemd-rl-items-tag">调试</div>
+</div>
+</section>
+</section></div></div>
+</article>
+<article class="comp">
+  <header class="comp-head">
+    <span class="tier tier-focal">FOCAL</span>
+    <h3 class="comp-id">styled-table</h3>
+  </header>
+  <p class="comp-note">像素调色板对照表：把参数对照做成工坊手写记录感</p>
+  <div class="comp-body"><div id="wemd"><section class="wemd-component wemd-styled-table wemd-sbt-stack" data-component="styled-table">
+<span class="wemd-sbt-top-bar"></span>
+<section class="wemd-sbt-table"><table><thead><tr><th>素材</th><th>像素规格</th><th>状态</th></tr></thead><tbody><tr><td>主角精灵</td><td>16×16</td><td>完成</td></tr><tr><td>敌人系列</td><td>16×16</td><td>制作中</td></tr><tr><td>关卡砖块</td><td>32×32</td><td>完成</td></tr><tr><td>UI 图标</td><td>8×8</td><td>待做</td></tr></tbody></table></section>
+</section></div></div>
+</article>
+<article class="comp">
+  <header class="comp-head">
+    <span class="tier tier-focal">FOCAL</span>
+    <h3 class="comp-id">image-grid</h3>
+  </header>
+  <p class="comp-note">精灵表网格陈列：直接呈现像素画的陈列感</p>
+  <div class="comp-body"><div id="wemd"><section class="wemd-component wemd-image-grid wemd-ig-grid" data-component="image-grid">
+<div class="wemd-component-body"><img src="assets/sprite-hero.jpg" alt="主角精灵" title="主角精灵 16×16" /><img src="assets/sprite-slime.jpg" alt="史莱姆" title="史莱姆 16×16" /><img src="assets/sprite-sword.jpg" alt="像素剑" title="像素剑 16×16" /><img src="assets/sprite-tile.jpg" alt="草地砖块" title="草地砖块 32×32" /></div>
+</section></div></div>
+</article>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

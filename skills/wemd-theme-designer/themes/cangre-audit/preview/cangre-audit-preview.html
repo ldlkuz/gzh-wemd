@@ -63,17 +63,17 @@
      ============================================================ */
   #wemd {
     /* 颜色 */
-    --wemd-bg-base: #F7F1E6;        /* 整页 · 淡牛皮纸 */
-    --wemd-bg-surface: #F3EBDA;     /* 卡片 · 深牛皮纸 */
-    --wemd-bg-card: #FFFFFF;        /* 高亮 · 白面 */
-    --wemd-accent-primary: #B03A2E; /* 印章红 · 红头条/骑缝章 */
-    --wemd-accent-secondary: #6B563F; /* 档案棕 · 归档编号 */
-    --wemd-accent-tertiary: #C29A6B;  /* 旧纸铜 · 分隔线强色 */
-    --wemd-text-strong: #3E3428;    /* 标题 · 深棕黑 */
-    --wemd-text-normal: #6B5B4E;    /* 正文 · 档案棕 */
-    --wemd-text-soft: #9C8B78;      /* 弱信息 · 袋布灰棕 */
-    --wemd-border: #E5DAC6;         /* 分隔线 · 牛皮纸纹 */
-    --wemd-border-strong: #C29A6B;
+    --wemd-bg-base: #f7f1e6; /* 整页 · 淡牛皮纸 */
+    --wemd-bg-surface: #f3ebda; /* 卡片 · 深牛皮纸 */
+    --wemd-bg-card: #ffffff; /* 高亮 · 白面 */
+    --wemd-accent-primary: #b03a2e; /* 印章红 · 红头条/骑缝章 */
+    --wemd-accent-secondary: #6b563f; /* 档案棕 · 归档编号 */
+    --wemd-accent-tertiary: #c29a6b; /* 旧纸铜 · 分隔线强色 */
+    --wemd-text-strong: #3e3428; /* 标题 · 深棕黑 */
+    --wemd-text-normal: #6b5b4e; /* 正文 · 档案棕 */
+    --wemd-text-soft: #9c8b78; /* 弱信息 · 袋布灰棕 */
+    --wemd-border: #e5dac6; /* 分隔线 · 牛皮纸纹 */
+    --wemd-border-strong: #c29a6b;
   
     /* 字体（serif-tape → 宋体系系统栈，微信兼容） */
     --wemd-font-heading: "Songti SC", "STSong", "SimSun", Georgia, serif;
@@ -81,9 +81,9 @@
   
     /* 间距 tokens（Stack 统一分配） */
     --wemd-space-component: 1.5rem; /* 组件之间 */
-    --wemd-space-section: 3rem;     /* 大块之间 */
-    --wemd-space-block: 2rem;       /* 组件内部区块 */
-    --wemd-space-inline: 1.25rem;   /* 卡片容器统一水平内边距 */
+    --wemd-space-section: 3rem; /* 大块之间 */
+    --wemd-space-block: 2rem; /* 组件内部区块 */
+    --wemd-space-inline: 1.25rem; /* 卡片容器统一水平内边距 */
   }
   
   /* ============================================================
@@ -101,11 +101,13 @@
   /* --- Magazine Cover：待核查的牛皮纸档案袋封面 --- */
   #wemd .wemd-magazine-cover {
     padding: 2rem var(--wemd-space-inline) 2.5rem;
-    background: linear-gradient(#F3EBDA, #F7F1E6), var(--wemd-bg-base);
+    background: linear-gradient(#f3ebda, #f7f1e6), var(--wemd-bg-base);
     border: 1px solid var(--wemd-border);
     border-radius: 4px;
   }
-  #wemd .wemd-magazine-cover .wemd-mc-header { padding-bottom: 0.5rem; }
+  #wemd .wemd-magazine-cover .wemd-mc-header {
+    padding-bottom: 0.5rem;
+  }
   #wemd .wemd-magazine-cover .wemd-mc-top-bar {
     display: block;
     height: 3px;
@@ -129,7 +131,9 @@
     height: 1px;
     background: var(--wemd-border);
   }
-  #wemd .wemd-magazine-cover .wemd-mc-main { text-align: center; }
+  #wemd .wemd-magazine-cover .wemd-mc-main {
+    text-align: center;
+  }
   #wemd .wemd-magazine-cover .wemd-mc-desc {
     font-size: 0.95rem;
     line-height: 1.7;
@@ -196,7 +200,9 @@
   }
   
   /* --- Numbered Heading：归档编号式小标题 --- */
-  #wemd .wemd-numbered-heading { padding: 0.5rem var(--wemd-space-inline); }
+  #wemd .wemd-numbered-heading {
+    padding: 0.5rem var(--wemd-space-inline);
+  }
   #wemd .wemd-numbered-heading .wemd-nh-main {
     display: flex;
     align-items: center;
@@ -223,12 +229,6 @@
     border: 1px solid var(--wemd-border);
     border-radius: 4px;
   }
-  #wemd .wemd-resource-list .wemd-rl-top-bar {
-    display: block;
-    height: 3px;
-    background: var(--wemd-accent-primary); /* 红头条 */
-    margin-bottom: 0.75rem;
-  }
   #wemd .wemd-resource-list .wemd-rl-title {
     font-family: var(--wemd-font-heading);
     font-size: 1.05rem;
@@ -240,13 +240,14 @@
     font-size: 0.85rem;
     color: var(--wemd-text-soft);
   }
-  #wemd .wemd-resource-list .wemd-rl-items { margin-top: 1rem; }
-  #wemd .wemd-resource-list .wemd-rl-items-item {
-    padding: 0.75rem 0;
-    border-top: 1px solid var(--wemd-border); /* 清单逐项细分隔线（不用 :last-child 结构伪类） */
+  #wemd .wemd-resource-list .wemd-rl-items {
+    margin-top: 1rem;
   }
-  #wemd .wemd-resource-list .wemd-rl-header { border-bottom: 1px solid var(--wemd-border); }
-  #wemd .wemd-resource-list .wemd-rl-items-label {
+  #wemd .wemd-resource-list .wemd-rl-item {
+    padding: 0.75rem 0;
+    border-top: 1px solid var(--wemd-border); /* 清单逐项用上边框分隔（避免结构伪类） */
+  }
+  #wemd .wemd-resource-list .wemd-rl-label {
     display: inline-block;
     padding: 1px 6px;
     font-size: 0.7rem;
@@ -254,24 +255,24 @@
     border: 1px solid var(--wemd-accent-primary);
     border-radius: 2px;
   }
-  #wemd .wemd-resource-list .wemd-rl-items-title {
+  #wemd .wemd-resource-list .wemd-rl-item-title {
     margin-top: 0.35rem;
     font-size: 0.95rem;
     font-weight: 600;
     color: var(--wemd-text-strong);
   }
-  #wemd .wemd-resource-list .wemd-rl-items-desc {
+  #wemd .wemd-resource-list .wemd-rl-item-desc {
     margin-top: 0.2rem;
     font-size: 0.85rem;
     line-height: 1.6;
     color: var(--wemd-text-normal);
   }
-  #wemd .wemd-resource-list .wemd-rl-items-meta {
+  #wemd .wemd-resource-list .wemd-rl-meta {
     margin-top: 0.25rem;
     font-size: 0.75rem;
     color: var(--wemd-text-soft);
   }
-  #wemd .wemd-resource-list .wemd-rl-items-tag {
+  #wemd .wemd-resource-list .wemd-rl-tag {
     margin-top: 0.35rem;
     font-size: 0.75rem;
     color: var(--wemd-accent-secondary);
@@ -326,7 +327,9 @@
   }
   
   /* --- Quote Card：核查结论式引用 --- */
-  #wemd .wemd-quote-card { padding: 1.25rem var(--wemd-space-inline); }
+  #wemd .wemd-quote-card {
+    padding: 1.25rem var(--wemd-space-inline);
+  }
   #wemd .wemd-quote-card .wemd-qc-quote {
     font-family: var(--wemd-font-heading);
     font-size: 1rem;
@@ -343,7 +346,9 @@
   }
   
   /* --- Stats Block：核查数据统计 --- */
-  #wemd .wemd-stats-block { padding: 1.25rem var(--wemd-space-inline); }
+  #wemd .wemd-stats-block {
+    padding: 1.25rem var(--wemd-space-inline);
+  }
   #wemd .wemd-stats-block .wemd-sb-items-value {
     font-family: var(--wemd-font-heading);
     font-size: 1.5rem;
@@ -356,7 +361,9 @@
   }
   
   /* --- Image Card --- */
-  #wemd .wemd-image-card { padding: 1rem var(--wemd-space-inline) 1.25rem; }
+  #wemd .wemd-image-card {
+    padding: 1rem var(--wemd-space-inline) 1.25rem;
+  }
   #wemd .wemd-image-card .wemd-ic-image {
     display: block;
     width: 100%;
@@ -390,7 +397,10 @@
   }
   
   /* --- Section Divider --- */
-  #wemd .wemd-section-divider { height: 1px; background: var(--wemd-border); }
+  #wemd .wemd-section-divider {
+    height: 1px;
+    background: var(--wemd-border);
+  }
   #wemd .wemd-section-divider .wemd-sd-title {
     font-size: 0.7rem;
     color: var(--wemd-text-soft);
@@ -410,6 +420,7 @@
     margin-top: 0;
     margin-bottom: var(--wemd-space-component, 1.5rem);
   }
+  
 </style>
 </head>
 <body>

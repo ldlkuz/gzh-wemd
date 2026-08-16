@@ -1,7 +1,7 @@
 /**
  * AI 杂志排版面板 —— 一键生成完整的杂志级排版模板
  */
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import {
   Check,
   Eye,
@@ -83,6 +83,38 @@ export function AiDesignPanel({
   const [audience, setAudience] = useState<Audience["type"]>("auto");
   const [designGoal, setDesignGoal] =
     useState<DesignConstraints["designGoal"]>("auto");
+
+  // 「已等待 N 秒」计时器 + 阶段进度：加载期间每秒刷新，
+  // 避免用户盯着转圈误以为程序卡死。
+  const [elapsed, setElapsed] = useState(0);
+  const [currentStep, setCurrentStep] = useState(0);
+  const startRef = useRef(0);
+
+  useEffect(() => {
+    if (!templateLoading) {
+      setElapsed(0);
+      setCurrentStep(0);
+      return;
+    }
+    startRef.current = Date.now();
+    setElapsed(0);
+    setCurrentStep(0);
+    // 阶段按耗时推进：0→准备内容，1→分析结构，2→设计布局，3→渲染成品
+    const phaseMarkers = [3000, 9000, 15000];
+    const timer = window.setInterval(() => {
+      const s = Math.floor((Date.now() - startRef.current) / 1000);
+      setElapsed(s);
+      let step = 0;
+      for (let i = 0; i < phaseMarkers.length; i += 1) {
+        if (s * 1000 >= phaseMarkers[i]) step = i + 1;
+      }
+      setCurrentStep(Math.min(step, 3));
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [templateLoading]);
+
+  const DESIGN_STEPS = ["准备内容", "分析文章结构", "设计组件布局", "渲染成品"];
+  const isLongWait = elapsed >= 10;
 
   const handleClose = useCallback(() => {
     if (isTemplatePreviewing) {
@@ -207,9 +239,39 @@ export function AiDesignPanel({
             <div className="ai-layout-loading">
               <Loader2 size={32} className="spinning" />
               <p>AI 正在设计排版方案...</p>
-              <p className="ai-layout-loading-hint">
-                分析文章结构 + 设计组件布局，约需 5-15 秒
+              <p className="ai-layout-loading-elapsed">
+                {isLongWait ? "排版较复杂，请耐心等待" : "正在推进中"}
+                ，已等待 <strong>{elapsed}s</strong>
               </p>
+              <div className="ai-layout-loading-steps">
+                {DESIGN_STEPS.map((label, i) => {
+                  const state =
+                    i < currentStep
+                      ? "done"
+                      : i === currentStep
+                        ? "active"
+                        : "pending";
+                  return (
+                    <div
+                      key={label}
+                      className={`ai-layout-loading-step ai-layout-loading-step-${state}`}
+                    >
+                      {state === "done" ? (
+                        <Check size={14} className="ai-load-step-icon" />
+                      ) : (
+                        <span className="ai-load-step-dot" />
+                      )}
+                      <span className="ai-load-step-label">{label}</span>
+                      {state === "active" && (
+                        <Loader2
+                          size={12}
+                          className="spinning ai-load-step-spin"
+                        />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           ) : !hasTemplateResult ? (
             <div className="ai-layout-empty">

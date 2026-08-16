@@ -11,7 +11,7 @@ description: "完整品牌视觉主题设计工具，7 阶段流程：品牌解�
 
 - 理解品牌，建立视觉语言系统
 - 通过 Component Registry 了解系统组件
-- 对 Brand Anchor 组件进行深度设计，Content 和 Utility 组件继承并克制表达
+- 对焦点组件（`components.focal`）进行深度设计，Content 和 Utility 组件继承并克制表达
 
 **不负责**（由主程序或独立脚本机械执行，AI 设计师不参与其设计/实现细节）：
 
@@ -70,12 +70,19 @@ Stage 7 → themes/{theme-name}/{theme-name}.wemd-theme       ⬅ 主题打包
 > - Stage 4.5（形）= 骨架构图，只描述组件视觉怎么构图（`skeleton_intent.json`）。
 > - Stage 5（皮）= CSS 皮肤，决定颜色/字体/间距（`component_mapping.json`）。
 >   先定形后定皮，Stage 5 的皮描述才能挂到 Stage 4.5 的骨上。
+>
+> **形皮分工（贯穿翻译阶段）：骨架定"哪里是视觉核心"，CSS 定"这个核心长什么样"。**
+>
+> - 骨架管**位置/构图/焦点**（每个组件内部视线停在哪）；CSS 管**样貌/气质/品牌语言**（整套页面什么气质）。
+> - 两者一对一的强绑定、嵌套而非对立：骨架定"填哪里"，CSS 用**同一套品牌语言**填满骨架的每个结构单元。
+> - **CSS 的全局核心不脱离骨架另立一套**——主题统一感来自"用同一套语言去填所有骨架"，组件差异性来自骨架选了不同焦点。
+> - 强绑定铁律：骨架宣告的结构单元（slot/group/decoration/强调/align），CSS 有义务填满，否则该区域是空壳（有骨无肉）。
 
 ## 整体流程
 
 ```text
-用户输入品牌信息
-      │
+用户打开 input.html 表单填写 → 导出结构化输入 JSON（schema/input.schema.json）
+      │  自然语言输入仅兜底，agent 按同一 schema 结构化
       │ ════════════════════════════════════
       │   创意阶段：纯视觉创作，无组件约束
       │ ════════════════════════════════════
@@ -112,7 +119,7 @@ Theme Complete ✅
 
 | 状态                  | 说明           | 输入                                                                   | 输出                                                            |
 | --------------------- | -------------- | ---------------------------------------------------------------------- | --------------------------------------------------------------- |
-| `NEW`                 | 初始状态       | 无                                                                     | 品牌输入表单                                                    |
+| `NEW`                 | 初始状态       | 无                                                                     | `input.html` 表单（主入口）→ 导出 `input.schema.json`           |
 | `BRAND_INTERPRETING`  | 阶段 1         | 用户输入                                                               | `themes/{theme-name}/states/brand_state.json`                   |
 | `CONCEPTING`          | 阶段 2         | `brand_state`                                                          | `themes/{theme-name}/states/concept_state.json`（3 个母题候选） |
 | `SELECTING_METAPHOR`  | 用户选择母题   | `concept_state`                                                        | 选中的母题（写入 `concept_state`）                              |
@@ -142,10 +149,10 @@ Theme Complete ✅
   现在读取创意产物与组件注册表。
   把创意愿景翻译进 WeMD 组件系统。
   把所有组件划分为三类：
-    - Brand Anchor（上限 6 个）：投入深度设计
-    - Content（大部分）：一致地继承视觉语言
+    - Brand Anchor（高预算，软上限 ~6）：深度设计候选池
+    - Content（大部分）：继承视觉语言，默认克制
     - Utility（少数）：保持极简、不抢眼
-  只有 Brand Anchor 才允许大胆且有表现力。
+  三档是**默认克制档位**，不是"谁能被设计"的门禁。真正决定权在骨架阶段：**母题需要 + 焦点有限**。
 
 阶段 4.5 — 骨架（形）：
   只设计组件视觉怎么构图，不碰颜色/字体/间距。
@@ -169,7 +176,7 @@ Theme Complete ✅
 10. **在组件 CSS 中使用微信不兼容特性**：`::before`/`::after`、`:hover`、结构伪类（`:first-child`/`:last-child`/`:first-of-type`/`:nth-child`）、`@keyframes`、`@media`、`animation`、`+`/`~` 兄弟选择器。详见 [reference/assembler-and-compiler.md](reference/assembler-and-compiler.md#wechat-compatibility)。
 11. **未按"移动窄优先"设计**：最终载体是微信公众号约 343px 的单列窄流。所有阶段（创意→翻译→编译）都不得设计依赖宽幅或多栏才能成立的构图，编译时不产生 `@media` 响应式。创意阶段保持"手机窄长竖纸"画布隐喻，反感任何横向宽屏构图。
 12. **在骨架（Stage 4.5）中写入任何 CSS 值**：`padding`/`margin`/`font-size`/`color`/`width`/`height`/`border`/`flex`/`gap`/`align-items` 等一律禁止。骨架只描述视觉结构。
-13. **为没有刻意构图理由的组件硬写骨架**：骨架能力是开放的，但 AI 不一定要写。Brand Anchor（score≥7）必须设计，Content/Utility 有特殊构图需求才设计，默认够用则不写。
+13. **为没有刻意构图理由的组件硬写骨架**：骨架能力是开放的，但 AI 不一定要写。决策标准是 **母题需要 + 焦点有限**，不是组件档位——母题使它成为本主题构图焦点的组件应设计（无论哪一档）；默认够用则不写，保持克制。
 
 ## 文件依赖索引
 
@@ -195,46 +202,55 @@ Theme Complete ✅
 | `reference/output-format.md`          | 输出格式（CreativeTheme / BrandVisualTheme JSON 示例）   |
 | `reference/assembler-and-compiler.md` | Assembler 合并规则 + Compiler 编译规则 + 微信兼容性      |
 | `reference/component-retrieval.md`    | 组件检索机制（按需匹配）                                 |
+| `reference/dom-structure.md`          | 主程序组件 DOM 结构（由 extract-dom-snapshot 自动生成）  |
 | `reference/skeleton-design-spec.md`   | 骨架 DSL 规范（v3）：layout/group/region/枚举/Validator  |
+| `reference/acceptance-checklist.md`   | **验收清单（检查目标）：交付前体检、六类高频问题**       |
 | `reference/theme-packing.md`          | 阶段 7 主题打包详细规则                                  |
 
-### Registry & Schema
+### 输入工具与 Schema
 
-| 文件                                    | 用途                                      |
-| --------------------------------------- | ----------------------------------------- |
-| `registry/components.json`              | 组件注册表（43 个组件的结构化 JSON 定义） |
-| `schema/brand_state.schema.json`        | 阶段 1 输出格式                           |
-| `schema/concept_state.schema.json`      | 阶段 2 输出格式                           |
-| `schema/visual_language.schema.json`    | 阶段 3 输出格式                           |
-| `schema/component_strategy.schema.json` | 阶段 4 输出格式                           |
-| `schema/skeleton_intent.schema.json`    | 阶段 4.5 输出格式（骨架意图）             |
-| `schema/component_mapping.schema.json`  | 阶段 5 输出格式                           |
-| `schema/CreativeTheme.schema.json`      | 创意阶段设计稿 Schema                     |
-| `schema/BrandVisualTheme.schema.json`   | 最终主题规范 Schema                       |
-| `reference/example/demo-theme.json`     | 完整示例                                  |
+| 文件                                    | 用途                                                                      |
+| --------------------------------------- | ------------------------------------------------------------------------- |
+| `input.html`                            | **主输入入口**：单文件 HTML 表单，按品牌类型引导填写，导出结构化输入 JSON |
+| `schema/input.schema.json`              | **输入契约**：Stage 1 消费的输入结构（表单输出严格遵循此 schema）         |
+| `registry/components.json`              | 组件注册表（43 个组件的结构化 JSON 定义）                                 |
+| `schema/brand_state.schema.json`        | 阶段 1 输出格式                                                           |
+| `schema/concept_state.schema.json`      | 阶段 2 输出格式                                                           |
+| `schema/visual_language.schema.json`    | 阶段 3 输出格式                                                           |
+| `schema/component_strategy.schema.json` | 阶段 4 输出格式                                                           |
+| `schema/skeleton_intent.schema.json`    | 阶段 4.5 输出格式（骨架意图）                                             |
+| `schema/component_mapping.schema.json`  | 阶段 5 输出格式                                                           |
+| `schema/CreativeTheme.schema.json`      | 创意阶段设计稿 Schema                                                     |
+| `schema/BrandVisualTheme.schema.json`   | 最终主题规范 Schema                                                       |
+| `reference/example/demo-theme.json`     | 完整示例                                                                  |
 
 ### 脚本
 
-| 文件                                 | 用途                                               |
-| ------------------------------------ | -------------------------------------------------- |
-| `scripts/compile-skeleton.cjs`       | Stage 4.5：骨架 Intent → Mustache 模板             |
-| `scripts/pack-theme.cjs`             | 阶段 7：打包脚本（打包前自动校验 CSS）             |
-| `scripts/validate-theme.cjs`         | 阶段 7：验证脚本                                   |
-| `scripts/export-html.cjs`            | HTML 导出脚本                                      |
-| `scripts/validate-css-selectors.mjs` | 打包前校验 CSS 选择器 + 嵌套 var（拦截臆造 class） |
-| `scripts/extract-dom-snapshot.mjs`   | 从主程序真源自动生成 `reference/dom-structure.md`  |
+| 文件                                 | 用途                                                  |
+| ------------------------------------ | ----------------------------------------------------- |
+| `scripts/compile-skeleton.cjs`       | Stage 4.5：骨架 Intent → Mustache 模板                |
+| `scripts/compile-preview.cjs`        | Compiler 子阶段 A：开发预览 HTML 生成器               |
+| `scripts/compile-publish.cjs`        | Compiler 子阶段 B：公众号发布 HTML 生成器（微信兼容） |
+| `scripts/pack-theme.cjs`             | 阶段 7：打包脚本（打包前自动校验 CSS）                |
+| `scripts/validate-theme.cjs`         | 阶段 7：验证脚本                                      |
+| `scripts/validate-css-selectors.mjs` | 打包前校验 CSS 选择器 + 嵌套 var（拦截臆造 class）    |
+| `scripts/extract-dom-snapshot.mjs`   | 从主程序真源自动生成 `reference/dom-structure.md`     |
 
 ## 工作模式
 
-### Creative Mode（创作者模式）
+本 skill 只有**一条流水线**（七阶段），不区分独立路线。品牌、个人创作者、媒体、产品、机构、社区等品牌类型（`brand_identity.type`）只改变 Stage 1/2 的**差异化信号来源**，其后的翻译、骨架、编译、打包完全一致。
 
-输入最少，AI 自主完成全部推导。例如：`"一个激情的 AI 创作者。"`
+**无论哪种类型，都不需要提前掌握组件清单**：创意阶段（Stage 1-3）禁止接触组件，翻译阶段（Stage 4-5）通过组件注册表**按需检索**，再设计骨架（Stage 4.5，形）与皮肤（Stage 5，皮）。
 
-创作者模式**同样产出 3 个视觉母题候选**供用户选择（与品牌模式一致），母题推导不依赖行业/客户，而是从**创作者的人格 + 创作主题 + 内容气质 + 受众**推导。Stage 1 会把 `industry` 重映射为创作主题、`customer` 重映射为受众（见 `prompts/01-brand.md`），Stage 2 据此推导母题（见 `prompts/02-concept.md`）。例如"激情的 AI 创作者"可能推出"舞台聚光灯"、"迸发的神经网络"、"实验室白板涂鸦"等不同母题。
+### 按品牌类型自适应的信号来源
 
-### Brand Mode（品牌模式）
+Stage 1（品牌解读）与 Stage 2（视觉概念）的母题推导信号，随 `brand_identity.type` 不同而不同：
 
-输入品牌介绍（100-300 字）+ Logo + 参考资料（可选）。硬约束：Logo 等文件资产不可修改；软约束：品牌人格必须体现；自由区域：视觉设计。
+- **Brand（企业 / 机构 / 产品 / 媒体 / 社区）**：输入品牌介绍（100-300 字）+ 行业 + 目标客户 + Logo/参考资料。母题从 `industry` + `customer` + `personality` + `avoid` + 品牌独特故事推导。硬约束：Logo 等文件资产不可修改；软约束：品牌人格必须体现；自由区域：视觉设计。
+
+- **Creator（个人创作者）**：输入最少，AI 自主完成全部推导，例如 `"一个激情的 AI 创作者。"`。没有真正的行业/客户，Stage 1 把 `industry` 重映射为**创作主题**、`customer` 重映射为**受众**（见 `prompts/01-brand.md`），Stage 2 据此从 `personality + 创作主题 + 内容气质 + 受众` 推导母题（见 `prompts/02-concept.md`）。例如"激情的 AI 创作者"可能推出"舞台聚光灯"、"迸发的神经网络"、"实验室白板涂鸦"等不同母题。
+
+两种类型都**同样产出 3 个视觉母题候选**供用户选择，也都在翻译阶段按需检索组件并设计骨架，走到同一套编译与打包。
 
 ## 最终判断标准
 
@@ -245,7 +261,7 @@ Theme Complete ✅
 5. **Creativity** — Brand Anchor 是否真正具有独特性？
 6. **Readability** — 品牌表达是否影响正常阅读？
 7. **Necessity** — 每一个 Brand Anchor 是否都有存在的理由？
-8. **Efficiency** — Brand Anchor 是否不超过 6 个？
+8. **Efficiency** — Brand Anchor 高预算池是否克制、焦点少而准（软上限 ~6，非硬锁）
 9. **Separation** — 创意阶段是否真的没有接触组件概念？
 
 ## 最终目标

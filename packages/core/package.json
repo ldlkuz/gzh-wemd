@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc -w",
-    "test": "vitest"
+    "test": "vitest",
+    "gen:snapshot": "node scripts/generate-shared-snapshot.cjs"
   },
   "dependencies": {
     "fflate": "^0.8.3",

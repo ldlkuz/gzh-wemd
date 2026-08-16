@@ -37,14 +37,14 @@ Assembler 输出 `BrandVisualTheme.json` 后，Compiler 将其编译为可预览
 
 ### 子阶段 A：编译规则
 
-| 输入                      | 输出                                    |
-| ------------------------- | --------------------------------------- |
-| `visual_language`         | CSS 变量系统（`:root {}`）              |
-| `design_tokens`           | 设计语义值（强调度、圆角、阴影、动画）  |
-| `skeletons`               | 骨架 Intent → 安全 DOM（Mustache 模板） |
-| `components.brand_anchor` | 每个 Brand Anchor 的完整独立样式        |
-| `components.content`      | 克制继承的 Content 组件样式             |
-| `components.utility`      | 最小化的 Utility 组件样式               |
+| 输入                 | 输出                                         |
+| -------------------- | -------------------------------------------- |
+| `visual_language`    | CSS 变量系统（`:root {}`，方向性描述为基础） |
+| `design_tokens`      | 受控词表（强调度、密度、装饰、对比度档位）   |
+| `skeletons`          | 骨架 Intent → 安全 DOM（Mustache 模板）      |
+| `components.focal`   | 每个焦点组件（深度设计焦点集）的完整独立样式 |
+| `components.content` | 克制继承的 Content 组件样式                  |
+| `components.utility` | 最小化的 Utility 组件样式                    |
 
 ### 骨架 Compiler：Intent → 安全 DOM
 
@@ -83,7 +83,7 @@ design_tokens（emphasis / density / decoration / contrast）  ← 受控词汇�
 ### 三分类样式的差异
 
 ```
-Brand Anchor: 边到边突破留白 · 极端对比 · 动态装饰 · 静态动画残留
+focal（焦点组件）: 边到边突破留白 · 极端对比 · 动态装饰 · 静态动画残留
 Content:      标准容器 · 克制装饰 · 可读性优先 · 无动画
 Utility:      极简样式 · 低可见度 · 无装饰 · 无动画
 ```

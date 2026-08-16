@@ -1,0 +1,104 @@
+{
+  "$schema": "Input",
+  "description": "Skill 主输入契约：由 input.html 表单产出的结构化输入 JSON。Stage 1（品牌解读）直接消费此结构与字段名。创作者与品牌类型共用同一 schema，仅字段语义不同（详见 reference/input-format.md）。",
+
+  "type": "object",
+  "required": ["brand_identity", "intro"],
+
+  "allOf": [
+    {
+      "description": "按品牌类型条件必填：creator 强制创作主题+受众，其余品牌类型强制行业+目标客户。",
+      "if": {
+        "properties": {
+          "brand_identity": {
+            "properties": { "type": { "const": "creator" } }
+          }
+        },
+        "required": ["brand_identity"]
+      },
+      "then": {
+        "required": ["creation_topic", "audience"]
+      },
+      "else": {
+        "required": ["industry", "customer"]
+      }
+    }
+  ],
+
+  "properties": {
+    "$origin": {
+      "type": "string",
+      "const": "wemd-theme-designer/input.html",
+      "description": "输入来源。主入口为 input.html 表单；若为自然语言输入，gathered 时省略，由 agent 按此 schema 结构化填充。"
+    },
+
+    "brand_identity": {
+      "type": "object",
+      "required": ["name", "type"],
+      "properties": {
+        "name": { "type": "string", "description": "品牌名称 / 创作者昵称" },
+        "type": {
+          "type": "string",
+          "enum": [
+            "enterprise",
+            "creator",
+            "media",
+            "product",
+            "institution",
+            "community"
+          ],
+          "description": "品牌类型。creator 走创作语境重映射，其余走行业+客户。"
+        }
+      }
+    },
+
+    "industry": {
+      "type": "string",
+      "description": "品牌类型：所属行业（差异化信号之一）。如 '工业机器人'。creator 类型不使用此字段。"
+    },
+    "customer": {
+      "type": "string",
+      "description": "品牌类型：目标客户（差异化信号之一）。如 '汽车制造企业'。creator 类型不使用此字段。"
+    },
+    "creation_topic": {
+      "type": "string",
+      "description": "creator 类型：创作主题/领域（重映射的 industry）。如 'AI 工具评测'。必须具体，禁止泛化词。"
+    },
+    "audience": {
+      "type": "string",
+      "description": "creator 类型：受众/读者（重映射的 customer）。如 '独立开发者'。"
+    },
+    "product": {
+      "type": "string",
+      "description": "品牌类型：核心产品或服务（可选）。如 '自动化生产线机器人'。creator 类型下为常做内容形态。"
+    },
+    "content_form": {
+      "type": "string",
+      "description": "creator 类型：常做内容形态（可选）。如 '深度技术长文'、'开箱测评'。"
+    },
+
+    "intro": {
+      "type": "string",
+      "description": "品牌介绍 / 自我介绍，100-300 字，决定语气与风格方向。"
+    },
+
+    "keywords": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "品牌关键词（可选），3-5 个，决定装饰风格方向。"
+    },
+    "avoid": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "避免方向（可选）：不希望看起来像什么。最有力的反向信号。"
+    },
+    "desired_impression": {
+      "type": "string",
+      "description": "希望别人怎么看你（可选）。如 '行业专家 / 创新先锋 / 长期伙伴'。"
+    },
+    "slogan": {
+      "type": "string",
+      "description": "Slogan / 一句话标语（可选）。"
+    }
+  }
+}

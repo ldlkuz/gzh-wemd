@@ -1,14 +1,14 @@
 {
   "$schema": "ComponentMappingState",
-  "description": "Stage 5 输出：组件映射状态。Brand Anchor 深度设计 + Content/Utility 策略与约束。",
+  "description": "Stage 5 输出：组件映射状态。焦点集（focal）深度设计 + Content/Utility 策略与约束。",
 
   "type": "object",
-  "required": ["brand_anchor", "content", "utility"],
+  "required": ["focal", "content", "utility"],
 
   "properties": {
-    "brand_anchor": {
+    "focal": {
       "type": "object",
-      "description": "Brand Anchor 深度设计，key 为组件名称",
+      "description": "深度设计焦点集，key 为组件名称",
       "additionalProperties": {
         "type": "object",
         "required": ["design"],

@@ -15,6 +15,12 @@ import { unzip, strFromU8, zip } from "fflate";
 import { validateThemePackageManifest, scanSvgSafety } from "./ThemeValidator";
 import type { ThemePackageManifest } from "../theme-schema/types";
 import type { ValidationError } from "../theme-schema/types";
+import {
+  PSEUDO_ELEMENT_REGEX,
+  STRUCTURAL_PSEUDO_REGEX,
+  EXTERNAL_LINK_REGEX,
+  FORBIDDEN_TAG_REGEX,
+} from "../wechatCompat/whitelist";
 
 // ============================================================
 // 类型
@@ -48,13 +54,6 @@ export type LoaderResult = LoaderSuccess | LoaderFailure;
 // ============================================================
 // 常量
 // ============================================================
-
-const PSEUDO_ELEMENT_REGEX =
-  /::(before|after|marker|selection|first-letter|first-line|placeholder|backdrop|spelling-error|grammar-error)/i;
-const STRUCTURAL_PSEUDO_REGEX =
-  /:(first-child|last-child|nth-child|nth-last-child|first-of-type|last-of-type|nth-of-type|nth-last-of-type|only-child|only-of-type|empty)\b/i;
-const EXTERNAL_LINK_REGEX = /url\s*\(\s*['"]?\s*https?:\/\//i;
-const FORBIDDEN_TAG_REGEX = /<(style|script)\b/i;
 
 // ============================================================
 // 辅助：扫描 CSS 内容中的安全问题

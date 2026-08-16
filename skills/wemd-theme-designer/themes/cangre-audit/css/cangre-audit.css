@@ -176,6 +176,15 @@
   border: 1px solid var(--wemd-border);
   border-radius: 4px;
 }
+#wemd .wemd-resource-list .wemd-rl-header {
+  display: block;
+}
+#wemd .wemd-resource-list .wemd-rl-top-bar {
+  display: block;
+  height: 3px;
+  background: var(--wemd-accent-primary); /* 红头条 */
+  margin-bottom: 0.75rem;
+}
 #wemd .wemd-resource-list .wemd-rl-title {
   font-family: var(--wemd-font-heading);
   font-size: 1.05rem;

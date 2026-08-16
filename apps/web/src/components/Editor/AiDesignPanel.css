@@ -185,3 +185,87 @@
     gap: 8px;
   }
 }
+
+/* ===== 加载态：实时「已等待 N 秒」 + 分阶段进度 ===== */
+.ai-design-content .ai-layout-loading {
+  padding: 48px 24px;
+  text-align: center;
+  color: #64748b;
+}
+.ai-layout-loading .spinning {
+  color: #8b5cf6;
+  margin-bottom: 12px;
+  animation: ai-layout-spin 1s linear infinite;
+}
+@keyframes ai-layout-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.ai-layout-loading-elapsed {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #7c3aed;
+}
+.ai-layout-loading-elapsed strong {
+  font-size: 16px;
+  font-weight: 700;
+}
+.ai-layout-loading-steps {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+.ai-layout-loading-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #94a3b8;
+  min-height: 22px;
+}
+.ai-layout-loading-step-dot,
+.ai-load-step-icon {
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+.ai-layout-loading-step-dot {
+  border-radius: 50%;
+  border: 1.5px solid #cbd5e1;
+}
+.ai-load-step-icon {
+  color: #10b981;
+}
+.ai-load-step-spin {
+  color: #8b5cf6;
+}
+.ai-layout-loading-step-pending .ai-load-step-label {
+  color: #cbd5e1;
+}
+.ai-layout-loading-step-active .ai-load-step-dot {
+  border-color: #8b5cf6;
+  animation: ai-layout-pulse 1s ease-in-out infinite;
+  background: rgba(139, 92, 246, 0.15);
+}
+.ai-layout-loading-step-active .ai-load-step-label {
+  color: #6d28d9;
+  font-weight: 600;
+}
+.ai-layout-loading-step-done .ai-load-step-label {
+  color: #059669;
+}
+@keyframes ai-layout-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 5px rgba(139, 92, 246, 0.1);
+  }
+}

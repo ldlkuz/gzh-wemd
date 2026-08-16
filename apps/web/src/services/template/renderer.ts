@@ -17,10 +17,11 @@ import type {
   DesignIntent,
 } from "./types";
 import {
+  splitParagraphs,
   extractParagraphs,
   calculateCoverage,
-  getParagraphCount,
   findUncoveredRanges,
+  getParagraphCount,
 } from "./contentExtractor";
 import {
   componentRenderers,
@@ -30,6 +31,80 @@ import {
 } from "./componentRenderers";
 
 const ARTICLE_SECTION = "article-section";
+
+/** 标题类组件：content.title 即替代了原文中对应的 Markdown 标题段 */
+const TITLE_COMPONENTS = new Set([
+  "section-title",
+  "section-divider",
+  "numbered-heading",
+  "hero-banner",
+  "magazine-cover",
+]);
+
+/**
+ * 归一化文本用于标题段匹配：
+ * 去 Markdown 标题前缀、去全部引号、去空白、小写，
+ * 容忍 AI 提取 title 时与原文在标点/空白上的细微差异。
+ */
+function normalizeForMatch(text: string): string {
+  return text
+    .replace(/^\s*#{1,6}\s+/, "")
+    .replace(/["""''']/g, "")
+    .replace(/\s+/g, "")
+    .toLowerCase();
+}
+
+/**
+ * 收集 layout 中标题类组件的 title（归一化），
+ * 用于识别"已被组件消费、不应再兜底进正文"的标题段。
+ */
+function collectConsumedTitles(tpl: TemplateJSON): string[] {
+  const titles: string[] = [];
+  for (const node of tpl.layout) {
+    if (TITLE_COMPONENTS.has(node.component)) {
+      const title = String(
+        (node.content as Record<string, unknown>)?.title ?? "",
+      );
+      if (title.trim()) titles.push(normalizeForMatch(title));
+    }
+  }
+  return titles;
+}
+
+/**
+ * 找出文章中被标题组件消费的标题段索引（1-based）。
+ * 这些段落已被组件（如 section-title）替代，不应再以原生 `## ` 标题输出。
+ */
+function findConsumedHeadingIndexes(
+  article: string,
+  consumedTitleSet: Set<string>,
+): number[] {
+  const indexes: number[] = [];
+  const paragraphs = splitParagraphs(article);
+  paragraphs.forEach((p, i) => {
+    if (/^\s*#{1,6}\s+/.test(p) && consumedTitleSet.has(normalizeForMatch(p))) {
+      indexes.push(i + 1);
+    }
+  });
+  return indexes;
+}
+
+/**
+ * 从 article-section 抽取的正文中，移除被标题组件消费的 Markdown 标题段。
+ * 例如 AI 把 `## 一、...` 转成 section-title 后，article-section 引用范围内
+ * 若包含该标题段，也应剔除，否则与组件标题重复。
+ */
+function stripConsumedHeadings(
+  markdown: string,
+  consumedTitleSet: Set<string>,
+): string {
+  const paragraphs = markdown.split(/\n\s*\n/);
+  const kept = paragraphs.filter((p) => {
+    if (!/^\s*#{1,6}\s+/.test(p)) return true; // 非标题段一律保留
+    return !consumedTitleSet.has(normalizeForMatch(p));
+  });
+  return kept.join("\n\n");
+}
 
 /** 各组件的默认 DesignIntent（AI 未提供 design 时使用） */
 const DEFAULT_DESIGN: Record<string, DesignIntent> = {
@@ -291,6 +366,14 @@ export function renderTemplate(
 
   const total = getParagraphCount(article);
 
+  // 收集被标题组件（section-title 等）消费的标题段。
+  // 这些标题段已由组件替代，直接视为"已覆盖"，
+  // 避免兜底逻辑把原 `## ` 标题段再次补回正文导致标题重复。
+  const consumedTitleSet = new Set(collectConsumedTitles(tpl));
+  for (const idx of findConsumedHeadingIndexes(article, consumedTitleSet)) {
+    paragraphRanges.push({ from: idx, to: idx });
+  }
+
   for (let i = 0; i < tpl.layout.length; i++) {
     const node = tpl.layout[i];
 
@@ -300,7 +383,13 @@ export function renderTemplate(
     }
 
     if (node.component === ARTICLE_SECTION) {
-      const part = renderArticleSection(node, article, total, warnings);
+      const part = renderArticleSection(
+        node,
+        article,
+        total,
+        warnings,
+        consumedTitleSet,
+      );
       if (part) {
         outputParts.push(part.markdown);
         paragraphRanges.push({ from: part.from, to: part.to });
@@ -334,6 +423,7 @@ export function renderTemplate(
         article,
         total,
         warnings,
+        consumedTitleSet,
       );
       if (part) {
         outputParts.push(part.markdown);
@@ -387,6 +477,7 @@ function renderArticleSection(
   article: string,
   total: number,
   warnings: string[],
+  consumedTitleSet: Set<string>,
 ): { markdown: string; from: number; to: number } | null {
   const content = (node.content || {}) as unknown as ArticleSectionContent;
   const from = Number(content.fromParagraph) || 1;
@@ -408,7 +499,13 @@ function renderArticleSection(
     return null;
   }
 
-  let markdown = result.text;
+  // 剔除范围内被标题组件消费的 Markdown 标题段（如 `## ` 已转成 section-title）
+  let markdown = stripConsumedHeadings(result.text, consumedTitleSet);
+
+  if (!markdown.trim()) {
+    warnings.push(`article-section 段落范围 ${from}-${to} 无正文，已跳过`);
+    return null;
+  }
 
   // 根据 design.emphasis 决定是否卡片化正文
   if (node.design?.emphasis === "high") {

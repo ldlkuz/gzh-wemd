@@ -5,6 +5,204 @@ const DATA_TOOL = "WeMD编辑器";
 const SECTION_ID = "wemd";
 
 /**
+ * 通用 CSS 简写家族表：每个「简写(shorthand)」映射到它所能影响的「长属性(longhand)」。
+ *
+ * 这些长属性在 CSS 层叠中与简写共享同一组联动值。当内联到同一段 style 串时，
+ * 浏览器按声明顺序求值：排在简写【之前】的长属性会被简写覆盖（危险），
+ * 排在简写【之后】的长属性会覆盖简写（安全）。
+ *
+ * 表驱动替代原先仅有 margin/padding 的硬编码，覆盖 border / outline / flex /
+ * background 等常见家族，统一解决「简写覆盖其前长属性」的顺序敏感问题。
+ */
+export const SHORTHAND_FAMILIES: ReadonlyArray<{
+  short: string;
+  longhands: readonly string[];
+}> = [
+  {
+    short: "margin",
+    longhands: ["margin-top", "margin-right", "margin-bottom", "margin-left"],
+  },
+  {
+    short: "padding",
+    longhands: [
+      "padding-top",
+      "padding-right",
+      "padding-bottom",
+      "padding-left",
+    ],
+  },
+  { short: "inset", longhands: ["top", "right", "bottom", "left"] },
+  {
+    short: "border",
+    longhands: [
+      "border-width",
+      "border-style",
+      "border-color",
+      "border-top",
+      "border-right",
+      "border-bottom",
+      "border-left",
+      "border-top-width",
+      "border-top-style",
+      "border-top-color",
+      "border-right-width",
+      "border-right-style",
+      "border-right-color",
+      "border-bottom-width",
+      "border-bottom-style",
+      "border-bottom-color",
+      "border-left-width",
+      "border-left-style",
+      "border-left-color",
+    ],
+  },
+  {
+    short: "border-width",
+    longhands: [
+      "border-top-width",
+      "border-right-width",
+      "border-bottom-width",
+      "border-left-width",
+    ],
+  },
+  {
+    short: "border-style",
+    longhands: [
+      "border-top-style",
+      "border-right-style",
+      "border-bottom-style",
+      "border-left-style",
+    ],
+  },
+  {
+    short: "border-color",
+    longhands: [
+      "border-top-color",
+      "border-right-color",
+      "border-bottom-color",
+      "border-left-color",
+    ],
+  },
+  {
+    short: "border-top",
+    longhands: ["border-top-width", "border-top-style", "border-top-color"],
+  },
+  {
+    short: "border-right",
+    longhands: [
+      "border-right-width",
+      "border-right-style",
+      "border-right-color",
+    ],
+  },
+  {
+    short: "border-bottom",
+    longhands: [
+      "border-bottom-width",
+      "border-bottom-style",
+      "border-bottom-color",
+    ],
+  },
+  {
+    short: "border-left",
+    longhands: ["border-left-width", "border-left-style", "border-left-color"],
+  },
+  {
+    short: "border-radius",
+    longhands: [
+      "border-top-left-radius",
+      "border-top-right-radius",
+      "border-bottom-right-radius",
+      "border-bottom-left-radius",
+    ],
+  },
+  {
+    short: "outline",
+    longhands: ["outline-width", "outline-style", "outline-color"],
+  },
+  { short: "flex", longhands: ["flex-grow", "flex-shrink", "flex-basis"] },
+  { short: "gap", longhands: ["row-gap", "column-gap"] },
+  { short: "place-items", longhands: ["align-items", "justify-items"] },
+  { short: "place-content", longhands: ["align-content", "justify-content"] },
+  {
+    short: "font",
+    longhands: [
+      "font-style",
+      "font-variant",
+      "font-weight",
+      "font-stretch",
+      "font-size",
+      "line-height",
+      "font-family",
+    ],
+  },
+  {
+    short: "background",
+    longhands: [
+      "background-image",
+      "background-position",
+      "background-size",
+      "background-repeat",
+      "background-origin",
+      "background-clip",
+      "background-attachment",
+      "background-color",
+    ],
+  },
+  {
+    short: "list-style",
+    longhands: ["list-style-type", "list-style-position", "list-style-image"],
+  },
+  {
+    short: "text-decoration",
+    longhands: [
+      "text-decoration-line",
+      "text-decoration-style",
+      "text-decoration-color",
+      "text-decoration-thickness",
+    ],
+  },
+];
+
+/**
+ * 解决内联时「简写(shorthand) + 长属性(longhand) 并存互相覆盖」问题。
+ *
+ * 背景：`margin: 0` 与 `margin-bottom: 24px` 会同时写进同一段 style，
+ * 浏览器按出现顺序求值，`margin` 简写若排在后面会把前面已内联的
+ * `margin-bottom` 顶掉——导致组件垂直间距丢失（blockquote 典型案例）。
+ *
+ * 处理策略：不删除简写、也不把简写值分解重写，而是把每个「简写」稳定地
+ * 前置到它所属家族第一个长属性之前。这样长属性在简写之后出现，按 CSS
+ * 层叠规则长属性生效，结果与声明顺序无关。相比逐属性展开值，此法对所有
+ * 家族统一成立，无需解析 background / font 等复杂简写的拆分语义。
+ */
+function normalizeShorthandOrderForInline(
+  styleMap: Map<string, string>,
+): Map<string, string> {
+  // 取 entries 数组做稳定移动：只调整简写与长属性的相对顺序，不触碰其它声明
+  const entries = Array.from(styleMap.entries());
+
+  for (const family of SHORTHAND_FAMILIES) {
+    const shortIdx = entries.findIndex(([k]) => k === family.short);
+    if (shortIdx < 0) continue;
+    // 简写存在但该家族没有任何长属性 → 无覆盖风险，无需处理
+    if (!family.longhands.some((k) => styleMap.has(k))) continue;
+    const firstLongIdx = entries.findIndex(([k]) =>
+      family.longhands.includes(k),
+    );
+    // 简写已经在长属性之前（安全）→ 跳过
+    if (firstLongIdx > shortIdx) continue;
+    // 把简写移动到该家族第一个长属性之前
+    const [moved] = entries.splice(shortIdx, 1);
+    entries.splice(firstLongIdx, 0, moved);
+  }
+
+  const result = new Map<string, string>();
+  for (const [k, v] of entries) result.set(k, v);
+  return result;
+}
+
+/**
  * 为 toc-nav 目录组件的 li 添加序号 span（兼容微信内联）
  * 微信不支持 ::before 伪元素和 counter 计数器，需要直接把序号写进 HTML
  *
@@ -149,7 +347,11 @@ const inlineAllStylesManually = (html: string, css: string): string => {
             );
           }
         });
-        const merged = Array.from(styleMap.entries())
+        // 统一简写家族（margin/padding/border/outline/flex 等）与长属性的顺序，
+        // 避免简写在 style 串中覆盖其前长属性，
+        // 从而消除组件垂直间距丢失（如 blockquote）这类「顺序决定结果」的问题
+        const normalizedMap = normalizeShorthandOrderForInline(styleMap);
+        const merged = Array.from(normalizedMap.entries())
           .map(([p, v]) => `${p}: ${v}`)
           .join("; ");
         el.setAttribute("style", merged);
@@ -188,6 +390,15 @@ export const processHtml = (
       return `<${tag} data-tool="${DATA_TOOL}"${attributes}>`;
     });
   });
+
+  // rem 单位 → px（基准 16px）
+  // 公众号编辑器根字体大小与浏览器不同且不可控，若残留 rem，间距/字号会随根字体缩放而异常。
+  // 需在 CSS 变量展开、样式全内联之后执行(buildWechatPublishHtml / compile-publish 共用本函数)。
+  const remToPx = (value: string): string =>
+    value.replace(/(\d+(?:\.\d+)?)rem\b/g, (_m, num: string) => {
+      const px = parseFloat(num) * 16;
+      return `${Number.isInteger(px) ? px : parseFloat(px.toFixed(3))}px`;
+    });
 
   // 处理 MathJax 相关的替换
   html = html.replace(
@@ -284,6 +495,9 @@ export const processHtml = (
       },
     );
   }
+
+  // 内联完成后，把所有 rem 统一转为 px，避免公众号根字体缩放导致间距/字号异常
+  res = remToPx(res);
 
   return res;
 };

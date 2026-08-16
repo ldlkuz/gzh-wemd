@@ -50,6 +50,9 @@ const THEME_JSON = path.join(THEME_DIR, "BrandVisualTheme.json");
 const OUT_DIR = path.join(THEME_DIR, "publish");
 const OUT_FILE = path.join(OUT_DIR, `${THEME_NAME}.html`);
 
+// 简写顺序门禁：与主程序内联器 SHORTHAND_FAMILIES 权威表同源，防止「简写覆盖其前长属性」
+const { findShorthandIssues } = require("./scan-shorthand.cjs");
+
 // 主程序依赖：模板填充 + 全内联器
 const { fillTemplate } = require(path.join(CORE_DIST, "plugins/component/templateFiller.js"));
 const { processHtml } = require(path.join(CORE_DIST, "ThemeProcessor.js"));
@@ -133,6 +136,37 @@ function buildSampleData(theme) {
 // ============================================================
 // 组装组件 HTML + 全内联
 // ============================================================
+/**
+ * 发布产物自检（Render Snapshot 的前置静态断言）
+ *
+ * 公众号对相对单位 / 浏览器特定特性支持不可靠，产物中一旦出现即属缺陷：
+ *  - rem：根字体不可控，间距/字号随根字体缩放 → 应已在主程序 processHtml 内全部转 px
+ *  - var(...)：变量未展开会残留，微信不支持
+ *  - ::before/::after 伪元素：微信无法正确渲染，需已物化为真实元素
+ * 命中即清单列示并 halt，避免问题被打包进 publish 产物。
+ */
+function assertPublishSafe(html) {
+  const issues = [];
+  const remMatch = html.match(/(\d+(?:\.\d+)?)\s*rem\b/g);
+  if (remMatch) issues.push(`残留 rem 单位 ${remMatch.length} 处：${remMatch.slice(0, 8).join(", ")}${remMatch.length > 8 ? " …" : ""}`);
+  const varMatch = html.match(/var\(--[\w-]+\)/g);
+  if (varMatch) issues.push(`残留未展开 CSS 变量 ${varMatch.length} 处：${varMatch.slice(0, 8).join(", ")}${varMatch.length > 8 ? " …" : ""}`);
+  const pseudoMatch = html.match(/::(before|after)/g);
+  if (pseudoMatch) issues.push(`残留伪元素 ${pseudoMatch.length} 处：未物化，微信无法渲染`);
+  // 简写顺序门禁：简写不得出现在其同族长属性之后（否则覆盖长属性导致视觉/间距丢失）
+  const { scanned, problems } = findShorthandIssues(html);
+  if (problems.length > 0) {
+    issues.push(
+      `简写覆盖其前长属性 ${problems.length} 处（扫描 ${scanned} 个 style）：` +
+        problems
+          .slice(0, 5)
+          .map((p) => `<${p.tag}>·${p.family}`)
+          .join(", ") + (problems.length > 5 ? " …" : ""),
+    );
+  }
+  return issues;
+}
+
 function renderComponentHtml({ templates, theme }) {
   const sample = buildSampleData(theme);
   const anchors = theme.component_strategy?.brand_anchor || [];
@@ -154,12 +188,18 @@ const { css, templates, theme } = load();
 const componentHtml = renderComponentHtml({ templates, theme });
 
 // processHtml 会自行包裹 <section id="wemd">，并做全内联 + 微信兼容处理
+// rem→px 已在主程序 processHtml 内统一完成（buildWechatPublishHtml 共用同一条链路）
 const inlined = processHtml(componentHtml, css, true, true);
+
+const issues = assertPublishSafe(inlined);
+if (issues.length > 0) {
+  console.error(`\n🚫 发布产物自检未通过（${THEME_NAME}）：`);
+  for (const i of issues) console.error(`   - ${i}`);
+  process.exit(1);
+}
 
 fs.mkdirSync(OUT_DIR, { recursive: true });
 fs.writeFileSync(OUT_FILE, inlined, "utf-8");
 console.log(`✅ 公众号发布 HTML 已生成：${OUT_FILE}`);
 console.log(`   字符数：${inlined.length}`);
-console.log(
-  `   是否含 <style> 标签：${/<style/i.test(inlined) ? "是（异常）" : "否（已全部内联）"}`,
-);
+console.log("   ✅ 发布产物自检通过（无 rem / 无未展开 var / 无伪元素残留）");

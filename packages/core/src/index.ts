@@ -20,6 +20,21 @@ export {
   convertToWeChatDarkMode,
 } from "./wechatDarkMode";
 
+// 微信公众号兼容规则（单一来源，供内联器/校验器/快照生成复用）
+export {
+  PSEUDO_ELEMENT_REGEX,
+  STRUCTURAL_PSEUDO_REGEX,
+  EXTERNAL_LINK_REGEX,
+  FORBIDDEN_TAG_REGEX,
+  ZIP_ASSET_URL_REGEX,
+  FORBIDDEN_CSS_PATTERNS,
+  FORBIDDEN_CSS_RULES,
+} from "./wechatCompat/whitelist";
+export type { ForbiddenCssRule } from "./wechatCompat/whitelist";
+
+// CSS 简写家族表（内联简写顺序归一 + scan-shorthand 快照的真源）
+export { SHORTHAND_FAMILIES } from "./ThemeProcessor";
+
 // Theme Registry（Validator + Loader + 组件注册表）
 export {
   validateThemePackageManifest,

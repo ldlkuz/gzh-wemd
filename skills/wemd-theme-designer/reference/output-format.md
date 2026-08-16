@@ -111,7 +111,7 @@ Schema 见 `schema/CreativeTheme.schema.json`。
   },
 
   "components": {
-    "brand_anchor": {
+    "focal": {
       "magazine-cover": {
         "design": {
           "role": "建立文章第一视觉印象",
@@ -201,11 +201,11 @@ Schema 见 `schema/CreativeTheme.schema.json`。
 - 每个顶级字段对应一个独立 State JSON
 - `component_strategy` — 三分类列表，`brand_anchor` 包含 score 和 reason
 - `skeletons` — 形（骨架意图），只收录有刻意构图理由的组件；未提供/非法回退默认骨架
-- `components.brand_anchor` — 显式设计，每个 Brand Anchor 单独设计
+- `components.focal` — 显式设计，每个焦点组件单独设计
 - `components.content` — 继承设计 + 组件级约束（component_rules）
 - `components.utility` — 继承设计 + 最小化约束（component_rules）
 - `design_tokens` — 受控词汇表，为 Compiler 提供稳定的语义映射
 
-**只有 Brand Anchor 才允许 AI "放飞"**。Content 和 Utility 继承并克制表达，通过 component_rules 确保安全。
+**只有 Brand Anchor 才是深度设计焦点**（默认高预算池）。Content 和 Utility 继承并克制表达，通过 component_rules 确保安全。但母题需要时任何档位都可提权（由骨架决定）。
 
 **输出的是设计方向（自然语言描述），不是 CSS 值。** AI 不是在描述"组件长什么样"，而是在描述"在这个品牌里，组件应该承担什么视觉任务"。

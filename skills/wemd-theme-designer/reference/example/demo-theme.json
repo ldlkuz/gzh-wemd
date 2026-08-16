@@ -54,7 +54,7 @@
   },
 
   "components": {
-    "brand_anchor": {
+    "focal": {
       "magazine-cover": {
         "design": {
           "role": "建立文章第一视觉印象",

@@ -1,0 +1,18 @@
+{
+  "brand_identity": {
+    "name": "像素工房",
+    "type": "creator"
+  },
+  "industry": "独立游戏开发",
+  "customer": "独立开发者与复古游戏玩家",
+  "product": "像素风独立游戏与开发日志",
+  "desired_impression": ["创意先锋", "硬核极客", "复古玩家同好"],
+  "existing_assets": {
+    "logo_available": false
+  },
+  "personality": ["playful", "nostalgic", "crafty", "bold"],
+  "audience": ["indie game developers", "retro game enthusiasts"],
+  "emotion": ["joy", "nostalgia", "discovery"],
+  "avoid": ["corporate", "smooth minimal", "modern flat"],
+  "keywords": ["pixel", "arcade", "retro", "crt", "handcrafted"]
+}

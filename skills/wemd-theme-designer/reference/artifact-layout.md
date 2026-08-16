@@ -113,13 +113,14 @@ themes/{theme-name}/
 
 脚本输入输出必须遵循本规范，禁止写回共享目录：
 
-| 脚本                                         | 输入                                                                     | 输出                                                 |
-| -------------------------------------------- | ------------------------------------------------------------------------ | ---------------------------------------------------- |
-| `scripts/compile-skeleton.cjs`               | `themes/{theme}/states/skeleton_intent.json`                             | `themes/{theme}/package/templates.json`              |
-| `scripts/pack-theme.cjs <theme>`             | `themes/{theme}/BrandVisualTheme.json`、`themes/{theme}/css/{theme}.css` | `themes/{theme}/package/`                            |
-| `scripts/validate-css-selectors.mjs <theme>` | `themes/{theme}/css/{theme}.css`                                         | 校验结果                                             |
-| `scripts/export-html.cjs <theme>`            | `themes/{theme}/BrandVisualTheme.json`                                   | `themes/{theme}/preview/`、`themes/{theme}/publish/` |
-| `scripts/extract-dom-snapshot.mjs`           | 主程序 `defaultTemplates`/`slotDefs`                                     | `reference/dom-structure.md`（共享，不随主题）       |
+| 脚本                                         | 输入                                                                     | 输出                                           |
+| -------------------------------------------- | ------------------------------------------------------------------------ | ---------------------------------------------- |
+| `scripts/compile-skeleton.cjs`               | `themes/{theme}/states/skeleton_intent.json`                             | `themes/{theme}/package/templates.json`        |
+| `scripts/pack-theme.cjs <theme>`             | `themes/{theme}/BrandVisualTheme.json`、`themes/{theme}/css/{theme}.css` | `themes/{theme}/package/`                      |
+| `scripts/validate-css-selectors.mjs <theme>` | `themes/{theme}/css/{theme}.css`                                         | 校验结果                                       |
+| `scripts/compile-preview.cjs <theme>`        | `themes/{theme}/BrandVisualTheme.json`                                   | `themes/{theme}/preview/`                      |
+| `scripts/compile-publish.cjs <theme>`        | `themes/{theme}/BrandVisualTheme.json`                                   | `themes/{theme}/publish/`                      |
+| `scripts/extract-dom-snapshot.mjs`           | 主程序 `defaultTemplates`/`slotDefs`                                     | `reference/dom-structure.md`（共享，不随主题） |
 
 > 脚本一律通过 `theme-name` 参数定位主题目录，**不写 `themes/` 之外的任何产物**。
 

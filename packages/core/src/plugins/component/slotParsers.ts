@@ -447,7 +447,27 @@ function parseCodeBlock(
  * body 兜底：整块走 markdown 渲染
  */
 function renderBody(markdownParser: MarkdownIt, raw: string): string {
-  return markQuestionParagraphs(markdownParser.render(raw.trim()));
+  const html = markdownParser.render(raw.trim());
+  // 先拆段再标记问题段落，避免新增 <p> 打断 markQuestionParagraphs 的 <p> 结构判断
+  return markQuestionParagraphs(splitSoftBreaks(html));
+}
+
+/**
+ * 把顶层 <p> 段落内的软换行拆成独立 <p>（每行一段）。
+ * 微信编辑器对 <p> 内 <br> 的续行会统一缩进对齐（第二行起前面多出空格），
+ * 而浏览器把 <p> 内的软换行折叠为空格 —— 用 <br> 无法两端一致；
+ * 拆成独立段落块后，两端都逐行对齐、不产生缩进。
+ * 仅处理"<p> 在行首、</p> 在行尾"的顶层段落；列表/表格内嵌套的 <p> 不在行首，
+ * 不会被命中，避免在 <li>/<td> 内生成残缺的 </p><p>。
+ */
+function splitSoftBreaks(html: string): string {
+  return html.replace(
+    /^<p(\s[^>]*)?>([\s\S]*?)<\/p>$/gm,
+    (_m, attrs: string, inner: string) => {
+      const split = inner.replace(/\n(?=\s*[^<\s])/g, "</p>\n<p>");
+      return split === inner ? _m : `<p${attrs ?? ""}>${split}</p>`;
+    },
+  );
 }
 
 /**

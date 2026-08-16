@@ -33,6 +33,11 @@ packages/core/__debug_normalize.mjs
 packages/core/__debug_verify_import.mjs
 weixin-article-full.png.jpg
 全组件测试范文.md
+repro-section-title.mjs
+repro-verify-section.mjs
+repro-section-preview.html
+skills/wemd-theme-designer/input.html
+apps/web/src/__tests__/tmp-callout-repro.test.ts
 
 # Local AI tool config
 .trae/

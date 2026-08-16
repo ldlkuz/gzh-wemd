@@ -1,0 +1,16 @@
+<section class="wemd-component wemd-series-nav" data-component="series-nav">
+<section class="wemd-sn-header">
+{{#if seriesName}}<section class="wemd-sn-name">{{slot:seriesName}}</section>{{/if}}
+{{#if description}}<section class="wemd-sn-desc">{{slot:description}}</section>{{/if}}
+<section class="wemd-sn-progress-bar" style="--sn-progress: {{slot:progress}}"><span class="wemd-sn-progress-fill"></span></section>
+</section>
+{{#if items}}<section class="wemd-sn-articles">
+{{#each items}}
+<section class="{{this.cls}}"><span class="wemd-sn-item-idx">{{this.idx}}</span><span class="wemd-sn-item-title">{{this.title}}</span>{{this.check}}{{this.tag}}</section>
+{{/each}}
+</section>{{/if}}
+<section class="wemd-sn-nav">
+<section class="wemd-sn-prev{{#if prevEmpty}} wemd-sn-prev-empty{{/if}}"><section class="wemd-sn-prev-label">{{slot:prevLabel}}</section>{{#if prevTitle}}<section class="wemd-sn-prev-title">{{slot:prevTitle}}</section>{{/if}}</section>
+<section class="wemd-sn-next{{#if nextEmpty}} wemd-sn-next-empty{{/if}}"><section class="wemd-sn-next-label">{{slot:nextLabel}}</section>{{#if nextTitle}}<section class="wemd-sn-next-title">{{slot:nextTitle}}</section>{{/if}}</section>
+</section>
+</section>

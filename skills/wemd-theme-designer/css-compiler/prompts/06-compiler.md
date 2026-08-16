@@ -8,7 +8,7 @@
 
 1. 从 `design_tokens` 编译 CSS 变量系统（`#wemd { --wemd-* }`）
 2. 从 `visual_language` 编译基础样式（字体、颜色、间距）
-3. 从 `components.brand_anchor` 编译每个 Brand Anchor 组件的完整样式
+3. 从 `components.focal` 编译每个焦点组件的完整样式
 4. 从 `components.content` 编译克制继承的 Content 组件样式
 5. 从 `components.utility` 编译最小化的 Utility 组件样式
 6. **将自定义 CSS 选择器翻译为 `#wemd .wemd-*` 标准选择器**
@@ -80,6 +80,19 @@ AI 在生成 CSS 时，**必须严格遵守以下分层原则**：
 - 在组件内使用 `padding-top` / `padding-bottom` 增加视觉呼吸空间
 - 或使用 `#wemd > .wemd-xxx + .wemd-yyy` 选择器在编译时特殊处理（极少情况）
 
+### 皮与骨的契约（填满义务 — 硬规则）
+
+骨架（Stage 4.5）定"**哪里是视觉核心**"，本阶段（皮）定"**这个核心长什么样**"。骨架定"填哪里"，CSS 用**同一套品牌语言**填满骨架的每个结构单元。两者一对一强绑定，嵌套而非对立——CSS 的全局核心不脱离骨架另立一套：主题统一感来自"用同一套语言去填所有骨架"，组件差异性来自骨架选了不同焦点。
+
+```text
+1. 对每个在 skeleton_intent.json 中有骨架的组件，本篇 CSS 必须完整覆盖其每个结构单元：
+   slot 区、group、decoration（top-bar / corner 等）、强调、align。骨架宣告了这些，CSS 就有义务填满，不可落空。
+2. 骨架宣告而 CSS 未覆盖 = 该区域是空壳（有骨无肉），属残缺交付。编译后自检时逐组件核对骨架区域都写到了对应规则。
+3. 填充方式统一用主题全局品牌语言（格纸纹理、主题强调色、主题字体），不凭空为某个组件发明一套脱离全局的独立视觉。
+```
+
+编译前先读 `skeleton_intent.json`，确认每个焦点组件的骨架宣告了哪些结构单元，再逐一落 CSS。
+
 ## 输入
 
 | 文件                                        | 来源                                                        |
@@ -94,7 +107,7 @@ AI 在生成 CSS 时，**必须严格遵守以下分层原则**：
 
 ### 核心原则
 
-1. **先理解意图，再找替代** — 某个装饰（如 `::before` 的渐变、动画的强调）想表达什么视觉意图？读 `components.brand_anchor[xxx].design.direction` 找到意图，再用微信支持的 CSS 表达同一意图。
+1. **先理解意图，再找替代** — 某个装饰（如 `::before` 的渐变、动画的强调）想表达什么视觉意图？读 `components.focal[xxx].design.direction` 找到意图，再用微信支持的 CSS 表达同一意图。
 2. **替代优先于删除** — 只有当某个效果**完全没有**微信兼容的等价表达时，才允许删除。
 3. **每个被删除或替代的装饰，都要在输出注释里说明原因**，确保可追溯。
 
@@ -259,7 +272,7 @@ AI 在生成 CSS 时，**必须严格遵守以下分层原则**：
 ### 3. 三分类样式差异
 
 ```
-Brand Anchor: 边到边突破留白 · 极端对比 · 动态装饰 · 静态动画残留
+focal（焦点组件）: 边到边突破留白 · 极端对比 · 动态装饰 · 静态动画残留
 Content:      标准容器 · 克制装饰 · 可读性优先 · 无动画
 Utility:      极简样式 · 低可见度 · 无装饰 · 无动画
 ```
@@ -272,7 +285,7 @@ Utility:      极简样式 · 低可见度 · 无装饰 · 无动画
 
 1. **CSS 变量系统** — `#wemd` 下的 CSS 自定义属性
 2. **基础重置** — 基础样式重置（`#wemd *` 选择器）
-3. **Brand Anchor 组件样式** — 按 `component_strategy.brand_anchor` 顺序输出
+3. **焦点组件（focal）样式** — 按 `component_strategy.brand_anchor` 候选池顺序输出
 4. **Content 组件样式** — 按 `component_strategy.content` 顺序输出
 5. **Utility 组件样式** — 按 `component_strategy.utility` 顺序输出
 6. **Stack 规则** — 组件间距统一分配（`#wemd > [class]`）
@@ -288,13 +301,15 @@ Utility:      极简样式 · 低可见度 · 无装饰 · 无动画
 
 ### Step 1: Token Resolver
 
-读取 `design_tokens` 和 `visual_language`，生成 CSS 变量：
+读取 `design_tokens`（受控词表）与 `visual_language`（方向性描述），生成 CSS 变量。**注意：`design_tokens` 只是受控词汇表，不含具体色值；具体 CSS 值由 Compiler 结合 `components.*.design.direction` 的意图推导。**
 
 ```text
-design_tokens.emphasis.minimal → --wemd-emphasis-minimal
-design_tokens.border_radius.card → --wemd-radius-card
-visual_language.color.palette.accent.primary → --wemd-accent-primary
-visual_language.typography.typefaces.heading → --wemd-font-heading
+design_tokens.emphasis（词表档位）→ --wemd-emphasis-*（如 --wemd-emphasis-high）
+design_tokens.decoration（词表档位）→ --wemd-decoration-*
+visual_language.color_direction.character → 色彩性格（推导具体色板）
+visual_language.typography.character → 字体气质（推导字重/字号）
+visual_language.layout.density → 布局密度（推导间距档位）
+design_tokens.contrast（词表档位）→ 对比度档位
 ```
 
 ### Step 2: Base Style
@@ -310,7 +325,7 @@ visual_language.typography.typefaces.heading → --wemd-font-heading
 
 按三分类编译组件样式：
 
-- **Brand Anchor** → 从 `components.brand_anchor` 提取设计方向，生成完整 CSS
+- **焦点组件（focal）** → 从 `components.focal` 提取设计方向，生成完整 CSS
 - **Content** → 继承基础样式，克制装饰
 - **Utility** → 最小化样式
 
@@ -340,7 +355,7 @@ visual_language.typography.typefaces.heading → --wemd-font-heading
 }
 
 /* ============================================================
-   Brand Anchor Components
+   Focal Components
    ============================================================ */
 
 /* Magazine Cover */
@@ -377,7 +392,7 @@ visual_language.typography.typefaces.heading → --wemd-font-heading
 
 1. 所有选择器是否以 `#wemd` 开头
 2. 所有 `wemd-*` 类名是否与"主程序提供的标准选择器注册表"中定义的一致
-3. 是否包含所有 6 个 Brand Anchor 组件的样式
+3. 是否包含所有焦点组件的样式（数量由 component_strategy 决定，动态检查）
 4. 是否包含至少 3 个 Content 组件的样式
 5. 是否包含至少 3 个 Utility 组件的样式
 6. CSS 变量名是否使用 `--wemd-` 前缀

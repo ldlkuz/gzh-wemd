@@ -1,0 +1,140 @@
+{
+  "brand_anchor": [
+    {
+      "component": "magazine-cover",
+      "score": 10,
+      "reason": "工坊封面：第一视觉印象，用像素格纸 + 油墨印章承载品牌身份与情绪，母题最核心的承载面"
+    },
+    {
+      "component": "section-title",
+      "score": 9,
+      "reason": "像素格纸分区：承载 pixel-grid graph paper 的结构意象，把每章标题做成格纸上的工坊分区标"
+    },
+    {
+      "component": "numbered-heading",
+      "score": 9,
+      "reason": "手作工序编号：承载 workbench / hand tools 的秩序，把小节标题做成工序步骤编号，硬核匠人气质"
+    },
+    {
+      "component": "resource-list",
+      "score": 8,
+      "reason": "工具/素材清单：承载 sprite sheets / palette swatches 的陈列，用 ink stamps 落款质感"
+    },
+    {
+      "component": "styled-table",
+      "score": 8,
+      "reason": "像素调色板对照表：承载 grid + ink 的网格秩序，把参数对照做成工坊手写记录感"
+    },
+    {
+      "component": "image-grid",
+      "score": 8,
+      "reason": "精灵表网格陈列：承载 sprite sheets 的像素网格排列，直接呈现像素画的陈列感"
+    },
+    {
+      "component": "hero-banner",
+      "score": 8,
+      "reason": "顶部头图：承载像素世界的视觉冲击，作为工坊开篇的冒险入口"
+    },
+    {
+      "component": "product-card",
+      "score": 8,
+      "reason": "像素商品陈列：承载工坊货架感，把游戏/周边做成像素商品卡"
+    },
+    {
+      "component": "brand-sign",
+      "score": 8,
+      "reason": "品牌签名：承载品牌油墨印章，强化像素工坊的识别与信任"
+    },
+    {
+      "component": "cta-card",
+      "score": 8,
+      "reason": "行动号召：承载像素按钮牌，引导关注/试玩等行动"
+    },
+    {
+      "component": "quote-card",
+      "score": 8,
+      "reason": "像素台词引用：承载台词式金句，突出阅读中的情感停顿"
+    },
+    {
+      "component": "testimonial-card",
+      "score": 8,
+      "reason": "匠人顾客背书：承载社区同好推荐，建立像素玩家的信任"
+    },
+    {
+      "component": "full-quote",
+      "score": 8,
+      "reason": "整行台词：承载像素大引号，制造醒目阅读节奏"
+    },
+    {
+      "component": "end-card",
+      "score": 8,
+      "reason": "结尾致谢：承载收工印章，温和收尾强化品牌记忆"
+    },
+    {
+      "component": "callout-pro",
+      "score": 8,
+      "reason": "强化提示：承载工坊警示挂牌，突出重要信息"
+    },
+    {
+      "component": "stats-block",
+      "score": 8,
+      "reason": "数据统计：承载调色板色块，制造硬核数据冲击"
+    },
+    {
+      "component": "share-card",
+      "score": 8,
+      "reason": "分享引导：承载像素角标，引导转发传播"
+    },
+    {
+      "component": "image-text-row",
+      "score": 8,
+      "reason": "图文混排：承载像素图文并列，丰富工坊叙事手法"
+    },
+    {
+      "component": "image-compare",
+      "score": 8,
+      "reason": "像素前后对比：承载改版/打磨对比，呈现迭代过程"
+    }
+  ],
+  "content": [
+    "hero-banner",
+    "product-card",
+    "brand-sign",
+    "cta-card",
+    "quote-card",
+    "testimonial-card",
+    "full-quote",
+    "end-card",
+    "callout-pro",
+    "stats-block",
+    "author-card",
+    "section-divider",
+    "image-card",
+    "image-text-row",
+    "image-compare",
+    "text-card",
+    "image-caption",
+    "two-column-cards",
+    "timeline",
+    "table",
+    "faq",
+    "accordion",
+    "steps",
+    "toc-nav",
+    "series-nav",
+    "related-posts",
+    "code-frame",
+    "code-block",
+    "pullquote",
+    "tag-label"
+  ],
+  "utility": [
+    "divider",
+    "divider-fancy",
+    "copyright-notice",
+    "article-section",
+    "follow-bar",
+    "share-card",
+    "qr-card"
+  ]
+}

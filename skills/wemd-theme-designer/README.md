@@ -12,7 +12,7 @@
 无需手动调 CSS。只需提供品牌信息（名称、介绍、关键词即可），AI 会像"杂志美术总监 + 设计系统工程师"一样，端到端产出：
 
 - **一套独特的视觉语言**（配色 / 字体 / 间距 / 形状 / 装饰方向）
-- **6 个深度设计的 Brand Anchor 组件**（其余组件克制继承）
+- **约 6 个深度设计的焦点组件**（`components.focal`，软上限；其余组件克制继承）
 - **可直接导入 GZH-WeMD 的完整主题包**（`.wemd-theme`）
 
 已用该流程生成的主题示例：
@@ -98,15 +98,16 @@ wemd-theme-designer/
 │   ├── 05-component-mapping.md
 │   └── self-check.md
 ├── css-compiler/prompts/    # Stage 6 编译 Prompt
-├── reference/               # 输入/输出格式、Assembler/Compiler、组件检索、打包规则
+├── reference/               # 输入/输出格式、Assembler/Compiler、组件检索、打包规则、验收清单
 │   └── example/demo-theme.json        # 完整示例（数据示例，非规范）
 ├── registry/components.json # 43 个组件的权威定义
 ├── scripts/
 │   ├── compile-skeleton.cjs       # Stage 4.5：骨架 Intent → Mustache 模板（class 确定性推导）
+│   ├── compile-preview.cjs        # Compiler 子阶段 A：开发预览 HTML
+│   ├── compile-publish.cjs        # Compiler 子阶段 B：公众号发布 HTML（微信兼容）
 │   ├── pack-theme.cjs             # Stage 7：打包 .wemd-theme（打包前自动校验 CSS）
 │   ├── validate-theme.cjs         # Stage 7：校验 manifest
 │   ├── validate-css-selectors.mjs# 打包前校验 CSS 选择器 + 嵌套 var（拦截臆造 class）
-│   ├── export-html.cjs            # Stage 6：主题感知 HTML 导出
 │   └── extract-dom-snapshot.mjs   # 从主程序真源自动生成 reference/dom-structure.md
 └── themes/                  # ★ 主题产物库，每个主题一个目录
     └── {theme-name}/
@@ -159,4 +160,4 @@ Compress-Archive -Path "./manifest.json","./brand.md","./styles","./templates" `
 - **创意阶段禁止接触组件**：先谈视觉感受，不谈 title/card/divider。
 - **移动窄优先**：最终载体是公众号约 343px 单列窄流，不产宽屏构图与 `@media`。
 - **微信兼容**：CSS 不使用 `::before/::after`、`:hover`、结构伪类、`@keyframes`、`animation`、兄弟选择器。
-- **克制优先**：只有 Brand Anchor 允许大胆表达，Content/Utility 保持继承与低调。
+- **克制优先**：Brand Anchor 是高预算焦点池（默认深度设计候选），Content/Utility 保持继承与低调。但母题需要时任何档位都可提权。
