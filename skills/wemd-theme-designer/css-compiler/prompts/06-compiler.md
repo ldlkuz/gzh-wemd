@@ -82,11 +82,11 @@ AI 在生成 CSS 时，**必须严格遵守以下分层原则**：
 
 ## 输入
 
-| 文件                           | 来源                                                        |
-| ------------------------------ | ----------------------------------------------------------- |
-| `output/BrandVisualTheme.json` | Assembler 合并输出                                          |
-| `registry/components.json`     | 组件注册表                                                  |
-| 主程序提供的标准选择器注册表   | WeMD 标准选择器映射（由主程序维护，skill 不复制其内部实现） |
+| 文件                                        | 来源                                                        |
+| ------------------------------------------- | ----------------------------------------------------------- |
+| `themes/{theme-name}/BrandVisualTheme.json` | Assembler 合并输出                                          |
+| `registry/components.json`                  | 组件注册表                                                  |
+| 主程序提供的标准选择器注册表                | WeMD 标准选择器映射（由主程序维护，skill 不复制其内部实现） |
 
 ## 微信兼容：禁止 + 替代策略（核心约束）
 
@@ -128,26 +128,26 @@ AI 在生成 CSS 时，**必须严格遵守以下分层原则**：
 ```
 
 ```css
-/* ❌ 不兼容：结构伪类 */
-#wemd .wemd-hero-banner .wemd-component-body > p:first-child {
-  font-size: 2rem;
+/* ❌ 不兼容：结构伪类定位标题 */
+#wemd .wemd-quote-card .wemd-component-body > p:first-child {
+  font-weight: 700;
 }
 
-/* ✅ 兼容替代：具名 class */
-#wemd .wemd-hero-banner .wemd-component-body > p.wemd-hb-title {
-  font-size: 2rem;
+/* ✅ 兼容替代：具名 slot class */
+#wemd .wemd-quote-card .wemd-qc-quote {
+  font-weight: 700;
 }
 ```
 
 ```css
 /* ❌ 不兼容：多栏宽幅 */
-#wemd .wemd-stats-block {
+#wemd .wemd-steps {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
 }
 
-/* ✅ 兼容替代：单栏流式，数据上下排布 */
-#wemd .wemd-stats-block .wemd-component-body > p {
+/* ✅ 兼容替代：单栏流式，内容上下排布 */
+#wemd .wemd-steps .wemd-component-body > p {
   display: block;
 }
 ```
@@ -187,70 +187,74 @@ AI 在生成 CSS 时，**必须严格遵守以下分层原则**：
 
 ### 2. 选择器翻译规则
 
-从预览 CSS 到 WeMD 标准选择器的映射规则。**映射依据：以主程序导出的真实 HTML 为唯一基准（见 `reference/dom-structure.md`），禁止凭记忆臆测 DOM 结构。**
+从预览 CSS 到 WeMD 标准选择器的映射规则。**映射依据：以主程序 Slot 契约（`slotDefs.ts` 的 `abbr` + slot 定义）和 Skeleton Compiler（`scripts/compile-skeleton.cjs`）产出的骨架模板为唯一基准，禁止凭记忆臆测 DOM 结构。**
 
-选择器分两类：
+选择器分三类：
 
-- **杂志级组件（无 body）**：body 内元素用具名 class（如 `.wemd-mc-title`），微信兼容。
-- **普通组件（有 body）**：body 内由 markdown-it 渲染出原生标签（`<p>/<ul>/<li>/<strong>`），再由 `ThemeProcessor.addChildPositionClasses` 给直接子标签附加序号 class `.wemd-child-N`（N 从 1 递增）。**真实 DOM = 原生标签 + `.wemd-child-N` 两者共存**，CSS 用 `.wemd-child-N` 定位更稳（不是结构伪类）。
+- **组件根**：`#wemd .wemd-{id}`（`id` 即组件名，如 `.wemd-hero-banner`），任何组件都先落到根。
+- **命名 slot**：骨架为非 body slot 生成 `<section class="wemd-{abbr}-{slot}">`，CSS 直接定位该 class（如 `.wemd-hb-title`）。list 型 slot 再细分 `.wemd-{abbr}-{slot}-item` 与字段 `.wemd-{abbr}-{slot}-{field}`。
+- **body slot**：`body` 槽生成 `<div class="wemd-component-body">`，内部是 markdown-it 渲染的原生标签（`<p>/<ul>/<li>/<strong>/<pre>/<table>`），CSS 用 `.wemd-component-body > p` 等定位。
 
-> ⚠️ 历史教训：不要写 `> p:first-child` / `> p:nth-child(N)` 这类结构伪类。主程序实际输出的是 `.wemd-child-1` / `.wemd-child-2`，结构伪类既匹配不上真实 DOM，又会被微信兼容清理剥离。翻译前必须先查 `reference/dom-structure.md` 确认该组件的真实结构。
+> ⚠️ 已废弃 `.wemd-child-N` 序号 class。骨架语义化后每个 slot 都有确定的 `wemd-{abbr}-{slot}` class，不再依赖序号定位。仅 body slot 组件保留 `.wemd-component-body`（其内部原生标签结构来自主程序 DOM 现状，可如实翻译）。**禁止为 skill 自创的结构写 `> p:first-child` / `> p:nth-child(N)` 结构伪类**（微信兼容会剥离），一律用具名 class。
 
-| 预览 CSS 选择器                   | WeMD 标准选择器（真实 DOM）                                                                         |
-| --------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `.magazine-cover`                 | `#wemd .wemd-magazine-cover`                                                                        |
-| `.magazine-cover .cover-title`    | `#wemd .wemd-magazine-cover .wemd-mc-title`                                                         |
-| `.magazine-cover .cover-subtitle` | `#wemd .wemd-magazine-cover .wemd-mc-subtitle`                                                      |
-| `.magazine-cover .cover-meta`     | `#wemd .wemd-magazine-cover .wemd-mc-desc`                                                          |
-| `.hero-banner`                    | `#wemd .wemd-hero-banner`                                                                           |
-| `.hero-banner .hero-heading`      | `#wemd .wemd-hero-banner .wemd-component-body .wemd-child-1`                                        |
-| `.hero-banner .hero-description`  | `#wemd .wemd-hero-banner .wemd-component-body .wemd-child-2`                                        |
-| `.stats-block`                    | `#wemd .wemd-stats-block`                                                                           |
-| `.stats-block .stat-number`       | `#wemd .wemd-stats-block .wemd-component-body .wemd-child-2 strong`、`.wemd-child-3 strong`         |
-| `.stats-block .stat-label`        | `#wemd .wemd-stats-block .wemd-component-body .wemd-child-2`、`.wemd-child-3`                       |
-| `.full-quote`                     | `#wemd .wemd-full-quote`                                                                            |
-| `.full-quote blockquote`          | `#wemd .wemd-full-quote .wemd-fq-text`                                                              |
-| `.quote-card`                     | `#wemd .wemd-quote-card`                                                                            |
-| `.quote-card .qc-quote`           | `#wemd .wemd-quote-card .wemd-component-body .wemd-child-1`                                         |
-| `.quote-card .qc-author`          | `#wemd .wemd-quote-card .wemd-component-body .wemd-child-2`                                         |
-| `.code-frame`                     | `#wemd .wemd-code-frame`                                                                            |
-| `.code-frame pre`                 | `#wemd .wemd-code-frame .wemd-component-body .wemd-child-1 code`                                    |
-| `.section-title`                  | `#wemd .wemd-section-title`                                                                         |
-| `.section-title` 标题文字         | `#wemd .wemd-section-title .wemd-component-body .wemd-child-1`                                      |
-| `.numbered-heading` 编号          | `#wemd .wemd-numbered-heading .wemd-component-body .wemd-child-1`                                   |
-| `.numbered-heading` 标题          | `#wemd .wemd-numbered-heading .wemd-component-body .wemd-child-2`                                   |
-| `.text-card`                      | `#wemd .wemd-text-card`                                                                             |
-| `.text-card` 段落                 | `#wemd .wemd-text-card .wemd-component-body .wemd-child-1`、`.wemd-child-2`                         |
-| `.image-text-row` 图              | `#wemd .wemd-image-text-row .wemd-component-body .wemd-child-1`                                     |
-| `.image-text-row` 文              | `#wemd .wemd-image-text-row .wemd-component-body .wemd-child-2`                                     |
-| `.image-card`                     | `#wemd .wemd-image-card`                                                                            |
-| `.image-card .ic-placeholder`     | `#wemd .wemd-image-card .wemd-ic-image`                                                             |
-| `.image-card .ic-caption`         | `#wemd .wemd-image-card .wemd-ic-caption`                                                           |
-| `.pullquote`                      | `#wemd .wemd-pullquote`                                                                             |
-| `.pullquote` 引文                 | `#wemd .wemd-pullquote .wemd-component-body .wemd-child-1`                                          |
-| `.code-block`                     | `#wemd .wemd-code-block`                                                                            |
-| `.code-block` 代码                | `#wemd .wemd-code-block .wemd-component-body .wemd-child-1 code`                                    |
-| `.brand-sign`                     | `#wemd .wemd-brand-sign`                                                                            |
-| `.brand-sign .bs-icon`            | `#wemd .wemd-brand-sign .wemd-bs-logo`                                                              |
-| `.brand-sign .bs-text`            | `#wemd .wemd-brand-sign .wemd-bs-brand-name`                                                        |
-| `.section-divider` 编号           | `#wemd .wemd-section-divider .wemd-sd-part`                                                         |
-| `.section-divider` 标题           | `#wemd .wemd-section-divider .wemd-sd-title`                                                        |
-| `.product-card` 标题              | `#wemd .wemd-product-card .wemd-pc-title`                                                           |
-| `.testimonial-card` 引文          | `#wemd .wemd-testimonial-card .wemd-tc-company`（⚠️ 引文正文在 company，`.wemd-tc-quote` 恒空勿用） |
-| `.testimonial-card` 人名          | `#wemd .wemd-testimonial-card .wemd-tc-name`                                                        |
-| `.testimonial-card` 身份          | `#wemd .wemd-testimonial-card .wemd-tc-title`                                                       |
-| `.testimonial-card` 信息区        | `#wemd .wemd-testimonial-card .wemd-tc-person`                                                      |
-| `.accordion` 各项                 | `#wemd .wemd-accordion .wemd-component-body .wemd-child-1` … `.wemd-child-4`（数量可变）            |
-| `.cta-card` 标题                  | `#wemd .wemd-cta-card .wemd-component-body .wemd-child-1`                                           |
-| `.cta-card` 副文                  | `#wemd .wemd-cta-card .wemd-component-body .wemd-child-2`                                           |
-| `.styled-table` 表容器            | `#wemd .wemd-styled-table .wemd-component-body .wemd-child-1`                                       |
-| `.divider`                        | `#wemd .wemd-divider`                                                                               |
-| `.divider-fancy`                  | `#wemd .wemd-divider-fancy`                                                                         |
-| `.copyright-notice`               | `#wemd .wemd-copyright-notice`                                                                      |
-| `.end-card` 标题                  | `#wemd .wemd-end-card .wemd-ec-title`                                                               |
-| `.end-card` 副文                  | `#wemd .wemd-end-card .wemd-ec-subtitle`                                                            |
+| 预览 CSS 选择器                   | WeMD 标准选择器（真源：slotDefs 的 abbr + slot）                                                 |
+| --------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `.magazine-cover`                 | `#wemd .wemd-magazine-cover`                                                                     |
+| `.magazine-cover .cover-title`    | `#wemd .wemd-magazine-cover .wemd-mc-title`                                                      |
+| `.magazine-cover .cover-subtitle` | `#wemd .wemd-magazine-cover .wemd-mc-subtitle`                                                   |
+| `.magazine-cover .cover-meta`     | `#wemd .wemd-magazine-cover .wemd-mc-desc`                                                       |
+| `.hero-banner`                    | `#wemd .wemd-hero-banner`                                                                        |
+| `.hero-banner .hero-heading`      | `#wemd .wemd-hero-banner .wemd-hb-title`                                                         |
+| `.hero-banner .hero-description`  | `#wemd .wemd-hero-banner .wemd-hb-subtitle`                                                      |
+| `.hero-banner .hero-bg`           | `#wemd .wemd-hero-banner .wemd-hb-image`                                                         |
+| `.stats-block`                    | `#wemd .wemd-stats-block`                                                                        |
+| `.stats-block .stat-number`       | `#wemd .wemd-stats-block .wemd-sb-items-value`                                                   |
+| `.stats-block .stat-label`        | `#wemd .wemd-stats-block .wemd-sb-items-label`                                                   |
+| `.full-quote`                     | `#wemd .wemd-full-quote`                                                                         |
+| `.full-quote blockquote`          | `#wemd .wemd-full-quote .wemd-fq-text`                                                           |
+| `.quote-card`                     | `#wemd .wemd-quote-card`                                                                         |
+| `.quote-card .qc-quote`           | `#wemd .wemd-quote-card .wemd-qc-quote`                                                          |
+| `.quote-card .qc-author`          | `#wemd .wemd-quote-card .wemd-qc-author`                                                         |
+| `.code-frame`                     | `#wemd .wemd-code-frame`                                                                         |
+| `.code-frame pre`                 | `#wemd .wemd-code-frame .wemd-cf-code`                                                           |
+| `.section-title`                  | `#wemd .wemd-section-title`                                                                      |
+| `.section-title` 标题文字         | `#wemd .wemd-section-title .wemd-component-body`                                                 |
+| `.numbered-heading` 编号/标题     | `#wemd .wemd-numbered-heading .wemd-component-body`                                              |
+| `.text-card`                      | `#wemd .wemd-text-card`                                                                          |
+| `.text-card` 段落                 | `#wemd .wemd-text-card .wemd-component-body`                                                     |
+| `.image-text-row` 图/文           | `#wemd .wemd-image-text-row .wemd-component-body`                                                |
+| `.image-card`                     | `#wemd .wemd-image-card`                                                                         |
+| `.image-card .ic-placeholder`     | `#wemd .wemd-image-card .wemd-ic-image`                                                          |
+| `.image-card .ic-caption`         | `#wemd .wemd-image-card .wemd-ic-caption`                                                        |
+| `.pullquote`                      | `#wemd .wemd-pullquote`                                                                          |
+| `.pullquote` 引文                 | `#wemd .wemd-pullquote .wemd-component-body`                                                     |
+| `.code-block`                     | `#wemd .wemd-code-block`                                                                         |
+| `.code-block` 代码                | `#wemd .wemd-code-block .wemd-component-body`                                                    |
+| `.brand-sign`                     | `#wemd .wemd-brand-sign`                                                                         |
+| `.brand-sign .bs-brand`           | `#wemd .wemd-brand-sign .wemd-bs-brandName`                                                      |
+| `.brand-sign .bs-tagline`         | `#wemd .wemd-brand-sign .wemd-bs-tagline`                                                        |
+| `.brand-sign .bs-slogan`          | `#wemd .wemd-brand-sign .wemd-bs-slogan`                                                         |
+| `.section-divider` 编号           | `#wemd .wemd-section-divider .wemd-sd-part`                                                      |
+| `.section-divider` 标题           | `#wemd .wemd-section-divider .wemd-sd-title`                                                     |
+| `.product-card` 图片              | `#wemd .wemd-product-card .wemd-pc-image`                                                        |
+| `.product-card` 标题              | `#wemd .wemd-product-card .wemd-pc-title`                                                        |
+| `.testimonial-card` 引文          | `#wemd .wemd-testimonial-card .wemd-tcq-quote`（⚠️ 引文正文在 quote，`.wemd-tcq-source` 为来源） |
+| `.testimonial-card` 人名          | `#wemd .wemd-testimonial-card .wemd-tcq-name`                                                    |
+| `.testimonial-card` 身份          | `#wemd .wemd-testimonial-card .wemd-tcq-title`                                                   |
+| `.testimonial-card` 信息区        | `#wemd .wemd-testimonial-card .wemd-tcq-company`                                                 |
+| `.accordion` 各项                 | `#wemd .wemd-accordion .wemd-component-body`（strong 段为标题、其余段为内容）                    |
+| `.cta-card` 标题                  | `#wemd .wemd-cta-card .wemd-cta-title`                                                           |
+| `.cta-card` 副文                  | `#wemd .wemd-cta-card .wemd-cta-body`                                                            |
+| `.cta-card` 行动                  | `#wemd .wemd-cta-card .wemd-cta-action`                                                          |
+| `.styled-table` 表容器            | `#wemd .wemd-styled-table .wemd-sbt-table`                                                       |
+| `.divider`                        | `#wemd .wemd-divider`                                                                            |
+| `.divider-fancy`                  | `#wemd .wemd-divider-fancy`                                                                      |
+| `.divider-fancy` 文字             | `#wemd .wemd-divider-fancy .wemd-df-label`                                                       |
+| `.copyright-notice`               | `#wemd .wemd-copyright-notice`                                                                   |
+| `.end-card` 标题                  | `#wemd .wemd-end-card .wemd-ec-title`                                                            |
+| `.end-card` 副文                  | `#wemd .wemd-end-card .wemd-ec-subtitle`                                                         |
 
-> 完整结构与陷阱清单见 `reference/dom-structure.md`。翻译任何组件前先查阅该表。
+> 完整结构与陷阱清单见 `reference/skeleton-design-spec.md`（§7 class 推导）与主程序 `slotDefs.ts`。翻译任何组件前先查该组件的 `abbr` 与 slot 定义。
 
 ### 3. 三分类样式差异
 
@@ -275,10 +279,10 @@ Utility:      极简样式 · 低可见度 · 无装饰 · 无动画
 
 ## 输出
 
-| 文件                                       | 说明                        |
-| ------------------------------------------ | --------------------------- |
-| `output/css/{theme-name}.css`              | 编译后的 WeMD 标准 CSS 文件 |
-| `output/preview/{theme-name}-preview.html` | 同上但保持预览 HTML 格式    |
+| 文件                                                    | 说明                        |
+| ------------------------------------------------------- | --------------------------- |
+| `themes/{theme-name}/css/{theme-name}.css`              | 编译后的 WeMD 标准 CSS 文件 |
+| `themes/{theme-name}/preview/{theme-name}-preview.html` | 同上但保持预览 HTML 格式    |
 
 ## 编译流程
 

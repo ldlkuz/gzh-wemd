@@ -2,8 +2,10 @@ import { useEffect, useState, useRef, useMemo } from "react";
 import mermaid from "mermaid";
 import {
   createMarkdownParser,
+  getThemeTemplates,
   processHtml,
   type ComponentStyleOverride,
+  type ThemeDefinition,
 } from "@wemd/core";
 import { useEditorStore } from "../../store/editorStore";
 import { useThemeStore } from "../../store/themeStore";
@@ -178,16 +180,19 @@ export function MarkdownPreview({ onScrollSyncReady }: MarkdownPreviewProps) {
   const designerVars = currentTheme?.designerVariables;
   const showMacBar = designerVars?.showMacBar ?? false;
 
-  // 缓存 parser 实例，避免每次渲染都创建新实例
-  const parser = useMemo(
-    () =>
-      createMarkdownParser({
-        showMacBar,
-        mathRenderer: "katex",
-        includeSourcePosition: true,
-      }),
-    [showMacBar],
-  );
+  // 当前主题的组件骨架模板 Map（Phase 5：骨架随主题）
+  const themeDefinition = currentTheme?.definition as
+    | ThemeDefinition
+    | undefined;
+  const parser = useMemo(() => {
+    const templates = getThemeTemplates(themeDefinition);
+    return createMarkdownParser({
+      showMacBar,
+      mathRenderer: "katex",
+      includeSourcePosition: true,
+      getTemplate: (componentId) => templates.get(componentId),
+    });
+  }, [showMacBar, themeDefinition]);
 
   // 预览 CSS：始终亮色模式（微信/公众号只支持亮色，暗色切换不应影响内容预览）
   const previewCss = useMemo(() => {
@@ -337,16 +342,23 @@ export function MarkdownPreview({ onScrollSyncReady }: MarkdownPreviewProps) {
       position,
     ) => {
       const max = Math.max(0, container.scrollHeight - container.clientHeight);
+      let target: number;
       if (position.sourceLine === null || position.ratio >= 0.999) {
-        container.scrollTop = Math.min(Math.max(position.ratio, 0), 1) * max;
-        return;
+        target = Math.min(Math.max(position.ratio, 0), 1) * max;
+      } else {
+        target = mapSourceLineToScrollTop(
+          getAnchors(),
+          position.sourceLine,
+          max,
+          position.ratio,
+        );
       }
-      container.scrollTop = mapSourceLineToScrollTop(
-        getAnchors(),
-        position.sourceLine,
-        max,
-        position.ratio,
-      );
+      // 停止校准：用平滑滚动滑到目标位置，避免瞬跳的机械感
+      if (typeof container.scrollTo === "function") {
+        container.scrollTo({ top: target, behavior: "smooth" });
+      } else {
+        container.scrollTop = target;
+      }
     };
     const handleScroll = () => scrollSubscriber();
     container.addEventListener("scroll", handleScroll, { passive: true });

@@ -239,6 +239,41 @@ describe("loadThemePackageFromZip", () => {
     }
   });
 
+  it("包含 templates/*.html 的 zip 应解析组件骨架", async () => {
+    const zipData = await createZip({
+      "manifest.json": manifestToJson(makeValidManifest()),
+      "templates/quote-card.html":
+        '<section class="wemd-component wemd-quote-card" data-component="quote-card"><div class="wemd-qc-quote">{{slot:quote}}</div></section>',
+      "templates/stats-block.html":
+        '<section class="wemd-component wemd-stats-block" data-component="stats-block">{{#each items}}<div class="wemd-sb-item">{{this.value}}</div>{{/each}}</section>',
+      "templates/ignored.txt": "not a template",
+    });
+    const result = await loadThemePackageFromZip(zipData);
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.value.templates.has("quote-card")).toBe(true);
+      expect(result.value.templates.get("quote-card")).toContain(
+        "{{slot:quote}}",
+      );
+      expect(result.value.templates.has("stats-block")).toBe(true);
+      // 非 .html 文件不入 templates
+      expect(result.value.templates.has("ignored")).toBe(false);
+    }
+  });
+
+  it("manifest 内嵌 templates 也会被加载", async () => {
+    const manifest = makeValidManifest();
+    manifest.templates = {
+      "cta-card":
+        '<section class="wemd-component wemd-cta-card" data-component="cta-card"><div class="wemd-cc-body">{{slot:body}}</div></section>',
+    };
+    const result = loadThemePackageFromJSON(manifestToJson(manifest));
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.value.templates.get("cta-card")).toContain("{{slot:body}}");
+    }
+  });
+
   it("components.css 含伪元素 ::before 应阻断导入", async () => {
     const zipData = await createZip({
       "manifest.json": manifestToJson(makeValidManifest()),
@@ -520,6 +555,28 @@ describe("repackThemePackage", () => {
       expect(reloadResult.value.brand?.text).toBe("品牌描述");
       expect(reloadResult.value.styles.componentsCss).toContain(
         ".wemd-share-card",
+      );
+    }
+  });
+
+  it("往返：templates 应完整保留", async () => {
+    const zipData = await createZip({
+      "manifest.json": manifestToJson(makeValidManifest()),
+      "templates/quote-card.html":
+        '<section class="wemd-component wemd-quote-card" data-component="quote-card">{{slot:quote}}</section>',
+    });
+    const loadResult = await loadThemePackageFromZip(zipData);
+    expect(loadResult.ok).toBe(true);
+    if (!loadResult.ok) return;
+
+    const pkg = loadResult.value;
+    const repackedZip = await repackThemePackage(pkg);
+
+    const reloadResult = await loadThemePackageFromZip(repackedZip);
+    expect(reloadResult.ok).toBe(true);
+    if (reloadResult.ok) {
+      expect(reloadResult.value.templates.get("quote-card")).toContain(
+        "{{slot:quote}}",
       );
     }
   });

@@ -96,6 +96,26 @@ const createFrameQueue = () => {
   };
 };
 
+const createTimerQueue = () => {
+  let nextHandle = 1;
+  const queue = new Map<number, () => void>();
+  return {
+    setTimeout: (callback: () => void) => {
+      const handle = nextHandle++;
+      queue.set(handle, callback);
+      return handle;
+    },
+    clearTimeout: (handle: number) => {
+      queue.delete(handle);
+    },
+    flush: () => {
+      const callbacks = Array.from(queue.values());
+      queue.clear();
+      callbacks.forEach((callback) => callback());
+    },
+  };
+};
+
 describe("长文档预览锚点同步", () => {
   let layoutScale = 1;
   let resizeCallback: ResizeObserverCallback | null = null;
@@ -196,13 +216,13 @@ describe("长文档预览锚点同步", () => {
       },
     };
     const frames = createFrameQueue();
-    const coordinator = createEditorPreviewScrollSync(frames);
+    const timers = createTimerQueue();
+    const coordinator = createEditorPreviewScrollSync(frames, timers);
     coordinator.setAdapter("editor", editorAdapter);
     coordinator.setAdapter("preview", previewAdapter!);
 
     editorScrollListener();
-    frames.flush();
-    frames.flush();
+    timers.flush();
     const initialScrollTop = previewContainer.scrollTop;
     expect(initialScrollTop).toBeGreaterThan(0);
 

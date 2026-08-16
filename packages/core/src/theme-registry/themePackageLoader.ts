@@ -23,6 +23,8 @@ import type { ValidationError } from "../theme-schema/types";
 export interface LoadedThemePackage {
   manifest: ThemePackageManifest;
   styles: { componentsCss?: string; extrasCss?: string };
+  /** 组件骨架模板：componentId → Mustache HTML（来自 templates/*.html 或 manifest.templates） */
+  templates: Map<string, string>;
   brand?: { text: string };
   preview?: Uint8Array;
   assets?: { images: Map<string, string> }; // key → base64 data URL
@@ -159,6 +161,7 @@ export function loadThemePackageFromJSON(json: string): LoaderResult {
     value: {
       manifest: validation.value,
       styles: {},
+      templates: new Map(Object.entries(validation.value.templates ?? {})),
     },
   };
 }
@@ -363,6 +366,18 @@ export async function loadThemePackageFromZip(
     }
   }
 
+  // 7. templates/*.html（组件骨架，可选）→ 先收 zip 文件，manifest 内嵌随后覆盖
+  const templates = new Map<string, string>();
+  for (const [path, data] of Object.entries(entries)) {
+    const m = /^templates\/([a-z][a-z0-9-]*)\.html$/.exec(path);
+    if (m && data.length > 0) {
+      templates.set(m[1], strFromU8(data));
+    }
+  }
+  for (const [key, tpl] of Object.entries(manifest.templates ?? {})) {
+    templates.set(key, tpl);
+  }
+
   // 有 error 级别的问题阻断导入；warning 允许导入但仍返回给调用方展示
   const hasErrors = errors.some((e) => e.severity !== "warning");
   if (hasErrors) {
@@ -374,6 +389,7 @@ export async function loadThemePackageFromZip(
     value: {
       manifest,
       styles: { componentsCss, extrasCss },
+      templates,
       brand,
       preview: previewRaw,
       assets: images.size > 0 ? { images } : undefined,
@@ -434,6 +450,13 @@ export async function repackThemePackage(
   // brand.md
   if (pkg.brand?.text) {
     files["brand.md"] = new TextEncoder().encode(pkg.brand.text);
+  }
+
+  // templates/<id>.html（组件骨架）
+  if (pkg.templates) {
+    for (const [id, tpl] of pkg.templates) {
+      files[`templates/${id}.html`] = new TextEncoder().encode(tpl);
+    }
   }
 
   // preview.png

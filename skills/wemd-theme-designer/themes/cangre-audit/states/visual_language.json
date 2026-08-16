@@ -1,0 +1,23 @@
+{
+  "color_direction": {
+    "contrast": "high",
+    "character": "warm",
+    "usage": "accent_driven"
+  },
+  "typography": {
+    "character": "serif-tape",
+    "hierarchy": "strong"
+  },
+  "layout": {
+    "composition": "grid",
+    "alignment": "strict",
+    "density": "normal"
+  },
+  "shape": {
+    "character": "sharp"
+  },
+  "image": {
+    "style": "documentary",
+    "treatment": "natural"
+  }
+}

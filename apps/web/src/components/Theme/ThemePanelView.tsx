@@ -7,7 +7,6 @@ import {
   FileText,
   Palette,
   Plus,
-  Sparkles,
   Trash2,
   Upload,
   X,
@@ -23,7 +22,6 @@ import type {
 import type { ValidationError } from "@wemd/core";
 import { ThemeDesigner, type DesignerVariables } from "./ThemeDesigner";
 import { ThemeLivePreview } from "./ThemeLivePreview";
-import { AiThemeGenerator } from "./AiThemeGenerator";
 
 interface ThemePanelViewProps {
   open: boolean;
@@ -36,12 +34,14 @@ interface ThemePanelViewProps {
   isCustomTheme: boolean;
   isCreating: boolean;
   creationStep: "select-mode" | "editing";
-  editorMode: "visual" | "css" | "ai";
+  editorMode: "visual" | "css";
   isVisualEditing: boolean;
   showDeleteConfirm: boolean;
   useCurrentArticle: boolean;
   previewCss: string;
   designerVariables: DesignerVariables | undefined;
+  /** Phase 7：当前所选主题的 definition，用于注入组件骨架模板 */
+  themeDefinition?: ThemeDefinition;
   nameInput: string;
   cssInput: string;
   canSave: boolean;
@@ -51,7 +51,7 @@ interface ThemePanelViewProps {
   onSelectTheme: (themeId: string) => void;
   onCreateNew: () => void;
   onImportThemeFile: (file: File) => Promise<void>;
-  onSelectCreationMode: (mode: "visual" | "css" | "ai") => void;
+  onSelectCreationMode: (mode: "visual" | "css") => void;
   onSetUseCurrentArticle: (value: boolean) => void;
   onVisualCssChange: (nextCss: string) => void;
   onVariablesChange: (vars: DesignerVariables) => void;
@@ -68,13 +68,6 @@ interface ThemePanelViewProps {
   onDeleteClick: () => void;
   onSave: () => void;
   onApply: () => void;
-  /** AI 生成 CSS 完成回调，附带 definition（若 AI 返回 JSON） */
-  onAiGenerated: (css: string, definition?: ThemeDefinition) => void;
-  /** AI 预览 CSS 实时更新 */
-  onPreviewCss: (css: string) => void;
-  /** AI 建议主题名称 */
-  onNameSuggestion: (name: string) => void;
-  // Phase 7: 导入相关
   importMenuOpen: boolean;
   importMenuRef: MutableRefObject<HTMLDivElement | null>;
   onToggleImportMenu: () => void;
@@ -115,6 +108,7 @@ export function ThemePanelView({
   useCurrentArticle,
   previewCss,
   designerVariables,
+  themeDefinition,
   nameInput,
   cssInput,
   canSave,
@@ -141,9 +135,6 @@ export function ThemePanelView({
   onDeleteClick,
   onSave,
   onApply,
-  onAiGenerated,
-  onPreviewCss,
-  onNameSuggestion,
   // Phase 7
   importMenuOpen,
   importMenuRef,
@@ -252,7 +243,7 @@ export function ThemePanelView({
                       )}
                       <span className="theme-item-name">{item.name}</span>
                       {item.readOnly && (
-                        <span className="theme-item-badge">AI 主题</span>
+                        <span className="theme-item-badge">AI</span>
                       )}
                     </button>
                   ))}
@@ -402,8 +393,10 @@ export function ThemePanelView({
                     </div>
                     <p className="tpm-override-modal-hint">
                       已存在主题 <strong>{overrideInfo.existingName}</strong>
-                      （版本 {overrideInfo.existingVersion}），导入的主题版本为{" "}
-                      {overrideInfo.newVersion}，是否覆盖？
+                      （版本 {
+                        overrideInfo.existingVersion
+                      }），导入的主题版本为 {overrideInfo.newVersion}
+                      ，是否覆盖？
                     </p>
                     <div className="tpm-override-modal-actions">
                       <button
@@ -446,19 +439,6 @@ export function ThemePanelView({
                       </span>
                       <span className="mode-tag">适合快速上手</span>
                     </button>
-                    <button
-                      className="mode-card mode-card-ai"
-                      onClick={() => onSelectCreationMode("ai")}
-                    >
-                      <span className="mode-icon mode-icon-ai">
-                        <Sparkles size={32} />
-                      </span>
-                      <span className="mode-title">AI 生成</span>
-                      <span className="mode-desc">
-                        描述需求，AI 自动生成主题
-                      </span>
-                      <span className="mode-tag">适合零基础</span>
-                    </button>
                   </div>
                 </div>
               )}
@@ -490,6 +470,7 @@ export function ThemePanelView({
                         isVisualEditing ? designerVariables : undefined
                       }
                       useCurrentArticle={useCurrentArticle}
+                      themeDefinition={themeDefinition}
                     />
                   </div>
 
@@ -515,16 +496,6 @@ export function ThemePanelView({
                               ? undefined
                               : selectedTheme?.designerVariables
                           }
-                        />
-                      </div>
-                    )}
-
-                    {isCreating && editorMode === "ai" && (
-                      <div className="ai-designer-container">
-                        <AiThemeGenerator
-                          onGenerated={onAiGenerated}
-                          onPreviewCss={onPreviewCss}
-                          onNameSuggestion={onNameSuggestion}
                         />
                       </div>
                     )}

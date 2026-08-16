@@ -1,4 +1,9 @@
-import { processHtml, createMarkdownParser } from "@wemd/core";
+import {
+  processHtml,
+  createMarkdownParser,
+  getThemeTemplates,
+} from "@wemd/core";
+import type { ThemeDefinition } from "@wemd/core";
 import katexCss from "katex/dist/katex.min.css?raw";
 import { convertLinksToFootnotes } from "../utils/linkFootnote";
 import { getPublishingPreference } from "../store/publishingPreferences";
@@ -20,6 +25,8 @@ import { renderTableBlocks } from "./wechatTableRenderer";
 
 export interface WechatPublishHtmlOptions {
   showMacBar?: boolean;
+  /** Phase 5：当前主题定义，用于注入组件骨架模板 */
+  themeDefinition?: ThemeDefinition;
 }
 
 export interface WechatPublishHtmlResult {
@@ -147,9 +154,11 @@ export async function buildWechatPublishHtml(
   };
 
   try {
+    const templates = getThemeTemplates(options.themeDefinition);
     const parser = createMarkdownParser({
       mathRenderer: "katex",
       showMacBar: options.showMacBar === true,
+      getTemplate: (componentId) => templates.get(componentId),
     });
     const rawHtml = parser.render(markdown);
     const themedCss = buildCopyCss(css);
@@ -161,7 +170,7 @@ export async function buildWechatPublishHtml(
       sourceHtml,
       themedCss,
     );
-    const styledHtml = processHtml(materializedHtml, sanitizedCss, true, false);
+    const styledHtml = processHtml(materializedHtml, sanitizedCss, true, true);
     const resolvedHtml = resolveInlineStyleVariablesForCopy(styledHtml, css);
     const finalHtml = convertCheckboxesToEmoji(resolvedHtml);
 

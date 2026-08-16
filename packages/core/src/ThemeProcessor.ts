@@ -1,69 +1,15 @@
 import { expandCSSVariables } from "./themes/cssVariableExpander";
+import { inlinePseudoElementDecorations } from "./pseudoElementInline";
 
 const DATA_TOOL = "WeMD编辑器";
 const SECTION_ID = "wemd";
-
-/**
- * 为组件内部的直接子元素添加位置 class（wemd-child-1, wemd-child-2, ...）
- * 解决 juice 无法内联 :nth-child 等伪类选择器的问题
- */
-function addChildPositionClasses(html: string): string {
-  const componentBodyRegex =
-    /<section[^>]*class="[^"]*wemd-component-body[^"]*"[^>]*>([\s\S]*?)<\/section>/g;
-
-  return html.replace(componentBodyRegex, (match, innerContent: string) => {
-    let result = innerContent;
-
-    const tagRegex =
-      /<(p|h[1-6]|ul|ol|blockquote|table|pre|hr|div|section)(\s+[^>]*|)>/gi;
-
-    const matches: Array<{
-      fullMatch: string;
-      tag: string;
-      attrs: string;
-      index: number;
-    }> = [];
-    let m: RegExpExecArray | null;
-    while ((m = tagRegex.exec(innerContent)) !== null) {
-      matches.push({
-        fullMatch: m[0],
-        tag: m[1],
-        attrs: m[2],
-        index: m.index,
-      });
-    }
-
-    for (let i = matches.length - 1; i >= 0; i--) {
-      const item = matches[i];
-      const childNum = i + 1;
-      let newAttrs = item.attrs;
-
-      if (newAttrs.includes('class="')) {
-        newAttrs = newAttrs.replace(
-          'class="',
-          `class="wemd-child-${childNum} `,
-        );
-      } else {
-        newAttrs = ` class="wemd-child-${childNum}"${newAttrs}`;
-      }
-
-      const newTag = `<${item.tag}${newAttrs}>`;
-      result =
-        result.slice(0, item.index) +
-        newTag +
-        result.slice(item.index + item.fullMatch.length);
-    }
-
-    return match.replace(innerContent, result);
-  });
-}
 
 /**
  * 为 toc-nav 目录组件的 li 添加序号 span（兼容微信内联）
  * 微信不支持 ::before 伪元素和 counter 计数器，需要直接把序号写进 HTML
  *
  * 用栈平衡匹配 toc-nav 的完整范围，避免非贪婪正则被内部嵌套的
- * <section>（component-body / wemd-child-3 等）提前截断。
+ * <section> 提前截断。
  *
  * 算法：在 toc-nav 开标签之后，用单指针 indexOf 逐位扫描最近的
  *       <section 或 </section>。两个独立 regex 会导致 lastIndex
@@ -272,7 +218,6 @@ export const processHtml = (
   );
 
   let processedHtml = html;
-  processedHtml = addChildPositionClasses(processedHtml);
   // 统一为 toc-nav 注入序号 span：预览和微信导出共用，避免 ::before 在微信丢失
   // 原"预览用 CSS counter + 导出用 span"双轨设计会导致微信导出时出现双重编号
   // （addTocNumbers 的 span + inlineAllStylesManually 转换的 ::before span）
@@ -297,6 +242,9 @@ export const processHtml = (
 
   // 为代码块追加关键内联样式
   if (inlinePseudoElements) {
+    // 微信会过滤 CSS 伪元素：把内置组件的 ::before / ::after 装饰物化为真实元素
+    res = inlinePseudoElementDecorations(res, resolvedCss);
+
     const appendStyleValue = (styleValue: string, extra: string) => {
       const trimmed = styleValue.trim();
       if (!trimmed) return extra;

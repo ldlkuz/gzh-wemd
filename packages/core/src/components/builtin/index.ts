@@ -59,6 +59,7 @@ import imageCompareManifest from "../builtin/manifests/extended/image-compare.js
 import {
   componentStylesDefault,
   componentStylesExtra,
+  componentStylesExtended,
   componentStylesFaq,
   componentStylesMagazine,
 } from "../../themes";
@@ -136,7 +137,7 @@ export function registerBuiltInComponents(registry: ComponentRegistry): void {
     });
   }
 
-  // extended 组（9 个扩展组件，暂共享 componentStylesExtra，后续可拆分）
+  // extended 组（9 个扩展组件，共享 componentStylesExtended）
   const extendedManifests: ComponentManifest[] = [
     articleSectionManifest,
     codeBlockManifest,
@@ -151,7 +152,7 @@ export function registerBuiltInComponents(registry: ComponentRegistry): void {
   for (const manifest of extendedManifests) {
     registry.register({
       manifest: manifest as ComponentManifest,
-      css: componentStylesExtra,
+      css: componentStylesExtended,
     });
   }
 }

@@ -1,7 +1,7 @@
 export * from "./MarkdownParser";
 export * from "./ThemeProcessor";
 export * from "./themes";
-export { renderTheme } from "./theme-renderer/index";
+export { renderTheme, getThemeTemplates } from "./theme-renderer/index";
 export type { RenderThemeOptions } from "./theme-renderer/index";
 export { getVariantCss } from "./components/index";
 export {
@@ -51,6 +51,20 @@ export type {
   ValidationError,
   ValidationResult,
 } from "./theme-schema/types";
+
+// 组件 Slot 契约（骨架校验复用权威真源）
+export {
+  getBuiltinSlotDef,
+  getComponentAbbr,
+  getFallbackSlotDef,
+} from "./plugins/component/slotDefs";
+export type {
+  ComponentSlotDef,
+  SlotDef,
+  SlotType,
+  SlotInputRule,
+  ListItem,
+} from "./plugins/component/slotTypes";
 
 // CSS 翻译引擎（AI 两阶段翻译系统）
 export {

@@ -551,31 +551,28 @@ const SERIES_NAV: ComponentElementsDef = {
 };
 
 // ============================================================
-// 普通组件（有 wemd-component-body）
+// 普通组件
+//   - body 层组件（hasBody=true）：走 .wemd-component-body 内容层
+//   - 语义槽组件（hasBody=false）：已迁移为语义类名，无 body 层
 // ============================================================
 
 const QUOTE_CARD: ComponentElementsDef = {
   type: "quote-card",
   label: "金句卡片",
-  hasBody: true,
+  hasBody: false,
   containerSelector: ".wemd-quote-card",
   containerDesc: "组件容器",
   elements: [
     { name: "container", desc: "组件容器", wemdSelector: ".wemd-quote-card" },
     {
-      name: "body",
-      desc: "内容主体",
-      wemdSelector: ".wemd-quote-card .wemd-component-body",
+      name: "quote",
+      desc: "金句正文",
+      wemdSelector: ".wemd-quote-card .wemd-qc-quote",
     },
     {
-      name: "firstParagraph",
-      desc: "第一段（金句正文）",
-      wemdSelector: ".wemd-quote-card .wemd-component-body > p:first-child",
-    },
-    {
-      name: "lastParagraph",
-      desc: "末段（作者署名）",
-      wemdSelector: ".wemd-quote-card .wemd-component-body > p:last-child",
+      name: "author",
+      desc: "署名",
+      wemdSelector: ".wemd-quote-card .wemd-qc-author",
     },
   ],
 };
@@ -614,30 +611,25 @@ const HERO_BANNER: ComponentElementsDef = {
 const CTA_CARD: ComponentElementsDef = {
   type: "cta-card",
   label: "关注引导卡片",
-  hasBody: true,
+  hasBody: false,
   containerSelector: ".wemd-cta-card",
   containerDesc: "组件容器",
   elements: [
     { name: "container", desc: "组件容器", wemdSelector: ".wemd-cta-card" },
     {
-      name: "body",
-      desc: "内容主体",
-      wemdSelector: ".wemd-cta-card .wemd-component-body",
-    },
-    {
       name: "title",
-      desc: "标题（第一段）",
-      wemdSelector: ".wemd-cta-card .wemd-component-body > p:first-child",
+      desc: "主标题（首段）",
+      wemdSelector: ".wemd-cta-card .wemd-cta-title",
     },
     {
-      name: "description",
-      desc: "描述（第二段）",
-      wemdSelector: ".wemd-cta-card .wemd-component-body > p:nth-child(2)",
+      name: "body",
+      desc: "正文（中间段）",
+      wemdSelector: ".wemd-cta-card .wemd-cta-body",
     },
     {
-      name: "button",
-      desc: "按钮（末段）",
-      wemdSelector: ".wemd-cta-card .wemd-component-body > p:last-child",
+      name: "action",
+      desc: "行动按钮（末段）",
+      wemdSelector: ".wemd-cta-card .wemd-cta-action",
     },
   ],
 };
@@ -718,30 +710,25 @@ const FAQ: ComponentElementsDef = {
 const TIMELINE: ComponentElementsDef = {
   type: "timeline",
   label: "时间线",
-  hasBody: true,
+  hasBody: false,
   containerSelector: ".wemd-timeline",
   containerDesc: "组件容器",
   elements: [
     { name: "container", desc: "组件容器", wemdSelector: ".wemd-timeline" },
     {
-      name: "body",
-      desc: "内容主体",
-      wemdSelector: ".wemd-timeline .wemd-component-body",
+      name: "title",
+      desc: "时间线标题（首行）",
+      wemdSelector: ".wemd-timeline .wemd-tl-title",
     },
     {
-      name: "title",
-      desc: "标题（第一段）",
-      wemdSelector: ".wemd-timeline .wemd-component-body > p:first-child",
+      name: "events",
+      desc: "事件列表容器",
+      wemdSelector: ".wemd-timeline .wemd-tl-events",
     },
     {
       name: "item",
-      desc: "时间线项（li）",
-      wemdSelector: ".wemd-timeline .wemd-component-body li",
-    },
-    {
-      name: "itemTitle",
-      desc: "项标题（strong）",
-      wemdSelector: ".wemd-timeline .wemd-component-body li strong",
+      desc: "时间线项",
+      wemdSelector: ".wemd-timeline .wemd-tl-item",
     },
   ],
 };
@@ -787,32 +774,30 @@ const AUTHOR_CARD: ComponentElementsDef = {
 const STATS_BLOCK: ComponentElementsDef = {
   type: "stats-block",
   label: "数据统计块",
-  hasBody: true,
+  hasBody: false,
   containerSelector: ".wemd-stats-block",
   containerDesc: "组件容器",
   elements: [
     { name: "container", desc: "组件容器", wemdSelector: ".wemd-stats-block" },
     {
-      name: "body",
-      desc: "内容主体",
-      wemdSelector: ".wemd-stats-block .wemd-component-body",
+      name: "items",
+      desc: "数据条目容器",
+      wemdSelector: ".wemd-stats-block .wemd-sb-items",
     },
     {
-      name: "title",
-      desc: "标题（第一段）",
-      wemdSelector: ".wemd-stats-block .wemd-component-body > p:first-child",
+      name: "item",
+      desc: "单个数据条目",
+      wemdSelector: ".wemd-stats-block .wemd-sb-items-item",
     },
     {
-      name: "statItem",
-      desc: "数据条目",
-      wemdSelector:
-        ".wemd-stats-block .wemd-component-body > p:not(:first-child)",
+      name: "value",
+      desc: "数值高亮",
+      wemdSelector: ".wemd-stats-block .wemd-sb-items-value",
     },
     {
-      name: "statValue",
-      desc: "数值高亮（strong）",
-      wemdSelector:
-        ".wemd-stats-block .wemd-component-body > p:not(:first-child) strong",
+      name: "label",
+      desc: "指标说明",
+      wemdSelector: ".wemd-stats-block .wemd-sb-items-label",
     },
   ],
 };
@@ -933,7 +918,7 @@ const IMAGE_GRID: ComponentElementsDef = {
 const RELATED_POSTS: ComponentElementsDef = {
   type: "related-posts",
   label: "推荐阅读卡片",
-  hasBody: true,
+  hasBody: false,
   containerSelector: ".wemd-related-posts",
   containerDesc: "组件容器",
   elements: [
@@ -943,24 +928,14 @@ const RELATED_POSTS: ComponentElementsDef = {
       wemdSelector: ".wemd-related-posts",
     },
     {
-      name: "body",
-      desc: "内容主体",
-      wemdSelector: ".wemd-related-posts .wemd-component-body",
-    },
-    {
-      name: "title",
-      desc: "区块标题（第一段）",
-      wemdSelector: ".wemd-related-posts .wemd-component-body > p:first-child",
+      name: "items",
+      desc: "推荐条目容器",
+      wemdSelector: ".wemd-related-posts .wemd-rp-items",
     },
     {
       name: "item",
-      desc: "推荐项（li）",
-      wemdSelector: ".wemd-related-posts .wemd-component-body li",
-    },
-    {
-      name: "link",
-      desc: "推荐链接",
-      wemdSelector: ".wemd-related-posts .wemd-component-body li a",
+      desc: "推荐项",
+      wemdSelector: ".wemd-related-posts .wemd-rp-items-item",
     },
   ],
 };
@@ -1075,35 +1050,30 @@ const COPYRIGHT_NOTICE: ComponentElementsDef = {
 const STYLED_TABLE: ComponentElementsDef = {
   type: "styled-table",
   label: "美化表格",
-  hasBody: true,
+  hasBody: false,
   containerSelector: ".wemd-styled-table",
   containerDesc: "组件容器",
   elements: [
     { name: "container", desc: "组件容器", wemdSelector: ".wemd-styled-table" },
     {
-      name: "body",
-      desc: "内容主体",
-      wemdSelector: ".wemd-styled-table .wemd-component-body",
-    },
-    {
-      name: "title",
-      desc: "表格标题（第一段）",
-      wemdSelector: ".wemd-styled-table .wemd-component-body > p:first-child",
-    },
-    {
       name: "table",
+      desc: "表格容器",
+      wemdSelector: ".wemd-styled-table .wemd-sbt-table",
+    },
+    {
+      name: "tableEl",
       desc: "表格元素",
-      wemdSelector: ".wemd-styled-table .wemd-component-body > table",
+      wemdSelector: ".wemd-styled-table .wemd-sbt-table table",
     },
     {
       name: "th",
       desc: "表头单元格",
-      wemdSelector: ".wemd-styled-table .wemd-component-body > table th",
+      wemdSelector: ".wemd-styled-table .wemd-sbt-table table th",
     },
     {
       name: "td",
       desc: "表体单元格",
-      wemdSelector: ".wemd-styled-table .wemd-component-body > table td",
+      wemdSelector: ".wemd-styled-table .wemd-sbt-table table td",
     },
   ],
 };
@@ -1111,25 +1081,20 @@ const STYLED_TABLE: ComponentElementsDef = {
 const CODE_FRAME: ComponentElementsDef = {
   type: "code-frame",
   label: "代码框",
-  hasBody: true,
+  hasBody: false,
   containerSelector: ".wemd-code-frame",
   containerDesc: "组件容器",
   elements: [
     { name: "container", desc: "组件容器", wemdSelector: ".wemd-code-frame" },
     {
-      name: "body",
-      desc: "内容主体",
-      wemdSelector: ".wemd-code-frame .wemd-component-body",
-    },
-    {
-      name: "header",
-      desc: "头部标签条（第一段）",
-      wemdSelector: ".wemd-code-frame .wemd-component-body > p:first-child",
+      name: "title",
+      desc: "代码标题（首行）",
+      wemdSelector: ".wemd-code-frame .wemd-cf-title",
     },
     {
       name: "code",
       desc: "代码内容",
-      wemdSelector: ".wemd-code-frame .wemd-component-body > pre code",
+      wemdSelector: ".wemd-code-frame .wemd-cf-code pre code",
     },
   ],
 };
@@ -1137,7 +1102,7 @@ const CODE_FRAME: ComponentElementsDef = {
 const DIVIDER_FANCY: ComponentElementsDef = {
   type: "divider-fancy",
   label: "装饰分割线",
-  hasBody: true,
+  hasBody: false,
   containerSelector: ".wemd-divider-fancy",
   containerDesc: "组件容器",
   elements: [
@@ -1147,9 +1112,9 @@ const DIVIDER_FANCY: ComponentElementsDef = {
       wemdSelector: ".wemd-divider-fancy",
     },
     {
-      name: "body",
-      desc: "内容主体",
-      wemdSelector: ".wemd-divider-fancy .wemd-component-body",
+      name: "label",
+      desc: "分隔线文字",
+      wemdSelector: ".wemd-divider-fancy .wemd-df-label",
     },
   ],
 };

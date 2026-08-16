@@ -34,8 +34,8 @@ export const componentStylesFaq = `/* === FAQ 常见问题组件 === */
   line-height: 1.6;
 }
 
-/* 回答文字 */
-#wemd .wemd-faq .wemd-component-body > p:not(:has(strong)) {
+/* 回答文字（无 wemd-q 标记的段落） */
+#wemd .wemd-faq .wemd-component-body > p:not(.wemd-q) {
   color: var(--wemd-text-soft, #475569);
   font-size: 14px;
   line-height: 1.8;
@@ -82,8 +82,8 @@ export const componentStylesFaq = `/* === FAQ 常见问题组件 === */
   border-radius: 2px;
 }
 
-/* 挂角标题 — body 的 ::before 伪元素，拿自身的 data-title */
-#wemd .wemd-faq .wemd-component-body[data-title]::before {
+/* 挂角标题 — 根容器透传 data-title，body 的 ::before 伪元素取用 */
+#wemd .wemd-faq[data-title] .wemd-component-body::before {
   content: attr(data-title);
   position: absolute;
   top: -1px;
@@ -102,19 +102,19 @@ export const componentStylesFaq = `/* === FAQ 常见问题组件 === */
 }
 
 /* 有标题时增加顶部内边距 */
-#wemd .wemd-faq .wemd-component-body[data-title] {
+#wemd .wemd-faq[data-title] .wemd-component-body {
   padding-top: 52px;
 }
 
 /* 问题项 — 卡片内的每个问答对 */
-#wemd .wemd-faq .wemd-component-body > p:has(strong) {
+#wemd .wemd-faq .wemd-component-body > p.wemd-q {
   display: flex;
   align-items: flex-start;
   gap: 10px;
   margin: 14px 0 0 0;
 }
 
-#wemd .wemd-faq .wemd-component-body > p:has(strong) + p {
+#wemd .wemd-faq .wemd-component-body > p.wemd-q + p {
   margin-left: 22px;
 }
 
@@ -148,7 +148,7 @@ export const componentStylesFaq = `/* === FAQ 常见问题组件 === */
 }
 
 /* 问答对之间的分割线 */
-#wemd .wemd-faq .wemd-component-body > p:has(strong) + p + p:has(strong) {
+#wemd .wemd-faq .wemd-component-body > p.wemd-q + p + p.wemd-q {
   margin-top: 18px;
   padding-top: 18px;
   border-top: 1px dashed var(--wemd-border, #e2e8f0);
@@ -169,11 +169,13 @@ export const componentStylesFaq = `/* === FAQ 常见问题组件 === */
   border-radius: 0;
 }
 
-#wemd .wemd-faq[data-style="simple"] .wemd-component-body[data-title]::before {
+#wemd .wemd-faq[data-style="simple"] .wemd-component-body[data-title]::before,
+#wemd .wemd-faq[data-style="simple"][data-title] .wemd-component-body::before {
   display: none;
 }
 
-#wemd .wemd-faq[data-style="simple"] .wemd-component-body[data-title] {
+#wemd .wemd-faq[data-style="simple"] .wemd-component-body[data-title],
+#wemd .wemd-faq[data-style="simple"][data-title] .wemd-component-body {
   padding-top: 0;
 }
 
@@ -187,14 +189,14 @@ export const componentStylesFaq = `/* === FAQ 常见问题组件 === */
   border-bottom: 2px solid var(--wemd-primary, #07c160);
 }
 
-#wemd .wemd-faq[data-style="simple"] .wemd-component-body > p:has(strong) {
+#wemd .wemd-faq[data-style="simple"] .wemd-component-body > p.wemd-q {
   display: flex;
   align-items: flex-start;
   gap: 0;
   margin: 16px 0 0 0;
 }
 
-#wemd .wemd-faq[data-style="simple"] .wemd-component-body > p:has(strong) + p {
+#wemd .wemd-faq[data-style="simple"] .wemd-component-body > p.wemd-q + p {
   margin-left: 22px;
 }
 

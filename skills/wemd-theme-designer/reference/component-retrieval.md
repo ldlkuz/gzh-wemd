@@ -10,7 +10,7 @@
 
 ## 检索步骤
 
-1. 从 `creative/concept_state.json` 提取**用户选中的母题**（`visual_metaphors[]` 中用户选定的那一项）与 `emotional_direction`
+1. 从 `themes/{theme-name}/states/concept_state.json` 提取**用户选中的母题**（`visual_metaphors[]` 中用户选定的那一项）与 `emotional_direction`
 2. **将所选母题的 `visual_objects` / `material_language` 作为主要检索关键词**，用于匹配组件
 3. 遍历 `registry/components.json`，匹配：
    - `visual_capability` 是否与品牌情感方向一致

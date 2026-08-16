@@ -181,9 +181,7 @@ describe("完整导入流程 - HTML 注入验证", () => {
   // 模拟 markdown-it-component 的 HTML 输出
   const mockHtml = `<section id="wemd">
 <section class="wemd-component wemd-hero-banner" data-component="hero-banner" data-props="{}">
-  <section class="wemd-component-body">
-    <p class="wemd-child-1">测试内容</p>
-  </section>
+  <section class="wemd-hb-title">测试内容</section>
 </section>
 <section class="wemd-component wemd-end-card" data-component="end-card" data-props="{}">
   <section class="wemd-component-body">

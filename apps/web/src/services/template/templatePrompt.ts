@@ -3,7 +3,7 @@
  *
  * v2.0: 从"文章类型分类 + magazineLevel 分级"升级为"内容信号识别 + design 字段"。
  * AI 逐段理解内容，独立做出设计判断，输出 design + reason。
- * Renderer 根据 design 自动推导 variant，AI 不再指定 variant。
+ * Phase 6: 组件形态由当前主题统一决定，AI 不指定 variant。
  */
 import { COMPONENT_CONTENT_SCHEMAS } from "./componentSchemas";
 import type { LayoutPreference } from "@wemd/core";
@@ -110,12 +110,6 @@ function buildDesignerReviewHint(): string {
 
 /** 构建主题约束提示 */
 function buildThemeHint(themeLayout: LayoutPreference): string {
-  const variantHint = themeLayout.defaultVariants
-    ? `\n- 推荐 variant：${Object.entries(themeLayout.defaultVariants)
-        .map(([k, v]) => `${k}=${v}`)
-        .join("、")}`
-    : "";
-
   // 格式化 preferredComponents：字符串直接输出，对象带 reason 则输出 "组件名: 理由"
   const componentsDesc = themeLayout.preferredComponents
     .map((pc) => {
@@ -129,7 +123,7 @@ function buildThemeHint(themeLayout: LayoutPreference): string {
   const reasonHint = themeLayout.preferredComponents.some(
     (pc) => typeof pc === "object" && pc.reason,
   )
-    ? "\n  注意：带有自定义造型说明的组件，AI 已为其定义了 variantCss，排版时优先使用这些组件以发挥其造型效果"
+    ? "\n  注意：带有自定义造型说明的组件，排版时优先使用这些组件以发挥其造型效果"
     : "";
 
   return [
@@ -139,10 +133,9 @@ function buildThemeHint(themeLayout: LayoutPreference): string {
     `- 排版密度：${themeLayout.density}`,
     `- 主题偏好的组件：`,
     componentsDesc,
-    variantHint,
     reasonHint,
     "",
-    "注意：优先选择主题偏好的组件，tone 应与主题风格基调协调。variant 推荐仅作参考，最终渲染由 design 字段推导。",
+    "注意：优先选择主题偏好的组件，tone 应与主题风格基调协调。组件形态（骨架）由当前主题统一决定，你不需要、也不应该指定组件的 variant。",
   ].join("\n");
 }
 
@@ -156,7 +149,7 @@ function buildBrandHint(brandText: string): string {
     "品牌规范定义了该主题的视觉语言、组件语义和排版哲学。",
     "排版时必须严格遵循品牌规范中的指引，包括但不限于：",
     "- 推荐的组件使用方式",
-    "- 组件定制造型（variant）的语义描述",
+    "- 组件自定义造型的语义描述",
     "- 风格基调和情绪表达",
     "- 排版节奏和密度偏好",
   ].join("\n");
@@ -278,7 +271,7 @@ export function buildTemplatePrompt(
     "## 设计意图字段（design）",
     "",
     "每个 layout node 必须附带 design 字段，描述这个组件的视觉表达意图。",
-    "Renderer 会根据 design 自动选择视觉变体（variant），你不需要指定 variant。",
+    "组件形态（骨架）由当前主题统一决定，你不需要、也不应该指定组件的 variant。",
     "",
     "design 字段规则：",
     "",

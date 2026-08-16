@@ -17,10 +17,10 @@
 
 已用该流程生成的主题示例：
 
-| 主题                      | 视觉母题                            | 产物                                |
-| ------------------------- | ----------------------------------- | ----------------------------------- |
-| 苍洱财税 · 税务核查档案室 | 税务局核查档案袋（红头文件/牛皮纸） | `output/cangre-audit.wemd-theme`    |
-| 苍洱科创财税              | 深蓝琥珀 · 政策核查证据链           | `output/cangre-kechuang.wemd-theme` |
+| 主题                      | 视觉母题                            | 产物                                                |
+| ------------------------- | ----------------------------------- | --------------------------------------------------- |
+| 苍洱财税 · 税务核查档案室 | 税务局核查档案袋（红头文件/牛皮纸） | `themes/cangre-audit/cangre-audit.wemd-theme`       |
+| 苍洱科创财税              | 深蓝琥珀 · 政策核查证据链           | `themes/cangre-kechuang/cangre-kechuang.wemd-theme` |
 
 ---
 
@@ -34,30 +34,34 @@
 
 ---
 
-## 六阶段流程
+## 七阶段流程
 
 ```text
 品牌输入
   │ ═══ 创意阶段：纯视觉创作，无组件约束 ═══
   ↓
-Stage 1  品牌解读   → creative/brand_state.json
+Stage 1  品牌解读   → themes/{theme-name}/states/brand_state.json
   ↓
-Stage 2  视觉概念   → creative/concept_state.json   ← 用户从 3 个母题候选中选 1 个
+Stage 2  视觉概念   → themes/{theme-name}/states/concept_state.json   ← 用户从 3 个母题候选中选 1 个
   ↓
-Stage 3  视觉设计   → creative/visual_language.json
+Stage 3  视觉设计   → themes/{theme-name}/states/visual_language.json
   │ ═══ 翻译阶段：映射到 WeMD 组件 ═══
   ↓
-Stage 4  组件分析   → translator/component_strategy.json
+Stage 4  组件分析   → themes/{theme-name}/states/component_strategy.json
   ↓
-Stage 5  组件映射   → translator/component_mapping.json
+Stage 4.5 骨架构图   → themes/{theme-name}/states/skeleton_intent.json（形）
   ↓
-Assembler 合并     → output/BrandVisualTheme.json
+Stage 5  组件映射   → themes/{theme-name}/states/component_mapping.json（皮）
   ↓
-Stage 6  编译（双输出）→ output/preview/*.html（开发预览）
-  │                      output/publish/*.html（公众号发布）
+Assembler 合并     → themes/{theme-name}/BrandVisualTheme.json
   ↓
-Stage 7  打包验证   → output/{theme-name}.wemd-theme
+Stage 6  编译（双输出）→ themes/{theme-name}/preview/*.html（开发预览）
+  │                      themes/{theme-name}/publish/*.html（公众号发布）
+  ↓
+Stage 7  打包验证   → themes/{theme-name}/{theme-name}.wemd-theme
 ```
+
+> 翻译阶段内部拆为**形 / 皮**两个子空间：Stage 4.5（形）只描述组件视觉怎么构图（`skeleton_intent.json`），Stage 5（皮）决定颜色/字体/间距（`component_mapping.json`）。先定形后定皮。
 
 各阶段产物独立成 JSON，AI 每步只读上一个 State + 当前需要的组件，不依赖历史对话。
 
@@ -81,32 +85,46 @@ Stage 7  打包验证   → output/{theme-name}.wemd-theme
 
 ```text
 wemd-theme-designer/
-├── SKILL.md                 # AI 执行规范（六阶段 Prompt + 状态机）
+├── SKILL.md                 # AI 执行规范（七阶段 Prompt + 状态机）
 ├── README.md                # 本文件（使用/开发说明）
 ├── skill.json               # skill 元信息
-├── creative/                # 创意阶段产物 + Schema
-│   ├── brand_state.json
-│   ├── concept_state.json
-│   └── visual_language.json
-├── translator/              # 翻译阶段产物 + Schema
-│   ├── component_strategy.json
-│   └── component_mapping.json
+├── schema/                  # 共享 Schema（规范，不随主题变化）
+│   ├── brand_state.schema.json … component_mapping.schema.json
+│   ├── CreativeTheme.schema.json      # 创意阶段设计稿 Schema
+│   └── BrandVisualTheme.schema.json   # 最终主题规范 Schema
 ├── prompts/                 # 各阶段 Prompt
-│   ├── 01-brand.md … 05-component-mapping.md
+│   ├── 01-brand.md … 04-component-analysis.md
+│   ├── 04.5-skeleton-composition.md
+│   ├── 05-component-mapping.md
 │   └── self-check.md
 ├── css-compiler/prompts/    # Stage 6 编译 Prompt
 ├── reference/               # 输入/输出格式、Assembler/Compiler、组件检索、打包规则
+│   └── example/demo-theme.json        # 完整示例（数据示例，非规范）
 ├── registry/components.json # 43 个组件的权威定义
 ├── scripts/
-│   ├── pack-theme.cjs            # Stage 7：打包 .wemd-theme（打包前自动校验 CSS）
-│   ├── validate-theme.cjs        # Stage 7：校验 manifest
+│   ├── compile-skeleton.cjs       # Stage 4.5：骨架 Intent → Mustache 模板（class 确定性推导）
+│   ├── pack-theme.cjs             # Stage 7：打包 .wemd-theme（打包前自动校验 CSS）
+│   ├── validate-theme.cjs         # Stage 7：校验 manifest
 │   ├── validate-css-selectors.mjs# 打包前校验 CSS 选择器 + 嵌套 var（拦截臆造 class）
-│   └── extract-dom-snapshot.mjs  # 从主程序真源自动生成 reference/dom-structure.md
-└── output/
-    ├── css/                 # 各主题 CSS
-    ├── preview/             # 开发预览 HTML
-    ├── theme-package/       # 打包中间产物（manifest/brand.md/styles）
-    └── *.wemd-theme         # 最终主题包（可直接导入主程序）
+│   ├── export-html.cjs            # Stage 6：主题感知 HTML 导出
+│   └── extract-dom-snapshot.mjs   # 从主程序真源自动生成 reference/dom-structure.md
+└── themes/                  # ★ 主题产物库，每个主题一个目录
+    └── {theme-name}/
+        ├── states/                 # AI 产出（6 个 State JSON）
+        │   ├── brand_state.json
+        │   ├── concept_state.json
+        │   ├── visual_language.json
+        │   ├── component_strategy.json
+        │   ├── skeleton_intent.json  # Stage 4.5（形）
+        │   └── component_mapping.json # Stage 5（皮）
+        ├── BrandVisualTheme.json   # Assembler 产物（最终主题规范）
+        ├── css/{theme-name}.css    # Compiler 产物（完整 CSS）
+        ├── preview/                # 开发预览 HTML
+        │   └── {theme-name}-preview.html
+        ├── publish/                # 公众号发布 HTML
+        │   └── {theme-name}.html
+        ├── package/                # 打包中间产物（manifest/brand.md/styles/templates）
+        └── {theme-name}.wemd-theme # 最终主题包（可直接导入主程序）
 ```
 
 ---
@@ -123,9 +141,10 @@ wemd-theme-designer/
 
 ```powershell
 # 在 skill 目录下执行
-node scripts/pack-theme.cjs <theme-name>          # 生成 output/theme-package/
-node scripts/validate-theme.cjs                   # 校验 manifest.json 是否通过
-Compress-Archive -Path "./manifest.json","./brand.md","./styles" `
+node scripts/compile-skeleton.cjs                     # 骨架 Intent → templates.json
+node scripts/pack-theme.cjs <theme-name>              # 生成 themes/{theme-name}/package/
+node scripts/validate-theme.cjs <theme-name>          # 校验 themes/{theme-name}/package/manifest.json
+Compress-Archive -Path "./manifest.json","./brand.md","./styles","./templates" `
   -DestinationPath "..\<theme-name>.wemd-theme" -Force   # 压缩为最终主题包
 ```
 

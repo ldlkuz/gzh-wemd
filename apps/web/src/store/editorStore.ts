@@ -313,7 +313,10 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     const showMacBar = currentTheme?.designerVariables?.showMacBar ?? false;
 
     try {
-      await execCopyToWechat(markdown, css, { showMacBar });
+      await execCopyToWechat(markdown, css, {
+        showMacBar,
+        themeDefinition: currentTheme?.definition,
+      });
       if (usePublishAuthor && publishAuthor.trim()) {
         set({ recentAuthors: addRecentAuthor(publishAuthor) });
       }
@@ -339,6 +342,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
 
     await execCopyAsHtml(markdown, css, {
       showMacBar,
+      themeDefinition: currentTheme?.definition,
       meta: resolvePublishMeta(markdown, {
         title: publishTitle,
         author: publishAuthor,

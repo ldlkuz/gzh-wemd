@@ -31,55 +31,34 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
   box-sizing: border-box;
 }
 
-/* === quote-card 金句卡片（primary 主色，跟随主题） === */
+/* === quote-card 金句卡片（primary 主色，跟随主题） ===
+   设计方向 D：上下主色装饰线夹住居中文字，杂志式留白。
+   纯原生 border 实现，微信 100% 保留，不依赖 absolute / 伪元素。 */
 #wemd .wemd-quote-card {
-  position: relative;
-  padding: 28px 24px 20px 24px;
-  background: linear-gradient(135deg, var(--wemd-bg-soft, #f7f8fa) 0%, var(--wemd-bg-card, #ffffff) 100%);
-  border-left: 4px solid var(--wemd-primary, #07c160);
-  border-radius: 8px;
-  overflow: hidden;
+  margin: 32px 0;
+  padding: 28px 16px;
+  border-top: 3px solid var(--wemd-primary, #07c160);
+  border-bottom: 3px solid var(--wemd-primary, #07c160);
+  box-sizing: border-box;
 }
 
-/* 左上角引号水印（primary 色，弱化装饰） */
-#wemd .wemd-quote-card::before {
-  content: "\u201C";
-  position: absolute;
-  top: -8px;
-  left: 12px;
-  font-size: 80px;
-  line-height: 1;
-  color: var(--wemd-primary, #07c160);
-  opacity: 0.12;
-  font-family: Georgia, serif;
-  pointer-events: none;
-}
-
-/* body 正常流布局 */
-#wemd .wemd-quote-card .wemd-component-body {
-  position: relative;
-}
-
-/* 金句正文（左对齐，撑满卡片） */
-#wemd .wemd-quote-card .wemd-component-body > p:first-child {
+/* 金句正文（居中，撑满卡片） */
+#wemd .wemd-quote-card .wemd-qc-quote {
   font-size: 17px;
   line-height: 1.75;
   color: var(--wemd-text-strong, #1a1a1a);
-  margin: 0 0 12px 0;
+  margin: 0;
   font-weight: 500;
-  text-align: left;
+  text-align: center;
 }
 
-/* 作者署名（右对齐，像信件落款） */
-#wemd .wemd-quote-card[data-props*="author"] .wemd-component-body::after {
+/* 作者署名（居中，像落款） */
+#wemd .wemd-quote-card .wemd-qc-author {
   display: block;
-  margin-top: 12px;
-  padding-top: 8px;
-  border-top: 1px dashed var(--wemd-border, #e2e8f0);
+  margin-top: 16px;
   font-size: 13px;
   color: var(--wemd-text-soft, #8a8a8a);
-  content: "— " attr(data-props);
-  text-align: right;
+  text-align: center;
 }
 
 /* === divider-fancy 装饰分割线（primary 主色，跟随主题） === */
@@ -92,40 +71,36 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
   justify-content: center;
 }
 
-#wemd .wemd-divider-fancy .wemd-component-body {
+#wemd .wemd-divider-fancy .wemd-df-label {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
+  font-size: 14px;
+  color: var(--wemd-text-soft, #8a8a8a);
+  margin: 0;
 }
 
-#wemd .wemd-divider-fancy .wemd-component-body::before,
-#wemd .wemd-divider-fancy .wemd-component-body::after {
-  content: "";
+#wemd .wemd-divider-fancy .wemd-df-label .wemd-df-line {
   flex: 1;
   height: 1px;
   background: linear-gradient(to right, transparent, var(--wemd-primary, #07c160), transparent);
 }
 
-#wemd .wemd-divider-fancy .wemd-component-body::before {
+#wemd .wemd-divider-fancy .wemd-df-label .wemd-df-line-left {
   margin-right: 16px;
 }
 
-#wemd .wemd-divider-fancy .wemd-component-body::after {
+#wemd .wemd-divider-fancy .wemd-df-label .wemd-df-line-right {
   margin-left: 16px;
 }
 
-/* 分割线中间装饰点（primary 色） */
-#wemd .wemd-divider-fancy .wemd-component-body:empty::before,
-#wemd .wemd-divider-fancy .wemd-component-body:empty::after {
-  content: "· · ·";
-  flex: none;
+/* 分隔线中间装饰点（primary 色） */
+#wemd .wemd-divider-fancy .wemd-df-label .wemd-df-dots {
   color: var(--wemd-primary, #07c160);
   font-size: 20px;
   letter-spacing: 8px;
-  background: none;
-  height: auto;
-  margin: 0;
+  text-align: center;
 }
 
 /* === cta-card 关注引导卡片 === */
@@ -138,7 +113,7 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
   margin: 32px 0;
 }
 
-#wemd .wemd-cta-card .wemd-component-body > p:first-child {
+#wemd .wemd-cta-card .wemd-cta-title {
   font-size: 18px;
   font-weight: 600;
   color: #ffffff;
@@ -146,14 +121,15 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
   line-height: 1.5;
 }
 
-#wemd .wemd-cta-card .wemd-component-body > p:nth-child(2) {
+#wemd .wemd-cta-card .wemd-cta-body {
   font-size: 14px;
   color: rgba(255, 255, 255, 0.9);
   margin: 0 0 16px 0;
+  line-height: 1.7;
 }
 
-/* CTA 卡片按钮样式（第二个段落之后的内容渲染为按钮） */
-#wemd .wemd-cta-card .wemd-component-body > p:last-child {
+/* CTA 卡片按钮样式（action 槽，末段文案） */
+#wemd .wemd-cta-card .wemd-cta-action {
   display: inline-block;
   padding: 8px 24px;
   background: rgba(255, 255, 255, 0.2);
@@ -174,11 +150,8 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
   box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
 }
 
-/* 头部条：标题 + 语言标签 */
-#wemd .wemd-code-frame .wemd-component-body > p:first-child {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+/* 头部条：标题 */
+#wemd .wemd-code-frame .wemd-cf-title {
   margin: 0;
   padding: 8px 14px;
   background: var(--wemd-bg-soft, #f1f5f9);
@@ -189,19 +162,14 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
   font-family: "SF Mono", Monaco, Consolas, monospace;
 }
 
-#wemd .wemd-code-frame .wemd-component-body > p:first-child strong {
-  color: var(--wemd-text-strong, #1e293b);
-  font-weight: 600;
-}
-
 /* 代码内容（用代码块语法包裹的内容会自动生成 pre） */
-#wemd .wemd-code-frame .wemd-component-body > pre {
+#wemd .wemd-code-frame .wemd-cf-code pre {
   margin: 0;
   border-radius: 0;
   background: var(--wemd-bg-soft, #f8fafc);
 }
 
-#wemd .wemd-code-frame .wemd-component-body > pre code {
+#wemd .wemd-code-frame .wemd-cf-code pre code {
   display: block;
   padding: 16px;
   background: transparent;
@@ -272,6 +240,31 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
   margin-bottom: 0;
 }
 
+/* 列表项（用 ::before 自定义绿色圆点，替代微信不支持的 ::marker） */
+#wemd .wemd-callout-pro .wemd-component-body ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 8px 0;
+}
+
+#wemd .wemd-callout-pro .wemd-component-body ul li {
+  position: relative;
+  padding-left: 20px;
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--wemd-text-soft, #475569);
+  margin: 4px 0;
+}
+
+#wemd .wemd-callout-pro .wemd-component-body ul li::before {
+  content: "•";
+  position: absolute;
+  left: 4px;
+  color: var(--wemd-primary, #07c160);
+  font-weight: bold;
+  font-size: 18px;
+}
+
 /* === stats-block 数据统计块（accent 数字跳出来） === */
 #wemd .wemd-stats-block {
   margin: 24px 0;
@@ -281,17 +274,15 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
   border: 1px solid var(--wemd-primary-light, #d1fae5);
 }
 
-/* 第一个段落作为标题 */
-#wemd .wemd-stats-block .wemd-component-body > p:first-child {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--wemd-text-strong, #1a2332);
-  margin: 0 0 16px 0;
-  letter-spacing: 0.3px;
+/* 数据条目容器 */
+#wemd .wemd-stats-block .wemd-sb-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-/* 其余段落作为数据条目（每段一行） */
-#wemd .wemd-stats-block .wemd-component-body > p:not(:first-child) {
+/* 每条数据一行（value + label 两端对齐） */
+#wemd .wemd-stats-block .wemd-sb-items-item {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -303,31 +294,8 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
   color: var(--wemd-text-soft, #334155);
 }
 
-/* 段落中的 strong 作为数值高亮（用 accent 点缀色跳出来） */
-#wemd .wemd-stats-block .wemd-component-body > p:not(:first-child) strong {
-  color: var(--wemd-accent, #07c160);
-  font-size: 18px;
-  font-weight: 700;
-  font-family: "SF Mono", Monaco, Consolas, monospace;
-}
-
-/* 列表场景：每条 li 一项 */
-#wemd .wemd-stats-block .wemd-component-body ul {
-  list-style: none;
-  padding: 0;
-  margin: 8px 0 0 0;
-}
-
-#wemd .wemd-stats-block .wemd-component-body li {
-  padding: 8px 12px;
-  margin: 6px 0;
-  background: rgba(255, 255, 255, 0.7);
-  border-radius: 6px;
-  color: var(--wemd-text-soft, #334155);
-  font-size: 14px;
-}
-
-#wemd .wemd-stats-block .wemd-component-body li strong {
+/* 数值高亮（用 accent 点缀色跳出来） */
+#wemd .wemd-stats-block .wemd-sb-items-value {
   color: var(--wemd-accent, #07c160);
   font-size: 18px;
   font-weight: 700;
@@ -403,8 +371,9 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
   flex-wrap: wrap;
 }
 
-/* 第一张图片作为头像 */
-#wemd .wemd-author-card .wemd-component-body img:first-child {
+/* 第一张图片作为头像（兼容独立图片段落被 implicit-figures 包成 figure） */
+#wemd .wemd-author-card .wemd-component-body figure:first-child img,
+#wemd .wemd-author-card .wemd-component-body > p img:first-of-type {
   width: 64px;
   height: 64px;
   border-radius: 50%;
@@ -415,14 +384,14 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* 第一段作为名称 + 角色容器 */
-#wemd .wemd-author-card .wemd-component-body > p:first-child {
+/* 首段作为名称 + 角色容器（用 first-of-type，兼容 figure 先行） */
+#wemd .wemd-author-card .wemd-component-body > p:first-of-type {
   margin: 0;
   flex: 1;
   min-width: 0;
 }
 
-#wemd .wemd-author-card .wemd-component-body > p:first-child strong {
+#wemd .wemd-author-card .wemd-component-body > p:first-of-type strong {
   display: block;
   font-size: 17px;
   font-weight: 600;
@@ -430,7 +399,7 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
   margin-bottom: 4px;
 }
 
-#wemd .wemd-author-card .wemd-component-body > p:first-child em {
+#wemd .wemd-author-card .wemd-component-body > p:first-of-type em {
   display: block;
   font-style: normal;
   font-size: 13px;
@@ -438,7 +407,7 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
 }
 
 /* 后续段落作为简介 */
-#wemd .wemd-author-card .wemd-component-body > p:not(:first-child) {
+#wemd .wemd-author-card .wemd-component-body > p:not(:first-of-type) {
   font-size: 14px;
   color: var(--wemd-text-soft, #475569);
   line-height: 1.7;
@@ -446,7 +415,8 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
   width: 100%;
 }
 
-#wemd .wemd-author-card .wemd-component-body > p:last-child {
+/* 末段简介顶部分隔线（仅当存在不止一段 p 时，避免单段作者名被误加边框） */
+#wemd .wemd-author-card .wemd-component-body > p:last-of-type:not(:first-of-type) {
   margin-top: 8px;
   padding-top: 12px;
   border-top: 1px dashed var(--wemd-border, #e2e8f0);
@@ -462,7 +432,7 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
 }
 
 /* 标题段落 */
-#wemd .wemd-timeline .wemd-component-body > p:first-child {
+#wemd .wemd-timeline .wemd-tl-title {
   font-size: 15px;
   font-weight: 600;
   color: var(--wemd-text-strong, #1e293b);
@@ -470,32 +440,22 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
   letter-spacing: 0.3px;
 }
 
-/* 列表作为时间线主体 */
-#wemd .wemd-timeline .wemd-component-body ul,
-#wemd .wemd-timeline .wemd-component-body ol {
+/* 事件列表作为时间线主体。
+   竖线用容器 border-left 实现（纯原生边框，微信 100% 保留）。
+   不用绝对定位 span + top/bottom 拉伸：微信会丢弃 span 的 bottom，
+   导致竖线高度塌陷为 0 而消失。 */
+#wemd .wemd-timeline .wemd-tl-events {
   list-style: none;
-  padding: 0;
+  padding: 0 0 0 20px;
   margin: 0;
   position: relative;
-}
-
-/* 竖线（primary 色渐变） */
-#wemd .wemd-timeline .wemd-component-body ul::before,
-#wemd .wemd-timeline .wemd-component-body ol::before {
-  content: "";
-  position: absolute;
-  left: 7px;
-  top: 6px;
-  bottom: 6px;
-  width: 2px;
-  background: linear-gradient(to bottom, var(--wemd-primary, #07c160), var(--wemd-bg-muted, #d1fae5));
-  border-radius: 1px;
+  border-left: 2px solid var(--wemd-primary, #07c160);
 }
 
 /* 每一项 */
-#wemd .wemd-timeline .wemd-component-body li {
+#wemd .wemd-timeline .wemd-tl-item {
   position: relative;
-  padding: 8px 0 8px 28px;
+  padding: 8px 0;
   margin: 0;
   color: var(--wemd-text-soft, #334155);
   font-size: 14px;
@@ -503,11 +463,17 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
   list-style: none;
 }
 
-/* 圆点（primary 边框） */
-#wemd .wemd-timeline .wemd-component-body li::before {
-  content: "";
+#wemd .wemd-timeline .wemd-tl-text {
+  display: inline-block;
+  vertical-align: top;
+}
+
+/* 圆点（primary 边框，真实元素以兼容微信）。
+   水平居中落在容器左边框上：border(2) + padding(20) = item 起点 x=22，
+   left:-27 使圆点中心 = 22 - 27 + 6 = 1 = 边框中心。 */
+#wemd .wemd-timeline .wemd-tl-dot {
   position: absolute;
-  left: 2px;
+  left: -27px;
   top: 14px;
   width: 12px;
   height: 12px;
@@ -516,22 +482,5 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
   border: 2px solid var(--wemd-primary, #07c160);
   box-sizing: border-box;
   z-index: 1;
-}
-
-/* 加粗内容作为节点标题（primary 色） */
-#wemd .wemd-timeline .wemd-component-body li strong {
-  display: block;
-  color: var(--wemd-primary, #07c160);
-  font-size: 15px;
-  font-weight: 600;
-  margin-bottom: 2px;
-}
-
-/* li 内 section 不继承默认 li 样式 */
-#wemd .wemd-timeline .wemd-component-body li section {
-  color: var(--wemd-text-soft, #475569);
-  font-weight: 400;
-  margin: 0;
-  line-height: 1.7;
 }
 `;

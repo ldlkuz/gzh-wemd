@@ -23,12 +23,12 @@ export const shareCardWarmCss = `/* === share-card 温暖变体 === */
   border-top: 2px solid var(--wemd-primary, #07c160);
   background: linear-gradient(180deg, transparent 0%, var(--wemd-primary-alpha-4, rgba(7, 193, 96, 0.04)) 100%);
 }
-#wemd .wemd-share-card[data-variant="warm"] .wemd-component-body .wemd-child-1 {
+#wemd .wemd-share-card[data-variant="warm"] .wemd-sc-body {
   font-size: 15px;
   color: var(--wemd-text-strong, #1a1a1a);
   font-weight: 500;
 }
-#wemd .wemd-share-card[data-variant="warm"] .wemd-component-body .wemd-child-1 strong {
+#wemd .wemd-share-card[data-variant="warm"] .wemd-sc-body strong {
   color: var(--wemd-primary, #07c160);
   font-weight: 600;
 }`;
@@ -40,7 +40,7 @@ export const shareCardMinimalCss = `/* === share-card 极简变体 === */
   text-align: center;
   border-top: 1px solid var(--wemd-border, #e2e8f0);
 }
-#wemd .wemd-share-card[data-variant="minimal"] .wemd-component-body .wemd-child-1 {
+#wemd .wemd-share-card[data-variant="minimal"] .wemd-sc-body {
   font-size: 13px;
   color: var(--wemd-text-soft, #999999);
   letter-spacing: 0.5px;
@@ -55,7 +55,7 @@ export const shareCardTechCss = `/* === share-card 科技变体 === */
   border-radius: 12px;
   border: 1px solid var(--wemd-border, #e2e8f0);
 }
-#wemd .wemd-share-card[data-variant="tech"] .wemd-component-body .wemd-child-1 {
+#wemd .wemd-share-card[data-variant="tech"] .wemd-sc-body {
   font-size: 14px;
   color: var(--wemd-text-soft, #666666);
   font-family: "SF Mono", Monaco, monospace;
@@ -74,7 +74,7 @@ export const quoteCardClassicCss = `/* === quote-card 经典竖线 === */
   margin: 24px 0;
   border-radius: 0 var(--wemd-border-radius, 4px) var(--wemd-border-radius, 4px) 0;
 }
-#wemd .wemd-quote-card[data-variant="classic"] .wemd-component-body > p {
+#wemd .wemd-quote-card[data-variant="classic"] .wemd-qc-quote {
   font-size: 16px;
   color: var(--wemd-text-normal, #34495e);
   line-height: 1.8;
@@ -98,7 +98,7 @@ export const quoteCardQuotationCss = `/* === quote-card 大引号 === */
   line-height: 0.8;
   margin-bottom: 8px;
 }
-#wemd .wemd-quote-card[data-variant="quotation"] .wemd-component-body > p {
+#wemd .wemd-quote-card[data-variant="quotation"] .wemd-qc-quote {
   font-size: 18px;
   color: var(--wemd-text-strong, #1a1a1a);
   line-height: 1.9;
@@ -116,13 +116,13 @@ export const quoteCardCardCss = `/* === quote-card 卡片式 === */
   margin: 24px 0;
   box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
-#wemd .wemd-quote-card[data-variant="card"] .wemd-component-body > p {
+#wemd .wemd-quote-card[data-variant="card"] .wemd-qc-quote {
   font-size: 15px;
   color: var(--wemd-text-normal, #34495e);
   line-height: 1.75;
   margin: 0;
 }
-#wemd .wemd-quote-card[data-variant="card"] .wemd-component-body > p strong {
+#wemd .wemd-quote-card[data-variant="card"] .wemd-qc-author {
   color: var(--wemd-primary-dark, #0a8f4a);
 }`;
 
@@ -136,7 +136,7 @@ export const ctaCardPillCss = `/* === cta-card 胶囊按钮 === */
   margin: 32px 0;
   text-align: center;
 }
-#wemd .wemd-cta-card[data-variant="pill"] .wemd-component-body {
+#wemd .wemd-cta-card[data-variant="pill"] .wemd-cta-body {
   display: inline-block;
   padding: 12px 32px;
   background: var(--wemd-primary, #07c160);
@@ -147,9 +147,12 @@ export const ctaCardPillCss = `/* === cta-card 胶囊按钮 === */
   letter-spacing: 0.5px;
   box-shadow: 0 4px 14px rgba(0,0,0,0.15);
 }
-#wemd .wemd-cta-card[data-variant="pill"] .wemd-component-body > p {
+#wemd .wemd-cta-card[data-variant="pill"] .wemd-cta-title {
   color: #fff;
-  margin: 0;
+  margin: 0 0 4px 0;
+}
+#wemd .wemd-cta-card[data-variant="pill"] .wemd-cta-action {
+  color: #fff;
 }`;
 
 /** cta-card 全宽横幅 */
@@ -161,13 +164,15 @@ export const ctaCardBannerCss = `/* === cta-card 全宽横幅 === */
   border-radius: 8px;
   text-align: center;
 }
-#wemd .wemd-cta-card[data-variant="banner"] .wemd-component-body > p {
+#wemd .wemd-cta-card[data-variant="banner"] .wemd-cta-title,
+#wemd .wemd-cta-card[data-variant="banner"] .wemd-cta-body,
+#wemd .wemd-cta-card[data-variant="banner"] .wemd-cta-action {
   color: #fff;
   font-size: 16px;
   font-weight: 500;
   margin: 0;
 }
-#wemd .wemd-cta-card[data-variant="banner"] .wemd-component-body strong {
+#wemd .wemd-cta-card[data-variant="banner"] .wemd-cta-title strong {
   color: #fff;
   font-weight: 700;
 }`;
@@ -182,7 +187,9 @@ export const ctaCardMinimalCss = `/* === cta-card 极简 === */
   text-align: center;
   background: transparent;
 }
-#wemd .wemd-cta-card[data-variant="minimal"] .wemd-component-body > p {
+#wemd .wemd-cta-card[data-variant="minimal"] .wemd-cta-title,
+#wemd .wemd-cta-card[data-variant="minimal"] .wemd-cta-body,
+#wemd .wemd-cta-card[data-variant="minimal"] .wemd-cta-action {
   color: var(--wemd-primary, #07c160);
   font-size: 15px;
   font-weight: 500;
@@ -199,13 +206,13 @@ export const dividerFancyLineCss = `/* === divider-fancy 细线 === */
   margin: 32px 0;
   text-align: center;
 }
-#wemd .wemd-divider-fancy[data-variant="line"] .wemd-component-body::before {
+#wemd .wemd-divider-fancy[data-variant="line"] .wemd-df-label::before,
+#wemd .wemd-divider-fancy[data-variant="line"] .wemd-df-label::after {
   content: "";
-  display: block;
+  flex: none;
   width: 60px;
   height: 2px;
   background: var(--wemd-primary, #07c160);
-  margin: 0 auto 8px;
 }`;
 
 /** divider-fancy 渐变 */
@@ -214,12 +221,12 @@ export const dividerFancyGradientCss = `/* === divider-fancy 渐变 === */
   margin: 32px 0;
   text-align: center;
 }
-#wemd .wemd-divider-fancy[data-variant="gradient"] .wemd-component-body::before {
+#wemd .wemd-divider-fancy[data-variant="gradient"] .wemd-df-label::before,
+#wemd .wemd-divider-fancy[data-variant="gradient"] .wemd-df-label::after {
   content: "";
-  display: block;
+  flex: none;
+  width: 100px;
   height: 3px;
-  max-width: 200px;
-  margin: 0 auto 10px;
   background: linear-gradient(90deg, transparent, var(--wemd-primary, #07c160), transparent);
   border-radius: 2px;
 }`;
@@ -234,8 +241,13 @@ export const dividerFancyDotsCss = `/* === divider-fancy 圆点 === */
   font-size: 8px;
   line-height: 1;
 }
-#wemd .wemd-divider-fancy[data-variant="dots"] .wemd-component-body::before {
+#wemd .wemd-divider-fancy[data-variant="dots"] .wemd-df-label::before,
+#wemd .wemd-divider-fancy[data-variant="dots"] .wemd-df-label::after {
   content: "●●●";
+  flex: none;
+  width: auto;
+  height: auto;
+  background: none;
 }`;
 
 // ============================================================
@@ -270,7 +282,7 @@ export const heroBannerCenterCss = `/* === hero-banner 居中渐变 === */
   padding: 44px 36px;
   text-align: center;
 }
-#wemd .wemd-hero-banner .wemd-component-body[data-variant="center"] .wemd-child-1 {
+#wemd .wemd-hero-banner[data-variant="center"] .wemd-hb-title {
   font-size: 28px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
 }`;
@@ -299,11 +311,11 @@ export const heroBannerLeftCss = `/* === hero-banner 左对齐 === */
   padding: 36px 32px 36px 28px;
   text-align: left;
 }
-#wemd .wemd-hero-banner .wemd-component-body[data-variant="left"] .wemd-child-1 {
+#wemd .wemd-hero-banner[data-variant="left"] .wemd-hb-title {
   font-size: 24px;
   letter-spacing: 0.8px;
 }
-#wemd .wemd-hero-banner .wemd-component-body[data-variant="left"] .wemd-child-2 {
+#wemd .wemd-hero-banner[data-variant="left"] .wemd-hb-subtitle {
   font-size: 13px;
 }`;
 
@@ -331,12 +343,12 @@ export const heroBannerMinimalCss = `/* === hero-banner 极简 === */
   padding: 30px 28px 26px 28px;
   text-align: center;
 }
-#wemd .wemd-hero-banner .wemd-component-body[data-variant="minimal"] .wemd-child-1 {
+#wemd .wemd-hero-banner[data-variant="minimal"] .wemd-hb-title {
   font-size: 22px;
   letter-spacing: 0.6px;
   color: var(--wemd-text-strong, #1a1a1a);
 }
-#wemd .wemd-hero-banner .wemd-component-body[data-variant="minimal"] .wemd-child-2 {
+#wemd .wemd-hero-banner[data-variant="minimal"] .wemd-hb-subtitle {
   font-size: 13px;
 }`;
 
@@ -389,7 +401,7 @@ export const calloutProMinimalCss = `/* === callout-pro 极简图标 === */
 #wemd .wemd-callout-pro[data-variant="minimal"]::before {
   display: none;
 }
-#wemd .wemd-callout-pro .wemd-component-body[data-variant="minimal"] .wemd-child-1 {
+#wemd .wemd-callout-pro[data-variant="minimal"] .wemd-cp-body {
   font-size: 15px;
   color: var(--wemd-text-strong, #1e293b);
 }`;

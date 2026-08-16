@@ -704,6 +704,18 @@ const themeLuxuryGold: ThemeDefinition = {
     tone: ["elegant", "warm"],
     defaultVariants: { "share-card": "warm" },
   },
+  // Phase 5：黑金奢华定制杂志封面骨架（装饰前置 + 金色分隔）
+  templates: {
+    "magazine-cover": [
+      '<section class="wemd-component wemd-magazine-cover" data-component="magazine-cover">',
+      '<section class="wemd-mc-ornament"></section>',
+      '<section class="wemd-mc-title">{{slot:title}}</section>',
+      '<section class="wemd-mc-subtitle">{{slot:subtitle}}</section>',
+      '<section class="wemd-mc-divider">{{slot:divider}}</section>',
+      '<section class="wemd-mc-desc">{{slot:desc}}</section>',
+      "</section>",
+    ].join("\n"),
+  },
 };
 
 // ============================================================
@@ -884,6 +896,36 @@ const themeModernEditorial: ThemeDefinition = {
     defaultVariants: { "share-card": "minimal" },
   },
   codeTheme: "github-dark",
+  // Phase 5：编辑部手记定制杂志类组件骨架（区别于内置默认）
+  templates: {
+    "magazine-cover": [
+      '<section class="wemd-component wemd-magazine-cover" data-component="magazine-cover">',
+      '<section class="wemd-mc-kicker">{{slot:subtitle}}</section>',
+      '<section class="wemd-mc-title">{{slot:title}}</section>',
+      '<section class="wemd-mc-divider">{{slot:divider}}</section>',
+      '<section class="wemd-mc-desc">{{slot:desc}}</section>',
+      "</section>",
+    ].join("\n"),
+    "section-divider": [
+      '<section class="wemd-component wemd-section-divider" data-component="section-divider">',
+      '<section class="wemd-sd-part">{{slot:part}}</section>',
+      '<section class="wemd-sd-title">{{slot:title}}</section>',
+      "</section>",
+    ].join("\n"),
+    "full-quote": [
+      '<section class="wemd-component wemd-full-quote" data-component="full-quote">',
+      '<section class="wemd-fq-quote-mark">“</section>',
+      '<section class="wemd-fq-text">{{slot:text}}</section>',
+      "</section>",
+    ].join("\n"),
+    "end-card": [
+      '<section class="wemd-component wemd-end-card" data-component="end-card">',
+      '<section class="wemd-ec-deco">{{slot:deco}}</section>',
+      '<section class="wemd-ec-title">{{slot:title}}</section>',
+      '<section class="wemd-ec-subtitle">{{slot:subtitle}}</section>',
+      "</section>",
+    ].join("\n"),
+  },
 };
 
 // ============================================================
@@ -964,6 +1006,24 @@ const themeReceipt: ThemeDefinition = {
     density: "low",
     tone: ["playful", "minimal"],
     defaultVariants: { "share-card": "minimal" },
+  },
+  // Phase 5：购物小票定制小票风骨架（虚线分隔、编号圆点）
+  templates: {
+    "quote-card": [
+      '<section class="wemd-component wemd-quote-card" data-component="quote-card">',
+      '<div class="wemd-component-body">{{slot:body}}</div>',
+      "</section>",
+    ].join("\n"),
+    "divider-fancy": [
+      '<section class="wemd-component wemd-divider-fancy" data-component="divider-fancy">',
+      '<div class="wemd-component-body">{{slot:body}}</div>',
+      "</section>",
+    ].join("\n"),
+    "numbered-heading": [
+      '<section class="wemd-component wemd-numbered-heading" data-component="numbered-heading">',
+      '<div class="wemd-component-body">{{slot:body}}</div>',
+      "</section>",
+    ].join("\n"),
   },
 };
 

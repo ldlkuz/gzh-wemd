@@ -3,10 +3,7 @@ import toast from "react-hot-toast";
 import { useEditorStore } from "../../store/editorStore";
 import { useThemeStore } from "../../store/themeStore";
 import type { ImportResult } from "../../store/themeStore";
-import {
-  isThemeSelectable,
-  type ThemeDefinition,
-} from "../../store/themes/builtInThemes";
+import { isThemeSelectable } from "../../store/themes/builtInThemes";
 import { useHistoryStore } from "../../store/historyStore";
 import { platformActions } from "../../lib/platformAdapter";
 import { type DesignerVariables, defaultVariables } from "./ThemeDesigner";
@@ -81,9 +78,7 @@ export function ThemePanel({ open, onClose }: ThemePanelProps) {
   );
   const [exportMenuOpen, setExportMenuOpen] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [editorMode, setEditorMode] = useState<"visual" | "css" | "ai">(
-    "visual",
-  );
+  const [editorMode, setEditorMode] = useState<"visual" | "css">("visual");
   // Phase 7: 导入相关 UI 状态
   const [importMenuOpen, setImportMenuOpen] = useState(false);
   const importMenuRef = useRef<HTMLDivElement | null>(null);
@@ -93,6 +88,7 @@ export function ThemePanel({ open, onClose }: ThemePanelProps) {
   const [importErrors, setImportErrors] = useState<ValidationError[]>([]);
   const [showOverrideModal, setShowOverrideModal] = useState(false);
   const [overrideInfo, setOverrideInfo] = useState<{
+    existingThemeId: string;
     existingName: string;
     existingVersion: string;
     newVersion: string;
@@ -104,9 +100,6 @@ export function ThemePanel({ open, onClose }: ThemePanelProps) {
     DesignerVariables | undefined
   >(undefined);
   const [useCurrentArticle, setUseCurrentArticle] = useState(true);
-  const [pendingDefinition, setPendingDefinition] = useState<
-    ThemeDefinition | undefined
-  >(undefined);
 
   const selectedTheme = allThemes.find((item) => item.id === selectedThemeId);
   const isCustomTheme = selectedTheme && !selectedTheme.isBuiltIn;
@@ -200,36 +193,11 @@ export function ThemePanel({ open, onClose }: ThemePanelProps) {
     setDesignerVariables(undefined);
     setOriginalDesignerVariables(undefined);
     setShowDeleteConfirm(false);
-    setPendingDefinition(undefined);
   };
 
-  const handleSelectCreationMode = (mode: "visual" | "css" | "ai") => {
+  const handleSelectCreationMode = (mode: "visual" | "css") => {
     setEditorMode(mode);
     setCreationStep("editing");
-  };
-
-  /** AI 生成完成后,推送 CSS 到预览区,建议名称,不切 CSS 模式 */
-  const handleAiGenerated = (css: string, definition?: ThemeDefinition) => {
-    setCssInput(css);
-    setVisualCss(css);
-    setPendingDefinition(definition);
-    // AI 建议名称
-    if (definition?.meta?.name) {
-      setNameInput(definition.meta.name);
-    }
-  };
-
-  /** AI 预览 CSS 实时更新 */
-  const handlePreviewCss = (css: string) => {
-    setVisualCss(css);
-    setCssInput(css);
-  };
-
-  /** AI 建议主题名称 */
-  const handleNameSuggestion = (name: string) => {
-    if (!nameInput.trim()) {
-      setNameInput(name);
-    }
   };
 
   const handleVisualCssChange = (nextCss: string) => {
@@ -328,14 +296,12 @@ export function ThemePanel({ open, onClose }: ThemePanelProps) {
     if (isCreating) {
       const cssToSave =
         editorMode === "visual" ? visualCss || cssInput : cssInput;
-      // AI 模式产物为 CSS,保存时归一化为 "css" 模式
       const savedMode = editorMode === "visual" ? "visual" : "css";
       const newTheme = createTheme(
         nameInput,
         savedMode,
         cssToSave,
         savedMode === "visual" ? designerVariables : undefined,
-        pendingDefinition,
       );
       selectTheme(newTheme.id);
 
@@ -436,21 +402,22 @@ export function ThemePanel({ open, onClose }: ThemePanelProps) {
 
   const handleImportThemeFile = async (file: File) => {
     const result = await importTheme(file);
-    handleImportResult(result);
+    handleImportResult(result, file);
   };
 
-  const handleImportResult = (result: ImportResult) => {
+  const handleImportResult = (result: ImportResult, file?: File) => {
     if (result.ok) {
       toast.success("主题导入成功");
       setShowPasteModal(false);
       setPasteJsonText("");
     } else if (result.duplicate) {
-      // 同名覆盖确认
+      // 同名覆盖确认：保留原始文件，供用户确认覆盖时重新导入
       setOverrideInfo({
+        existingThemeId: result.duplicate.existingTheme.id,
         existingName: result.duplicate.existingTheme.name,
         existingVersion: result.duplicate.existingTheme.sdkVersion ?? "?",
-        newVersion: "?", // 从文件无法在此时获取，用 placeholder
-        file: new File([], ""), // 会在实际使用时替换
+        newVersion: "?",
+        file: file ?? new File([], ""),
       });
       setShowOverrideModal(true);
     } else {
@@ -465,12 +432,11 @@ export function ThemePanel({ open, onClose }: ThemePanelProps) {
       toast.error("请粘贴 JSON 内容");
       return;
     }
-    const result = await importTheme(
-      new File([pasteJsonText], "pasted-theme.json", {
-        type: "application/json",
-      }),
-    );
-    handleImportResult(result);
+    const pasteFile = new File([pasteJsonText], "pasted-theme.json", {
+      type: "application/json",
+    });
+    const result = await importTheme(pasteFile);
+    handleImportResult(result, pasteFile);
   };
 
   const handleOpenPasteModal = () => {
@@ -512,6 +478,7 @@ export function ThemePanel({ open, onClose }: ThemePanelProps) {
       useCurrentArticle={useCurrentArticle}
       previewCss={previewCss}
       designerVariables={designerVariables}
+      themeDefinition={selectedTheme?.definition}
       nameInput={nameInput}
       cssInput={cssInput}
       canSave={canSave}
@@ -547,9 +514,6 @@ export function ThemePanel({ open, onClose }: ThemePanelProps) {
       onDeleteClick={handleDeleteClick}
       onSave={handleSave}
       onApply={handleApply}
-      onAiGenerated={handleAiGenerated}
-      onPreviewCss={handlePreviewCss}
-      onNameSuggestion={handleNameSuggestion}
       // Phase 7
       importMenuOpen={importMenuOpen}
       importMenuRef={importMenuRef}
@@ -579,6 +543,10 @@ export function ThemePanel({ open, onClose }: ThemePanelProps) {
       onOverrideReplace={async () => {
         setShowOverrideModal(false);
         if (overrideInfo?.file) {
+          // 先删除旧主题，否则 importTheme 会再次检测到同名而返回 duplicate，覆盖永远失败
+          if (overrideInfo.existingThemeId) {
+            deleteTheme(overrideInfo.existingThemeId);
+          }
           const result = await importTheme(overrideInfo.file);
           if (result.ok) toast.success("主题已覆盖导入");
           else toast.error(result.errors?.[0]?.message ?? "覆盖失败");

@@ -1,9 +1,17 @@
 /**
  * validate-theme.cjs — 验证主题包 manifest.json 是否符合规范
  *
- * 用法：node scripts/validate-theme.cjs
+ * 用法：node scripts/validate-theme.cjs [theme-name]
  */
 const path = require("path");
+
+// ============================================================
+// 配置
+// ============================================================
+const ROOT = path.resolve(__dirname, "..");
+
+// 主题名称（默认 intelligent-precision，可通过命令行参数指定，如 node scripts/validate-theme.cjs mountain-mist）
+const THEME_NAME = process.argv[2] || "intelligent-precision";
 
 // 加载主程序 validator
 const { validateThemePackageManifest } = require(
@@ -11,7 +19,7 @@ const { validateThemePackageManifest } = require(
 );
 
 const manifest = require(
-  path.resolve(__dirname, "../output/theme-package/manifest.json"),
+  path.join(ROOT, "themes", THEME_NAME, "package", "manifest.json"),
 );
 
 console.log("🔍 验证 manifest.json...\n");

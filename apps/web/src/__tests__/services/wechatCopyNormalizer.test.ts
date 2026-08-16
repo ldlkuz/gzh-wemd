@@ -256,4 +256,20 @@ describe("wechatCopyNormalizer", () => {
     expect(innerP.style.backgroundColor).toBe("");
     expect(outerP.style.backgroundColor).toBe("rgb(255, 255, 255)");
   });
+
+  it("renders quote-card without any absolute-positioned quote mark element", () => {
+    const container = document.createElement("div");
+    container.innerHTML =
+      '<section id="wemd"><section class="wemd-component wemd-quote-card"><section class="wemd-qc-quote">约束是创造力的朋友</section><section class="wemd-qc-author">—— 设计师箴言</section></section></section>';
+
+    normalizeCopyContainer(container);
+
+    // 新设计（方向 D：上下装饰线）不再包含引号标记元素，避免微信端上下结构错乱
+    expect(container.querySelector(".wemd-qc-mark")).toBeNull();
+    const quote = container.querySelector(".wemd-qc-quote") as HTMLElement;
+    expect(quote).toBeTruthy();
+    expect(quote.textContent).toBe("约束是创造力的朋友");
+    const author = container.querySelector(".wemd-qc-author") as HTMLElement;
+    expect(author).toBeTruthy();
+  });
 });

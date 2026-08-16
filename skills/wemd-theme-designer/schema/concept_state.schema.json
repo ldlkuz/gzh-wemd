@@ -1,0 +1,76 @@
+{
+  "$schema": "ConceptState",
+  "description": "Stage 2 输出：视觉概念状态。包含核心概念名称、描述、视觉关键词和情感方向。",
+
+  "type": "object",
+  "required": [
+    "concept_name",
+    "core_concept",
+    "visual_metaphors",
+    "emotional_direction"
+  ],
+
+  "properties": {
+    "concept_name": {
+      "type": "string",
+      "description": "概念名称，如 'Experimental Energy'"
+    },
+    "core_concept": {
+      "type": "string",
+      "description": "核心概念描述，如 '通过实验感和探索感表达未来创新'"
+    },
+    "visual_metaphors": {
+      "type": "array",
+      "description": "视觉母题候选（建议 3 个）。把抽象的品牌概念锚定为具象、可感知的视觉隐喻，供用户选择。禁止使用行业风格词（如 technology、modern、blue、gradient），必须给出图形化、可被视觉化的具体意象。",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "required": [
+          "metaphor_name",
+          "reason",
+          "visual_objects",
+          "material_language",
+          "motion_character"
+        ],
+        "properties": {
+          "metaphor_name": {
+            "type": "string",
+            "description": "母题名称，如 '精密仪器实验室'、'工业工程图纸'、'金融市场数据终端'"
+          },
+          "reason": {
+            "type": "string",
+            "description": "推导依据：说明该母题如何从品牌档案的差异化信号（industry / customer / desired_impression / avoid / personality）推导而来，确保可追溯。"
+          },
+          "visual_objects": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "具象视觉对象，如 ['grid', 'measurement', 'technical drawing', 'calibration marks']"
+          },
+          "material_language": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "材质语言，如 ['metal', 'glass', 'paper', 'plastic']"
+          },
+          "motion_character": {
+            "type": "string",
+            "description": "动势性格，如 'calm precise'、'rapid electric'"
+          }
+        }
+      }
+    },
+    "visual_keywords": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "视觉关键词。必须能从所选母题的 visual_objects / material_language 追溯来源，不得凭空产生。"
+    },
+    "emotional_direction": {
+      "type": "object",
+      "required": ["primary", "secondary"],
+      "properties": {
+        "primary": { "type": "string", "description": "主要情感方向" },
+        "secondary": { "type": "string", "description": "次要情感方向" }
+      }
+    }
+  }
+}

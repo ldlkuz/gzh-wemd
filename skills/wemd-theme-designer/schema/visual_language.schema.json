@@ -1,0 +1,86 @@
+{
+  "$schema": "VisualLanguageState",
+  "description": "Stage 3 输出：视觉语言状态。包含颜色、排版、布局、形状、图片等方向性描述。使用 Design Tokens 受控词汇。",
+
+  "type": "object",
+  "required": ["color_direction", "typography", "layout", "shape", "image"],
+
+  "properties": {
+    "color_direction": {
+      "type": "object",
+      "required": ["contrast", "character", "usage"],
+      "properties": {
+        "contrast": {
+          "type": "string",
+          "description": "Design Token: contrast",
+          "enum": ["soft", "normal", "high", "extreme"]
+        },
+        "character": {
+          "type": "string",
+          "description": "色彩性格，如 'vivid', 'muted', 'warm', 'cold'"
+        },
+        "usage": {
+          "type": "string",
+          "description": "色彩使用方式，如 'accent_driven', 'full_palette', 'monochrome'"
+        }
+      }
+    },
+    "typography": {
+      "type": "object",
+      "required": ["character", "hierarchy"],
+      "properties": {
+        "character": {
+          "type": "string",
+          "description": "排版性格，如 'bold', 'elegant', 'technical'"
+        },
+        "hierarchy": {
+          "type": "string",
+          "description": "层级强度，如 'strong', 'subtle', 'flat'"
+        }
+      }
+    },
+    "layout": {
+      "type": "object",
+      "required": ["composition", "alignment", "density"],
+      "properties": {
+        "composition": {
+          "type": "string",
+          "description": "构图方式，如 'editorial', 'grid', 'freeform'"
+        },
+        "alignment": {
+          "type": "string",
+          "description": "对齐方式，如 'dynamic', 'center', 'strict'"
+        },
+        "density": {
+          "type": "string",
+          "description": "Design Token: density",
+          "enum": ["compact", "normal", "spacious", "dramatic"]
+        }
+      }
+    },
+    "shape": {
+      "type": "object",
+      "required": ["character"],
+      "properties": {
+        "character": {
+          "type": "string",
+          "description": "形状性格，如 'geometric', 'organic', 'sharp', 'rounded'"
+        }
+      }
+    },
+    "image": {
+      "type": "object",
+      "required": ["style", "treatment"],
+      "properties": {
+        "style": {
+          "type": "string",
+          "description": "图片风格，如 'experimental', 'documentary', 'illustration'"
+        },
+        "treatment": {
+          "type": "string",
+          "description": "图片处理方式，如 'dramatic', 'natural', 'minimal'"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "$schema": "CreativeTheme",
+  "description": "创意阶段（Stage 1-3）设计稿。不包含任何组件概念，是纯视觉方案。",
+  "type": "object",
+  "required": ["schema", "brand", "creative_direction", "page_design"],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "CreativeTheme"
+    },
+    "brand": {
+      "type": "object",
+      "required": ["name", "type", "personality", "industry", "customer"],
+      "properties": {
+        "name": { "type": "string" },
+        "type": {
+          "type": "string",
+          "enum": [
+            "enterprise",
+            "creator",
+            "media",
+            "product",
+            "institution",
+            "community"
+          ]
+        },
+        "personality": { "type": "array", "items": { "type": "string" } },
+        "industry": { "type": "string" },
+        "customer": { "type": "string" }
+      }
+    },
+    "creative_direction": {
+      "type": "object",
+      "required": [
+        "concept",
+        "visual_story",
+        "emotional_tone",
+        "visual_keywords"
+      ],
+      "properties": {
+        "concept": { "type": "string" },
+        "visual_story": { "type": "string" },
+        "emotional_tone": { "type": "string" },
+        "visual_keywords": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "page_design": {
+      "type": "object",
+      "description": "文章可按视觉区域划分，key 为区域名（如 hero/content/highlight），value 描述该区域视觉感受",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["description", "visual_character"],
+        "properties": {
+          "description": { "type": "string" },
+          "visual_character": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  }
+}

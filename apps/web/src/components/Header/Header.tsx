@@ -247,7 +247,10 @@ export function Header() {
             ) : (
               <DefaultLogoMark />
             )}
-            <span className="logo-text">WeMD</span>
+            <div className="logo-text-group">
+              <span className="logo-text">WeMD</span>
+              <span className="logo-subtitle">AI版</span>
+            </div>
           </div>
 
           <div className="header-nav">

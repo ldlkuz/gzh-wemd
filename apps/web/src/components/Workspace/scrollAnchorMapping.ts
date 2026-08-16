@@ -5,113 +5,112 @@ export interface ScrollAnchor {
   bottom: number;
 }
 
-interface AnchorPoint {
-  line: number;
-  offset: number;
-}
-
 const clamp = (value: number, min: number, max: number): number =>
   Math.min(Math.max(value, min), max);
 
-const buildAnchorPoints = (anchors: ScrollAnchor[]): AnchorPoint[] => {
-  const points = anchors.flatMap(({ startLine, endLine, top, bottom }) => [
-    { line: startLine, offset: top },
-    { line: Math.max(startLine, endLine), offset: Math.max(top, bottom) },
-  ]);
+const anchorHeight = (a: ScrollAnchor): number => Math.max(0, a.bottom - a.top);
+const anchorLines = (a: ScrollAnchor): number =>
+  Math.max(1, a.endLine - a.startLine);
 
-  points.sort((left, right) =>
-    left.line === right.line
-      ? left.offset - right.offset
-      : left.line - right.line,
-  );
-
-  if (points.length === 0) return [];
-
-  // 哨兵锚点：确保 line=0 总是映射到 offset=0，避免顶部组件（如目录卡片）被滚动跳过
-  const normalized: AnchorPoint[] = [{ line: 0, offset: 0 }];
-  points.forEach((point) => {
-    const previous = normalized.at(-1)!;
-    if (previous.line === point.line) {
-      previous.offset = Math.min(previous.offset, point.offset);
-      return;
-    }
-
-    normalized.push({
-      line: point.line,
-      offset: Math.max(previous.offset, point.offset),
-    });
-  });
-  return normalized;
-};
-
-const interpolate = (
-  value: number,
-  leftInput: number,
-  rightInput: number,
-  leftOutput: number,
-  rightOutput: number,
-): number => {
-  if (rightInput <= leftInput) return leftOutput;
-  const progress = (value - leftInput) / (rightInput - leftInput);
-  return leftOutput + progress * (rightOutput - leftOutput);
-};
-
-const findBounds = <T>(
-  items: T[],
-  value: number,
-  getValue: (item: T) => number,
-): [T, T] => {
-  let low = 0;
-  let high = items.length - 1;
-
-  while (low <= high) {
-    const middle = Math.floor((low + high) / 2);
-    if (getValue(items[middle]) < value) low = middle + 1;
-    else high = middle - 1;
+/**
+ * 找到"包含某源码行"的最精确锚点元素。
+ * 每个段落/标题/组件都是一个独立的对齐点，编辑器滚到该元素起始行时，
+ * 预览精确滚到该元素顶部——不再做跨元素的线性插值，从根源上消除漂移。
+ */
+const findAnchorContainingLine = (
+  anchors: ScrollAnchor[],
+  sourceLine: number,
+): ScrollAnchor | null => {
+  let best: ScrollAnchor | null = null;
+  for (const a of anchors) {
+    if (sourceLine < a.startLine || sourceLine > a.endLine) continue;
+    if (!best || anchorLines(a) < anchorLines(best)) best = a;
   }
-
-  const rightIndex = clamp(low, 0, items.length - 1);
-  const leftIndex = clamp(rightIndex - 1, 0, items.length - 1);
-  return [items[leftIndex], items[rightIndex]];
+  return best;
 };
 
+/** sourceLine 落在锚点空隙（元素之间的行）时，取"起始行 ≤ 该行"中起始行最大的前一个元素 */
+const findAnchorBeforeLine = (
+  anchors: ScrollAnchor[],
+  sourceLine: number,
+): ScrollAnchor | null => {
+  let best: ScrollAnchor | null = null;
+  for (const a of anchors) {
+    if (a.startLine <= sourceLine && (!best || a.startLine > best.startLine)) {
+      best = a;
+    }
+  }
+  return best;
+};
+
+/** 找到"包含某滚动偏移"的最精确锚点元素 */
+const findAnchorContainingOffset = (
+  anchors: ScrollAnchor[],
+  offset: number,
+): ScrollAnchor | null => {
+  let best: ScrollAnchor | null = null;
+  for (const a of anchors) {
+    if (offset < a.top || offset > a.bottom) continue;
+    if (!best || anchorHeight(a) < anchorHeight(best)) best = a;
+  }
+  return best;
+};
+
+/** offset 落在元素间距空隙时，取"顶部 ≤ 该偏移"中顶部最大的前一个元素 */
+const findAnchorBeforeOffset = (
+  anchors: ScrollAnchor[],
+  offset: number,
+): ScrollAnchor | null => {
+  let best: ScrollAnchor | null = null;
+  for (const a of anchors) {
+    if (a.top <= offset && (!best || a.top > best.top)) best = a;
+  }
+  return best;
+};
+
+/**
+ * 编辑器滚动到某源码行时，预览应滚动到的位置。
+ * 定位到"包含该行"的渲染元素，元素内部才按比例细分；元素之间不做跨元素插值。
+ */
 export const mapSourceLineToScrollTop = (
   anchors: ScrollAnchor[],
   sourceLine: number,
   maxScrollTop: number,
   fallbackRatio: number,
 ): number => {
-  const points = buildAnchorPoints(anchors);
-  if (points.length === 0) {
+  if (anchors.length === 0) {
     return clamp(fallbackRatio, 0, 1) * Math.max(0, maxScrollTop);
   }
-
-  const [left, right] = findBounds(points, sourceLine, (point) => point.line);
-  const offset = interpolate(
-    sourceLine,
-    left.line,
-    right.line,
-    left.offset,
-    right.offset,
+  const anchor =
+    findAnchorContainingLine(anchors, sourceLine) ??
+    findAnchorBeforeLine(anchors, sourceLine) ??
+    anchors[0];
+  const ratio = clamp(
+    (sourceLine - anchor.startLine) / anchorLines(anchor),
+    0,
+    1,
   );
-  return clamp(offset, 0, Math.max(0, maxScrollTop));
+  const target = anchor.top + ratio * anchorHeight(anchor);
+  return clamp(target, 0, Math.max(0, maxScrollTop));
 };
 
+/**
+ * 预览滚动到某位置时，对应的源码行。
+ * 定位到"包含该偏移"的渲染元素，元素内部才按比例细分。
+ */
 export const mapScrollTopToSourceLine = (
   anchors: ScrollAnchor[],
   scrollTop: number,
 ): number | null => {
-  const points = buildAnchorPoints(anchors);
-  if (points.length === 0) return null;
-  if (scrollTop <= points[0].offset) return points[0].line;
-  if (scrollTop >= points.at(-1)!.offset) return points.at(-1)!.line;
-
-  const [left, right] = findBounds(points, scrollTop, (point) => point.offset);
-  return interpolate(
-    scrollTop,
-    left.offset,
-    right.offset,
-    left.line,
-    right.line,
+  if (anchors.length === 0) return null;
+  const anchor =
+    findAnchorContainingOffset(anchors, scrollTop) ??
+    findAnchorBeforeOffset(anchors, scrollTop) ??
+    anchors[0];
+  const ratio = clamp(
+    (scrollTop - anchor.top) / Math.max(1, anchorHeight(anchor)),
+    0,
+    1,
   );
+  return anchor.startLine + ratio * anchorLines(anchor);
 };

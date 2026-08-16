@@ -35,7 +35,7 @@ describe("copyAsHtml", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocked.buildWechatPublishHtml.mockResolvedValue({
-      html: "<section id=\"wemd\"><h1>Hello</h1></section>",
+      html: '<section id="wemd"><h1>Hello</h1></section>',
       cleanup: mocked.cleanup,
     });
     Object.defineProperty(window, "electron", {
@@ -51,9 +51,19 @@ describe("copyAsHtml", () => {
 
     await copyAsHtml("# Hello");
 
-    expect(mocked.buildWechatPublishHtml).toHaveBeenCalledWith("# Hello", "", {});
+    expect(mocked.buildWechatPublishHtml).toHaveBeenCalledWith(
+      "# Hello",
+      "",
+      {},
+    );
     expect(writeText).toHaveBeenCalledWith(
-      "<section id=\"wemd\"><h1>Hello</h1></section>",
+      expect.stringContaining('<section id="wemd">'),
+    );
+    expect(writeText).toHaveBeenCalledWith(
+      expect.stringContaining("<h1>Hello</h1>"),
+    );
+    expect(writeText).toHaveBeenCalledWith(
+      expect.stringMatching(/<section id="wemd">\s*\n\s*<h1>Hello<\/h1>/),
     );
     expect(mocked.toastSuccess).toHaveBeenCalledWith("已复制 HTML");
     expect(mocked.toastError).not.toHaveBeenCalled();
@@ -78,7 +88,7 @@ describe("copyAsHtml", () => {
     await copyAsHtml("# Hello");
 
     expect(mocked.electronClipboardWriteText).toHaveBeenCalledWith(
-      "<section id=\"wemd\"><h1>Hello</h1></section>",
+      expect.stringMatching(/<section id="wemd">\s*\n\s*<h1>Hello<\/h1>/),
     );
     expect(writeText).not.toHaveBeenCalled();
     expect(document.execCommand).not.toHaveBeenCalled();
@@ -95,7 +105,11 @@ describe("copyAsHtml", () => {
 
     await copyAsHtml("# 标题");
 
-    expect(writeText).toHaveBeenCalledWith("<section><h1>标题</h1><p>内容</p></section>");
+    const copied = writeText.mock.calls[0][0] as string;
+    expect(copied).toContain("\n");
+    expect(copied).toContain("<section>");
+    expect(copied).toContain("<h1>标题</h1>");
+    expect(copied).toContain("<p>内容</p>");
   });
 
   it("prepends encoded WeMD publish metadata for plugin consumption", async () => {
@@ -114,7 +128,8 @@ describe("copyAsHtml", () => {
     const copied = writeText.mock.calls[0][0] as string;
     expect(copied).toContain("<!--wemd-meta:");
     expect(copied).toContain('data-wemd-publish-meta="');
-    expect(copied).toContain("<section id=\"wemd\"><h1>Hello</h1></section>");
+    expect(copied).toContain('<section id="wemd">');
+    expect(copied).toContain("<h1>Hello</h1>");
     expect(decodeURIComponent(copied)).toContain('"title":"公众号标题"');
     expect(decodeURIComponent(copied)).toContain('"author":"Alice"');
     expect(decodeURIComponent(copied)).toContain('"useTitle":true');
@@ -154,7 +169,7 @@ describe("copyAsHtml", () => {
 
     expect(mocked.electronClipboardWriteText).toHaveBeenCalledTimes(1);
     expect(writeText).toHaveBeenCalledWith(
-      "<section id=\"wemd\"><h1>Hello</h1></section>",
+      expect.stringMatching(/<section id="wemd">\s*\n\s*<h1>Hello<\/h1>/),
     );
     expect(document.execCommand).not.toHaveBeenCalled();
     expect(mocked.toastSuccess).toHaveBeenCalledWith("已复制 HTML");
@@ -169,7 +184,7 @@ describe("copyAsHtml", () => {
     await copyAsHtml("# Hello");
 
     expect(writeText).toHaveBeenCalledWith(
-      "<section id=\"wemd\"><h1>Hello</h1></section>",
+      expect.stringMatching(/<section id="wemd">\s*\n\s*<h1>Hello<\/h1>/),
     );
     expect(execSpy).toHaveBeenCalledWith("copy");
     expect(mocked.toastSuccess).toHaveBeenCalledWith("已复制 HTML");

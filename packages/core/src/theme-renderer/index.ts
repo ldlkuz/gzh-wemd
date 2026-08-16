@@ -30,6 +30,7 @@ import { codeGithubTheme } from "../themes/code-github";
 import { codeGithubDarkTheme } from "../themes/code-github-dark";
 import { componentStylesDefault } from "../themes/components-default";
 import { componentStylesExtra } from "../themes/components-extra";
+import { componentStylesExtended } from "../themes/components-extended";
 import { componentStylesFaq } from "../themes/components-faq";
 import { componentStylesMagazine } from "../themes/components-magazine";
 
@@ -41,6 +42,19 @@ export interface RenderThemeOptions {
   extrasCss?: string;
   /** 资源图片映射（key → base64 data URL），注入为 --wemd-asset-xxx CSS 变量 */
   assets?: Map<string, string>;
+}
+
+/**
+ * 从主题定义（内置或 AI 生成）提取组件骨架模板 Map。
+ *
+ * 内置主题与 AI 生成主题（ThemePackageManifest）共用此入口：
+ * 两者都通过 ThemeDefinition.templates 携带组件骨架，渲染链路无需区分来源。
+ * 组件未在主题中声明时，由渲染器回退到内置默认骨架（defaultTemplates.ts）。
+ */
+export function getThemeTemplates(
+  theme?: ThemeDefinition,
+): Map<string, string> {
+  return new Map(Object.entries(theme?.templates ?? {}));
 }
 
 /**
@@ -219,13 +233,14 @@ function injectCodeTheme(codeTheme?: "github" | "github-dark"): string {
 /**
  * 注入 30 个 WeMD 组件的默认样式
  *
- * 顺序：default → extra → faq → magazine
+ * 顺序：default → extra → extended → faq → magazine
  * 组件样式通过 var(--wemd-*) 引用主题色，实现跟随主题。
  */
 function injectComponentStyles(): string {
   return [
     componentStylesDefault,
     componentStylesExtra,
+    componentStylesExtended,
     componentStylesFaq,
     componentStylesMagazine,
   ].join("\n\n");

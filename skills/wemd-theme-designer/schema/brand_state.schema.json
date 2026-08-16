@@ -1,0 +1,103 @@
+{
+  "$schema": "BrandState",
+  "description": "Stage 1 输出：品牌状态。包含品牌身份、人格、受众、情感方向和关键词。",
+
+  "type": "object",
+  "required": [
+    "brand_identity",
+    "industry",
+    "customer",
+    "personality",
+    "audience",
+    "emotion",
+    "avoid",
+    "keywords"
+  ],
+
+  "properties": {
+    "brand_identity": {
+      "type": "object",
+      "required": ["name", "type"],
+      "properties": {
+        "name": { "type": "string", "description": "品牌名称" },
+        "type": {
+          "type": "string",
+          "enum": [
+            "enterprise",
+            "creator",
+            "media",
+            "product",
+            "institution",
+            "community"
+          ],
+          "description": "品牌类型"
+        }
+      }
+    },
+    "industry": {
+      "type": "string",
+      "description": "所属行业，如 '工业机器人'、'新能源汽车'。差异化信号之一，用于母题推导。"
+    },
+    "customer": {
+      "type": "string",
+      "description": "目标客户/服务对象，如 '汽车制造企业'、'个人消费者'。差异化信号之一，用于判断母题要唤起的心智。"
+    },
+    "product": {
+      "type": "string",
+      "description": "核心产品或服务，如 '自动化生产线机器人'。可选，来自品牌档案。"
+    },
+    "desired_impression": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "希望别人怎么看待品牌（用户希望的认知），如 ['行业专家', '长期伙伴', '创新先锋']。可选，来自品牌档案。"
+    },
+    "existing_assets": {
+      "type": "object",
+      "description": "已有视觉资产分析（从 Logo / VI / 官网 / 宣传册提取），如几何结构、直线曲线、色调、质感。可选。",
+      "properties": {
+        "logo_available": { "type": "boolean", "description": "是否提供 Logo" },
+        "geometry": {
+          "type": "string",
+          "description": "几何结构特征，如 'sharp'、'rounded'、'geometric'"
+        },
+        "line_character": {
+          "type": "string",
+          "description": "线条特征，如 'straight'、'curved'"
+        },
+        "tone": {
+          "type": "string",
+          "description": "色调倾向，如 'cool'、'warm'、'neutral'"
+        },
+        "material_feel": {
+          "type": "string",
+          "description": "质感，如 'metallic'、'soft'、'technical'"
+        }
+      }
+    },
+    "personality": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "品牌人格标签，如 ['experimental', 'energetic', 'curious']"
+    },
+    "audience": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "目标受众，如 ['developers', 'technology enthusiasts']"
+    },
+    "emotion": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "情感方向，如 ['exploration', 'future', 'speed']"
+    },
+    "avoid": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "避免的方向，如 ['traditional corporate', 'formal']。最有力的反向信号，反向锁定母题。"
+    },
+    "keywords": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "品牌关键词，如 ['innovation', 'breakthrough', 'creation']"
+    }
+  }
+}

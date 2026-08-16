@@ -211,6 +211,9 @@
   transition: all 0.2s;
   border-radius: var(--radius-md);
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .theme-item:hover {
@@ -718,32 +721,6 @@
   padding: 4px 10px;
   border-radius: var(--radius-pill);
   margin-top: 4px;
-}
-
-/* AI 生成卡片 - 渐变风格区分 */
-.mode-card-ai:hover {
-  border-color: #8b5cf6;
-  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.2);
-}
-
-.mode-icon-ai {
-  color: #8b5cf6;
-  background: linear-gradient(
-    135deg,
-    rgba(139, 92, 246, 0.12),
-    rgba(236, 72, 153, 0.12)
-  );
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.mode-card-ai .mode-tag {
-  color: #8b5cf6;
-  background: color-mix(in srgb, #8b5cf6 12%, transparent);
 }
 
 /* 当前模式标识 */

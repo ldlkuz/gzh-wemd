@@ -10,7 +10,9 @@ describe("Skill 示例主题校验", () => {
     "..",
     "..",
     "..",
+    "sandbox",
     "bytedance-tech",
+    "bytedance-tech-extracted",
   );
   it("bytedance-tech 主题应通过校验", () => {
     const manifest = JSON.parse(

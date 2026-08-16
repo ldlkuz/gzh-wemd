@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   createEditorPreviewScrollSync,
   type ScrollSyncAdapter,
@@ -55,8 +55,18 @@ const createAdapter = (initialPosition: ScrollSyncPosition) => {
   };
 };
 
-describe("编辑器与预览双向滚动协调", () => {
-  it("在下一动画帧把主动侧源行同步到另一侧", () => {
+const SETTLE_DELAY_MS = 150;
+
+describe("编辑器与预览双向滚动协调（弱同步 + 停止校准）", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("滚动过程中不立即同步，停止 150ms 后才把主动侧源行送到另一侧", () => {
     const frames = createFrameQueue();
     const editor = createAdapter({ sourceLine: 12, ratio: 0.4 });
     const preview = createAdapter({ sourceLine: 2, ratio: 0.1 });
@@ -65,12 +75,34 @@ describe("编辑器与预览双向滚动协调", () => {
     coordinator.setAdapter("preview", preview.adapter);
 
     editor.emitScroll();
-    frames.flush();
+    // 仍在滚动，尚未到达停止校准时机
+    expect(preview.adapter.scrollToPosition).not.toHaveBeenCalled();
+
+    vi.advanceTimersByTime(SETTLE_DELAY_MS);
 
     expect(preview.adapter.scrollToPosition).toHaveBeenCalledWith({
       sourceLine: 12,
       ratio: 0.4,
     });
+    coordinator.destroy();
+  });
+
+  it("滚动持续时重置计时器，只有真正停止后才同步一次", () => {
+    const frames = createFrameQueue();
+    const editor = createAdapter({ sourceLine: 12, ratio: 0.4 });
+    const preview = createAdapter({ sourceLine: 2, ratio: 0.1 });
+    const coordinator = createEditorPreviewScrollSync(frames);
+    coordinator.setAdapter("editor", editor.adapter);
+    coordinator.setAdapter("preview", preview.adapter);
+
+    editor.emitScroll();
+    vi.advanceTimersByTime(100);
+    editor.emitScroll(); // 继续滚动，重置计时
+    vi.advanceTimersByTime(100);
+    expect(preview.adapter.scrollToPosition).not.toHaveBeenCalled();
+
+    vi.advanceTimersByTime(SETTLE_DELAY_MS);
+    expect(preview.adapter.scrollToPosition).toHaveBeenCalledTimes(1);
     coordinator.destroy();
   });
 
@@ -83,9 +115,10 @@ describe("编辑器与预览双向滚动协调", () => {
     coordinator.setAdapter("preview", preview.adapter);
 
     editor.emitScroll();
-    frames.flush();
+    vi.advanceTimersByTime(SETTLE_DELAY_MS);
+    // 程序化滚动使 preview 进入静默期，其反向 scroll 事件应被忽略
     preview.emitScroll();
-    frames.flush();
+    vi.advanceTimersByTime(SETTLE_DELAY_MS);
     expect(editor.adapter.scrollToPosition).not.toHaveBeenCalled();
 
     editor.setPosition({ sourceLine: 22, ratio: 0.7 });
@@ -107,10 +140,10 @@ describe("编辑器与预览双向滚动协调", () => {
     coordinator.setAdapter("preview", preview.adapter);
 
     editor.emitScroll();
-    frames.flush();
+    vi.advanceTimersByTime(SETTLE_DELAY_MS);
     preview.emitUserIntent();
     preview.emitScroll();
-    frames.flush();
+    vi.advanceTimersByTime(SETTLE_DELAY_MS);
 
     expect(editor.adapter.scrollToPosition).toHaveBeenLastCalledWith({
       sourceLine: 4,
@@ -119,7 +152,7 @@ describe("编辑器与预览双向滚动协调", () => {
     coordinator.destroy();
   });
 
-  it("用户滚动会抢占同帧内尚未执行的布局恢复", () => {
+  it("用户滚动会抢占尚未执行的布局恢复", () => {
     const frames = createFrameQueue();
     const editor = createAdapter({ sourceLine: 18, ratio: 0.6 });
     const preview = createAdapter({ sourceLine: 4, ratio: 0.2 });
@@ -128,12 +161,11 @@ describe("编辑器与预览双向滚动协调", () => {
     coordinator.setAdapter("preview", preview.adapter);
 
     editor.emitScroll();
-    frames.flush();
-    frames.flush();
+    vi.advanceTimersByTime(SETTLE_DELAY_MS);
     preview.emitLayoutChange();
     preview.emitUserIntent();
     preview.emitScroll();
-    frames.flush();
+    vi.advanceTimersByTime(SETTLE_DELAY_MS);
 
     expect(editor.adapter.scrollToPosition).toHaveBeenLastCalledWith({
       sourceLine: 4,

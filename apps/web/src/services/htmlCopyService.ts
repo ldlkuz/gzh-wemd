@@ -4,6 +4,7 @@ import {
   type WechatPublishHtmlOptions,
 } from "./wechatPublishHtml";
 import type { PublishMeta } from "../utils/publishMeta";
+import { html as beautifyHtml } from "js-beautify";
 
 // 剥离 parser 为微信主题 CSS 注入的结构装饰（prefix/content/suffix span、<li><section>、空 <center>）。
 // 外部编辑器不认这些 class，留着只会变成语义噪音。
@@ -41,6 +42,19 @@ export function sanitizeForExternalHtml(html: string): string {
 
 function normalizeHtmlSource(html: string): string {
   return html.replace(/>\s+</g, "><").trim();
+}
+
+// 用 js-beautify 把 HTML 源码格式化为多行缩进，便于排查。
+// 默认配置下内联元素保持同行，只对块级/标签层级换行，
+// 往公众号粘贴时块级间的空白会被折叠，不会引入多余空格。
+function formatHtmlSource(html: string): string {
+  // 先清掉标签间冗余空白，避免格式化后出现重复空行
+  const minified = normalizeHtmlSource(html);
+  return beautifyHtml(minified, {
+    indent_size: 2,
+    indent_char: " ",
+    wrap_line_length: 0,
+  });
 }
 
 function prependPublishMetaComment(html: string, meta?: PublishMeta): string {
@@ -112,7 +126,7 @@ export async function copyAsHtml(
 ): Promise<void> {
   const publishResult = await buildWechatPublishHtml(markdown, css, options);
   const html = prependPublishMetaComment(
-    normalizeHtmlSource(publishResult.html),
+    formatHtmlSource(publishResult.html),
     options.meta,
   );
 

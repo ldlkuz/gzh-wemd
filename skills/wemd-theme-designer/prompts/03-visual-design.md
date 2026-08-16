@@ -10,7 +10,7 @@
 
 ## 输入
 
-读取 `creative/concept_state.json`（上一阶段输出），**重点读取其中用户已选中的 `visual_metaphors[]` 里的那一项母题**。
+读取 `themes/{theme-name}/states/concept_state.json`（上一阶段输出），**重点读取其中用户已选中的 `visual_metaphors[]` 里的那一项母题**。
 
 > `concept_state.json` 的 `visual_metaphors` 是 3 个候选母题数组。上一阶段用户已从中选定 1 个（该选择已写回 `concept_state`）。本阶段只基于**选中的那一项**的 `visual_objects` / `material_language` 推导，忽略其余候选。
 
@@ -47,7 +47,7 @@
 
 ## 输出格式
 
-输出到 `creative/visual_language.json`，严格遵循 `creative/visual_language.schema.json`：
+输出到 `themes/{theme-name}/states/visual_language.json`，严格遵循 `schema/visual_language.schema.json`：
 
 ```json
 {

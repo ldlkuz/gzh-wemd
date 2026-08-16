@@ -79,7 +79,44 @@ describe("组件元素描述表", () => {
 
     for (const type of normalTypes) {
       expect(ALL_COMPONENT_ELEMENTS[type]).toBeDefined();
+    }
+  });
+
+  it("普通组件按是否有 body 层区分 hasBody 标志", () => {
+    // body 层组件：渲染仍走 .wemd-component-body 内容层
+    const bodyBased = [
+      "hero-banner",
+      "callout-pro",
+      "share-card",
+      "faq",
+      "author-card",
+      "image-text-row",
+      "numbered-heading",
+      "section-title",
+      "image-grid",
+      "toc-nav",
+      "tag-label",
+      "image-caption",
+      "copyright-notice",
+      "follow-bar",
+      "qr-card",
+    ];
+    for (const type of bodyBased) {
       expect(ALL_COMPONENT_ELEMENTS[type].hasBody).toBe(true);
+    }
+    // 语义槽组件：已迁移为语义类名，无 body 层
+    const semanticSlotted = [
+      "quote-card",
+      "cta-card",
+      "timeline",
+      "stats-block",
+      "related-posts",
+      "styled-table",
+      "code-frame",
+      "divider-fancy",
+    ];
+    for (const type of semanticSlotted) {
+      expect(ALL_COMPONENT_ELEMENTS[type].hasBody).toBe(false);
     }
   });
 

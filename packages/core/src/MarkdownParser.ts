@@ -41,6 +41,12 @@ export interface MarkdownParserOptions {
   showMacBar?: boolean;
   mathRenderer?: "auto" | "katex";
   includeSourcePosition?: boolean;
+  /**
+   * 取组件骨架模板（Phase 5）。
+   * 优先返回当前主题包 templates 中的骨架，返回 undefined 时回退到内置默认骨架。
+   * 由渲染调用方注入当前主题的 getThemeTemplates(theme) 结果。
+   */
+  getTemplate?: (componentId: string) => string | undefined;
 }
 
 const MAC_CODE_DOTS = ["rgb(237,108,96)", "rgb(247,193,81)", "rgb(100,200,86)"]
@@ -128,7 +134,7 @@ export const createMarkdownParser = (options: MarkdownParserOptions = {}) => {
       labelAfter: true,
     })
     .use(markdownItCheckboxEmoji)
-    .use(markdownItComponent);
+    .use(markdownItComponent, { getTemplate: options.getTemplate });
 
   if (options.includeSourcePosition) {
     markdownParser.use(markdownItSourcePosition);

@@ -260,20 +260,21 @@ export function MarkdownEditor({
     ) => {
       const max = scrollDOM.scrollHeight - scrollDOM.clientHeight;
       if (max <= 0) return;
+      let target: number;
       if (position.ratio >= 0.999 || position.sourceLine === null) {
-        scrollDOM.scrollTo({ top: clamp(position.ratio, 0, 1) * max });
-        return;
+        target = clamp(position.ratio, 0, 1) * max;
+      } else {
+        const sourceLine = clamp(
+          position.sourceLine,
+          0,
+          Math.max(0, view.state.doc.lines - 1),
+        );
+        const lineNumber = Math.floor(sourceLine) + 1;
+        const block = view.lineBlockAt(view.state.doc.line(lineNumber).from);
+        target = clamp(block.top + (sourceLine % 1) * block.height, 0, max);
       }
-
-      const sourceLine = clamp(
-        position.sourceLine,
-        0,
-        Math.max(0, view.state.doc.lines - 1),
-      );
-      const lineNumber = Math.floor(sourceLine) + 1;
-      const block = view.lineBlockAt(view.state.doc.line(lineNumber).from);
-      const target = block.top + (sourceLine % 1) * block.height;
-      scrollDOM.scrollTo({ top: clamp(target, 0, max) });
+      // 停止校准：平滑滚动到目标位置，避免瞬跳
+      scrollDOM.scrollTo({ top: target, behavior: "smooth" });
     };
 
     const handleEditorScroll = () => scrollSubscriber();

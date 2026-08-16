@@ -4,8 +4,8 @@
  * 把 Template JSON + 用户原文 → 组件 Markdown（含 ::: 语法）
  * 走现有 markdown-it-component + 主题 CSS + juice 内联管线。
  *
- * v2.0: 新增 resolveVariant() 和 getDefaultDesign()，
- * Renderer 根据 node.design 自动推导 variant，AI 不再直接指定 variant。
+ * v2.0: 新增 getDefaultDesign()，AI 未提供 design 时推导默认值。
+ * Phase 6: 组件形态由当前主题决定，不再注入 variant；AI 输出不带 variant。
  * 旧模板（v1.x）通过 migrateV1ToV2() 自动迁移。
  */
 
@@ -30,91 +30,6 @@ import {
 } from "./componentRenderers";
 
 const ARTICLE_SECTION = "article-section";
-
-/**
- * DesignIntent → Variant 映射
- *
- * 根据 design 字段自动选择已有 variant 名称。
- * 映射到现有 variantCss.ts 中已实现的 variant，不产生新 variant。
- */
-function resolveVariant(
-  component: string,
-  design?: DesignIntent,
-): string | null {
-  if (!design) return null;
-
-  if (component === "hero-banner") {
-    if (design.emphasis === "high" && design.layout === "center")
-      return "center";
-    if (design.layout === "left") return "left";
-    if (design.spacing === "compact" || design.emphasis === "low")
-      return "minimal";
-    return "center";
-  }
-
-  if (component === "callout-pro") {
-    if (design.emphasis === "high" || design.tone === "bold") return "bg";
-    if (design.emphasis === "low" || design.tone === "minimal")
-      return "minimal";
-    return null; // 默认 border
-  }
-
-  if (component === "section-divider") {
-    if (design.emphasis === "high" || design.tone === "bold") return "bold";
-    if (design.tone === "warm" || design.tone === "playful") return "dots";
-    return "line";
-  }
-
-  if (component === "end-card") {
-    if (design.tone === "warm") return "warm";
-    if (design.tone === "minimal" || design.emphasis === "low")
-      return "minimal";
-    return "centered";
-  }
-
-  if (component === "product-card") {
-    if (design.tone === "bold" || design.emphasis === "high") return "promo";
-    if (design.tone === "minimal" || design.spacing === "compact")
-      return "minimal";
-    return "ecommerce";
-  }
-
-  if (component === "brand-sign") {
-    if (
-      design.layout === "stacked" ||
-      design.emphasis === "high" ||
-      design.tone === "playful"
-    )
-      return "stacked";
-    if (design.tone === "warm" || design.tone === "minimal") return "signature";
-    return "inline";
-  }
-
-  if (component === "resource-list") {
-    if (design.layout === "stacked" || design.tone === "professional")
-      return "steps";
-    if (design.tone === "minimal" || design.spacing === "compact")
-      return "minimal";
-    return "files";
-  }
-
-  if (component === "testimonial-card") {
-    if (design.emphasis === "high" || design.tone === "bold") return "featured";
-    if (design.tone === "warm" || design.layout === "left") return "casual";
-    return "classic";
-  }
-
-  if (component === "series-nav") {
-    if (design.emphasis === "high" || design.tone === "professional")
-      return "toc";
-    if (design.spacing === "compact" || design.emphasis === "low")
-      return "breadcrumb";
-    return "progress";
-  }
-
-  // 其他组件目前无 variant，日后扩展
-  return null;
-}
 
 /** 各组件的默认 DesignIntent（AI 未提供 design 时使用） */
 const DEFAULT_DESIGN: Record<string, DesignIntent> = {
@@ -444,8 +359,8 @@ export function renderTemplate(
 /**
  * 渲染普通组件节点
  *
- * v2.0: 调用 resolveVariant() 自动注入 variant 到 props。
- * AI 显式指定的 variant 优先，未指定时由 design 推导。
+ * Phase 6: 组件形态由当前主题决定，不再注入 variant。
+ * node.props 原样透传，AI 输出不带 variant，渲染时用主题默认骨架。
  */
 function renderComponentNode(node: LayoutNode): string {
   const renderer = componentRenderers[node.component];
@@ -453,17 +368,7 @@ function renderComponentNode(node: LayoutNode): string {
 
   try {
     const body = renderer(node.content || {});
-
-    // 自动根据 design 解析 variant
-    const variant = resolveVariant(node.component, node.design);
-
-    // 合并 props：用户显式指定的优先，没有则用自动解析的 variant
-    const mergedProps = { ...(node.props || {}) };
-    if (variant && !mergedProps.variant) {
-      mergedProps.variant = variant;
-    }
-
-    const propsStr = stringifyProps(mergedProps);
+    const propsStr = stringifyProps(node.props);
     return wrapComponent(node.component, propsStr, body || " ");
   } catch (e) {
     return "";

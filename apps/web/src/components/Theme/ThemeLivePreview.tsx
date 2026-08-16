@@ -2,8 +2,10 @@ import { useEffect, useMemo, useRef, memo } from "react";
 import mermaid from "mermaid";
 import {
   createMarkdownParser,
+  getThemeTemplates,
   processHtml,
   convertCssToWeChatDarkMode,
+  type ThemeDefinition,
 } from "@wemd/core";
 import { useUITheme } from "../../hooks/useUITheme";
 import { useEditorStore } from "../../store/editorStore";
@@ -78,6 +80,8 @@ interface ThemeLivePreviewProps {
   designerVariables?: DesignerVariables;
   /** 是否使用当前文章内容，true=订阅 store 获取当前文章，false=使用内置示例 */
   useCurrentArticle?: boolean;
+  /** Phase 7：当前预览主题的 definition，用于注入组件骨架模板；缺省用内置默认 */
+  themeDefinition?: ThemeDefinition;
 }
 
 // 主题实时预览组件（使用 iframe 隔离样式）
@@ -85,16 +89,21 @@ export const ThemeLivePreview = memo(function ThemeLivePreview({
   css,
   designerVariables,
   useCurrentArticle = false,
+  themeDefinition,
 }: ThemeLivePreviewProps) {
   // 只有当 useCurrentArticle=true 时才订阅 store，避免不必要的重渲染
   const currentMarkdown = useEditorStore((state) =>
     useCurrentArticle ? state.markdown : "",
   );
   const showMacBar = designerVariables?.showMacBar ?? false;
-  const parser = useMemo(
-    () => createMarkdownParser({ showMacBar, mathRenderer: "katex" }),
-    [showMacBar],
-  );
+  const parser = useMemo(() => {
+    const templates = getThemeTemplates(themeDefinition);
+    return createMarkdownParser({
+      showMacBar,
+      mathRenderer: "katex",
+      getTemplate: (componentId) => templates.get(componentId),
+    });
+  }, [showMacBar, themeDefinition]);
   const uiTheme = useUITheme((state) => state.theme);
   const isDarkMode = uiTheme === "dark";
   const iframeRef = useRef<HTMLIFrameElement>(null);

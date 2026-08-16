@@ -419,11 +419,27 @@
   transform: translateY(-1px);
 }
 
+.logo-text-group {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  line-height: 1;
+}
+
 .logo-text {
   font-size: 18px;
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -0.3px;
+  line-height: 1;
+}
+
+.logo-subtitle {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
+  line-height: 1;
 }
 
 /* UI 主题切换按钮 */

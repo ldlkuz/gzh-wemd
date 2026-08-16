@@ -4,11 +4,9 @@
  * 读取 BrandVisualTheme.json + CSS 文件，生成：
  *   - manifest.json（ThemePackageManifest 格式，含组件 variantCss）
  *   - brand.md（品牌描述）
- *   - styles/components.css（完整 CSS）
- *   - styles/extras.css（CSS 变量定义）
- *   - future-frontier.wemd-theme（zip 压缩包）
+ *   - styles/components.css（完整 CSS，微信兼容清理）
  *
- * 用法：node scripts/pack-theme.cjs
+ * 用法：node scripts/pack-theme.cjs [theme-name]
  */
 
 const fs = require("fs");
@@ -19,14 +17,16 @@ const { execSync } = require("child_process");
 // 配置
 // ============================================================
 const ROOT = path.resolve(__dirname, "..");
-const OUTPUT_DIR = path.join(ROOT, "output");
 
 // 主题名称（默认 intelligent-precision，可通过命令行参数指定，如 node scripts/pack-theme.cjs mountain-mist）
 const THEME_NAME = process.argv[2] || "intelligent-precision";
 
-const CSS_FILE = path.join(OUTPUT_DIR, "css", `${THEME_NAME}.css`);
-const BRAND_THEME_FILE = path.join(OUTPUT_DIR, "BrandVisualTheme.json");
-const THEME_PACKAGE_DIR = path.join(OUTPUT_DIR, "theme-package");
+// 主题目录：themes/{theme-name}/（产物全程按主题隔离，见 reference/artifact-layout.md）
+const THEME_DIR = path.join(ROOT, "themes", THEME_NAME);
+
+const CSS_FILE = path.join(THEME_DIR, "css", `${THEME_NAME}.css`);
+const BRAND_THEME_FILE = path.join(THEME_DIR, "BrandVisualTheme.json");
+const THEME_PACKAGE_DIR = path.join(THEME_DIR, "package");
 
 // 主题未提供对应 CSS 变量时的回退色
 const FALLBACK_COLORS = {
@@ -268,9 +268,16 @@ function extractComponentCss(fullCss, componentName) {
   nextSelectorRegex.lastIndex = selectorIdx + 1;
   let endIdx = fullCss.length;
   let nextMatch;
+  let nextText;
   while ((nextMatch = nextSelectorRegex.exec(fullCss)) !== null) {
-    const matchedSelector = fullCss.slice(nextMatch.index, nextMatch.index + 50);
-    if (matchedSelector.includes(`.wemd-${componentName}`)) continue;
+    nextText = fullCss.slice(nextMatch.index, nextMatch.index + 50);
+    // 用词边界判断是否为同一组件的后续选择器（如 .wemd-divider 的后续规则行），
+    // divider 不应匹配到 divider-fancy：.wemd-divider-fancy 中 .wemd-divider 后是 "-"，
+    // 不在 [\s{,:] 中，视为不同组件。
+    const sameComp = new RegExp(
+      `#wemd\\s+\\.wemd-${componentName}(?=[\\s{,:])`,
+    ).test(nextText);
+    if (sameComp) continue;
     endIdx = nextMatch.index;
     break;
   }
@@ -427,17 +434,24 @@ for (const compName of COMPONENTS_WITH_CSS) {
         `  ❌ ${compName} — 引用未定义变量: ${[...undefVars].join(", ")}`,
       );
     }
+    // 只有真正提供了 variantCss 的组件才声明 variant。
+    // 主程序校验器要求：variant 非空必须配套非空 variantCss（AI 主题不依赖内置预设）。
+    // 未提取到 CSS 的组件 variant 留空，走主程序默认内置样式，避免空 variantCss 报错。
     components[compName] = {
       enabled: true,
-      variant: THEME_NAME,
+      variant: cleanedCss.trim() ? THEME_NAME : "",
       variantCss: cleanedCss,
     };
-    console.log(`  ✅ ${compName} — CSS 已提取 (${rawCss.length} chars, var() resolved)`);
+    if (cleanedCss.trim()) {
+      console.log(`  ✅ ${compName} — CSS 已提取 (${rawCss.length} chars, var() resolved)`);
+    } else {
+      console.log(`  ⚠️  ${compName} — 未找到 CSS，variant 留空（走默认样式）`);
+    }
   } else {
     console.log(`  ⚠️  ${compName} — 未找到 CSS`);
     components[compName] = {
       enabled: true,
-      variant: THEME_NAME,
+      variant: "",
       variantCss: "",
     };
   }
@@ -590,9 +604,33 @@ const cleanedFullCss = cleanVariantCss(fullCss);
 fs.writeFileSync(cssOutputPath, cleanedFullCss, "utf-8");
 console.log(`  ✅ styles/components.css 已写入 (微信兼容清理)`);
 
+// ============================================================
+// 骨架模板：templates.json → templates/<id>.html（供主程序 resolveThemeTemplate 消费）
+// 主程序加载器从 zip 的 templates/*.html 或 manifest.templates 读取组件骨架，
+// 渲染时优先用主题骨架，未提供才回退默认骨架。见 themePackageLoader.ts。
+// ============================================================
+const templatesJsonPath = path.join(THEME_PACKAGE_DIR, "templates.json");
+const templatesOutDir = path.join(THEME_PACKAGE_DIR, "templates");
+let skeletonCount = 0;
+
+if (fs.existsSync(templatesJsonPath)) {
+  const templates = JSON.parse(fs.readFileSync(templatesJsonPath, "utf-8"));
+  fs.mkdirSync(templatesOutDir, { recursive: true });
+  for (const [id, html] of Object.entries(templates)) {
+    // 仅收集符合主程序加载器命名规则的组件骨架（templates/<id>.html）
+    if (typeof html === "string" && /^[a-z][a-z0-9-]*$/.test(id)) {
+      fs.writeFileSync(path.join(templatesOutDir, `${id}.html`), html, "utf-8");
+      skeletonCount++;
+    }
+  }
+  console.log(`  ✅ templates/*.html 已写入 (${skeletonCount} 个组件骨架)`);
+} else {
+  console.log(`  ⚠️  未找到 templates.json，跳过骨架打包。请先运行 node scripts/compile-skeleton.cjs`);
+}
+
 console.log("");
 console.log("✅ 文件生成完成！");
 console.log(`   📁 ${THEME_PACKAGE_DIR}`);
 console.log("");
 console.log("下一步：运行 PowerShell 打包命令");
-console.log(`  Compress-Archive -Path "./manifest.json","./brand.md","./styles" -DestinationPath "../${THEME_NAME}.wemd-theme" -Force`);
+console.log(`  Compress-Archive -Path "./manifest.json","./brand.md","./styles","./templates" -DestinationPath "../${THEME_NAME}.wemd-theme" -Force`);

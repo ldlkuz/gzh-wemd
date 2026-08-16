@@ -280,6 +280,15 @@ const shouldUseMarginForHorizontalOffset = (node: HTMLElement): boolean => {
   //   保留自身 padding，避免卡片背景贴到页面最左。
   // - 自身无 padding 的内容组件（如 text-card）→ 走 padding 迁移，让内部正文获得内边距。
   if (tagName === "SECTION" && /(?:^|\s)wemd-/i.test(node.className)) {
+    // code-block / code-frame 是带背景、边框、圆角的卡片式容器，
+    // 页面水平留白应通过 margin 迁移（背景整体内缩），与 resource-list 等卡片对齐。
+    // 若走 padding 迁移，背景会贴到页面左右边缘，在微信里看起来比其他组件宽。
+    if (
+      /(?:^|\s)wemd-code-block(?:$|\s)/i.test(node.className) ||
+      /(?:^|\s)wemd-code-frame(?:$|\s)/i.test(node.className)
+    ) {
+      return true;
+    }
     return hasOwnHorizontalPadding(node);
   }
   return false;

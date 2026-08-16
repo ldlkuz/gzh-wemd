@@ -205,6 +205,13 @@ export interface ThemeDefinition {
    * 内置主题默认不写此字段——组件自行消费 DesignTokens。 */
   components?: Record<string, ComponentStyleOverride>;
   layout: LayoutPreference;
+  /**
+   * 组件骨架模板（Mustache 子集：{{slot:key}} / {{#each}} / {{this.field}}）。
+   * key = 组件 id。这是"骨架随主题"的核心：切主题时组件 DOM 结构随之变化。
+   * 组件未声明时继承内置默认骨架（defaultTemplates.ts）。
+   * 内置主题与 AI 生成主题（ThemePackageManifest）共用此字段与渲染链路，无特殊分支。
+   */
+  templates?: Record<string, string>;
   /** 代码高亮主题：github（亮色）/ github-dark（暗色） */
   codeTheme?: "github" | "github-dark";
 }

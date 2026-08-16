@@ -6,7 +6,7 @@
 
 - [ ] 创意阶段（Stage 1-3）是否真的没有接触组件概念？
 - [ ] Stage 3 的输出是否使用了"页面区域"语言而非"组件"语言？
-- [ ] `creative/visual_language.json` 是否没有出现 title/image/card/quote 等组件名称？
+- [ ] `themes/{theme-name}/states/visual_language.json` 是否没有出现 title/image/card/quote 等组件名称？
 
 ## 翻译阶段检查
 

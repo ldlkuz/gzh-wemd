@@ -6,7 +6,8 @@
 }
 
 .preview-header {
-  padding: 12px 16px;
+  height: 44px;
+  padding: 0 16px;
   border-bottom: 1px solid var(--border-light);
   background: var(--bg-primary);
   display: flex;

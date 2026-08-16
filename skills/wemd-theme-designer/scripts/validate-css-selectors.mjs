@@ -3,70 +3,82 @@
  *
  * 校验项：
  *  1. 每个组件 CSS 里引用的 `.wemd-xxx` 具名 class，是否存在于真源
- *     （componentElements.ts 标准选择器 + magazineRenderers.ts 输出 class）。
+ *     （defaultTemplates.js 内置默认骨架 + slotDefs.js abbr/slot 契约）。
  *     不存在的 => 选择器写错 / 臆造 class，打包前拦截。
- *  2. 普通组件（hasBody=true）的 CSS 是否误用 `.wemd-child-N`（已废弃的错误结构）。
+ *  2. 普通组件的 CSS 是否误用 `.wemd-child-N`（已废弃的错误结构，现在直接报错）。
  *  3. CSS 中是否出现嵌套 var fallback `var(--a, var(--b))`（BUG-0010 同款雷区，
  *     resolveCssVars 的 fallback 正则会截断，导致变量展开中断）。
  *
  * 用法：node scripts/validate-css-selectors.mjs [themeName]
- *   默认校验 output/css/*.css 全部主题；也可指定单个主题名（如 videographer）。
+ *   默认校验 themes 目录下所有主题的 css 产物；也可指定单个主题名（如 videographer）。
  * 退出码：0=通过，1=有错误（供打包脚本 halt）。
  */
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
-const CSS_DIR = path.join(ROOT, "output", "css");
-const CORE_DIR = path.resolve(ROOT, "..", "..", "packages", "core", "src");
-const ELEMENTS_TS = path.join(CORE_DIR, "css-translator", "componentElements.ts");
+const THEMES_DIR = path.join(ROOT, "themes");
+const REGISTRY = path.join(ROOT, "registry", "components.json");
+const require = createRequire(import.meta.url);
+const CORE_DIST = path.resolve(ROOT, "..", "..", "packages", "core", "dist");
+const { getDefaultTemplate } = require(path.join(CORE_DIST, "plugins/component/defaultTemplates.js"));
 
 // ============================================================
 // 从真源加载合法 class 集
 // ============================================================
-function loadValidClasses() {
-  if (!fs.existsSync(ELEMENTS_TS)) {
-    console.error(`❌ 未找到真源: ${ELEMENTS_TS}`);
+function loadValidClasses(themeName) {
+  if (!fs.existsSync(REGISTRY)) {
+    console.error(`❌ 未找到组件注册表: ${REGISTRY}`);
     process.exit(1);
   }
-  const src = fs.readFileSync(ELEMENTS_TS, "utf-8");
+  const registry = JSON.parse(fs.readFileSync(REGISTRY, "utf-8"));
   const valid = new Set();
-
-  // 1. componentElements.ts 中所有 wemdSelector 里的 .wemd-xxx
-  const selectorRe = /wemdSelector\s*:\s*"([^"]+)"/g;
-  let m;
-  while ((m = selectorRe.exec(src)) !== null) {
-    for (const cls of collectWemdClasses(m[1])) valid.add(cls);
+  for (const r of registry) {
+    if (!r.id) continue;
+    const html = getDefaultTemplate(r.id);
+    if (!html) continue;
+    for (const cls of collectWemdClassesFrom(html)) valid.add(cls);
   }
-  // 容器选择器
-  const containerRe = /containerSelector\s*:\s*"([^"]+)"/g;
-  while ((m = containerRe.exec(src)) !== null) {
-    for (const cls of collectWemdClasses(m[1])) valid.add(cls);
-  }
-
-  // 2. magazineRenderers.ts 实际输出的 class
-  const renderersTs = path.join(
-    CORE_DIR,
-    "plugins",
-    "component",
-    "magazineRenderers.ts",
-  );
-  if (fs.existsSync(renderersTs)) {
-    const rsrc = fs.readFileSync(renderersTs, "utf-8");
-    const clsRe = /class="(wemd-[a-z0-9-]+)/g;
-    while ((m = clsRe.exec(rsrc)) !== null) valid.add(m[1]);
-  }
-
+  // 若指定了主题，把该主题自定义骨架（package/templates.json）也纳入真源，
+  // 否则自定义骨架上的 class 会被误判为臆造。
+  addThemeTemplateClasses(valid, themeName);
   return valid;
 }
 
-function collectWemdClasses(selector) {
+/** 将主题自定义骨架 templates.json 中的 wemd-* class 加入合法集 */
+function addThemeTemplateClasses(valid, themeName) {
+  if (!themeName) return;
+  const tplFile = path.join(THEMES_DIR, themeName, "package", "templates.json");
+  if (!fs.existsSync(tplFile)) return;
+  let templates;
+  try {
+    templates = JSON.parse(fs.readFileSync(tplFile, "utf-8"));
+  } catch {
+    return;
+  }
+  for (const html of Object.values(templates)) {
+    for (const cls of collectWemdClassesFrom(html)) valid.add(cls);
+  }
+}
+
+/** 从模板 HTML 提取所有 wemd-* class（剥离 Mustache 表达式） */
+function collectWemdClassesFrom(html) {
   const out = [];
-  const re = /\.(wemd-[a-z0-9-]+)/g;
+  const seen = new Set();
+  const clsRe = /class="([^"]*)"/g;
   let m;
-  while ((m = re.exec(selector)) !== null) out.push(m[1]);
+  while ((m = clsRe.exec(html)) !== null) {
+    const value = m[1].replace(/\{\{[\s\S]*?\}\}/g, "");
+    for (const token of value.split(/\s+/)) {
+      if (!token.startsWith("wemd-")) continue;
+      if (seen.has(token)) continue;
+      seen.add(token);
+      out.push(token);
+    }
+  }
   return out;
 }
 
@@ -101,24 +113,6 @@ const ALLOWED_UNDEFINED = new Set([
   "wemd-component-body",
 ]);
 
-// 真源 componentElements.ts 未定义、但真实渲染会原生输出 child-N 的组件容器 class。
-// 这些组件走纯原生渲染（无专用渲染器），body 内直接是原生标签 + .wemd-child-N。
-// 当它们在 componentElements.ts 补齐后可移出此表。
-const KNOWN_RAW_COMPONENTS = new Set([
-  "wemd-text-card",
-  "wemd-image-compare",
-  "wemd-table",
-  "wemd-accordion",
-  "wemd-steps",
-  "wemd-code-block",
-  "wemd-pullquote",
-  "wemd-divider",
-  "wemd-article-section",
-]);
-
-// 校验时忽略的合法 class：.wemd-child-N 由 addChildPositionClasses 生成，合法
-const CHILD_N_CLASS = /^wemd-child-\d+$/;
-
 // 合法的排版标记 class（非组件 class，由 markdown 语法 em/u/++高亮++ 渲染生成）
 const KNOWN_MARKUP_CLASSES = new Set(["wemd-highlight"]);
 
@@ -130,13 +124,16 @@ function validateCss(cssFile, validClasses) {
 
   for (const sel of selectors) {
     // 检查每个 .wemd-xxx 是否合法
-    const clsRe = /\.(wemd-[a-z0-9-]+)/g;
+    const clsRe = /\.(wemd-[a-zA-Z0-9-]+)/g;
     let m;
     while ((m = clsRe.exec(sel)) !== null) {
       const cls = m[1];
       if (ALLOWED_UNDEFINED.has(cls)) continue;
-      if (CHILD_N_CLASS.test(cls)) continue;
-      if (KNOWN_RAW_COMPONENTS.has(cls)) continue;
+      // ⚠️ .wemd-child-N 已废弃，命中即报错
+      if (/^wemd-child-\d+$/.test(cls)) {
+        errors.push(`  ❌ 已废弃的序号 class \`.${cls}\`（请改用 slot class）: ${sel}`);
+        continue;
+      }
       if (KNOWN_MARKUP_CLASSES.has(cls)) continue;
       if (!validClasses.has(cls)) {
         errors.push(`  引用不存在的 class \`.${cls}\`: ${sel}`);
@@ -166,20 +163,34 @@ function getLineAt(text, index) {
 // ============================================================
 // 主流程
 // ============================================================
+// 收集待校验主题的 CSS 文件：按主题目录扫描 themes/*/css/*.css
 const target = process.argv[2] || "";
-const cssFiles = target
-  ? [path.join(CSS_DIR, `${target}.css`)]
-  : fs
-      .readdirSync(CSS_DIR)
-      .filter((f) => f.endsWith(".css"))
-      .map((f) => path.join(CSS_DIR, f));
+const cssFiles = [];
+function collectThemeCss(themeName) {
+  const cssDir = path.join(THEMES_DIR, themeName, "css");
+  if (!fs.existsSync(cssDir)) return;
+  const cssFile = path.join(cssDir, `${themeName}.css`);
+  if (fs.existsSync(cssFile)) cssFiles.push(cssFile);
+}
+
+if (target) {
+  // 指定主题：校验 themes/{theme}/css/{theme}.css
+  collectThemeCss(target);
+} else {
+  // 默认：扫描全部主题目录
+  if (fs.existsSync(THEMES_DIR)) {
+    for (const dir of fs.readdirSync(THEMES_DIR)) {
+      if (fs.statSync(path.join(THEMES_DIR, dir)).isDirectory()) collectThemeCss(dir);
+    }
+  }
+}
 
 if (cssFiles.length === 0) {
-  console.error("❌ 未找到任何 CSS 文件");
+  console.error("❌ 未找到任何主题 CSS 文件（themes/*/css/*.css）");
   process.exit(1);
 }
 
-const validClasses = loadValidClasses();
+const validClasses = loadValidClasses(target);
 console.log(`🔍 合法 class 集：${validClasses.size} 个`);
 console.log("");
 

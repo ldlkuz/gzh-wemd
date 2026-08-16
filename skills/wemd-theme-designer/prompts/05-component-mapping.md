@@ -6,9 +6,12 @@
 
 ## 输入
 
-1. `creative/visual_language.json`（创意阶段的视觉语言）
-2. `translator/component_strategy.json`（上一阶段的三分类结果）
-3. `registry/components.json`（仅读取 Brand Anchor 对应的组件定义）
+1. `themes/{theme-name}/states/visual_language.json`（创意阶段的视觉语言）
+2. `themes/{theme-name}/states/component_strategy.json`（阶段 4 的三分类结果）
+3. `themes/{theme-name}/states/skeleton_intent.json`（阶段 4.5 的骨架意图，**形**已定）
+4. `registry/components.json`（仅读取 Brand Anchor 对应的组件定义）
+
+> **先形后皮**：本阶段是"皮"。骨架（形）已在 Stage 4.5 定稿，本阶段的颜色/字体/间距必须挂到骨架的 class 结构上。阅读 `skeleton_intent.json` 了解每个组件视觉上怎么构图，再为它设计皮肤。
 
 ## 翻译策略
 
@@ -25,10 +28,11 @@
 3. component_rules 的目的是**限制**，不是设计
 4. 输出的是设计方向（自然语言描述），不是 CSS 值
 5. Brand Anchor 的 design.direction 应能从创意视觉中找到源头
+6. **皮挂骨**：本阶段描述的颜色/字体/间距，最后会挂到 Stage 4.5 骨架推导出的 class 上。有刻意构图（`skeleton_intent.json` 中存在骨架）的组件，其 design.direction 应描述"如何为这个骨架的视觉关系上色"，而不是凭空想象一个结构。
 
 ## 输出格式
 
-严格遵循 `translator/component_mapping.schema.json`：
+严格遵循 `schema/component_mapping.schema.json`：
 
 ```json
 {

@@ -8,10 +8,10 @@
 }
 
 .editor-header {
-  padding: 12px 16px 12px 8px;
-  border-bottom: 1px solid var(--border-light);
-  background: rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(8px);
+  height: 44px;
+  padding: 0 16px 0 8px;
+  border-bottom: 1px solid rgba(214, 178, 88, 0.22);
+  background: #fff9e6;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -61,11 +61,10 @@
 .editor-meta-bar {
   display: grid;
   grid-template-columns: minmax(0, 1.45fr) minmax(128px, 0.55fr);
-  gap: 14px;
-  padding: 14px 24px;
-  border-bottom: 1px solid var(--border-light);
-  background: rgba(255, 255, 255, 0.68);
-  backdrop-filter: blur(8px);
+  gap: 12px;
+  padding: 8px 24px;
+  border-bottom: 1px solid rgba(214, 178, 88, 0.2);
+  background: #fffbef;
   position: relative;
   z-index: 8;
   isolation: isolate;
@@ -121,9 +120,9 @@
 
 .editor-meta-input {
   width: 100%;
-  height: 40px;
+  height: 34px;
   border: 1px solid var(--border-color);
-  border-radius: 12px;
+  border-radius: 10px;
   padding: 0 14px;
   background: rgba(255, 255, 255, 0.9);
   color: var(--text-primary);
@@ -304,6 +303,15 @@
 
 .editor-container .cm-scroller::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.2);
+}
+
+.editor-container .cm-scroller {
+  /* 浅黄方格纹理铺满整个编辑区，左右留白也带纹理 */
+  background-color: #fffdf3;
+  background-image:
+    linear-gradient(rgba(214, 178, 88, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(214, 178, 88, 0.12) 1px, transparent 1px);
+  background-size: 26px 26px;
 }
 
 .editor-container .cm-content {
@@ -539,12 +547,26 @@
   background: rgba(37, 37, 38, 0.8);
 }
 
+/* 深色模式：编辑区用暗色方格纹理 */
+[data-ui-theme="dark"] .editor-container .cm-scroller {
+  background-color: #1e1f22;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 26px 26px;
+}
+
 [data-ui-theme="dark"] .editor-footer {
   background: rgba(37, 37, 38, 0.8);
 }
 
 [data-ui-theme="dark"] .editor-meta-bar {
   background: rgba(37, 37, 38, 0.82);
+}
+
+[data-ui-theme="dark"] .md-toolbar {
+  background: rgba(37, 37, 38, 0.85);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
 }
 
 [data-ui-theme="dark"] .editor-meta-input {

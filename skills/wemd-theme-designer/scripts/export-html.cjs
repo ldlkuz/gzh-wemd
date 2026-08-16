@@ -4,11 +4,11 @@
  * 直接读取 BrandVisualTheme.json 的色值令牌，生成内联样式的 HTML，
  * 避免通用 CSS 内联器丢失主题语义的问题。
  *
- * 用法：node scripts/export-html.cjs [--input <markdown-file>] [--output <html-file>]
+ * 用法：node scripts/export-html.cjs <theme> [--input <markdown-file>] [--output <html-file>]
  *
  * 默认：
- *   --input  output/docs/future-frontier-article-sample.md
- *   --output output/test.html
+ *   --input  themes/{theme}/docs/{theme}-sample.md（可选，缺省用内置示例）
+ *   --output themes/{theme}/publish/{theme}.html
  */
 
 const fs = require("fs");
@@ -18,13 +18,19 @@ const path = require("path");
 // 配置
 // ============================================================
 const ROOT = path.resolve(__dirname, "..");
-const OUTPUT_DIR = path.join(ROOT, "output");
-const THEME_JSON = path.join(OUTPUT_DIR, "BrandVisualTheme.json");
-const DEFAULT_INPUT = path.join(OUTPUT_DIR, "docs", "future-frontier-article-sample.md");
-const DEFAULT_OUTPUT = path.join(OUTPUT_DIR, "test.html");
+// 主题名称（必填，如 node scripts/export-html.cjs intelligent-precision）
+const THEME_NAME = process.argv[2] || "";
+if (!THEME_NAME) {
+  console.error("❌ 请指定主题名：node scripts/export-html.cjs <theme-name>");
+  process.exit(1);
+}
+const THEME_DIR = path.join(ROOT, "themes", THEME_NAME);
+const THEME_JSON = path.join(THEME_DIR, "BrandVisualTheme.json");
+const DEFAULT_INPUT = path.join(THEME_DIR, "docs", `${THEME_NAME}-sample.md`);
+const DEFAULT_OUTPUT = path.join(THEME_DIR, "publish", `${THEME_NAME}.html`);
 
-// 解析命令行参数
-const args = process.argv.slice(2);
+// 解析命令行参数（从去掉主题名后的剩余参数中解析）
+const args = process.argv.slice(3);
 const inputFile = args.includes("--input")
   ? path.resolve(process.cwd(), args[args.indexOf("--input") + 1])
   : DEFAULT_INPUT;

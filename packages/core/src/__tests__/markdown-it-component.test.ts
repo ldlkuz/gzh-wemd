@@ -80,20 +80,40 @@ describe("markdown-it-component 语法解析", () => {
     expect(html).toContain("<em>斜体</em>");
   });
 
-  it("body 支持多段落", () => {
-    const md = "::: cta-card\n第一段\n\n第二段\n:::";
-    const html = parser.render(md);
-    expect(html).toContain("第一段");
-    expect(html).toContain("第二段");
-    // 应该有两个 <p>
-    expect(html.match(/<p>/g)?.length).toBeGreaterThanOrEqual(2);
+  it("开启 includeSourcePosition 时组件 section 带滚动锚点属性", () => {
+    const parserSp = createMarkdownParser({ includeSourcePosition: true });
+    const md = '前置段落\n\n::: quote-card{author="x"}\n内容\n:::\n\n后置段落';
+    const html = parserSp.render(md);
+    // 组件外层 section 必须有 source 锚点，供预览端 collectAnchors 建立滚动同步
+    expect(html).toContain(
+      'class="wemd-component wemd-quote-card" data-component="quote-card"',
+    );
+    expect(html).toMatch(
+      /<section[^>]*data-component="quote-card"[^>]*data-wemd-source-start="\d+"/,
+    );
+    expect(html).toMatch(
+      /<section[^>]*data-component="quote-card"[^>]*data-wemd-source-end="\d+"/,
+    );
   });
 
-  it("body 支持列表", () => {
+  it("body 支持多段落（按 slot 分离）", () => {
+    const md = "::: cta-card\n第一段\n\n第二段\n:::";
+    const html = parser.render(md);
+    // cta-card 按 title/body 槽分离渲染（不再整块进 .wemd-component-body）
+    expect(html).toContain("wemd-cta-title");
+    expect(html).toContain("wemd-cta-body");
+    expect(html).toContain("第一段");
+    expect(html).toContain("第二段");
+  });
+
+  it("body 支持列表（渲染为 list 槽）", () => {
     const md = "::: timeline\n- 第一步\n- 第二步\n- 第三步\n:::";
     const html = parser.render(md);
-    expect(html).toContain("<ul>");
+    // timeline 按 title/items 槽渲染为事件列表
+    expect(html).toContain("wemd-tl-events");
+    expect(html).toContain("wemd-tl-item");
     expect(html).toContain("第一步");
+    expect(html).toContain("第二步");
     expect(html).toContain("第三步");
   });
 
@@ -108,7 +128,8 @@ describe("markdown-it-component 语法解析", () => {
     const md = "::: divider-fancy\n:::";
     const html = parser.render(md);
     expect(html).toContain("wemd-component");
-    expect(html).toContain("wemd-component-body");
+    // 渲染为 Slot class 结构（不再有 wemd-component-body）
+    expect(html).toContain("wemd-df-label");
   });
 
   it("props 为空对象时仍正常输出", () => {
@@ -225,9 +246,9 @@ describe("markdown-it-component 新增组件渲染", () => {
     const html = parser.render(md);
     expect(html).toContain("wemd-stats-block");
     expect(html).toContain('data-component="stats-block"');
-    expect(html).toContain("<ul>");
-    expect(html).toContain("<strong>1,234</strong>");
-    expect(html).toContain("<strong>¥9,800</strong>");
+    expect(html).toContain("wemd-sb-items");
+    expect(html).toContain("用户数 1,234");
+    expect(html).toContain("收入 ¥9,800");
   });
 
   it("image-grid 渲染图片列表", () => {
@@ -239,6 +260,9 @@ describe("markdown-it-component 新增组件渲染", () => {
     expect(html).toContain("<img");
     expect(html).toContain("example.com/1.png");
     expect(html).toContain("example.com/2.png");
+    // 列表前缀 `- ` 应被清理，不残留在 <img> 前
+    expect(html).not.toContain(">- <img");
+    expect(html).not.toContain(">- ");
   });
 
   it("author-card 渲染头像与简介", () => {
@@ -261,8 +285,10 @@ describe("markdown-it-component 新增组件渲染", () => {
     const html = parser.render(md);
     expect(html).toContain("wemd-cta-card");
     expect(html).toContain("点击关注");
-    // 至少 3 个段落
-    expect(html.match(/<p>/g)?.length).toBeGreaterThanOrEqual(3);
+    // 内容按 title/body 槽分离渲染（不再输出 <p> 段落）
+    expect(html).toContain("wemd-cta-title");
+    expect(html).toContain("wemd-cta-body");
+    expect(html).toContain("如果觉得有用");
   });
 
   it("timeline 渲染时间线列表", () => {
@@ -271,9 +297,9 @@ describe("markdown-it-component 新增组件渲染", () => {
     const html = parser.render(md);
     expect(html).toContain("wemd-timeline");
     expect(html).toContain('data-component="timeline"');
-    expect(html).toContain("<ul>");
-    expect(html).toContain("<strong>2019 年</strong>");
-    expect(html).toContain("<strong>2024 年</strong>");
+    expect(html).toContain("wemd-tl-events");
+    expect(html).toContain("2019 年 项目立项");
+    expect(html).toContain("2024 年 行业标杆");
     expect(html).toContain("项目立项");
     expect(html).toContain("行业标杆");
   });

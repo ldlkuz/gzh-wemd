@@ -3,8 +3,8 @@
   align-items: center;
   gap: 4px;
   padding: 8px 12px;
-  background: var(--bg-secondary);
-  border-bottom: var(--border-width) solid var(--border-light);
+  background: #fffaf0;
+  border-bottom: 1px solid rgba(214, 178, 88, 0.2);
   flex-wrap: wrap;
 }
 

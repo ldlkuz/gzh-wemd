@@ -624,6 +624,7 @@ export const useThemeStore = create<ThemeStore>((set, get) => ({
 
         const pkg: LoadedThemePackage = {
           manifest,
+          templates: new Map(Object.entries(theme.definition?.templates ?? {})),
           styles: {
             componentsCss: theme.componentsCss,
             extrasCss: theme.extrasCss,
@@ -685,6 +686,14 @@ export const useThemeStore = create<ThemeStore>((set, get) => ({
       const pkg = loaderResult.value;
       const manifest = pkg.manifest;
 
+      // 主题骨架模板：loader 把 zip 的 templates/*.html 提取到 pkg.templates（Map），
+      // 但不会写回 manifest。若不合并，渲染器 getThemeTemplates(themeDefinition) 取不到，
+      // 会回退到内置默认骨架，导致主题自定义骨架不生效。
+      manifest.templates = manifest.templates ?? {};
+      for (const [id, tpl] of pkg.templates) {
+        manifest.templates[id] = tpl;
+      }
+
       // 检查重名
       const existingNames = get().customThemes.map((t) => t.name);
       const existingById = get().customThemes.find(
@@ -724,12 +733,15 @@ export const useThemeStore = create<ThemeStore>((set, get) => ({
       );
 
       // 渲染 CSS：renderTheme 生成完整 CSS（含轨道 B AI variantCss + components.css）
-      // 排版由主程序统一控制：用内置默认主题的排版替换导入主题的排版
-      const defaultDef = getBuiltInThemeDefinition("default");
-      if (defaultDef?.tokens?.typography) {
-        manifest.tokens.typography = JSON.parse(
-          JSON.stringify(defaultDef.tokens.typography),
-        );
+      // 保留导入主题自身的排版（标题预设/字体/字号），避免被默认主题覆盖而出现无关装饰线
+      // 仅当导入主题缺少排版时才回退到内置默认主题的排版
+      if (!manifest.tokens.typography) {
+        const defaultDef = getBuiltInThemeDefinition("default");
+        if (defaultDef?.tokens?.typography) {
+          manifest.tokens.typography = JSON.parse(
+            JSON.stringify(defaultDef.tokens.typography),
+          );
+        }
       }
       const fullCss = renderTheme(manifest, {
         componentsCss: pkg.styles.componentsCss,

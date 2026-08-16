@@ -38,6 +38,13 @@ const PSEUDO_STYLE_KEYS = [
   "vertical-align",
 ] as const;
 
+/**
+ * steps 组件由 pseudoElementInline.materializeSteps 完整物化（保留 position/width/height 等
+ * 布局属性），此处跳过，避免与 materializeCounterPseudoContent 的简化样式复制双重/错误处理。
+ */
+const isStepsCounterSelector = (selector: string | undefined): boolean =>
+  !!selector && selector.includes(".wemd-steps");
+
 const isCounterNoopValue = (input: string | undefined): boolean => {
   if (!input) return true;
   return COUNTER_NOOP_KEYWORDS.has(input.trim().toLowerCase());
@@ -114,6 +121,7 @@ export const extractCounterPseudoRules = (css: string): CounterPseudoRule[] => {
       .filter(Boolean);
 
     selectors.forEach((selector) => {
+      if (isStepsCounterSelector(selector)) return;
       rules.push({ selector, pseudo });
     });
   }
@@ -127,8 +135,10 @@ export const stripCounterPseudoRules = (css: string): string => {
 
   return css.replace(
     pattern,
-    (fullRule: string, _selector: string, _pseudo: string, body: string) =>
-      COUNTER_CONTENT_PATTERN.test(body || "") ? "" : fullRule,
+    (fullRule: string, selector: string, _pseudo: string, body: string) => {
+      if (isStepsCounterSelector(selector)) return fullRule;
+      return COUNTER_CONTENT_PATTERN.test(body || "") ? "" : fullRule;
+    },
   );
 };
 
@@ -445,6 +455,11 @@ export const materializeCounterPseudoContent = (
       pseudo: PseudoPosition,
       depth: number,
     ) => {
+      // steps 序号由 pseudoElementInline.materializeSteps 完整物化（保留 position/width/height），
+      // 此处跳过其容器内所有元素，避免与 materializeSteps 形成双重物化（真实浏览器下
+      // getComputedStyle 能解析 li::before 的 counter，导致多余的绿色内联 "1"）。
+      if (element.closest?.(".wemd-steps")) return;
+
       const pseudoStyle = window.getComputedStyle(element, `::${pseudo}`);
       applyCounterOpsFromStyle(pseudoStyle, counterScopes, depth);
 

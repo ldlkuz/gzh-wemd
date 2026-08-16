@@ -2,7 +2,7 @@
 
 ## 输入
 
-读取 `creative/brand_state.json`（上一阶段输出）。
+读取 `themes/{theme-name}/states/brand_state.json`（上一阶段输出）。
 
 ## 任务
 
@@ -69,7 +69,7 @@
 
 ## 输出格式
 
-严格遵循 `creative/concept_state.schema.json`，输出以下字段：
+严格遵循 `schema/concept_state.schema.json`，输出以下字段：
 
 - `concept_name`: 独特的概念名称，概括品牌视觉方向
 - `core_concept`: 核心概念的一句话描述

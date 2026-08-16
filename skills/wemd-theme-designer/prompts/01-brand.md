@@ -41,7 +41,7 @@
 
 ## 输出格式
 
-严格遵循 `creative/brand_state.schema.json`：
+严格遵循 `schema/brand_state.schema.json`：
 
 ```json
 {

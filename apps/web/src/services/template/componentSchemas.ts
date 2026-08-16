@@ -20,7 +20,6 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
   {
     component: "hero-banner",
     description: "顶部头图 banner，展示标题和副标题",
-    propsExample: { variant: "center" },
     example: {
       title: "文章主标题",
       subtitle: "副标题或摘要",
@@ -46,7 +45,7 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
   {
     component: "section-title",
     description: "段落小标题，用于分节",
-    propsExample: { variant: "default" },
+
     example: {
       title: "小标题文字",
     },
@@ -62,7 +61,7 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
   {
     component: "callout-pro",
     description: "提示/警告/信息框，用于突出重要内容",
-    propsExample: { type: "tip", variant: "border" },
+    propsExample: { type: "tip" },
     example: {
       title: "提示标题",
       body: "提示内容说明",
@@ -172,7 +171,6 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
   {
     component: "section-divider",
     description: "章节分隔标题，PART 编号 + 中文标题，居中显示",
-    propsExample: { variant: "line" },
     example: {
       part: "PART 01",
       title: "夏日故事",
@@ -213,7 +211,6 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
   {
     component: "end-card",
     description: "结尾致谢卡片，居中 Thanks 样式",
-    propsExample: { variant: "centered" },
     example: {
       title: "Thanks",
       subtitle: "感谢阅读 · 期待下次相遇",
@@ -224,7 +221,6 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
     component: "product-card",
     description:
       "产品/商品卡片（电商/带货向）：图片 + 标题 + 描述 + 价格/原价折扣 + 评分⭐ + 购买按钮 + 标签",
-    propsExample: { variant: "ecommerce" },
     example: {
       image: "https://example.com/product.jpg",
       title: "星空投影灯 Pro",
@@ -243,7 +239,6 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
   {
     component: "brand-sign",
     description: "品牌签名 Logo 小标：品牌 Logo + 品牌名 + Slogan + 小装饰",
-    propsExample: { variant: "inline" },
     example: {
       logo: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
       brandName: "WeMD",
@@ -257,7 +252,6 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
     component: "resource-list",
     description:
       "资料清单/步骤清单：非文章目录，用于资料下载列表、操作N步法、参考书目等外部列表",
-    propsExample: { variant: "files" },
     example: {
       title: "配套资料包",
       subtitle: "关注公众号后台回复「vue」即可下载」即可获取",
@@ -293,7 +287,6 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
     component: "testimonial-card",
     description:
       "名人名言/客户推荐卡：头像 + 人名 + 职位 + 公司 + 名言正文 + 来源 + 公司 Logo 可选",
-    propsExample: { variant: "classic" },
     example: {
       avatar: "https://example.com/avatar.jpg",
       name: "史蒂夫·乔布斯",
@@ -307,7 +300,6 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
     component: "series-nav",
     description:
       "系列文章导航：系列名 + 当前第 N 篇/共 X 篇 + 上一篇/下一篇 + 文章列表或进度条",
-    propsExample: { variant: "progress" },
     example: {
       seriesName: "Vue3 从 0 到 1",
       currentIndex: 3,
@@ -327,7 +319,6 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
   {
     component: "image-grid",
     description: "图片画廊/多图网格，展示多张图片",
-    propsExample: { variant: "grid" },
     example: {
       title: "夏日旅行记录",
       images: [
@@ -340,7 +331,6 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
   {
     component: "author-card",
     description: "作者卡片：头像 + 作者名 + 职位/头衔 + 简介",
-    propsExample: { variant: "compact" },
     example: {
       avatar: "https://example.com/avatar.jpg",
       name: "张三",
@@ -351,7 +341,6 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
   {
     component: "related-posts",
     description: "相关推荐文章列表，文末引导继续阅读",
-    propsExample: { variant: "list" },
     example: {
       title: "延伸阅读",
       posts: [
@@ -364,7 +353,7 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
   {
     component: "copyright-notice",
     description: "版权声明：版权年份 + 作者 + 许可协议，或自定义声明文本",
-    propsExample: { variant: "default" },
+
     example: {
       year: "2026",
       author: "WeMD Team",
@@ -374,7 +363,7 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
   {
     component: "qr-card",
     description: "二维码卡片：二维码图片 + 标题 + 描述说明",
-    propsExample: { variant: "default" },
+
     example: {
       src: "https://example.com/qrcode.png",
       title: "扫码关注公众号",
@@ -384,7 +373,6 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
   {
     component: "image-text-row",
     description: "图文横排：图片 + 文字并排展示",
-    propsExample: { variant: "row" },
     example: {
       image: "https://example.com/cover.jpg",
       text: "这里是图片对应的说明文字，与图片横向并排展示。",
@@ -393,7 +381,7 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
   {
     component: "image-caption",
     description: "图片说明：图片 + 斜体说明文字（caption 样式）",
-    propsExample: { variant: "default" },
+
     example: {
       src: "https://example.com/photo.jpg",
       caption: "摄于 2026 年盛夏，海边日落",
@@ -402,7 +390,7 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
   {
     component: "image-compare",
     description: "图片对比：前后两张图并排，用于展示变化/对比",
-    propsExample: { variant: "default" },
+
     example: {
       before: "https://example.com/before.jpg",
       after: "https://example.com/after.jpg",
@@ -412,7 +400,7 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
   {
     component: "table",
     description: "原始数据表格：表头 + 多行数据，适合结构化数据对比",
-    propsExample: { variant: "default" },
+
     example: {
       title: "配置对比表",
       headers: ["版本", "价格", "功能"],
@@ -425,7 +413,7 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
   {
     component: "accordion",
     description: "折叠面板：多个问答/条目，可折叠展开",
-    propsExample: { variant: "default" },
+
     example: {
       items: [
         { title: "常见问题一", body: "这是答案内容。" },
@@ -436,7 +424,7 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
   {
     component: "steps",
     description: "步骤条：分步骤说明操作流程，带序号",
-    propsExample: { variant: "default" },
+
     example: {
       title: "使用步骤",
       items: [
@@ -457,7 +445,7 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
   {
     component: "pullquote",
     description: "拉取引用：页面居中的大号金句，突出展示",
-    propsExample: { variant: "default" },
+
     example: {
       text: "真正的好产品，是让它消失。",
       source: "乔布斯",
@@ -466,7 +454,7 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
   {
     component: "divider",
     description: "分隔线：简单的内容分隔，可带文字",
-    propsExample: { variant: "default" },
+
     example: {
       text: "以上是第一部分",
     },

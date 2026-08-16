@@ -1,6 +1,7 @@
 export * from "./basic";
 export * from "./components-default";
 export * from "./components-extra";
+export * from "./components-extended";
 export * from "./components-faq";
 export * from "./components-magazine";
 export * from "./theme-variables";

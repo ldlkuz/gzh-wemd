@@ -6,14 +6,14 @@
 
 ## 输入
 
-1. `creative/visual_language.json`（上一阶段输出的视觉语言）
+1. `themes/{theme-name}/states/visual_language.json`（上一阶段输出的视觉语言）
 2. `registry/components.json`（WeMD 组件注册表，43 个组件的定义）
 
 ## 翻译任务
 
 ### 第一步：理解创意
 
-阅读 `creative/visual_language.json` 中的视觉语言，理解创意阶段设计的视觉感受：
+阅读 `themes/{theme-name}/states/visual_language.json` 中的视觉语言，理解创意阶段设计的视觉感受：
 
 - 色彩方向：什么性格、什么对比度？
 - 排版：什么气质、什么层级？
@@ -52,7 +52,7 @@
 
 ## 输出格式
 
-严格遵循 `translator/component_strategy.schema.json`。以下仅供说明**输出结构**，其中的组件名纯属示意，**不代表任何固定的 Anchor 组合**——具体哪些组件成为 Anchor，必须由上一阶段的视觉母题（`visual_metaphor`）牵引推导，不得照抄：
+严格遵循 `schema/component_strategy.schema.json`。以下仅供说明**输出结构**，其中的组件名纯属示意，**不代表任何固定的 Anchor 组合**——具体哪些组件成为 Anchor，必须由上一阶段的视觉母题（`visual_metaphor`）牵引推导，不得照抄：
 
 ```json
 {

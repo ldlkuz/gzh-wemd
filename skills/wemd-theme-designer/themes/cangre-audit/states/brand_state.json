@@ -1,0 +1,22 @@
+{
+  "brand_identity": {
+    "name": "苍洱财税",
+    "type": "enterprise"
+  },
+  "industry": "财税服务 · 研发费用加计扣除专项",
+  "customer": "科技型中小企业（需做研发费加计扣除申报与备查资料的企业）",
+  "product": "研发费用加计扣除合规服务、备查资料整理、税务核查应对",
+  "desired_impression": ["行业专家", "可信赖的合规伙伴", "严谨的守护者"],
+  "existing_assets": {
+    "logo_available": false,
+    "geometry": "geometric",
+    "line_character": "straight",
+    "tone": "neutral",
+    "material_feel": "paper"
+  },
+  "personality": ["meticulous", "reliable", "precise"],
+  "audience": ["finance managers", "tax accountants", "tech-company founders"],
+  "emotion": ["reassuring", "orderly", "trustworthy"],
+  "avoid": ["internet startup style", "too flashy", "cyberpunk"],
+  "keywords": ["严谨", "合规", "可信", "条理", "守护"]
+}
