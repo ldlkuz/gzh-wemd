@@ -9,32 +9,8 @@
     "owner": "ldlkuz",
     "repo": "gzh-wemd"
   },
-  "files": [
-    "dist/**/*",
-    "assets/**/*",
-    "package.json",
-    "!**/.DS_Store",
-    {
-      "from": "../../node_modules",
-      "to": "node_modules",
-      "filter": [
-        "electron-updater/**",
-        "fs-extra/**",
-        "builder-util-runtime/**",
-        "js-yaml/**",
-        "lazy-val/**",
-        "lodash.escaperegexp/**",
-        "lodash.isequal/**",
-        "semver/**",
-        "tiny-typed-emitter/**",
-        "jsonfile/**",
-        "universalify/**",
-        "graceful-fs/**",
-        "argparse/**",
-        "sprintf-js/**"
-      ]
-    }
-  ],
+  "electronVersion": "28.3.3",
+  "files": ["dist/**/*", "assets/**/*", "package.json", "!**/.DS_Store"],
   "extraResources": [
     {
       "from": "../web/dist",

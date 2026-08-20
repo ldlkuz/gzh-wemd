@@ -76,7 +76,7 @@ importers:
         specifier: ^20.0.0
         version: 20.19.25
       electron:
-        specifier: ^28.0.0
+        specifier: 28.3.3
         version: 28.3.3
       electron-builder:
         specifier: ^24.13.3
@@ -7647,7 +7647,7 @@ snapshots:
       es6-error: 4.1.1
       matcher: 3.0.0
       roarr: 2.15.4
-      semver: 7.7.3
+      semver: 7.7.4
       serialize-error: 7.0.1
     optional: true
 
