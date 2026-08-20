@@ -288,8 +288,96 @@ const BLOCK_TAGS = [
  * 也无法避免。
  *
  * 本函数直接用浏览器原生 querySelectorAll 匹配选择器，稳定可靠。
- * CSS 规则按出现顺序应用，后出现的规则覆盖先出现的（与 CSS 层叠一致）。
+ * 与浏览器 CSS 层叠一致：先按「特异性」升序应用（高特异性覆盖低特异性），
+ * 同特异性内再按源码顺序应用（后者覆盖前者），保证内联结果 = 实时预览。
+ * 仅按源码顺序会把「后出现的低特异性全局规则」错置为最高优先级，
+ * 导致组件级覆盖失效（如前本文件中 code-frame 代码区配色被全局 pre code.hljs 顶掉）。
  */
+/**
+ * 计算 CSS 选择器的特异性 (a, b, c)：
+ * a = ID 选择器数，b = 类 / 属性 / 伪类选择器数，c = 元素 / 伪元素选择器数。
+ * 一个选择器列表（含逗号）取其中最大的特异性 —— 元素匹配时以命中的那一支为准，
+ * 取 max 是对「多支都可能命中同一元素」时的安全上界。
+ *
+ * 说明：本工程组件骨架已规避微信不兼容的 :not()/:nth-child 等结构伪类，
+ * 因此按选择器片段直接计数即可，无需完整实现 CSS 伪类语法树解析。
+ */
+function selectorSpecificity(selector: string): [number, number, number] {
+  let a = 0;
+  let b = 0;
+  let c = 0;
+  // 逗号分开的每个复杂选择器逐一计，取最大
+  for (const complex of selector.split(",")) {
+    const s = complex.trim();
+    if (!s) continue;
+    const ids = s.match(/#[a-zA-Z][\w-]*/g)?.length ?? 0;
+    const classes = s.match(/\.[a-zA-Z][\w-]*/g)?.length ?? 0;
+    const attrs = s.match(/\[[^\]]*\]/g)?.length ?? 0;
+    // 伪类：单冒号（非 ::），:not/:is 内部也纳为类级（工程已规避，属可接受的近似）
+    const pseudoClasses = s.match(/(?<!:):[a-zA-Z][\w-]*/g)?.length ?? 0;
+    const cleaned = s
+      .replace(/#[a-zA-Z][\w-]*/g, "")
+      .replace(/\.[a-zA-Z][\w-]*/g, "")
+      .replace(/\[[^\]]*\]/g, "")
+      .replace(/(?<!:):[a-zA-Z][\w-]*/g, "")
+      .replace(/::[a-zA-Z][\w-]*/g, "");
+    const elements = (cleaned.match(/[a-zA-Z][a-zA-Z0-9-]*/g) ?? []).length;
+    if (
+      ids > a ||
+      (ids === a && classes + attrs + pseudoClasses > b) ||
+      (ids === a &&
+        classes + attrs + pseudoClasses === b &&
+        elements > c)
+    ) {
+      a = ids;
+      b = classes + attrs + pseudoClasses;
+      c = elements;
+    }
+  }
+  return [a, b, c];
+}
+
+/**
+ * 按分号切分 CSS 声明，但忽略 url(...) 内部的分号。
+ * 否则 url("data:image/svg+xml;base64,...") 里的分号会被截断，
+ * 导致 data URL 背景内联时被拆散（数据交响纸纹噪点背景依赖此修复）。
+ */
+function splitCssDeclarations(input: string): string[] {
+  const parts: string[] = [];
+  let current = "";
+  let i = 0;
+  while (i < input.length) {
+    // url(...) 进入保护：跳过其中的所有分号（允许嵌套括号）
+    if (/^url\s*\(/i.test(input.slice(i))) {
+      let depth = 0;
+      while (i < input.length) {
+        const ch = input[i];
+        current += ch;
+        if (ch === "(") depth++;
+        else if (ch === ")") {
+          depth--;
+          if (depth === 0) {
+            i++;
+            break;
+          }
+        }
+        i++;
+      }
+      continue;
+    }
+    if (input[i] === ";") {
+      parts.push(current);
+      current = "";
+      i++;
+      continue;
+    }
+    current += input[i];
+    i++;
+  }
+  parts.push(current);
+  return parts;
+}
+
 const inlineAllStylesManually = (html: string, css: string): string => {
   const rules: Array<{ selector: string; styles: string }> = [];
   // 剥离 CSS 注释，避免注释文本被误认为是选择器的一部分
@@ -306,8 +394,7 @@ const inlineAllStylesManually = (html: string, css: string): string => {
     if (selector.includes("::")) continue;
     if (selector.startsWith("@")) continue;
 
-    const styleStr = body
-      .split(";")
+    const styleStr = splitCssDeclarations(body)
       .map((s) => s.trim())
       .filter((s) => s.length > 0 && s.indexOf(":") > 0)
       .join("; ");
@@ -319,38 +406,61 @@ const inlineAllStylesManually = (html: string, css: string): string => {
 
   if (rules.length === 0) return html;
 
+  // 与浏览器层叠一致：按「特异性」升序应用，同特异性内保持源码顺序（稳定排序）。
+  const orderedRules = rules
+    .map((r) => ({ rule: r, sp: selectorSpecificity(r.selector) }))
+    .sort(
+      (x, y) =>
+        x.sp[0] - y.sp[0] || x.sp[1] - y.sp[1] || x.sp[2] - y.sp[2],
+    )
+    .map((x) => x.rule);
+
   const container = document.createElement("div");
   container.innerHTML = html;
 
-  for (const { selector, styles } of rules) {
+  for (const { selector, styles } of orderedRules) {
     try {
       const elements = container.querySelectorAll(selector);
       elements.forEach((el) => {
         if (!(el instanceof HTMLElement)) return;
-        const styleMap = new Map<string, string>();
+        // 记录每条声明的级联优先级（seq 单调递增；规则按特异性+源码序应用，
+        // 因此后应用=级联优先级更高），用于处理「简写 vs 长属性」的覆盖关系。
+        const styleMap = new Map<string, { value: string; seq: number }>();
+        let seq = 0;
         const existing = (el.getAttribute("style") || "").trim();
-        existing.split(";").forEach((s) => {
+        splitCssDeclarations(existing).forEach((s) => {
           const colonIdx = s.indexOf(":");
           if (colonIdx > 0) {
-            styleMap.set(
-              s.substring(0, colonIdx).trim(),
-              s.substring(colonIdx + 1).trim(),
-            );
+            styleMap.set(s.substring(0, colonIdx).trim(), {
+              value: s.substring(colonIdx + 1).trim(),
+              seq: seq++,
+            });
           }
         });
-        styles.split(";").forEach((s) => {
+        splitCssDeclarations(styles).forEach((s) => {
           const colonIdx = s.indexOf(":");
-          if (colonIdx > 0) {
-            styleMap.set(
-              s.substring(0, colonIdx).trim(),
-              s.substring(colonIdx + 1).trim(),
-            );
+          if (colonIdx <= 0) return;
+          const prop = s.substring(0, colonIdx).trim();
+          const value = s.substring(colonIdx + 1).trim();
+          // 简写声明会重置整条家族：清除该家族里「级联优先级更低」的长属性。
+          // 否则同元素上会残留低特异规则写下的长属性（如全局 #wemd pre 的
+          // margin-top:10px），且 normalizeShorthandOrderForInline 又把它排到
+          // 简写之后，导致低特异长属性反而赢过组件的高特异简写 margin:0，
+          // 让 code-frame 的红色上边线离黑色标题条多出 10px 缝隙。
+          const fam = SHORTHAND_FAMILIES.find((f) => f.short === prop);
+          if (fam) {
+            for (const lh of fam.longhands) {
+              const entry = styleMap.get(lh);
+              if (entry && entry.seq < seq) styleMap.delete(lh);
+            }
           }
+          styleMap.set(prop, { value, seq: seq++ });
         });
-        // 统一简写家族（margin/padding/border/outline/flex 等）与长属性的顺序，
-        // 避免简写在 style 串中覆盖其前长属性，
-        // 从而消除组件垂直间距丢失（如 blockquote）这类「顺序决定结果」的问题
-        const normalizedMap = normalizeShorthandOrderForInline(styleMap);
+        // 收敛为纯字符串表，再交给 normalizeShorthandOrderForInline 排序
+        // （此时仍共存的长属性必然优先级更高，简写前置让长属性赢 = 正确）。
+        const plain: Map<string, string> = new Map();
+        for (const [k, v] of styleMap) plain.set(k, v.value);
+        const normalizedMap = normalizeShorthandOrderForInline(plain);
         const merged = Array.from(normalizedMap.entries())
           .map(([p, v]) => `${p}: ${v}`)
           .join("; ");

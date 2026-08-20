@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>好物种草 · Shopping List · 视觉稿</title>
+<style>
+  :root{
+    --bg:#faf6ef;
+    --paper:#fffdf8;
+    --ink:#2a2520;
+    --ink-soft:#8a7f72;
+    --accent:#d9583b;
+    --accent-soft:#f6e5dc;
+    --line:rgba(42,37,32,.14);
+    --sans:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+    --serif:"Noto Serif SC","Songti SC","SimSun","Source Han Serif SC",Georgia,serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#ece6da;font-family:var(--serif);color:var(--ink);-webkit-font-smoothing:antialiased}
+  main{width:min(680px,94vw);margin:0 auto;background:var(--bg)}
+  section,header,footer{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease}
+  section.in,header.in,footer.in{opacity:1;transform:none}
+  img{display:block;width:100%}
+
+  /* ============ 封面：主推大图 + 叠字 ============ */
+  .cover{position:relative;height:clamp(420px,72vw,560px);overflow:hidden}
+  .cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .cover-shade{position:absolute;inset:0;background:linear-gradient(to top,rgba(25,18,12,.78) 0%,rgba(25,18,12,.28) 42%,rgba(25,18,12,.06) 100%)}
+  .cover-text{position:absolute;left:0;right:0;bottom:0;padding:0 28px 30px;color:#f7f1e6}
+  .cover-kicker{font-family:var(--sans);font-size:11.5px;letter-spacing:.42em;color:#f2a48c;margin-bottom:18px}
+  .cover h1{font-family:var(--sans);font-weight:800;font-size:clamp(30px,6.4vw,46px);line-height:1.18;letter-spacing:.02em}
+  .cover .cover-sub{margin-top:14px;font-size:clamp(13px,2vw,15px);letter-spacing:.1em;color:rgba(247,241,230,.82)}
+  .cover .cover-meta{margin-top:22px;display:flex;align-items:center;gap:14px;font-family:var(--sans);font-size:11px;letter-spacing:.24em;color:rgba(247,241,230,.55)}
+  .cover .cover-meta .dot{width:3px;height:3px;border-radius:50%;background:rgba(247,241,230,.5)}
+
+  /* ============ 引言 ============ */
+  .intro{padding:clamp(28px,5vw,40px) clamp(22px,5vw,34px)}
+  .intro .intro-tag{font-family:var(--sans);font-size:11px;letter-spacing:.36em;color:var(--accent);margin-bottom:14px}
+  .intro p{font-size:clamp(17px,2.6vw,20px);line-height:2;font-weight:600}
+
+  /* ============ 好物区 ============ */
+  .item{padding:clamp(8px,1.5vw,12px) 0 clamp(44px,7vw,64px)}
+  .item-fig{position:relative;overflow:hidden;border-radius:4px}
+  .item-fig img{transition:transform .9s ease}
+  .item-fig:hover img{transform:scale(1.03)}
+  .item-no{position:absolute;top:16px;left:16px;background:rgba(250,246,239,.94);color:var(--accent);font-family:var(--sans);font-weight:800;font-size:12px;letter-spacing:.16em;padding:6px 12px;border-radius:2px}
+  .item-price{position:absolute;bottom:16px;right:16px;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:13.5px;padding:7px 14px;border-radius:2px;letter-spacing:.04em}
+  .item-body{padding:18px clamp(4px,1.5vw,8px) 0}
+  .item-title{font-family:var(--sans);font-weight:800;font-size:clamp(19px,3.2vw,23px);letter-spacing:.02em}
+  .item-desc{margin-top:10px;font-size:clamp(14.5px,2.2vw,16px);line-height:2;color:var(--ink-soft)}
+  .item-desc strong{color:var(--ink);font-weight:600}
+  .item-divider{height:1px;background:var(--line);margin:0 clamp(22px,5vw,34px)}
+
+  /* ============ 总结 ============ */
+  .summary{padding:clamp(30px,5.5vw,44px) clamp(22px,5vw,34px)}
+  .summary .summary-tag{font-family:var(--sans);font-size:11px;letter-spacing:.36em;color:var(--accent);margin-bottom:16px}
+  .summary h3{font-family:var(--sans);font-weight:800;font-size:clamp(18px,3vw,22px);margin-bottom:16px}
+  .summary ul{list-style:none}
+  .summary li{display:flex;align-items:baseline;gap:12px;font-size:clamp(14.5px,2.2vw,16px);line-height:2.1;color:var(--ink-soft)}
+  .summary li::before{content:"·";color:var(--accent);font-weight:800}
+
+  /* ============ 落款 ============ */
+  .signoff{text-align:center;padding:clamp(36px,6.5vw,52px) 10px clamp(56px,8vw,76px)}
+  .signoff .rule{width:52px;height:2px;background:var(--accent);margin:0 auto 24px}
+  .signoff .name{font-family:var(--sans);font-weight:800;font-size:15px;letter-spacing:.3em}
+  .signoff .date{margin-top:12px;font-family:var(--sans);font-size:11px;letter-spacing:.3em;color:var(--ink-soft)}
+</style>
+</head>
+<body>
+<main>
+
+  <!-- 封面 -->
+  <header class="cover">
+    <img src="img/hero-desk.jpg" alt="暖光桌面">
+    <div class="cover-shade"></div>
+    <div class="cover-text">
+      <div class="cover-kicker">买手清单 · SHOPPING LIST</div>
+      <h1>让桌面变好的四件小东西</h1>
+      <p class="cover-sub">不追新款，只留用过三个月还想继续用的。</p>
+      <div class="cover-meta"><span>本期 · 桌面好物</span><span class="dot"></span><span>2026.08.20</span></div>
+    </div>
+  </header>
+
+  <!-- 引言 -->
+  <section class="intro">
+    <div class="intro-tag">筛选标准 · STANDARD</div>
+    <p>这期只收四件：第一眼喜欢，用三个月不腻，<span style="color:var(--accent);font-weight:700">还愿意再买一件送人</span>的东西。</p>
+  </section>
+
+  <!-- 好物 01 -->
+  <section class="item">
+    <div class="item-fig">
+      <img src="img/item-lamp.jpg" alt="黄铜台灯">
+      <span class="item-no">01 · 光线</span>
+      <span class="item-price">¥ 299</span>
+    </div>
+    <div class="item-body">
+      <div class="item-title">黄铜台灯</div>
+      <p class="item-desc">暖光调到最暗，正好照到键盘，不照脸。<strong>光线舒服到想加班。</strong>底盘够重，猫碰不倒。</p>
+    </div>
+  </section>
+  <div class="item-divider"></div>
+
+  <!-- 好物 02 -->
+  <section class="item">
+    <div class="item-fig">
+      <img src="img/item-keyboard.jpg" alt="奶油机械键盘">
+      <span class="item-no">02 · 手感</span>
+      <span class="item-price">¥ 459</span>
+    </div>
+    <div class="item-body">
+      <div class="item-title">奶油机械键盘</div>
+      <p class="item-desc">奶油白键帽 + 一颗橙色回车。轴体声音闷而不吵，<strong>打字声是治愈的白噪音</strong>，开会有底气。</p>
+    </div>
+  </section>
+  <div class="item-divider"></div>
+
+  <!-- 好物 03 -->
+  <section class="item">
+    <div class="item-fig">
+      <img src="img/item-mug.jpg" alt="手作粗陶杯">
+      <span class="item-no">03 · 温度</span>
+      <span class="item-price">¥ 128</span>
+    </div>
+    <div class="item-body">
+      <div class="item-title">手作粗陶咖啡杯</div>
+      <p class="item-desc">每只杯子的釉色都不重样，杯口贴着唇很舒服。<strong>用它喝挂耳，等于每天开一家自己的咖啡馆。</strong></p>
+    </div>
+  </section>
+  <div class="item-divider"></div>
+
+  <!-- 好物 04 -->
+  <section class="item">
+    <div class="item-fig">
+      <img src="img/item-organizer.jpg" alt="原木收纳盒">
+      <span class="item-no">04 · 秩序</span>
+      <span class="item-price">¥ 89</span>
+    </div>
+    <div class="item-body">
+      <div class="item-title">原木收纳盒</div>
+      <p class="item-desc">钢笔、便签、回形针各有各的格子。<strong>桌面终于腾出了半个桌面</strong>，烦躁感少了一半。</p>
+    </div>
+  </section>
+
+  <!-- 总结 -->
+  <section class="summary">
+    <div class="summary-tag">适合谁 · FOR WHOM</div>
+    <h3>这四件，适合这样的人</h3>
+    <ul>
+      <li>长期居家办公，想在视线里放点顺眼的</li>
+      <li>喜欢把东西用出感情，而不是用完就换</li>
+      <li>不知道送什么，想送一件"对方天天会用"的</li>
+    </ul>
+  </section>
+
+  <!-- 落款 -->
+  <footer class="signoff">
+    <div class="rule"></div>
+    <div class="name">买手清单 · 编辑部</div>
+    <div class="date">SHOPPING LIST · 2026.08.20</div>
+  </footer>
+
+</main>
+<script>
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  },{threshold:.08});
+  document.querySelectorAll('section,header,footer').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>

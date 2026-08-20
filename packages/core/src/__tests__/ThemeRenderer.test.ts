@@ -14,7 +14,7 @@ import { builtInThemeDefinitions } from "../builtin-themes/index";
 // 12 套主题全部渲染
 // ============================================================
 
-describe("ThemeRenderer - 12 套内置主题", () => {
+describe("ThemeRenderer - 14 套内置主题", () => {
   for (const theme of builtInThemeDefinitions) {
     describe(theme.meta.name, () => {
       const css = renderTheme(theme);
@@ -106,8 +106,12 @@ describe("购物小票", () => {
   const theme = builtInThemeDefinitions.find((t) => t.meta.id === "receipt")!;
   const css = renderTheme(theme);
 
-  it("等宽字体生效", () => {
-    expect(css).toContain("Courier New");
+  it("小票红主色生效", () => {
+    expect(css).toContain("#cf2323");
+  });
+
+  it("等宽字体用于代码", () => {
+    expect(css).toContain("SF Mono");
   });
 });
 
@@ -116,7 +120,7 @@ describe("购物小票", () => {
 // ============================================================
 
 describe("ThemeDefinition 结构", () => {
-  it("12 套主题 ID 不重复", () => {
+  it("14 套主题 ID 不重复", () => {
     const ids = builtInThemeDefinitions.map((t) => t.meta.id);
     expect(new Set(ids).size).toBe(ids.length);
   });

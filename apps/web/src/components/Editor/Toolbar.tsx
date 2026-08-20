@@ -11,6 +11,7 @@ import {
   WrapText,
   LayoutTemplate,
   FileText,
+  Sigma,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -20,15 +21,20 @@ import {
 } from "../../services/image/autoCompressImage";
 import { uploadEditorImage } from "../../services/image/imageUploadFlow";
 import { useEditorStore } from "../../store/editorStore";
+import { useThemeStore } from "../../store/themeStore";
 import { resolveAppAssetPath } from "../../utils/assetPath";
+import { getBuiltInThemeDefinition, getComponentSampleMarkdown } from "@wemd/core";
 import { CurrentThemeBadge } from "./CurrentThemeBadge";
 import {
   blockTools,
+  componentGroups,
+  componentGroupOrder,
   componentTemplates,
   headingOptions,
   listOptions,
   mermaidMoreTemplates,
   mermaidPrimaryTemplates,
+  syntaxTools,
   textFormatTools,
   type ComponentTemplate,
 } from "./toolbarConfigs";
@@ -40,7 +46,12 @@ import { SyntaxHelpPopover } from "./SyntaxHelpPopover";
 import "./Toolbar.css";
 
 interface ToolbarProps {
-  onInsert: (prefix: string, suffix: string, placeholder: string) => void;
+  onInsert: (
+    prefix: string,
+    suffix: string,
+    placeholder: string,
+    opts?: { selectFirstLine?: boolean },
+  ) => void;
   onOpenAi?: () => void;
   aiLoading?: boolean;
   /** 打开 AI 杂志排版面板 */
@@ -58,15 +69,19 @@ export function Toolbar({
 }: ToolbarProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const themeId = useThemeStore((s) => s.themeId);
+  const customThemes = useThemeStore((s) => s.customThemes);
   const [showMermaidMenu, setShowMermaidMenu] = useState(false);
   const [showMermaidMore, setShowMermaidMore] = useState(false);
   const [showHeadingMenu, setShowHeadingMenu] = useState(false);
   const [showListMenu, setShowListMenu] = useState(false);
   const [showComponentMenu, setShowComponentMenu] = useState(false);
+  const [showSyntaxMenu, setShowSyntaxMenu] = useState(false);
   const mermaidMenuRef = useRef<HTMLDivElement>(null);
   const headingMenuRef = useRef<HTMLDivElement>(null);
   const listMenuRef = useRef<HTMLDivElement>(null);
   const componentMenuRef = useRef<HTMLDivElement>(null);
+  const syntaxMenuRef = useRef<HTMLDivElement>(null);
   const mermaidMoreRef = useRef<HTMLDivElement>(null);
   const mermaidSubmenuRef = useRef<HTMLDivElement>(null);
   const [mermaidSubmenuSide, setMermaidSubmenuSide] = useState<
@@ -102,6 +117,10 @@ export function Toolbar({
       ) {
         setShowComponentMenu(false);
       }
+      // 关闭语法菜单
+      if (syntaxMenuRef.current && !syntaxMenuRef.current.contains(target)) {
+        setShowSyntaxMenu(false);
+      }
       // 关闭 Mermaid 菜单
       if (mermaidMenuRef.current && !mermaidMenuRef.current.contains(target)) {
         setShowMermaidMenu(false);
@@ -110,14 +129,24 @@ export function Toolbar({
     };
 
     const anyMenuOpen =
-      showHeadingMenu || showListMenu || showMermaidMenu || showComponentMenu;
+      showHeadingMenu ||
+      showListMenu ||
+      showMermaidMenu ||
+      showComponentMenu ||
+      showSyntaxMenu;
     if (anyMenuOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [showHeadingMenu, showListMenu, showMermaidMenu, showComponentMenu]);
+  }, [
+    showHeadingMenu,
+    showListMenu,
+    showMermaidMenu,
+    showComponentMenu,
+    showSyntaxMenu,
+  ]);
 
   useEffect(() => {
     if (!showMermaidMore) return;
@@ -162,16 +191,25 @@ export function Toolbar({
         setShowHeadingMenu(false);
         setShowListMenu(false);
         setShowComponentMenu(false);
+        setShowSyntaxMenu(false);
       }
       return next;
     });
   };
 
   const handleComponentInsert = (template: ComponentTemplate) => {
+    // 按当前主题的槽位结构生成组件 body（主题感知插入）：
+    // 内置主题按 id 解析，自定义主题取其 definition；无法解析时回退静态模板。
+    const currentTheme =
+      getBuiltInThemeDefinition(themeId) ??
+      customThemes.find((t) => t.id === themeId)?.definition;
+    const generated = getComponentSampleMarkdown(currentTheme, template.name);
+    const body = generated || template.body;
     const propsSeg = template.props ? `{${template.props}}` : "";
     const prefix = `::: ${template.name}${propsSeg}\n`;
     const suffix = `\n:::`;
-    onInsert(prefix, suffix, template.body);
+    // 插入后自动选中首个占位符，用户可直接打字覆盖
+    onInsert(prefix, suffix, body, { selectFirstLine: true });
     setShowComponentMenu(false);
   };
 
@@ -184,6 +222,22 @@ export function Toolbar({
         setShowListMenu(false);
         setShowMermaidMenu(false);
         setShowMermaidMore(false);
+        setShowSyntaxMenu(false);
+      }
+      return next;
+    });
+  };
+
+  const toggleSyntaxMenu = () => {
+    setShowSyntaxMenu((prev) => {
+      const next = !prev;
+      if (next) {
+        // 关闭其他菜单
+        setShowHeadingMenu(false);
+        setShowListMenu(false);
+        setShowMermaidMenu(false);
+        setShowMermaidMore(false);
+        setShowComponentMenu(false);
       }
       return next;
     });
@@ -258,7 +312,7 @@ export function Toolbar({
     const loadingToastId = toast.loading("正在加载全组件范文...");
     try {
       // 使用相对路径，兼容 dev(http) 与打包后(file://)环境
-      const response = await fetch(resolveAppAssetPath("default-article.md"));
+      const response = await fetch(resolveAppAssetPath("samples/default.md"));
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
@@ -296,6 +350,7 @@ export function Toolbar({
             setShowListMenu(false);
             setShowMermaidMenu(false);
             setShowComponentMenu(false);
+            setShowSyntaxMenu(false);
           }}
           data-tooltip="标题"
         >
@@ -329,6 +384,7 @@ export function Toolbar({
             setShowHeadingMenu(false);
             setShowMermaidMenu(false);
             setShowComponentMenu(false);
+            setShowSyntaxMenu(false);
           }}
           data-tooltip="列表"
         >
@@ -433,6 +489,34 @@ export function Toolbar({
         )}
       </div>
 
+      {/* 语法下拉菜单（core 支持的扩展 Markdown 语法） */}
+      <div className="md-toolbar-dropdown-container" ref={syntaxMenuRef}>
+        <button
+          className={`md-toolbar-btn ${showSyntaxMenu ? "active" : ""}`}
+          onClick={toggleSyntaxMenu}
+          data-tooltip="插入语法"
+        >
+          <Sigma size={16} />
+        </button>
+        {showSyntaxMenu && (
+          <div className="md-toolbar-dropdown-menu">
+            {syntaxTools.map((tool, idx) => (
+              <button
+                key={idx}
+                className="md-toolbar-dropdown-item"
+                onClick={() => {
+                  onInsert(tool.prefix, tool.suffix, tool.placeholder);
+                  setShowSyntaxMenu(false);
+                }}
+              >
+                <tool.icon size={14} className="mr-2" />
+                <span>{tool.label}</span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
       {/* 组件下拉菜单（公众号富文本组件） */}
       <div className="md-toolbar-dropdown-container" ref={componentMenuRef}>
         <button
@@ -444,19 +528,32 @@ export function Toolbar({
         </button>
         {showComponentMenu && (
           <div className="md-toolbar-dropdown-menu md-toolbar-component-menu">
-            {componentTemplates.map((template, idx) => (
-              <button
-                key={idx}
-                className="md-toolbar-dropdown-item md-toolbar-component-item"
-                onClick={() => handleComponentInsert(template)}
-                title={template.description}
-              >
-                <template.icon size={14} className="mr-2" />
-                <span className="md-toolbar-component-label">
-                  {template.label}
-                </span>
-              </button>
-            ))}
+            {componentGroupOrder.map((group) => {
+              const items = componentTemplates.filter(
+                (t) => (componentGroups[t.name] ?? "常用") === group,
+              );
+              if (!items.length) return null;
+              return (
+                <div key={group} className="md-toolbar-component-group">
+                  <div className="md-toolbar-component-group-title">
+                    {group}
+                  </div>
+                  {items.map((template, idx) => (
+                    <button
+                      key={idx}
+                      className="md-toolbar-dropdown-item md-toolbar-component-item"
+                      onClick={() => handleComponentInsert(template)}
+                      title={template.description}
+                    >
+                      <template.icon size={14} className="mr-2" />
+                      <span className="md-toolbar-component-label">
+                        {template.label}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

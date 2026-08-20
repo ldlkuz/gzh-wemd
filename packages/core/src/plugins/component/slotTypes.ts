@@ -20,14 +20,17 @@ export type SlotType =
 
 /** 单个 Slot 的输入识别规则（Input Contract） */
 export interface SlotInputRule {
-  /** 输入来源：段落 / 粗体 / 列表 / 图片 / 首行 / 末行 / 整块 */
+  /** 输入来源：段落 / 粗体 / 列表 / 图片 / 图片URL / 首行 / 末行 / 编号前缀 / 首字符 / 分隔线 / 整块 */
   source:
     | "paragraph"
     | "strong"
     | "list"
     | "image"
+    | "image-url"
     | "first-line"
     | "last-line"
+    | "number-prefix"
+    | "first-char"
     | "hr"
     | "block"
     | "all";
@@ -35,6 +38,9 @@ export interface SlotInputRule {
   position?: "first" | "last" | "any";
   /** 数量：one / optional / many */
   cardinality?: "one" | "optional" | "many";
+  /** 最大字符数：超出该长度的行不匹配（用于"只认短行"的槽，
+   *  如 end-card 的 heading 只认「后记」这类短标题，不吞长正文） */
+  maxChars?: number;
 }
 
 /** 单个 Slot 定义 */

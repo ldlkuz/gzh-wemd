@@ -1,0 +1,45 @@
+{
+  "meta": {
+    "id": "retro-newspaper",
+    "name": "复古日报",
+    "description": "铅字印刷风 · 油墨黑 / 新闻纸米 / 报头红，衬线排版，适合怀旧、文化、历史、手作类内容",
+    "keywords": ["复古", "报纸", "铅字", "油墨", "新闻纸"],
+    "version": "1.0.0"
+  },
+  "layout": {
+    "preferredComponents": [
+      "magazine-cover",
+      "section-divider",
+      "quote-card",
+      "end-card",
+      "divider-fancy",
+      "styled-table",
+      "section-title",
+      "numbered-heading",
+      "pullquote",
+      "text-card",
+      "image-card",
+      "image-caption",
+      "callout-pro",
+      "timeline",
+      "stats-block",
+      "code-frame",
+      "divider",
+      "copyright-notice"
+    ],
+    "density": "medium",
+    "tone": ["warm", "nostalgic", "editorial"],
+    "defaultVariants": {}
+  },
+  "codeTheme": "github-light",
+  "brand": {
+    "name": "复古日报",
+    "type": "media",
+    "personality": ["nostalgic", "rigorous", "artisanal", "warm"],
+    "keywords": ["复古", "报纸", "铅字", "油墨", "新闻纸"],
+    "audience": ["怀旧读者", "文化历史爱好者"],
+    "emotion": ["warm", "retro", "trustworthy"],
+    "conceptName": "铅字晨报",
+    "coreConcept": "以老式铅字印刷与新闻纸质感为视觉意象，用油墨黑、报纸米、报头红与衬线排版，表达「被油墨定格的时间」"
+  }
+}

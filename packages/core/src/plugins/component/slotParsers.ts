@@ -11,8 +11,9 @@
  * 输出：分槽结果（SlotContent），值为已渲染的 HTML 片段；list 槽为条目数组
  */
 import type MarkdownIt from "markdown-it";
-import type { ComponentSlotDef, ListItem, SlotContent } from "./slotTypes";
+import type { ComponentSlotDef, ListItem, SlotContent, SlotDef } from "./slotTypes";
 import { getBuiltinSlotDef, getFallbackSlotDef } from "./slotDefs";
+import { setNativeLayerDisabled } from "../markdown-it-native-layer";
 import highlightjs from "../../utils/langHighlight";
 
 /** 行内粗体标记（用于识别 strong 槽） */
@@ -30,8 +31,19 @@ function analyzeBlock(rawContent: string): {
   const lines: string[] = [];
   const paragraphs: number[][] = [];
   let current: number[] = [];
+  let inFence = false;
   for (const rawLine of rawContent.split("\n")) {
-    const line = rawLine.trim();
+    // 代码围栏 ```` ```lang ... ``` ```` 内的行保留原始缩进：
+    // 代码缩进是语义（非正文排版空白），不能像正文一样去头尾空白，
+    // 否则 code-frame / code-block 等组件的行首缩进会丢失。
+    const isFence = /^```/.test(rawLine.trim());
+    if (isFence) {
+      inFence = !inFence;
+      lines.push(rawLine);
+      current.push(lines.length - 1);
+      continue;
+    }
+    const line = inFence ? rawLine : rawLine.trim();
     if (!line) {
       if (current.length) {
         paragraphs.push(current);
@@ -77,13 +89,17 @@ export function parseComponentSlots(
   markdownParser: MarkdownIt,
   componentId: string,
   rawContent: string,
+  slotOverrides?: SlotDef[],
 ): SlotContent {
   // 复杂扩展组件：走专用解析器（解析逻辑复杂，无法用通用 source 规则表达）
   const complex = COMPLEX_PARSERS[componentId];
   if (complex) return complex(markdownParser, rawContent);
 
-  const def: ComponentSlotDef =
+  const baseDef: ComponentSlotDef =
     getBuiltinSlotDef(componentId) ?? getFallbackSlotDef(componentId);
+
+  // 主题级扩展槽：合并共享槽位，key 冲突以主题扩展为准（让主题能消费额外内容）
+  const def = mergeSlotOverrides(baseDef, slotOverrides);
 
   const result: SlotContent = {};
   const { lines, paragraphs } = analyzeBlock(rawContent);
@@ -102,6 +118,18 @@ export function parseComponentSlots(
           rule,
           consumed,
         );
+        if (taken !== undefined) result[slot.key] = taken;
+        break;
+      }
+      case "number-prefix": {
+        // 行首编号前缀：提取编号（如 01 / 1. / 一、），剩余文本（含 ##）替换回原行
+        const taken = takeNumberPrefix(lines, rule);
+        if (taken !== undefined) result[slot.key] = taken;
+        break;
+      }
+      case "first-char": {
+        // 首字下沉：取首段第一个字符并从该行剥除（剩余文本替换回原行，供 body 渲染）
+        const taken = takeFirstChar(lines, rule, consumed);
         if (taken !== undefined) result[slot.key] = taken;
         break;
       }
@@ -124,6 +152,12 @@ export function parseComponentSlots(
       case "image": {
         const taken = takeImages(lines, rule, consumed);
         if (taken !== undefined) result[slot.key] = taken;
+        break;
+      }
+      case "image-url": {
+        // 图片 URL（背景图用途）：取首张图片的 src，不渲染 <img>
+        const url = takeImageUrl(lines, rule, consumed);
+        if (url !== undefined) result[slot.key] = url;
         break;
       }
       case "list": {
@@ -180,6 +214,23 @@ export function parseComponentSlots(
 }
 
 /**
+ * 合并主题级扩展槽到共享槽位：
+ * - 追加主题声明的槽位（骨架可用 {{slot:key}} 消费）
+ * - key 与共享槽冲突时以主题扩展为准（主题作者明确声明的优先）
+ * - 扩展槽排在共享槽之前解析：确保能抢在段落型共享槽（如 desc / body 的
+ *   paragraph/many）之前消费内容——否则图片/行会被 desc 吞掉提取不到
+ */
+export function mergeSlotOverrides(
+  base: ComponentSlotDef,
+  overrides?: SlotDef[],
+): ComponentSlotDef {
+  if (!overrides || overrides.length === 0) return base;
+  const overrideKeys = new Set(overrides.map((s) => s.key));
+  const keepBase = base.slots.filter((s) => !overrideKeys.has(s.key));
+  return { ...base, slots: [...overrides, ...keepBase] };
+}
+
+/**
  * 取首行 / 末行（first-line / last-line 语义恒为一行，与 cardinality 无关）
  */
 function takeLinesByPosition(
@@ -188,6 +239,7 @@ function takeLinesByPosition(
   rule: {
     position?: "first" | "last" | "any";
     cardinality?: "one" | "optional" | "many";
+    maxChars?: number;
   },
   consumed: Set<number>,
 ): string | undefined {
@@ -198,6 +250,11 @@ function takeLinesByPosition(
     // 跳过代码围栏段（``` 开闭内的所有行），避免 ```js 围栏或代码内容被误取为标题
     if (/^```/.test(lines[i])) {
       i = skipFenceRange(lines, i);
+      continue;
+    }
+    // 可选最大字数：超长行不匹配（如 end-card 的 heading 只认「后记」这类短行，
+    // 不吞长正文；无标题时正文仍留给 subtitle，避免被渲染成大标题）
+    if (rule.maxChars !== undefined && lines[i].trim().length > rule.maxChars) {
       continue;
     }
     idxs.push(i);
@@ -213,6 +270,74 @@ function takeLinesByPosition(
 function skipFenceRange(lines: string[], openIdx: number): number {
   const relClose = lines.slice(openIdx + 1).findIndex((l) => /^```/.test(l));
   return relClose >= 0 ? openIdx + relClose : lines.length - 1;
+}
+
+/** 行首编号前缀：可选 ## 头 + 数字/中文序号 + 可选分隔符（如 "01 "、"1. "、"一、"） */
+const NUMBER_PREFIX_RE =
+  /^\s*((?:\d{1,3}|[一二三四五六七八九十百]+)[.、．:：]?\s*)(.*)$/;
+
+/**
+ * 提取行首编号前缀（source:"number-prefix"，主题扩展槽用，如 section-title/numbered-heading 的编号拆分）。
+ * - 只处理"标题行"：以 ## 开头（h2 自动识别）或以编号开头
+ * - 剥离行首 ## 标记（native h2 的 rawContent 含 ##）
+ * - 有编号时提取为前缀返回（如 "01"），无编号返回 undefined
+ * - 剩余文本替换回原行，供后续 body/paragraph 槽渲染（body 用 renderInline，纯文本）
+ * - 不标记 consumed：避免 takeParagraphs 因行已消费而跳过标题行
+ */
+function takeNumberPrefix(
+  lines: string[],
+  rule: { position?: "first" | "last" | "any" },
+): string | undefined {
+  const idxs: number[] = [];
+  for (let i = 0; i < lines.length; i++) {
+    if (/^\s*#+\s/.test(lines[i]) || NUMBER_PREFIX_RE.test(lines[i])) {
+      idxs.push(i);
+    }
+  }
+  if (rule.position === "last") idxs.reverse();
+  const pick = idxs[0];
+  if (pick === undefined) return undefined;
+  // 剥离 ## 标记（native h2 的 rawContent 含 ##）
+  const stripped = lines[pick].replace(/^\s*#+\s*/, "");
+  const m = stripped.match(NUMBER_PREFIX_RE);
+  let prefix = "";
+  let remainder = stripped;
+  if (m) {
+    prefix = m[1].trim();
+    remainder = (m[2] ?? "").trim();
+  }
+  lines[pick] = remainder.trim() ? remainder.trim() : "";
+  return prefix || undefined;
+}
+
+/**
+ * 取首段第一个字符（source:"first-char"，主题扩展槽用，如引子卡的首字下沉）。
+ * - 取第一个含未消费行的段落（跳过图片行 / 围栏 / 空行）的首个字符
+ * - 从该行剥除首字符，剩余文本替换回原行，供 body/paragraph 槽渲染
+ *   （与 takeNumberPrefix 同思路：修改原行、不标记 consumed，
+ *    使剩余正文仍能被后续 body/paragraph 槽收集，避免正文丢失）
+ */
+function takeFirstChar(
+  lines: string[],
+  rule: { position?: "first" | "last" | "any" },
+  consumed: Set<number>,
+): string | undefined {
+  const idxs: number[] = [];
+  for (let i = 0; i < lines.length; i++) {
+    if (consumed.has(i)) continue;
+    if (/^```/.test(lines[i])) continue;
+    const line = lines[i].trim();
+    if (!line || isImageLine(line)) continue;
+    idxs.push(i);
+  }
+  if (rule.position === "last") idxs.reverse();
+  const pick = idxs[0];
+  if (pick === undefined) return undefined;
+  const line = lines[pick].trim();
+  const first = line.charAt(0);
+  if (!first) return undefined;
+  lines[pick] = line.slice(1).trim();
+  return first;
 }
 
 /**
@@ -298,6 +423,26 @@ function takeImages(
     if (rule.cardinality === "one") break;
   }
   return taken.join("");
+}
+
+/** 取图片 URL（不渲染 <img>，供 background-image 使用） */
+function takeImageUrl(
+  lines: string[],
+  rule: { position?: "first" | "last" | "any" },
+  consumed: Set<number>,
+): string | undefined {
+  const idxs: number[] = [];
+  for (let i = 0; i < lines.length; i++) {
+    if (consumed.has(i) || !isImageLine(lines[i])) continue;
+    idxs.push(i);
+  }
+  if (rule.position === "last") idxs.reverse();
+  const pick = idxs[0];
+  if (pick === undefined) return undefined;
+  const m = IMAGE_LINE_RE.exec(lines[pick]);
+  if (!m) return undefined;
+  consumed.add(pick);
+  return escapeHtmlAttr(m[2]);
 }
 
 /**
@@ -386,7 +531,9 @@ function takeBlock(
       .join("\n");
     for (let i = openIdx; i <= endIdx; i++) consumed.add(i);
     if (type === "code") {
-      return renderCodeBlock(inner, lines[openIdx]);
+      // code-frame 骨架自带标题栏（.wemd-cf-header），只需纯 <pre><code>，
+      // 不能再带 code-block 的 Mac 窗（.wemd-cb-window），否则两层圆点栏嵌套
+      return renderCodeBlock(inner, lines[openIdx], false);
     }
     return renderBody(markdownParser, inner);
   }
@@ -394,24 +541,33 @@ function takeBlock(
 }
 
 /**
- * 把代码围栏内容渲染为带高亮的 <pre><code>（复用 langHighlight）
+ * 把代码围栏内容渲染为带高亮的代码块。
+ * @param withWindow 是否包 Mac 终端窗（圆点栏 + 语言标签）；code-block 组件需要，
+ *                   code-frame 骨架自带标题栏，传 false 只生成 <pre><code>
  */
-function renderCodeBlock(inner: string, openLine: string): string {
+function renderCodeBlock(
+  inner: string,
+  openLine: string,
+  withWindow = true,
+): string {
   const langMatch = openLine.match(/^```\s*([\w+-]+)/);
   const lang = langMatch?.[1] ?? "";
-  const code = inner.trim();
+  // 只去掉首尾空白行与行尾空白，保留行首缩进（trim() 会把首行缩进一并剥掉）
+  const code = inner.replace(/^\n+/, "").replace(/\s+$/, "");
   const codeHtml =
     lang && highlightjs.getLanguage(lang)
       ? highlightjs.highlight(lang, code, true).value
       : escapeHtml(code);
   const langLabel = lang || "Code";
+  const codeEl = `<pre><code class="hljs language-${escapeHtmlAttr(lang)}">${codeHtml}</code></pre>`;
+  if (!withWindow) return codeEl;
   return (
     `<div class="wemd-cb-window">` +
     `<div class="wemd-cb-bar">` +
     `<span class="wemd-cb-dots"><i class="wemd-cb-dot wemd-cb-dot-r"></i><i class="wemd-cb-dot wemd-cb-dot-y"></i><i class="wemd-cb-dot wemd-cb-dot-g"></i></span>` +
     `<span class="wemd-cb-lang">${escapeHtml(langLabel)}</span>` +
     `</div>` +
-    `<pre><code class="hljs language-${escapeHtmlAttr(lang)}">${codeHtml}</code></pre>` +
+    codeEl +
     `</div>`
   );
 }
@@ -447,9 +603,15 @@ function parseCodeBlock(
  * body 兜底：整块走 markdown 渲染
  */
 function renderBody(markdownParser: MarkdownIt, raw: string): string {
-  const html = markdownParser.render(raw.trim());
-  // 先拆段再标记问题段落，避免新增 <p> 打断 markQuestionParagraphs 的 <p> 结构判断
-  return markQuestionParagraphs(splitSoftBreaks(html));
+  // 重新渲染组件槽内容期间关闭 native-layer 识别，防止递归套容器
+  setNativeLayerDisabled(markdownParser, true);
+  try {
+    const html = markdownParser.render(raw.trim());
+    // 先拆段再标记问题段落，避免新增 <p> 打断 markQuestionParagraphs 的 <p> 结构判断
+    return markQuestionParagraphs(splitSoftBreaks(html));
+  } finally {
+    setNativeLayerDisabled(markdownParser, false);
+  }
 }
 
 /**
@@ -633,6 +795,13 @@ function parseBrandSign(_parser: MarkdownIt, raw: string): SlotContent {
   const result: SlotContent = {};
   let cursor = 0;
 
+  // 首段若为 Logo 图片（![](url) / ![alt](url) / !`url`），提取为 logo，继续从下一段解析品牌名
+  const logo = extractBrandLogo(paragraphs[cursor]);
+  if (logo) {
+    result.logo = logo;
+    cursor++;
+  }
+
   const nameP = paragraphs[cursor] || "";
   const m = nameP.match(/\*\*([^*]+)\*\*/);
   if (m) result.brandName = escapeHtml(m[1]);
@@ -672,6 +841,21 @@ function parseBrandSign(_parser: MarkdownIt, raw: string): SlotContent {
   }
 
   return result;
+}
+
+/** 提取 brand-sign Logo 图片 HTML（支持 ![](url) / ![alt](url) / !`url`），无则返回空 */
+function extractBrandLogo(line: string | undefined): string {
+  const trimmed = (line || "").trim();
+  if (!trimmed) return "";
+  const std = trimmed.match(/^!\[([^\]]*)\]\(([^)\s]+)\)/);
+  if (std) {
+    return `<img class="wemd-bs-logo-img" src="${escapeHtmlAttr(std[2])}" alt="${escapeHtmlAttr(std[1] || "logo")}">`;
+  }
+  const tick = trimmed.match(/^!`([^`]+)`/);
+  if (tick) {
+    return `<img class="wemd-bs-logo-img" src="${escapeHtmlAttr(tick[1].trim())}" alt="logo">`;
+  }
+  return "";
 }
 
 /** resource-list：资料/步骤清单 */
@@ -1189,6 +1373,83 @@ function parseSeriesListItem(l: string): {
   return { index, title, current: isCurrent, done, url, titleHasNo };
 }
 
+/** tag-label：把 `#标签` 拆成独立标签行（每行一个 <p>，渲染为独立胶囊）；
+    不含 `#` 的行（如纯文字说明）整行保留，避免空盒丢内容 */
+function parseTagLabel(_parser: MarkdownIt, raw: string): SlotContent {
+  const items: string[] = [];
+  for (const line of raw.split("\n")) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+    const tokens = trimmed.split(/\s+/);
+    const hasHash = tokens.some((t) => t.startsWith("#"));
+    if (hasHash) {
+      for (const token of tokens) {
+        if (token.startsWith("#")) items.push(token);
+      }
+    } else {
+      items.push(trimmed);
+    }
+  }
+  return {
+    body: items.map((t) => `<p>${escapeHtml(t)}</p>`).join("\n"),
+  };
+}
+
+/** stats-block：首段单行纯文字作标题；每个列表项/段落组，
+    加粗行→value、非加粗行→label（顺序无关；无加粗时按行序 value/label）。 */
+function parseStatsBlock(parser: MarkdownIt, raw: string): SlotContent {
+  const { lines, paragraphs } = analyzeBlock(raw);
+  const result: SlotContent = {};
+  let cursor = 0;
+
+  // 首段若为「单行纯文字」→ 作为标题（数据对的加粗首行不算标题）
+  if (paragraphs.length) {
+    const first = paragraphs[0];
+    const isSinglePlain =
+      first.length === 1 && !lines[first[0]].includes("**");
+    if (isSinglePlain) {
+      result.title = renderInline(parser, lines[first[0]]);
+      cursor = 1;
+    }
+  }
+
+  const items: ListItem[] = [];
+  let group: string[] = [];
+  const flushGroup = () => {
+    if (!group.length) return;
+    const boldIdx = group.findIndex((l) => l.includes("**"));
+    if (boldIdx !== -1) {
+      const nonBold = group.findIndex(
+        (l, i) => i !== boldIdx && !l.includes("**"),
+      );
+      items.push({
+        value: group[boldIdx].replace(/\*\*/g, "").trim(),
+        label:
+          nonBold !== -1
+            ? renderInline(parser, group[nonBold]).trim()
+            : "",
+      });
+    } else {
+      items.push({
+        value: group[0] ? renderInline(parser, group[0]).trim() : "",
+        label: group[1] ? renderInline(parser, group[1]).trim() : "",
+      });
+    }
+    group = [];
+  };
+
+  for (const para of paragraphs.slice(cursor)) {
+    for (const i of para) {
+      const line = lines[i];
+      if (LIST_ITEM_RE.test(line)) flushGroup();
+      group.push(line.replace(LIST_ITEM_RE, "$1"));
+    }
+  }
+  flushGroup();
+  result.items = items;
+  return result;
+}
+
 /** 复杂扩展组件解析器映射 */
 const COMPLEX_PARSERS: Record<
   string,
@@ -1202,4 +1463,6 @@ const COMPLEX_PARSERS: Record<
   "cta-card": parseCtaCard,
   timeline: parseTimeline,
   "code-block": parseCodeBlock,
+  "tag-label": parseTagLabel,
+  "stats-block": parseStatsBlock,
 };

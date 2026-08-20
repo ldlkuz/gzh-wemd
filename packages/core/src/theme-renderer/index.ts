@@ -20,6 +20,7 @@ import type {
   ThemeDefinition,
   ComponentStyleOverride,
 } from "../theme-schema/types";
+import type { SlotDef } from "../plugins/component/slotTypes";
 import { renderBaseCss } from "./baseCss";
 import { renderTokenCss } from "./tokenCss";
 import { renderTypographyCss } from "./typographyCss";
@@ -33,6 +34,46 @@ import { componentStylesExtra } from "../themes/components-extra";
 import { componentStylesExtended } from "../themes/components-extended";
 import { componentStylesFaq } from "../themes/components-faq";
 import { componentStylesMagazine } from "../themes/components-magazine";
+import { componentStylesEasternNotes } from "../themes/components-eastern-notes";
+import { componentStylesDataBlueprint } from "../themes/components-data-blueprint";
+import { componentStylesClearGuide } from "../themes/components-clear-guide";
+import { componentStylesWhitespaceGallery } from "../themes/components-whitespace-gallery";
+import { componentStylesAcademicPaper } from "../themes/components-academic-paper";
+import { componentStylesLuxuryGold } from "../themes/components-luxury-gold";
+import { componentStylesMorandiForest } from "../themes/components-morandi-forest";
+import { componentStylesModernEditorial } from "../themes/components-modern-editorial";
+import { componentStylesReceipt } from "../themes/components-receipt";
+import { componentStylesKnowledgeBase } from "../themes/components-knowledge-base";
+import { componentStylesSunsetFilm } from "../themes/components-sunset-film";
+import { componentStylesSilentKeynote } from "../themes/components-silent-keynote";
+import { componentStylesStorybook } from "../themes/components-storybook";
+import { componentStylesShoppingGuide } from "../themes/components-shopping-guide";
+import { componentStylesFoodAtlas } from "../themes/components-food-atlas";
+import { componentStylesStayNotes } from "../themes/components-stay-notes";
+
+/**
+ * 内置主题的专属组件级皮肤（覆盖共享组件样式，实现「同骨架 · 强差异化」）。
+ * 以主题 id 为键，追加在所有共享组件样式与变体之后（最终视觉话语权）。
+ * 其他主题未登记时沿用共享组件样式（仅靠 token 差异化）。
+ */
+const BUILTIN_THEME_COMPONENT_STYLES: Record<string, string> = {
+  "eastern-notes": componentStylesEasternNotes,
+  "data-blueprint": componentStylesDataBlueprint,
+  "clear-guide": componentStylesClearGuide,
+  "whitespace-gallery": componentStylesWhitespaceGallery,
+  "academic-paper": componentStylesAcademicPaper,
+  "luxury-gold": componentStylesLuxuryGold,
+  "morandi-forest": componentStylesMorandiForest,
+  "modern-editorial": componentStylesModernEditorial,
+  receipt: componentStylesReceipt,
+  "knowledge-base": componentStylesKnowledgeBase,
+  "sunset-film": componentStylesSunsetFilm,
+  "silent-keynote": componentStylesSilentKeynote,
+  storybook: componentStylesStorybook,
+  "shopping-guide": componentStylesShoppingGuide,
+  "food-atlas": componentStylesFoodAtlas,
+  "stay-notes": componentStylesStayNotes,
+};
 
 /** renderTheme 扩展选项（Phase 4） */
 export interface RenderThemeOptions {
@@ -55,6 +96,17 @@ export function getThemeTemplates(
   theme?: ThemeDefinition,
 ): Map<string, string> {
   return new Map(Object.entries(theme?.templates ?? {}));
+}
+
+/**
+ * 从主题定义提取主题级扩展槽位 Map（组件 id → 追加槽位数组）。
+ * 与 getThemeTemplates 同源：内置主题与 AI 生成主题共用 ThemeDefinition.slotDefs。
+ * 组件未声明扩展槽时，解析器仅用共享 slotDefs（行为与现状一致）。
+ */
+export function getThemeSlotDefs(
+  theme?: ThemeDefinition,
+): Map<string, SlotDef[]> {
+  return new Map(Object.entries(theme?.slotDefs ?? {}));
 }
 
 /**
@@ -88,6 +140,12 @@ export function renderTheme(
     renderExtrasCss(),
     injectExtraCss(options),
   ];
+
+  // 内置主题专属组件皮肤：置于最末，覆盖共享组件样式（最终视觉话语权）
+  const themedCss = BUILTIN_THEME_COMPONENT_STYLES[theme.meta.id];
+  if (themedCss) {
+    parts.push(`/* === ${theme.meta.name} · 主题皮肤 === */\n${themedCss}`);
+  }
 
   return parts.filter(Boolean).join("\n\n");
 }

@@ -1,0 +1,149 @@
+.debug-preview {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 0;
+  background: var(--bg-secondary);
+  border-left: 1px solid var(--border-light);
+}
+
+.debug-preview__header {
+  height: 44px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--border-light);
+  background: var(--bg-primary);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.debug-preview__title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.debug-preview__subtitle {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  padding: 2px 8px;
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+}
+
+.debug-preview__badge {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 999px;
+  line-height: 1.5;
+}
+
+.debug-preview__badge.is-ok {
+  color: #0f9d6a;
+  background: rgba(15, 157, 106, 0.12);
+}
+
+.debug-preview__badge.is-warn {
+  color: #b45309;
+  background: rgba(245, 158, 11, 0.14);
+}
+
+.debug-preview__badge.is-danger {
+  color: #c0392b;
+  background: rgba(214, 69, 69, 0.13);
+}
+
+.debug-preview__close {
+  margin-left: 2px;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-tertiary);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.debug-preview__close:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+}
+
+.debug-preview__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: auto;
+  /* 顶部与主预览（preview-container padding 24px）对齐 */
+  padding: 24px 12px 12px;
+}
+
+.debug-preview__content {
+  min-width: 0;
+  min-height: 100%;
+  background: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+/* Web Component 自带 Shadow DOM 样式，让它铺满 content 容器高度 */
+.debug-preview__content paste-editor {
+  display: block;
+  min-height: 100%;
+  box-sizing: border-box;
+}
+
+/* 调试预览为纯展示（只读），不需要编辑工具栏：通过暴露的 part 隐藏 */
+.debug-preview__content paste-editor::part(toolbar) {
+  display: none;
+}
+
+/* rich-html-editor 会注入内容，保留 contenteditable 编辑区默认行为 */
+.debug-preview__content [contenteditable] {
+  outline: none;
+}
+
+.debug-preview__report {
+  border-top: 1px solid var(--border-light);
+  background: var(--bg-primary);
+  padding: 8px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.debug-preview__report-line {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.debug-preview__report-line b {
+  color: #b45309;
+  font-weight: 700;
+}
+
+.debug-preview__report-line.is-danger b {
+  color: #c0392b;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .debug-preview__body {
+    padding: 8px;
+  }
+}

@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数据蓝天 · 主题视觉稿</title>
+<!--
+  主题：数据蓝天（Data Blue Sky）· 视觉稿
+  场景：数据周报 / 技术复盘 / 指标解读类公众号文章
+  说明：本稿以视觉设计为主，不强约束组件骨架；所有装饰均为真实 DOM（无伪元素）。
+-->
+<style>
+  :root{
+    --sky-950:#081a3d; --sky-900:#0b2a5b; --sky-800:#123c7e;
+    --sky-700:#1d4ed8; --sky-600:#2563eb; --sky-500:#3b82f6;
+    --sky-400:#60a5fa; --sky-300:#93c5fd; --sky-200:#bfdbfe;
+    --sky-100:#dbeafe; --sky-50:#eff6ff;
+    --ink:#0f172a; --muted:#475569; --line:#bfdbfe;
+    --amber:#f59e0b; --amber-deep:#d97706; --green:#0f9d6a; --red:#e11d48;
+    --mono:"SF Mono","Cascadia Code",Consolas,Menlo,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:linear-gradient(165deg,#dfeefd 0%,#f6faff 42%,#e7f3ff 100%);
+    font-family:"PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif;
+    color:var(--ink);padding:34px 14px 60px;
+  }
+  #wemd{
+    max-width:680px;margin:0 auto;
+    background:#ffffff;border-radius:14px;overflow:hidden;
+    box-shadow:0 20px 60px rgba(8,26,61,.14);
+  }
+
+  /* ============ 封面：数据仪表盘氛围 ============ */
+  .cover{
+    position:relative;padding:44px 30px 40px;color:#fff;overflow:hidden;
+    background:linear-gradient(150deg,var(--sky-950) 0%,var(--sky-800) 55%,var(--sky-600) 100%);
+  }
+  /* 背景装饰：真实 DOM 的网格点阵 + 数据光点 */
+  .cover .grid-bg{
+    position:absolute;inset:0;opacity:.16;pointer-events:none;
+    background-image:
+      linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 1px);
+    background-size:34px 34px;
+  }
+  .cover .dot{position:absolute;border-radius:50%;background:var(--sky-300);opacity:.7;pointer-events:none;}
+  .cover .dot.d1{width:8px;height:8px;top:18%;right:12%;}
+  .cover .dot.d2{width:5px;height:5px;top:40%;right:28%;}
+  .cover .dot.d3{width:6px;height:6px;bottom:24%;right:18%;}
+  .cover .dot.d4{width:10px;height:10px;top:30%;right:6%;opacity:.4;}
+  .cover .kicker{
+    position:relative;display:inline-flex;align-items:center;gap:8px;
+    font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--sky-200);
+    text-transform:uppercase;
+  }
+  .cover .kicker .bar{width:26px;height:3px;background:var(--amber);}
+  .cover h1{
+    position:relative;margin-top:18px;font-size:30px;line-height:1.42;font-weight:800;
+    letter-spacing:.01em;text-shadow:0 2px 12px rgba(0,0,0,.18);
+  }
+  .cover .lede{
+    position:relative;margin-top:16px;font-size:14px;line-height:2;color:var(--sky-100);
+    max-width:520px;
+  }
+  .cover .meta{
+    position:relative;display:flex;flex-wrap:wrap;gap:10px;margin-top:24px;
+  }
+  .cover .meta span{
+    font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:#e6f0ff;
+    padding:5px 12px;border:1px solid rgba(147,197,253,.4);border-radius:999px;
+    background:rgba(255,255,255,.06);backdrop-filter:blur(4px);
+  }
+  .cover .meta span b{color:var(--amber);font-weight:700;}
+
+  /* 封面底部：横向迷你数据条（真实 DOM） */
+  .cover .mini-bars{
+    position:relative;display:flex;gap:10px;margin-top:34px;
+  }
+  .cover .mini-bars .mb{flex:1;text-align:left;}
+  .cover .mini-bars .mb .lbl{font-size:11px;color:var(--sky-200);}
+  .cover .mini-bars .mb .val{font-family:var(--mono);font-size:17px;font-weight:700;color:#fff;margin-top:3px;}
+  .cover .mini-bars .track{height:5px;border-radius:99px;background:rgba(255,255,255,.16);margin-top:6px;overflow:hidden;}
+  .cover .mini-bars .fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--amber),#fbbf24);}
+
+  /* ============ 章节头：编号胶囊 + 数据线 ============ */
+  .sec{
+    display:flex;align-items:center;gap:12px;margin:46px 26px 20px;
+  }
+  .sec .no{
+    font-family:var(--mono);font-size:12px;font-weight:800;letter-spacing:.08em;
+    color:#fff;background:linear-gradient(135deg,var(--sky-700),var(--sky-500));
+    padding:5px 11px;border-radius:8px;box-shadow:0 4px 12px rgba(37,99,235,.3);
+  }
+  .sec h2{font-size:20px;font-weight:750;color:var(--sky-900);}
+  .sec .line{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent);}
+
+  /* ============ 指标卡：倾斜 + 数据光边 ============ */
+  .stats{display:flex;gap:14px;margin:6px 26px 0;flex-wrap:wrap;}
+  .stat{
+    flex:1;min-width:150px;position:relative;padding:20px 18px 16px;
+    background:linear-gradient(180deg,#fff,var(--sky-50));
+    border:1px solid var(--sky-100);border-radius:12px;
+    box-shadow:0 6px 18px rgba(8,26,61,.06);
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .stat .glow{position:absolute;left:0;top:0;width:100%;height:4px;border-radius:12px 12px 0 0;
+    background:linear-gradient(90deg,var(--sky-700),var(--sky-400));}
+  .stat .name{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;}
+  .stat .name .ico{width:8px;height:8px;border-radius:2px;background:var(--sky-400);}
+  .stat .value{
+    margin-top:10px;font-family:var(--mono);font-size:30px;font-weight:800;
+    color:var(--sky-900);letter-spacing:-.02em;font-variant-numeric:tabular-nums;
+  }
+  .stat .delta{margin-top:8px;font-family:var(--mono);font-size:12px;font-weight:700;
+    display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;}
+  .delta.up{color:var(--green);background:rgba(15,157,106,.1);}
+  .delta.down{color:var(--red);background:rgba(225,29,72,.08);}
+
+  /* ============ CSS 条形图：渠道健康度 ============ */
+  .bars{margin:28px 26px 0;padding:22px 22px 16px;
+    background:#fff;border:1px solid var(--sky-100);border-radius:12px;box-shadow:0 6px 18px rgba(8,26,61,.05);}
+  .bars .bars-title{font-size:14px;font-weight:700;color:var(--sky-900);margin-bottom:16px;}
+  .bar-row{margin-bottom:13px;}
+  .bar-row .bar-hd{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;}
+  .bar-row .bar-hd .bl{color:var(--muted);}
+  .bar-row .bar-hd .bv{font-family:var(--mono);color:var(--sky-800);font-weight:700;}
+  .bar-row .track{height:12px;border-radius:99px;background:var(--sky-50);border:1px solid var(--sky-100);overflow:hidden;}
+  .bar-row .fill{height:100%;border-radius:99px;position:relative;}
+  .fill.a{width:92%;background:linear-gradient(90deg,var(--sky-800),var(--sky-500));}
+  .fill.b{width:74%;background:linear-gradient(90deg,var(--sky-600),var(--sky-400));}
+  .fill.c{width:61%;background:linear-gradient(90deg,var(--green),#34d399);}
+  .fill.d{width:48%;background:linear-gradient(90deg,var(--amber-deep),var(--amber));}
+  .bar-row .fill .tip{position:absolute;right:0;top:0;bottom:0;width:3px;background:rgba(255,255,255,.85);}
+
+  /* ============ 数据表 ============ */
+  .table-wrap{margin:8px 26px 0;border:1px solid var(--sky-100);border-radius:12px;overflow:hidden;box-shadow:0 6px 18px rgba(8,26,61,.05);}
+  .tbl{width:100%;border-collapse:collapse;font-size:13px;}
+  .tbl thead th{
+    background:linear-gradient(135deg,var(--sky-800),var(--sky-600));color:#fff;font-weight:700;
+    text-align:left;padding:12px 14px;font-size:12px;letter-spacing:.04em;
+  }
+  .tbl td{padding:12px 14px;border-top:1px solid var(--sky-100);
+    font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums;}
+  .tbl tr.alt{background:var(--sky-50);}
+  .tbl .up{color:var(--green);font-weight:700;}
+  .tbl .down{color:var(--red);font-weight:700;}
+  .tbl .tag{display:inline-block;padding:2px 9px;border-radius:999px;font-family:inherit;font-size:11px;font-weight:600;}
+  .tag.hot{background:var(--sky-100);color:var(--sky-700);}
+  .tag.warn{background:#fef3c7;color:var(--amber-deep);}
+
+  /* ============ 环形图（conic-gradient，真实 DOM） ============ */
+  .donut-wrap{margin:28px 26px 0;padding:22px;background:#fff;border:1px solid var(--sky-100);
+    border-radius:12px;box-shadow:0 6px 18px rgba(8,26,61,.05);
+    display:flex;align-items:center;gap:24px;flex-wrap:wrap;}
+  .donut{width:120px;height:120px;border-radius:50%;flex-shrink:0;
+    background:conic-gradient(var(--sky-600) 0 52%, var(--sky-300) 52% 78%, var(--amber) 78% 90%, var(--sky-100) 90% 100%);
+    display:flex;align-items:center;justify-content:center;position:relative;}
+  .donut .hole{width:76px;height:76px;border-radius:50%;background:#fff;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;}
+  .donut .hole b{font-family:var(--mono);font-size:19px;color:var(--sky-900);}
+  .donut .hole span{font-size:10px;color:var(--muted);}
+  .donut-legend{flex:1;min-width:180px;display:flex;flex-direction:column;gap:9px;}
+  .donut-legend .lg{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--ink);}
+  .donut-legend .lg .sw{width:12px;height:12px;border-radius:3px;flex-shrink:0;}
+  .donut-legend .lg .pv{margin-left:auto;font-family:var(--mono);color:var(--sky-800);font-weight:700;}
+
+  /* ============ 代码框：深空蓝终端 ============ */
+  .code{margin:8px 26px 0;background:var(--sky-950);border-radius:12px;overflow:hidden;box-shadow:0 10px 26px rgba(8,26,61,.25);}
+  .code .cbar{display:flex;align-items:center;gap:8px;padding:11px 14px;background:var(--sky-900);border-bottom:1px solid #1d4ed8;}
+  .code .dots{display:flex;gap:6px;}
+  .code .dots i{width:10px;height:10px;border-radius:50%;display:block;}
+  .code .dots i.r{background:#ff5f57;}
+  .code .dots i.y{background:#febc2e;}
+  .code .dots i.g{background:#28c840;}
+  .code .lang{margin-left:6px;color:var(--sky-300);font-family:var(--mono);font-size:11px;}
+  .code .fname{margin-left:auto;color:#64748b;font-family:var(--mono);font-size:11px;}
+  .code pre{padding:17px 18px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.8;color:var(--sky-100);}
+  .code .c-k{color:#7dd3fc;}.code .c-f{color:#93c5fd;}.code .c-s{color:#86efac;}.code .c-n{color:#c4b5fd;}.code .c-c{color:#64748b;}
+
+  /* ============ 结论引用：蓝条卡 ============ */
+  .concl{margin:30px 26px 0;padding:22px 24px;position:relative;
+    background:linear-gradient(120deg,var(--sky-50),#fff);
+    border:1px solid var(--sky-100);border-left:6px solid var(--sky-500);border-radius:0 12px 12px 0;}
+  .concl .flag{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--sky-600);font-weight:700;}
+  .concl p{margin-top:10px;font-size:16px;line-height:2;color:var(--sky-900);font-weight:600;}
+  .concl .src{margin-top:8px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--muted);}
+
+  /* ============ 步骤：竖排时间线风格 ============ */
+  .steps{margin:30px 26px 0;padding:4px 0;}
+  .steps .stp{display:flex;gap:16px;padding-bottom:22px;position:relative;}
+  .steps .stp.is-last{padding-bottom:0;}
+  .steps .stp .rail{position:relative;width:34px;flex-shrink:0;}
+  .steps .stp .rail .dot{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,var(--sky-700),var(--sky-500));color:#fff;
+    font-family:var(--mono);font-size:14px;font-weight:700;box-shadow:0 4px 12px rgba(37,99,235,.3);}
+  .steps .stp .rail .conn{position:absolute;left:16px;top:38px;bottom:-4px;width:2px;background:var(--sky-200);}
+  .steps .stp.is-last .rail .conn{display:none;}
+  .steps .stp .bd{flex:1;padding-top:6px;}
+  .steps .stp .bd p{font-size:13.5px;line-height:1.85;color:var(--ink);}
+  .steps .stp .bd p b{color:var(--sky-800);}
+
+  /* ============ 里程碑：横排卡片 ============ */
+  .miles{margin:30px 26px 0;}
+  .miles .m-hd{font-size:14px;font-weight:700;color:var(--sky-900);margin-bottom:14px;}
+  .miles .m-row{display:flex;gap:12px;flex-wrap:wrap;}
+  .miles .mile{flex:1;min-width:130px;padding:14px;border-radius:10px;
+    background:#fff;border:1px solid var(--sky-100);box-shadow:0 4px 12px rgba(8,26,61,.05);}
+  .miles .mile .m-d{font-family:var(--mono);font-size:12px;font-weight:800;color:var(--sky-600);}
+  .miles .mile .m-t{margin-top:6px;font-size:12.5px;line-height:1.6;color:var(--ink);}
+
+  /* ============ 要点提示：琥珀注意 ============ */
+  .note{margin:30px 26px 0;padding:18px 20px;border:1px solid #fde68a;border-left:6px solid var(--amber);
+    border-radius:0 12px 12px 0;background:linear-gradient(120deg,#fffbeb,#fff);}
+  .note p{font-size:14px;line-height:1.95;color:var(--ink);}
+  .note p b{color:var(--amber-deep);}
+
+  /* ============ 分隔线 ============ */
+  .divider{display:flex;align-items:center;gap:16px;margin:44px 26px 0;}
+  .divider .ln{flex:1;height:1px;background:var(--sky-100);}
+  .divider .g{color:var(--sky-400);font-size:14px;letter-spacing:.2em;}
+
+  /* ============ 文末卡：深蓝收束 ============ */
+  .footer{margin-top:46px;padding:36px 24px;text-align:center;color:#fff;
+    background:linear-gradient(150deg,var(--sky-900),var(--sky-950));}
+  .footer .f-ec{font-size:22px;font-weight:750;letter-spacing:.1em;}
+  .footer .f-en{margin-top:10px;font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--sky-300);}
+  .footer .f-line{width:52px;height:3px;background:var(--amber);margin:18px auto 0;border-radius:99px;}
+</style>
+</head>
+<body>
+  <div id="wemd">
+
+    <!-- ===== 封面 ===== -->
+    <header class="cover">
+      <div class="grid-bg"></div>
+      <span class="dot d1"></span><span class="dot d2"></span><span class="dot d3"></span><span class="dot d4"></span>
+      <span class="kicker"><span class="bar"></span>Data&nbsp;Blue&nbsp;Sky&nbsp;·&nbsp;Q3&nbsp;Review</span>
+      <h1>增长卡在哪一环？<br>一份数据复盘把链路摊开看</h1>
+      <p class="lede">从入口到复购，每一环都用数字说话。这篇周报拆解了 Q3 私域全链路，不堆报表，只看瓶颈在哪、下一步往哪使劲。</p>
+      <div class="meta">
+        <span>周期 <b>Q3-2026</b></span>
+        <span>样本 <b>128.4w</b></span>
+        <span>渠道 <b>4</b></span>
+        <span>结论 <b>1</b></span>
+      </div>
+      <div class="mini-bars">
+        <div class="mb"><div class="lbl">图文引流</div><div class="val">92</div><div class="track"><div class="fill" style="width:92%"></div></div></div>
+        <div class="mb"><div class="lbl">直播承接</div><div class="val">74</div><div class="track"><div class="fill" style="width:74%"></div></div></div>
+        <div class="mb"><div class="lbl">企微转化</div><div class="val">61</div><div class="track"><div class="fill" style="width:61%"></div></div></div>
+      </div>
+    </header>
+
+    <!-- ===== 01 大盘 ===== -->
+    <div class="sec"><span class="no">01</span><h2>大盘指标</h2><span class="line"></span></div>
+    <div class="stats">
+      <div class="stat"><span class="glow"></span>
+        <div class="name"><span class="ico"></span>新增用户</div>
+        <div class="value">98.6w</div>
+        <span class="delta up">▲ 18.3%</span>
+      </div>
+      <div class="stat"><span class="glow"></span>
+        <div class="name"><span class="ico"></span>新增付费</div>
+        <div class="value">4.2w</div>
+        <span class="delta up">▲ 9.7%</span>
+      </div>
+      <div class="stat"><span class="glow"></span>
+        <div class="name"><span class="ico"></span>整体转化率</div>
+        <div class="value">4.26%</div>
+        <span class="delta down">▼ 0.4pt</span>
+      </div>
+    </div>
+
+    <!-- 渠道健康度条形图 -->
+    <div class="bars">
+      <div class="bars-title">渠道健康度</div>
+      <div class="bar-row"><div class="bar-hd"><span class="bl">公众号图文</span><span class="bv">92 / 100</span></div>
+        <div class="track"><div class="fill a"><span class="tip"></span></div></div></div>
+      <div class="bar-row"><div class="bar-hd"><span class="bl">视频号直播</span><span class="bv">74 / 100</span></div>
+        <div class="track"><div class="fill b"><span class="tip"></span></div></div></div>
+      <div class="bar-row"><div class="bar-hd"><span class="bl">企微 1v1</span><span class="bv">61 / 100</span></div>
+        <div class="track"><div class="fill c"><span class="tip"></span></div></div></div>
+      <div class="bar-row"><div class="bar-hd"><span class="bl">社群复购</span><span class="bv">48 / 100</span></div>
+        <div class="track"><div class="fill d"><span class="tip"></span></div></div></div>
+    </div>
+
+    <!-- ===== 02 渠道 ===== -->
+    <div class="sec"><span class="no">02</span><h2>渠道表现</h2><span class="line"></span></div>
+    <div class="table-wrap">
+      <table class="tbl">
+        <thead><tr><th>渠道</th><th>触达</th><th>转化率</th><th>同比</th><th>状态</th></tr></thead>
+        <tbody>
+          <tr><td>公众号图文</td><td>42.1w</td><td>5.8%</td><td class="up">+1.2pt</td><td><span class="tag hot">主力</span></td></tr>
+          <tr class="alt"><td>视频号直播</td><td>31.6w</td><td>4.3%</td><td class="up">+0.6pt</td><td><span class="tag hot">加速</span></td></tr>
+          <tr><td>企微 1v1</td><td>19.4w</td><td>6.6%</td><td class="up">+0.9pt</td><td><span class="tag hot">高潜</span></td></tr>
+          <tr class="alt"><td>社群推送</td><td>35.3w</td><td>2.1%</td><td class="down">-0.8pt</td><td><span class="tag warn">回落</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 流量构成环形图 -->
+    <div class="donut-wrap">
+      <div class="donut"><div class="hole"><b>52%</b><span>图文</span></div></div>
+      <div class="donut-legend">
+        <div class="lg"><span class="sw" style="background:var(--sky-600)"></span>公众号图文<span class="pv">52%</span></div>
+        <div class="lg"><span class="sw" style="background:var(--sky-300)"></span>视频号直播<span class="pv">26%</span></div>
+        <div class="lg"><span class="sw" style="background:var(--amber)"></span>企微 1v1<span class="pv">12%</span></div>
+        <div class="lg"><span class="sw" style="background:var(--sky-100)"></span>社群<span class="pv">10%</span></div>
+      </div>
+    </div>
+
+    <!-- ===== 03 取数 ===== -->
+    <div class="sec"><span class="no">03</span><h2>取数脚本</h2><span class="line"></span></div>
+    <div class="code">
+      <div class="cbar">
+        <span class="dots"><i class="r"></i><i class="y"></i><i class="g"></i></span>
+        <span class="lang">python</span>
+        <span class="fname">q3_funnel.py</span>
+      </div>
+      <pre><span class="c-k">from</span> metrics <span class="c-k">import</span> funnel
+cohort = funnel(<span class="c-s">"q3-2026"</span>, dimensions=[<span class="c-s">"channel"</span>])
+report = cohort.bottleneck(threshold=<span class="c-n">0.45</span>)
+print(report.top(by=<span class="c-s">"drop"</span>))  <span class="c-c"># → 社群</span></pre>
+    </div>
+
+    <!-- ===== 结论 ===== -->
+    <div class="concl">
+      <span class="flag">CONCLUSION</span>
+      <p>转化率下滑的根因不在入口，而在「社群 → 复购」这一环。</p>
+      <span class="src">— 分析结论 · 2026-10-12</span>
+    </div>
+
+    <!-- ===== 04 方法 ===== -->
+    <div class="sec"><span class="no">04</span><h2>落地三步</h2><span class="line"></span></div>
+    <div class="steps">
+      <div class="stp"><div class="rail"><span class="dot">1</span><span class="conn"></span></div>
+        <div class="bd"><p><b>统一归因口径</b>：所有渠道按 7 日归因窗计算，避免跨渠道重复计次。</p></div></div>
+      <div class="stp"><div class="rail"><span class="dot">2</span><span class="conn"></span></div>
+        <div class="bd"><p><b>样本分离</b>：决策用 Q3 全量，剔除灰度组与测试流量，降低噪声。</p></div></div>
+      <div class="stp is-last"><div class="rail"><span class="dot">3</span><span class="conn"></span></div>
+        <div class="bd"><p><b>结论可复现</b>：关键数字附带取数脚本，周会可直接重跑核验。</p></div></div>
+    </div>
+
+    <!-- 里程碑 -->
+    <div class="miles">
+      <div class="m-hd">Q3 关键节点</div>
+      <div class="m-row">
+        <div class="mile"><div class="m-d">07-04</div><div class="m-t">入口改版，图文引流 +12%</div></div>
+        <div class="mile"><div class="m-d">08-17</div><div class="m-t">直播承接优化，转化 +0.6pt</div></div>
+        <div class="mile"><div class="m-d">09-09</div><div class="m-t">社群分层策略试点</div></div>
+      </div>
+    </div>
+
+    <!-- 要点提示 -->
+    <div class="note">
+      <p><b>下一步动作：</b>推送资源向图文与企微 1v1 倾斜，社群按活跃度分层触达，两周后再对比一次。</p>
+    </div>
+
+    <div class="divider"><span class="ln"></span><span class="g">◆ ◆ ◆</span><span class="ln"></span></div>
+
+    <!-- ===== 文末 ===== -->
+    <footer class="footer">
+      <div class="f-ec">数据产品组</div>
+      <div class="f-en">DATA BLUE SKY · 数据蓝天</div>
+      <div class="f-line"></div>
+    </footer>
+
+  </div>
+</body>
+</html>

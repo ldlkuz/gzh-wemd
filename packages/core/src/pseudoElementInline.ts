@@ -19,18 +19,24 @@ interface ParsedRule {
   content: string; // content 属性原文
 }
 
-/** 从（已展开变量的）CSS 中提取某条选择器规则的声明 */
+/** 从（已展开变量的）CSS 中提取某条选择器规则的声明。
+    取「最后一个匹配项」：CSS 覆盖法则下，后面的规则（如主题追加层）胜出，
+    避免命中共享层旧规则。 */
 function parseRule(resolvedCss: string, selectorPart: string): ParsedRule {
   const re = new RegExp(
     `([^{}]*${escapeRegExp(selectorPart)}[^{}]*)\\{([^{}]*)\\}`,
-    "i",
+    "gi",
   );
-  const m = resolvedCss.match(re);
+  let match: RegExpExecArray | null;
+  let last: RegExpExecArray | null = null;
+  while ((match = re.exec(resolvedCss)) !== null) {
+    last = match;
+  }
   const parsed: ParsedRule = { style: "", content: "" };
-  if (!m) return parsed;
+  if (!last) return parsed;
 
   const styleParts: string[] = [];
-  m[2]
+  last[2]
     .split(";")
     .map((s) => s.trim())
     .filter((s) => s.length > 0)
@@ -124,9 +130,16 @@ function materializeCalloutPro(container: HTMLElement, css: string): boolean {
     // 左侧色条
     if (barRule.style) {
       let style = barRule.style;
-      if (type && CALLOUT_TYPE_COLORS[type]) {
-        // 覆盖背景色为语义固定色（去掉原 background 声明，避免残留主题色）
-        style = style.replace(/background\s*:[^;]*(;|$)/gi, "");
+      // 语义固定色兜底：仅当主题 CSS 未自定义竖条背景（barRule.style 不含
+      // background）时才强制覆盖为 type 语义色。主题皮肤若写了
+      // `.wemd-callout-pro::before { background: ... }`，parseRule 取最后匹配，
+      // style 会带上主题背景 → 尊重主题色，避免「主题想用琥珀/科技蓝，却被
+      // 物化器硬塞紫色」的竖条与卡片风格冲突。
+      if (
+        type &&
+        CALLOUT_TYPE_COLORS[type] &&
+        !/background\s*:/.test(style)
+      ) {
         style = `${style}; background: ${CALLOUT_TYPE_COLORS[type]}`.replace(
           /^;/,
           "",
@@ -151,7 +164,8 @@ function materializeCalloutPro(container: HTMLElement, css: string): boolean {
   return changed;
 }
 
-/** callout-pro 列表圆点规则：复用 .wemd-callout-pro li::before 的样式 */
+/** callout-pro 列表装饰：复用 .wemd-callout-pro li::before 的样式。
+    content 为空时（如主题改用纯装饰竖线）仅物化样式、不插入文本。 */
 function materializeCalloutProList(
   container: HTMLElement,
   css: string,
@@ -165,7 +179,8 @@ function materializeCalloutProList(
     ".wemd-callout-pro .wemd-component-body ul li::before",
   );
   if (!rule.style) return false;
-  const text = contentText(rule.content, roots[0], 0) || "\u2022";
+  const hasContent = rule.content.trim().length > 0;
+  const text = hasContent ? contentText(rule.content, roots[0], 0) : "";
   let changed = false;
   roots.forEach((root) => {
     root
@@ -201,20 +216,36 @@ function materializeAccordion(container: HTMLElement, css: string): boolean {
     css,
     ".wemd-accordion .wemd-component-body > p.wemd-q::before",
   );
+  // 微信无折叠交互：不再画"＋"折叠符号，仅当主题仍定义了 ::before 装饰时才物化
+  if (!rule.style) return false;
   const plus = contentText(rule.content, qs[0], 0) || "\uFF0B";
   qs.forEach((p) => p.insertBefore(makeSpan(rule.style, plus), p.firstChild));
   return true;
 }
 
 function materializePullquote(container: HTMLElement, css: string): boolean {
+  // pullquote 两种结构：原生 > 引用（blockquote）与显式 ::: pullquote 容器（p）
   const ps = container.querySelectorAll<HTMLElement>(
-    "#wemd .wemd-pullquote .wemd-component-body > p:first-child",
+    "#wemd .wemd-pullquote .wemd-component-body blockquote p:first-child, #wemd .wemd-pullquote .wemd-component-body > p:first-child",
   );
   if (!ps.length) return false;
-  const rule = parseRule(
+
+  // 若该 pullquote 已定制为「双色角线」装饰（存在 .wemd-pq-corner），
+  // 视觉已由角线承载，不再插入旧的 ::before 引号 span，避免装饰重复。
+  const cornerRoot = ps[0].closest(".wemd-pullquote");
+  if (cornerRoot && cornerRoot.querySelector(".wemd-pq-corner")) {
+    return false;
+  }
+
+  const blockquoteRule = parseRule(
+    css,
+    ".wemd-pullquote .wemd-component-body > blockquote p:first-child::before",
+  );
+  const pRule = parseRule(
     css,
     ".wemd-pullquote .wemd-component-body > p:first-child::before",
   );
+  const rule = blockquoteRule.style ? blockquoteRule : pRule;
   const mark = contentText(rule.content, ps[0], 0) || "\u201C";
   ps.forEach((p) => p.insertBefore(makeSpan(rule.style, mark), p.firstChild));
   return true;
@@ -263,6 +294,10 @@ function materializeDivider(container: HTMLElement, css: string): boolean {
   let changed = false;
 
   bodies.forEach((body) => {
+    // 主题定制骨架已物化装饰元素（如 .wemd-dv-line），跳过，避免重复插入侧线
+    if (body.querySelector(".wemd-dv-line") || body.querySelector(".wemd-mat")) {
+      return;
+    }
     const hasContent = body.children.length > 0;
     if (before.style) {
       body.insertBefore(makeSpan(before.style, ""), body.firstChild);

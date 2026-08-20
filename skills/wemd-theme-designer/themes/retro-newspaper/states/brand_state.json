@@ -1,0 +1,15 @@
+{
+  "brand_identity": {
+    "name": "复古报纸",
+    "type": "media"
+  },
+  "industry": "新闻出版 / 报刊杂志",
+  "customer": "怀旧文艺读者、文化历史爱好者",
+  "product": "复古报刊风格的公众号排版主题",
+  "desired_impression": ["有质感的记录者", "怀旧收藏感"],
+  "personality": ["nostalgic", "rigorous", "artisanal", "warm"],
+  "audience": ["怀旧读者", "文化历史爱好者"],
+  "emotion": ["warm", "retro", "trustworthy"],
+  "avoid": ["modern flat design", "neon glow", "tech minimalism", "too colorful"],
+  "keywords": ["复古", "报纸", "铅字", "油墨", "新闻纸"]
+}

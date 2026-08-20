@@ -29,16 +29,11 @@ wemd-theme-designer/
 
 | 文件                                    | 阶段       | 校验对象                  |
 | --------------------------------------- | ---------- | ------------------------- |
+| `schema/input.schema.json`              | 输入契约   | 表单导出的输入 JSON       |
 | `schema/brand_state.schema.json`        | Stage 1    | `brand_state.json`        |
 | `schema/concept_state.schema.json`      | Stage 2    | `concept_state.json`      |
-| `schema/visual_language.schema.json`    | Stage 3    | `visual_language.json`    |
-| `schema/component_strategy.schema.json` | Stage 4    | `component_strategy.json` |
-| `schema/skeleton_intent.schema.json`    | Stage 4.5  | `skeleton_intent.json`    |
-| `schema/component_mapping.schema.json`  | Stage 5    | `component_mapping.json`  |
-| `schema/CreativeTheme.schema.json`      | 创意层聚合 | 创意阶段整体设计稿        |
-| `schema/BrandVisualTheme.schema.json`   | 最终规范   | `BrandVisualTheme.json`   |
 
-> 参考示例 `reference/example/demo-theme.json` 不在 `schema/` 内，它是数据示例而非规范。
+> 端到端生成模式下不产出中间 State JSON，故不维护 `visual_language` / `component_strategy` / `skeleton_intent` / `component_mapping` / `BrandVisualTheme` 等旧 Schema（已清理）。
 
 ---
 
@@ -48,20 +43,19 @@ wemd-theme-designer/
 
 ```text
 themes/{theme-name}/
-├── states/                       # 【AI 产出】工作记忆（6 个 State JSON）
+├── states/                       # 【AI 产出】工作记忆（需求定义 2 个 State）
 │   ├── brand_state.json          #   Stage 1
-│   ├── concept_state.json        #   Stage 2（含选中的视觉母题）
-│   ├── visual_language.json      #   Stage 3
-│   ├── component_strategy.json   #   Stage 4
-│   ├── skeleton_intent.json      #   Stage 4.5（形）
-│   └── component_mapping.json    #   Stage 5（皮）
-├── BrandVisualTheme.json         # 【Assembler 产物】最终主题规范（产品交付物）
-├── css/
-│   └── {theme-name}.css          # 【Compiler 产物】完整 CSS
+│   └── concept_state.json        #   Stage 2（含选中的视觉母题）
 ├── preview/
-│   └── {theme-name}-preview.html # 【Compiler 产物】开发预览
+│   └── vision.html               # 【Stage 3a 视觉稿】用户预览确认视觉气质
+├── manifest.json                 # 【Stage 3b 主题清单】meta / layout / codeTheme / brand（打包脚本读取）
+├── templates/                    # 【Stage 3b 自由骨架】需要改骨架的组件才写（<id>.html）
+│   └── <componentId>.html        #   Mustache 骨架模板（未写组件回退默认）
+├── css/
+│   └── {theme-name}.css          # 【Stage 3b 产物】完整 CSS
 ├── publish/
-│   └── {theme-name}.html         # 【Compiler 产物】公众号发布
+│   └── {theme-name}.html         # 【Stage 3b 产物】公众号发布（内联版）
+├── validation.md                 # 【Stage 4 回归验证】验收报告（playbook 清单）
 ├── package/                      # 【打包中间产物】pack-theme.cjs 输出
 │   ├── manifest.json
 │   ├── brand.md
@@ -72,28 +66,29 @@ themes/{theme-name}/
 
 ### 3.1 各阶段产物 → 路径 → Schema 对照
 
-| 阶段      | 产物文件                                                | 校验 Schema                                   |
-| --------- | ------------------------------------------------------- | --------------------------------------------- |
-| Stage 1   | `themes/{theme-name}/states/brand_state.json`           | `schema/brand_state.schema.json`              |
-| Stage 2   | `themes/{theme-name}/states/concept_state.json`         | `schema/concept_state.schema.json`            |
-| Stage 3   | `themes/{theme-name}/states/visual_language.json`       | `schema/visual_language.schema.json`          |
-| Stage 4   | `themes/{theme-name}/states/component_strategy.json`    | `schema/component_strategy.schema.json`       |
-| Stage 4.5 | `themes/{theme-name}/states/skeleton_intent.json`       | `schema/skeleton_intent.schema.json`          |
-| Stage 5   | `themes/{theme-name}/states/component_mapping.json`     | `schema/component_mapping.schema.json`        |
-| Assembler | `themes/{theme-name}/BrandVisualTheme.json`             | `schema/BrandVisualTheme.schema.json`         |
-| Compiler  | `themes/{theme-name}/css/{theme-name}.css`              | —                                             |
-| Compiler  | `themes/{theme-name}/preview/{theme-name}-preview.html` | —                                             |
-| Compiler  | `themes/{theme-name}/publish/{theme-name}.html`         | —                                             |
-| Stage 7   | `themes/{theme-name}/package/*`                         | `schema/BrandVisualTheme.schema.json`（复核） |
-| Stage 7   | `themes/{theme-name}/{theme-name}.wemd-theme`           | `reference/theme-packing.md`                  |
+| 阶段    | 产物文件                                                | 校验 Schema                                   |
+| ------- | ------------------------------------------------------- | --------------------------------------------- |
+| Stage 1 | `themes/{theme-name}/states/brand_state.json`           | `schema/brand_state.schema.json`              |
+| Stage 2 | `themes/{theme-name}/states/concept_state.json`         | `schema/concept_state.schema.json`            |
+| Stage 3a | `themes/{theme-name}/preview/vision.html`               | —（HTML 视觉稿，无 schema）                   |
+| Stage 3b | `themes/{theme-name}/templates/*.html`                  | —（自由骨架，compile-skeleton 校验三条底线） |
+| Stage 3b | `themes/{theme-name}/css/{theme-name}.css`              | —                                             |
+| Stage 3b | `themes/{theme-name}/publish/{theme-name}.html`         | —                                             |
+| Stage 4  | `themes/{theme-name}/validation.md`                     | —（验收报告，对照 playbook 清单）            |
+| 打包    | `themes/{theme-name}/package/*`                         | `scripts/validate-theme.cjs`（复核）          |
+| 打包    | `themes/{theme-name}/{theme-name}.wemd-theme`           | `reference/theme-packing.md`                  |
+
+> 端到端生成模式下不再产出 `visual_language` / `component_strategy` / `skeleton_intent` / `component_mapping` 中间 State，也不产出 `BrandVisualTheme.json`（由 AI 直接落地模板 + CSS + 主题包）。
 
 ### 3.2 目录职责划分
 
 | 目录                         | 谁写                      | 生命周期                             |
 | ---------------------------- | ------------------------- | ------------------------------------ |
-| `states/`                    | AI（各阶段）              | 主题工作记忆，可随时重建，不随包交付 |
-| `BrandVisualTheme.json`      | Assembler                 | 产品交付物之一，随主题保留           |
-| `css/` `preview/` `publish/` | Compiler 脚本             | 中间产物，可重新编译                 |
+| `states/`                    | AI（Stage 1-2）           | 需求工作记忆，可随时重建，不随包交付 |
+| `preview/vision.html`        | AI（Stage 3a 视觉稿）     | 气质确认稿，用户预览用               |
+| `templates/`                 | AI（Stage 3b 自由骨架）   | 定制骨架，随主题保留                 |
+| `css/` `publish/`            | AI（Stage 3b 端到端生成） | 主题产物，随主题保留                 |
+| `validation.md`              | AI（Stage 4 回归验证）    | 验收报告，随主题保留                 |
 | `package/`                   | pack-theme.cjs            | 打包中间件，可重新生成               |
 | `{theme-name}.wemd-theme`    | 用户手动 Compress-Archive | **最终交付物**，可导入主程序         |
 
@@ -115,20 +110,20 @@ themes/{theme-name}/
 
 | 脚本                                         | 输入                                                                     | 输出                                           |
 | -------------------------------------------- | ------------------------------------------------------------------------ | ---------------------------------------------- |
-| `scripts/compile-skeleton.cjs`               | `themes/{theme}/states/skeleton_intent.json`                             | `themes/{theme}/package/templates.json`        |
-| `scripts/pack-theme.cjs <theme>`             | `themes/{theme}/BrandVisualTheme.json`、`themes/{theme}/css/{theme}.css` | `themes/{theme}/package/`                      |
+| `scripts/compile-skeleton.cjs <theme>`       | `themes/{theme}/templates/*.html`（自由模板）                    | `themes/{theme}/package/templates.json`        |
+| `scripts/pack-theme.cjs <theme>`             | `themes/{theme}/css/{theme}.css`、`templates.json`、manifest               | `themes/{theme}/package/`                      |
 | `scripts/validate-css-selectors.mjs <theme>` | `themes/{theme}/css/{theme}.css`                                         | 校验结果                                       |
-| `scripts/compile-preview.cjs <theme>`        | `themes/{theme}/BrandVisualTheme.json`                                   | `themes/{theme}/preview/`                      |
-| `scripts/compile-publish.cjs <theme>`        | `themes/{theme}/BrandVisualTheme.json`                                   | `themes/{theme}/publish/`                      |
+| `scripts/validate-theme.cjs <theme>`         | `themes/{theme}/package/manifest.json`                                   | 校验结果                                       |
 | `scripts/extract-dom-snapshot.mjs`           | 主程序 `defaultTemplates`/`slotDefs`                                     | `reference/dom-structure.md`（共享，不随主题） |
 
 > 脚本一律通过 `theme-name` 参数定位主题目录，**不写 `themes/` 之外的任何产物**。
+> 开发预览 / 公众号发布 HTML 由 AI 端到端生成（Stage 3b）直接产出（`preview/vision.html` + `publish/{theme}.html`），不依赖编译脚本。
 
 ---
 
 ## 6. 生命周期与清理
 
 - **States 可丢弃**：`states/` 中的 State 是工作记忆，主题完成后可清理，不影响已交付的 `.wemd-theme`。
-- **中间件可重建**：`css/`、`preview/`、`publish/`、`package/` 均可由脚本重新生成。
-- **交付物保留**：`BrandVisualTheme.json`、`{theme-name}.wemd-theme` 是核心交付物，长期保留。
+- **中间件可重建**：`package/` 可由脚本重新生成。
+- **交付物保留**：`templates/`、`css/`、`publish/`、`preview/vision.html`、`validation.md`、`{theme-name}.wemd-theme` 长期保留。
 - 删除整个主题：直接删除 `themes/{theme-name}/` 目录即可，不影响其他主题与共享资源。

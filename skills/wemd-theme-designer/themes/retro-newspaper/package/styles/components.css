@@ -1,0 +1,506 @@
+/* ============================================================
+   Theme: retro-newspaper（复古日报 · 铅字印刷风）
+   设计：油墨黑 #2b2118 / 新闻纸米 #f5efe0 / 报头红 #9e1f12 / 铅线棕 #c9b98f
+   字体：衬线（Georgia / 宋体）正文 + 等宽（Courier）元信息
+   约束：无伪元素、无动画、无结构伪类、无绝对定位；#wemd 不设整篇背景
+   ============================================================ */
+
+/* ============ CSS Variables ============ */
+#wemd {
+  --wemd-rn-ink: #2b2118;
+  --wemd-rn-ink-soft: #6b5f4d;
+  --wemd-rn-paper: #f5efe0;
+  --wemd-rn-paper-soft: #ece2cf;
+  --wemd-rn-accent: #9e1f12;
+  --wemd-rn-line: #c9b98f;
+  --wemd-rn-serif: Georgia, "Times New Roman", "Songti SC", "STSong", "SimSun", serif;
+  --wemd-rn-mono: "Courier New", Consolas, monospace;
+  /* 兼容 token 映射（pack-theme 从 CSS 变量映射主题 tokens） */
+  --wemd-accent-primary: #9e1f12;
+  --wemd-accent-secondary: #c9b98f;
+  --wemd-accent-tertiary: #6b1a0d;
+  --wemd-bg-base: #f5efe0;
+  --wemd-bg-section: #ece2cf;
+  --wemd-bg-card: #f5efe0;
+  --wemd-bg-surface: #ece2cf;
+  --wemd-text-primary: #2b2118;
+  --wemd-text-secondary: #6b5f4d;
+  --wemd-text-muted: #8a7a63;
+  --wemd-border-light: #c9b98f;
+  --wemd-border-accent: #9e1f12;
+  --wemd-font-body: Georgia, "Times New Roman", "Songti SC", "SimSun", serif;
+  --wemd-font-mono: "Courier New", Consolas, monospace;
+}
+
+/* ============ 基础（白场深字） ============ */
+#wemd {
+  color: #2b2118;
+  font-family: Georgia, "Times New Roman", "Songti SC", "STSong", "SimSun", serif;
+  font-size: 16px;
+  line-height: 1.9;
+  letter-spacing: 0.01em;
+}
+
+#wemd p {
+  margin: 0 0 16px;
+  color: #2b2118;
+  font-size: 15px;
+  line-height: 1.9;
+  text-align: justify;
+}
+
+#wemd p strong,
+#wemd p b {
+  color: #2b2118;
+  font-weight: 700;
+}
+
+#wemd em {
+  font-style: italic;
+  color: #6b5f4d;
+}
+
+#wemd a {
+  color: #9e1f12;
+  text-decoration: none;
+  border-bottom: 1px solid #c9b98f;
+}
+
+/* 标题（衬线墨黑，h2/h3 下带铅线） */
+#wemd h1,
+#wemd h2,
+#wemd h3,
+#wemd h4 {
+  font-family: Georgia, "Times New Roman", "Songti SC", "SimSun", serif;
+  color: #2b2118;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+/* ============ 焦点：magazine-cover 报头封面 ============ */
+#wemd .wemd-magazine-cover {
+  margin: 0 0 24px;
+  padding: 20px 18px;
+  text-align: center;
+  border: 1px solid #c9b98f;
+  background: #ece2cf;
+}
+#wemd .wemd-magazine-cover .wemd-mc-rule-top,
+#wemd .wemd-magazine-cover .wemd-mc-rule-bottom {
+  display: block;
+  height: 0;
+  border-top: 3px double #2b2118;
+  margin: 0 0 12px;
+}
+#wemd .wemd-magazine-cover .wemd-mc-rule-bottom {
+  margin: 12px 0 0;
+}
+#wemd .wemd-magazine-cover .wemd-mc-title {
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  color: #2b2118;
+  line-height: 1.3;
+}
+#wemd .wemd-magazine-cover .wemd-mc-title strong {
+  color: #9e1f12;
+  font-weight: 900;
+}
+#wemd .wemd-magazine-cover .wemd-mc-subtitle {
+  margin-top: 6px;
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  color: #6b5f4d;
+  text-transform: uppercase;
+}
+#wemd .wemd-magazine-cover .wemd-mc-divider {
+  /* 共享把它做成 4px 红条（width/height/background），本主题用作文字分隔（—— 或 · · ·），
+     需覆盖掉共享红条，否则出现「红条 + 内嵌 hr」双线。 */
+  width: auto;
+  height: auto;
+  background: none;
+  border-radius: 0;
+  margin: 12px 0;
+  font-size: 12px;
+  color: #9e1f12;
+  letter-spacing: 0.3em;
+}
+#wemd .wemd-magazine-cover .wemd-mc-desc {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #6b5f4d;
+  line-height: 1.7;
+}
+
+/* ============ 焦点：section-divider 栏目分隔带 ============ */
+#wemd .wemd-section-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 28px 0 18px;
+}
+#wemd .wemd-section-divider .wemd-sd-part {
+  font-family: "Courier New", Consolas, monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: #6b5f4d;
+  white-space: nowrap;
+}
+#wemd .wemd-section-divider .wemd-sd-line {
+  flex: 1;
+  height: 0;
+  border-top: 1px solid #c9b98f;
+}
+#wemd .wemd-section-divider .wemd-sd-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #9e1f12;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+
+/* ============ 焦点：quote-card 红竖条引用 ============ */
+#wemd .wemd-quote-card {
+  margin: 20px 0;
+  padding: 14px 16px;
+  background: #ece2cf;
+  border-left: 4px solid #9e1f12;
+}
+#wemd .wemd-quote-card .wemd-qc-mark {
+  display: block;
+  font-family: Georgia, serif;
+  font-size: 34px;
+  line-height: 1;
+  color: #9e1f12;
+}
+#wemd .wemd-quote-card .wemd-qc-quote {
+  margin: 6px 0 8px;
+  font-size: 16px;
+  font-style: italic;
+  font-weight: 600;
+  color: #2b2118;
+  line-height: 1.7;
+}
+#wemd .wemd-quote-card .wemd-qc-author {
+  font-family: "Courier New", Consolas, monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: #6b5f4d;
+  text-transform: uppercase;
+}
+
+/* ============ 焦点：end-card 报尾刊号 ============ */
+#wemd .wemd-end-card {
+  margin: 28px 0 0;
+  padding: 14px 16px 18px;
+  text-align: center;
+  border-top: 2px solid #2b2118;
+  border-bottom: 1px solid #c9b98f;
+}
+#wemd .wemd-end-card .wemd-ec-rule {
+  display: block;
+  height: 0;
+  border-top: 1px solid #c9b98f;
+  margin-bottom: 14px;
+}
+#wemd .wemd-end-card .wemd-ec-title {
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  color: #2b2118;
+}
+#wemd .wemd-end-card .wemd-ec-title strong {
+  color: #9e1f12;
+  font-weight: 900;
+}
+#wemd .wemd-end-card .wemd-ec-subtitle {
+  margin-top: 6px;
+  font-family: "Courier New", Consolas, monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: #6b5f4d;
+  text-transform: uppercase;
+}
+#wemd .wemd-end-card .wemd-ec-deco {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #9e1f12;
+}
+
+/* ============ 焦点：divider-fancy 菱形分隔 ============ */
+#wemd .wemd-divider-fancy {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0;
+  color: #9e1f12;
+}
+#wemd .wemd-divider-fancy .wemd-df-label {
+  /* 共享 .wemd-df-label 有 width:100%（共享结构把线嵌在 label 内），
+     本主题自定义骨架把线放在 label 两侧，须把 width 归 auto，否则 label 独占整行 */
+  width: auto;
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  color: #6b5f4d;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+#wemd .wemd-divider-fancy .wemd-df-line {
+  flex: 1;
+  height: 0;
+  border-top: 1px solid #c9b98f;
+}
+#wemd .wemd-divider-fancy .wemd-df-glyph {
+  font-size: 11px;
+  color: #9e1f12;
+}
+
+/* ============ 焦点：styled-table 报纸表格 ============ */
+#wemd .wemd-styled-table {
+  margin: 18px 0;
+  border: 1px solid #2b2118;
+}
+#wemd .wemd-styled-table .wemd-sbt-table table th {
+  background: #2b2118;
+  color: #f5efe0;
+  font-family: "Helvetica Neue", Arial, "PingFang SC", sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  padding: 9px 10px;
+  text-align: left;
+  font-weight: 700;
+}
+#wemd .wemd-styled-table .wemd-sbt-table table td {
+  font-size: 13px;
+  padding: 8px 10px;
+  color: #2b2118;
+  border: none;
+  border-bottom: 1px solid #c9b98f;
+  background: transparent;
+}
+#wemd .wemd-styled-table .wemd-sbt-table table td strong {
+  color: #9e1f12;
+  font-weight: 700;
+}
+
+/* ============ Content：section-title 报纸栏目标题 ============ */
+#wemd .wemd-section-title {
+  /* 共享把它做成卡片（bg + 左边条 + 圆角 + padding），本主题用作报纸栏目标题（文字 + 下红线），
+     需清掉共享卡片，否则出现「卡片底 + 左红条 + 下红线」三重样式。 */
+  background: transparent;
+  border-left: none;
+  border-radius: 0;
+  padding: 0 0 6px;
+  margin: 26px 0 12px;
+  border-bottom: 2px solid #9e1f12;
+}
+#wemd .wemd-section-title .wemd-component-body {
+  font-size: 19px;
+  font-weight: 800;
+  color: #2b2118;
+  line-height: 1.4;
+}
+
+/* ============ Content：numbered-heading 编号标题 ============ */
+#wemd .wemd-numbered-heading {
+  margin: 24px 0 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #c9b98f;
+}
+#wemd .wemd-numbered-heading .wemd-component-body {
+  font-size: 18px;
+  font-weight: 800;
+  color: #2b2118;
+  line-height: 1.4;
+}
+
+/* ============ Content：pullquote 行内引用 ============ */
+/* 共享 pullquote 根元素自带 border-left:5px + 卡片底/圆角；主题用 body 的
+   border-left 表达竖条，必须覆盖根元素去掉共享竖条，否则根 + body 双条。 */
+#wemd .wemd-pullquote {
+  background: transparent;
+  border-left: none;
+  border-radius: 0;
+  padding: 0;
+}
+#wemd .wemd-pullquote .wemd-component-body {
+  margin: 18px 0;
+  padding: 10px 14px;
+  border-left: 4px solid #9e1f12;
+  font-size: 16px;
+  font-style: italic;
+  font-weight: 600;
+  color: #2b2118;
+  background: transparent;
+}
+
+/* ============ Content：text-card 正文卡（纸底细线） ============ */
+#wemd .wemd-text-card {
+  margin: 18px 0;
+  padding: 16px;
+  background: #ece2cf;
+  border: 1px solid #c9b98f;
+}
+#wemd .wemd-text-card .wemd-component-body p {
+  margin: 0 0 10px;
+}
+
+/* ============ Content：image-card 图片卡 ============ */
+#wemd .wemd-image-card {
+  margin: 18px 0;
+  padding: 6px;
+  background: #ece2cf;
+  border: 1px solid #c9b98f;
+}
+#wemd .wemd-image-card .wemd-ic-image img {
+  border-radius: 0;
+}
+#wemd .wemd-image-card .wemd-ic-caption {
+  margin-top: 8px;
+  font-family: "Courier New", Consolas, monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: #6b5f4d;
+}
+
+/* ============ Content：callout-pro 提示框 ============ */
+/* 竖条已用 border-left 表达，去掉共享 ::before 色条，避免预览与导出出现双竖线 */
+#wemd .wemd-callout-pro::before {
+  content: none;
+}
+#wemd .wemd-callout-pro {
+  margin: 18px 0;
+  padding: 14px 16px;
+  background: #ece2cf;
+  border-left: 3px solid #9e1f12;
+  border-top: 1px solid #c9b98f;
+  border-bottom: 1px solid #c9b98f;
+  border-right: 1px solid #c9b98f;
+}
+#wemd .wemd-callout-pro .wemd-component-body p {
+  font-size: 14px;
+}
+
+/* ============ Content：timeline 时间线 ============ */
+#wemd .wemd-timeline {
+  margin: 18px 0;
+  padding: 14px 16px;
+  background: #ece2cf;
+  border: 1px solid #c9b98f;
+}
+#wemd .wemd-timeline .wemd-tl-title {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #9e1f12;
+  margin-bottom: 10px;
+}
+#wemd .wemd-timeline .wemd-tl-item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 4px 0;
+}
+#wemd .wemd-timeline .wemd-tl-dot {
+  /* 共享圆点已做尺寸无关居中（left:-21px + translateX(-50%)），圆心自动落在竖线中心，
+     与尺寸无关。这里只需改尺寸与颜色，不要自己写 left（会破坏居中）。 */
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #9e1f12;
+  border: none; /* 实心红点：去掉共享白底红环 */
+}
+#wemd .wemd-timeline .wemd-tl-text {
+  font-size: 14px;
+  color: #2b2118;
+}
+
+/* ============ Content：stats-block 数据栏 ============ */
+#wemd .wemd-stats-block {
+  margin: 18px 0;
+  padding: 14px 16px;
+  background: #ece2cf;
+  border: 1px solid #c9b98f;
+}
+#wemd .wemd-stats-block .wemd-sb-items-value {
+  font-family: Georgia, serif;
+  font-size: 22px;
+  font-weight: 900;
+  color: #9e1f12;
+}
+#wemd .wemd-stats-block .wemd-sb-items-label {
+  font-size: 12px;
+  color: #6b5f4d;
+  letter-spacing: 0.1em;
+}
+
+/* ============ Utility：divider 双线分隔 ============ */
+/* 已用上下双线表达，去掉共享 ::before/::after 左右横线，避免装饰叠加 */
+#wemd .wemd-divider .wemd-component-body::before,
+#wemd .wemd-divider .wemd-component-body::after {
+  content: none;
+}
+#wemd .wemd-divider {
+  margin: 22px 0;
+}
+#wemd .wemd-divider .wemd-component-body {
+  height: 0;
+  border-top: 1px solid #c9b98f;
+  border-bottom: 1px solid #c9b98f;
+  padding: 2px 0;
+  color: transparent;
+}
+/* markdown 的 --- 会在 divider body 内生成 <hr>，双线中间会多出一条 hr 线（三线）。
+   隐藏它，只留主题的上下双线。 */
+#wemd .wemd-divider .wemd-component-body hr {
+  display: none;
+}
+
+/* ============ Utility：copyright-notice 版权 ============ */
+#wemd .wemd-copyright-notice .wemd-component-body {
+  margin: 20px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid #c9b98f;
+  font-family: "Courier New", Consolas, monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: #8a7a63;
+  text-align: center;
+}
+
+/* ============ Content：code-frame 代码（纸底深字） ============ */
+#wemd .wemd-code-frame {
+  margin: 18px 0;
+  border: 1px solid #c9b98f;
+  background: #ece2cf;
+}
+#wemd .wemd-code-frame .wemd-cf-title {
+  padding: 8px 12px;
+  font-family: "Courier New", Consolas, monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: #6b5f4d;
+  background: #e2d7bd;
+  border-bottom: 1px solid #c9b98f;
+}
+#wemd .wemd-code-frame .wemd-cf-code pre {
+  margin: 0;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-family: "Courier New", Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #2b2118;
+  background: transparent;
+}
+#wemd .wemd-code-frame .wemd-cf-code pre code {
+  background: transparent;
+  color: #2b2118;
+}
+
+/* ============ Stack 规则：组件间距统一 ============ */
+#wemd > [class] {
+  margin-top: 0;
+  margin-bottom: var(--wemd-space-component, 1.25rem);
+}

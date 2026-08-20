@@ -1,0 +1,13 @@
+<section class="wemd-component wemd-brand-sign" data-component="brand-sign">
+<section class="wemd-bs-wrapper" data-style="{{slot:style}}" data-divider="{{slot:divider}}">
+{{#if logo}}<section class="wemd-bs-logo">{{slot:logo}}</section>{{else}}<section class="wemd-bs-logo"></section>{{/if}}
+<section class="wemd-bs-text">
+<section class="wemd-bs-brand-line">
+<section class="wemd-bs-brand-name">{{slot:brandName}}</section>
+{{#if tagline}}<section class="wemd-bs-divider-dot">·</section><section class="wemd-bs-tagline">{{slot:tagline}}</section>{{/if}}
+</section>
+<section class="wemd-bs-slogan">{{slot:slogan}}</section>
+{{#if subText}}<section class="wemd-bs-subtext">{{slot:subText}}</section>{{/if}}
+</section>
+</section>
+</section>

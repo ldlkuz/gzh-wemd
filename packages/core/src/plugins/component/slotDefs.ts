@@ -251,6 +251,12 @@ export const BUILTIN_SLOT_DEFS: ComponentSlotDef[] = [
     abbr: "sb",
     slots: [
       {
+        key: "title",
+        type: "text",
+        semantic: "标题",
+        input: { source: "first-line", position: "first", cardinality: "optional" },
+      },
+      {
         key: "items",
         type: "list",
         semantic: "数据指标列表",
@@ -633,6 +639,12 @@ export const BUILTIN_SLOT_DEFS: ComponentSlotDef[] = [
     abbr: "bs",
     hasCustomRenderer: true,
     slots: [
+      {
+        key: "logo",
+        type: "image",
+        semantic: "Logo 图片（body 首段图片）",
+        input: { source: "image", position: "first", cardinality: "optional" },
+      },
       { key: "brandName", type: "text", semantic: "品牌名" },
       { key: "tagline", type: "text", semantic: "副标题（品牌名后 · 紧跟）" },
       { key: "slogan", type: "text", semantic: "Slogan" },

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>民宿纪 · 慢住指南</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --base:#f4efe5;      /* 燕麦米白基底 */
+  --card:#fdfaf3;      /* 奶油白卡 */
+  --wood:#b06a44;      /* 原木/陶土 主色 */
+  --wood-deep:#955431; /* 深陶土 */
+  --sage:#8d9a77;      /* 鼠尾草绿 辅助 */
+  --ink:#4d3d2f;       /* 可可深字 */
+  --txt:#71624f;       /* 次级文字 */
+  --soft:#b7a588;      /* 浅棕 */
+  --line:#e7dfcd;      /* 分割线 */
+  --cream:#f7efe1;
+}
+html,body{background:#ece4d6}
+body{font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;color:var(--ink);line-height:1.8;}
+.article{width:100%;max-width:430px;margin:0 auto;background:var(--base);overflow:hidden;}
+/* 顶部原木纹条：民宿的"木" */
+.top-wood{height:8px;background:repeating-linear-gradient(90deg,#dccbb0 0 30px,#cbbd9f 30px 32px),#e5d9c2;}
+
+.masthead{display:flex;align-items:center;justify-content:space-between;padding:22px 24px 0;font-size:11px;letter-spacing:.3em;color:var(--soft);}
+.masthead b{color:var(--wood);font-weight:600;}
+.masthead span:last-child{font-family:"Georgia",serif;color:#b2a48f;} 
+
+/* ======== 封面：原木奶油暖光 ======== */
+.hero{position:relative;margin:18px 16px 4px;border-radius:22px;overflow:hidden;min-height:420px;
+  background:
+    linear-gradient(185deg,rgba(74,54,32,.08),rgba(74,54,32,.55) 78%,rgba(61,44,26,.92)),
+    url("https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1000&q=85") center/cover;}
+/* 原木腰牌 */
+.wood-sign{position:absolute;top:20px;left:24px;
+  background:#8f5b37;color:#f7ead6;padding:8px 16px;border-radius:8px;
+  font-size:11px;letter-spacing:.28em;font-weight:600;
+  box-shadow:inset 0 -3px 0 rgba(0,0,0,.18),0 4px 12px rgba(0,0,0,.18);}
+/* 陶土印章 01 */
+.seal{position:absolute;top:22px;right:26px;width:54px;height:54px;border-radius:50%;
+  border:2px solid rgba(247,234,214,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;
+  color:#f7ead6;font-family:"Songti SC",serif;line-height:1;
+  background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.18),transparent 60%),#b06a44;
+  box-shadow:0 4px 14px rgba(0,0,0,.22);}
+.seal .en{font-size:7px;letter-spacing:.2em;opacity:.85;font-family:"Georgia",serif;}
+.seal b{font-size:17px;margin-top:2px;}
+.hero-text{position:absolute;left:24px;right:24px;bottom:24px;}
+.hero-kicker{color:#ead9bd;font-family:"Georgia",serif;font-size:12px;letter-spacing:.26em;margin-bottom:11px;display:flex;align-items:center;gap:9px;}
+.hero-kicker::after{content:"";flex:0 0 30px;height:2px;background:#c9a878;}
+.hero h1{font-family:"Songti SC","STSong",Georgia,serif;font-size:32px;font-weight:600;line-height:1.18;color:#fbf3e4;margin-bottom:12px;}
+.hero h1 b{color:#e9b98a;font-weight:600;}
+.hero .caption{color:#efe3cd;font-size:13px;letter-spacing:.05em;}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes stamp{from{opacity:0;transform:scale(.6) rotate(-8deg)}to{opacity:1;transform:none}}
+.wood-sign{animation:stamp .6s .15s both}
+.seal{animation:stamp .5s .3s both}
+.hero-kicker{animation:rise .7s .35s both}
+.hero h1{animation:rise .7s .5s both}
+.hero .caption{animation:rise .7s .65s both}
+
+/* ======== 导语 ======== */
+.intro{margin:26px 22px 4px;padding:22px 2px 4px;position:relative;}
+.intro::before{content:"";position:absolute;left:0;top:0;width:34px;height:3px;background:var(--wood);border-radius:3px;}
+.intro .intro-tag{font-family:"Georgia","Songti SC",serif;color:var(--wood);font-size:12px;letter-spacing:.16em;margin-bottom:10px;}
+.intro p{font-size:16.5px;line-height:1.95;font-weight:600;color:var(--ink);}
+.intro p b{color:var(--wood);}
+
+/* ======== 房型导读 ======== */
+.plate{margin:32px 22px 6px;display:flex;align-items:flex-end;gap:12px;}
+.plate .no{font-family:"Georgia",serif;font-size:40px;line-height:.9;color:var(--wood);font-weight:600;opacity:.9;}
+.plate .txt b{display:block;font-family:"Songti SC","STSong",serif;font-size:21px;font-weight:600;color:var(--ink);letter-spacing:.03em;}
+.plate .txt span{font-size:11px;color:var(--soft);letter-spacing:.26em;}
+.plate .rule{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent);margin-bottom:6px;}
+
+/* ======== 民宿卡 ======== */
+.stay{position:relative;margin:26px 16px;background:var(--card);border-radius:18px;overflow:hidden;box-shadow:0 8px 26px rgba(90,60,25,.08);border:1px solid var(--line);}
+.stay-img{position:relative;height:226px;overflow:hidden;margin:9px 9px 0;border-radius:13px;}
+.stay-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .9s ease;}
+.stay:hover .stay-img img{transform:scale(1.05)}
+/* 木牌编号 + 陶土印章号 */
+.stay-no{position:absolute;top:12px;left:12px;background:var(--wood);color:#f7ead6;
+  font-family:"Georgia",serif;font-size:15px;font-weight:700;letter-spacing:.05em;padding:6px 13px;border-radius:6px;
+  box-shadow:inset 0 -3px 0 rgba(0,0,0,.16),0 3px 10px rgba(0,0,0,.22);}
+.stay-price{position:absolute;right:12px;bottom:12px;
+  background:rgba(250,244,232,.94);color:var(--wood-deep);border:1px solid #e0cfae;
+  padding:5px 14px;border-radius:30px;text-align:center;line-height:1.3;
+  box-shadow:0 3px 10px rgba(0,0,0,.14);}
+.stay-price small{font-size:9px;color:var(--soft);letter-spacing:.12em;display:block;}
+.stay-price b{font-size:15px;}
+/* 亚麻挂签：一句推荐 */
+.linen-tag{position:absolute;left:50%;top:18px;transform:translateX(-50%) rotate(-1deg);
+  background:#ece0c6;color:#7a6b52;font-size:10px;letter-spacing:.24em;padding:6px 18px;
+  border:1px dashed #cdb990;border-radius:4px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.08);}
+.stay-body{padding:0 18px 20px;}
+.stay-name{margin:16px 0 2px;font-family:"Songti SC","STSong",serif;font-size:22px;font-weight:700;color:var(--ink);display:flex;align-items:baseline;gap:9px;}
+.stay-name small{font-size:10px;color:var(--soft);letter-spacing:.14em;}
+.stay-meta{display:flex;flex-wrap:wrap;gap:6px 16px;margin:8px 0 12px;font-size:12.5px;color:var(--txt);}
+.stay-meta span{display:flex;align-items:center;gap:5px;}
+.stay-meta .dot{width:6px;height:6px;border-radius:50%;background:var(--wood);flex:none;}
+.stay-meta .dot.green{background:var(--sage);}
+.stay-desc{margin:0 0 14px;font-size:14.5px;color:var(--txt);line-height:1.85;text-align:justify;}
+.stay-desc b{color:var(--wood);font-weight:700;}
+.stay-tags{display:flex;flex-wrap:wrap;gap:7px;}
+.tag{display:inline-block;padding:4px 11px;border:1px solid #cfc5ab;border-radius:20px;color:var(--txt);background:#f7f2e6;font-size:11.5px;}
+.tag.filled{background:var(--wood);color:#f7ead6;border-color:var(--wood);}
+.tag.sage{background:var(--sage);color:#f4f0e2;border-color:var(--sage);}
+
+/* ======== 民宿主人的话（maiden 卡片） ======== */
+.host{margin:30px 16px;padding:26px 22px;background:var(--cream);border:1px solid var(--line);border-radius:18px;position:relative;}
+.host .host-tag{display:inline-block;margin-bottom:14px;padding:5px 14px;background:var(--wood);color:#f7ead6;font-size:10px;letter-spacing:.24em;border-radius:4px;}
+.host p{font-family:"Songti SC","STSong",serif;font-size:17px;line-height:2;color:var(--ink);font-weight:500;}
+.host p b{color:var(--wood);}
+.host .host-by{display:block;margin-top:14px;font-size:11px;letter-spacing:.2em;color:var(--soft);}
+
+/* ======== 附：入住清单 ======== */
+.pack{margin:10px 16px 6px;border:1px solid var(--line);border-radius:18px;background:var(--card);padding:22px 20px;}
+.pack-head{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.pack-head .leaf{width:15px;height:15px;flex:none;border-radius:2px;background:var(--sage);transform:rotate(8deg);}
+.pack-head b{font-family:"Songti SC","STSong",serif;font-size:17px;font-weight:600;color:var(--ink);letter-spacing:.06em;}
+.pack li{list-style:none;display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px dashed #e3d9c2;color:var(--txt);font-size:14px;line-height:1.7;}
+.pack li:last-child{border-bottom:0;}
+.pack .ck{flex:none;width:17px;height:17px;border:1.5px solid var(--wood);border-radius:5px;margin-top:2px;position:relative;}
+.pack .ck.on::after{content:"";position:absolute;left:4px;top:1px;width:5px;height:9px;border:solid var(--wood);border-width:0 2px 2px 0;transform:rotate(45deg);}
+
+/* ======== 落款 ======== */
+.quote{margin:36px 22px 6px;text-align:center;padding:6px 0;}
+.quote .rule{width:46px;height:3px;background:var(--wood);margin:0 auto 22px;border-radius:3px;}
+.quote p{font-family:"Songti SC","STSong",Georgia,serif;font-size:18px;line-height:2;color:var(--ink);font-weight:500;}
+.quote p b{color:var(--wood);font-weight:600;}
+.quote small{display:block;margin-top:12px;color:var(--soft);font-size:10px;letter-spacing:.26em;}
+.signoff{margin:34px 0 44px;text-align:center;}
+.signoff .brand{font-family:"Songti SC","STSong",Georgia,serif;font-size:18px;color:var(--ink);letter-spacing:.3em;}
+.signoff .brand em{font-style:normal;color:var(--wood);}
+.signoff .brand em.sage{color:var(--sage);}
+.signoff .date{margin-top:10px;font-size:10px;color:var(--soft);letter-spacing:.3em;}
+.signoff .hr{width:66%;height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent);margin:0 auto 16px;}
+
+@media(max-width:380px){
+  .hero{min-height:370px}
+  .hero h1{font-size:28px}
+  .stay-img{height:198px}
+}
+</style>
+</head>
+<body>
+<article class="article">
+
+  <div class="top-wood"></div>
+  <div class="masthead"><b>民宿纪</b><span>SLOW STAY · 慢住指南</span></div>
+
+  <!-- 封面：原木奶油暖光 -->
+  <header class="hero">
+    <span class="wood-sign">民宿纪 · 本期慢住</span>
+    <div class="seal"><span class="en">ISSUE</span><b>04</b></div>
+    <div class="hero-text">
+      <p class="hero-kicker">SLOW STAY · 住进慢生活</p>
+      <h1>把周末，<br>住进一间暖房</h1>
+      <p class="caption">原木的温、亚麻的柔、一盏刚好亮起的灯 —— 本期的四间，都适合放慢。</p>
+    </div>
+  </header>
+
+  <!-- 导语 -->
+  <section class="intro">
+    <div class="intro-tag">这一期挑房的标准</div>
+    <p>好民宿不是看得见风景，而是<b>睡得好、坐得舒服、像回了一趟家</b>。床品、隔音、热水、还有一盏不刺眼的光，四样都要达标。</p>
+  </section>
+
+  <!-- 房型导读 -->
+  <div class="plate">
+    <span class="no">01</span>
+    <div class="txt"><b>本期民宿 · 四间</b><span>FOUR STAYS</span></div>
+    <div class="rule"></div>
+  </div>
+
+  <!-- 民宿一 -->
+  <section class="stay">
+    <div class="stay-img">
+      <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=85" alt="原木大床房">
+      <span class="linen-tag">睡到自然醒</span>
+      <span class="stay-no">01</span>
+      <div class="stay-price"><small>价格/晚</small><b>¥428</b></div>
+    </div>
+    <div class="stay-body">
+      <h2 class="stay-name">自木·山居<small>WOOD CABIN</small></h2>
+      <div class="stay-meta">
+        <span><i class="dot"></i>云顶镇 半山腰</span>
+        <span><i class="dot green"></i>含双早</span>
+        <span><i class="dot"></i>可住 2–3</span>
+      </div>
+      <p class="stay-desc">整栋原木小屋，窗朝杉树林。<b>床垫软硬适中，夜里安静</b>，睡到自然醒是这里最稳的体验。</p>
+      <div class="stay-tags"><span class="tag filled">山景</span><span class="tag">独立院子</span><span class="tag sage">可带宠物</span></div>
+    </div>
+  </section>
+
+  <!-- 民宿二 -->
+  <section class="stay">
+    <div class="stay-img">
+      <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=900&q=85" alt="弄堂小院">
+      <span class="linen-tag">闹中取静</span>
+      <span class="stay-no">02</span>
+      <div class="stay-price"><small>价格/晚</small><b>¥368</b></div>
+    </div>
+    <div class="stay-body">
+      <h2 class="stay-name">弄堂·小院<small>COURTYARD</small></h2>
+      <div class="stay-meta">
+        <span><i class="dot"></i>老城 弄堂深处</span>
+        <span><i class="dot green"></i>自助入住</span>
+        <span><i class="dot"></i>近地铁</span>
+      </div>
+      <p class="stay-desc">藏进市中心安静的巷子，推开木门是种着桂花的天井。<b>晚上回房像回家</b>，哪怕只住一晚。</p>
+      <div class="stay-tags"><span class="tag filled">位置便利</span><span class="tag">闹中取静</span></div>
+    </div>
+  </section>
+
+  <!-- 民宿三 -->
+  <section class="stay">
+    <div class="stay-img">
+      <img src="https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&w=900&q=85" alt="临湖民宿">
+      <span class="linen-tag">阳台看湖</span>
+      <span class="stay-no">03</span>
+      <div class="stay-price"><small>价格/晚</small><b>¥528</b></div>
+    </div>
+    <div class="stay-body">
+      <h2 class="stay-name">拾光·临湖<small>LAKESIDE</small></h2>
+      <div class="stay-meta">
+        <span><i class="dot"></i>湖畔村 一排</span>
+        <span><i class="dot green"></i>含日出</span>
+        <span><i class="dot"></i>阳台浴缸</span>
+      </div>
+      <p class="stay-desc">阳台正对湖面，备了厚拖鞋和眼部热敷袋。<b>细节比连锁酒店体面</b>，适合慢下来待一下午。</p>
+      <div class="stay-tags"><span class="tag filled">湖景</span><span class="tag sage">情侣首选</span></div>
+    </div>
+  </section>
+
+  <!-- 民宿四 -->
+  <section class="stay">
+    <div class="stay-img">
+      <img src="https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&w=900&q=85" alt="山间小屋">
+      <span class="linen-tag">性价比之选</span>
+      <span class="stay-no">04</span>
+      <div class="stay-price"><small>价格/晚</small><b>¥298</b></div>
+    </div>
+    <div class="stay-body">
+      <h2 class="stay-name">拾光·老宅<small>RENOVATED HOME</small></h2>
+      <div class="stay-meta">
+        <span><i class="dot"></i>古街 巷尾</span>
+        <span><i class="dot green"></i>含两餐</span>
+        <span><i class="dot"></i>全屋地暖</span>
+      </div>
+      <p class="stay-desc">老宅改造，保留木梁和石板地。主人会留一壶茶和手写纸条，<b>住一晚像被好好招待</b>。</p>
+      <div class="stay-tags"><span class="tag filled">格调老宅</span><span class="tag">含两餐</span></div>
+    </div>
+  </section>
+
+  <!-- 民宿主人的话 -->
+  <section class="host">
+    <div class="host-tag">主 人 的 话</div>
+    <p>「我们不做景点，只做一间<b>你住过还想再来的房子</b>。窗帘、被子和一盏灯，都按自己回家的样子备好。」</p>
+    <span class="host-by">—— 慢住 · 民宿主理人</span>
+  </section>
+
+  <!-- 附：入住清单 -->
+  <section class="pack">
+    <div class="pack-head"><span class="leaf"></span><b>入住前 · 慢一点</b></div>
+    <ul>
+      <li><span class="ck on"></span>把行李放下，先泡一壶茶</li>
+      <li><span class="ck on"></span>调暗灯光，让眼睛先休息</li>
+      <li><span class="ck"></span>铺开床头的亚麻薄毯午睡</li>
+      <li><span class="ck"></span>睡前关掉通知，留一盏小灯</li>
+      <li><span class="ck"></span>第二天，别急着退房</li>
+    </ul>
+  </section>
+
+  <!-- 落款 -->
+  <footer class="signoff">
+    <div class="hr"></div>
+    <div class="brand">民宿<em>纪</em> · <em class="sage">SLOW</em> STAY</div>
+    <div class="date">慢住指南 · 2026.08.20</div>
+  </footer>
+
+</article>
+</body>
+</html>

@@ -34,8 +34,10 @@ import markdownItCheckboxEmoji from "./plugins/markdown-it-checkbox-emoji";
 import markdownItAttributePolicy from "./plugins/markdown-it-attribute-policy";
 import markdownItSourcePosition from "./plugins/markdown-it-source-position";
 import markdownItComponent from "./plugins/markdown-it-component";
+import markdownItNativeLayer from "./plugins/markdown-it-native-layer";
 
 import highlightjs from "./utils/langHighlight";
+import type { SlotDef } from "./plugins/component/slotTypes";
 
 export interface MarkdownParserOptions {
   showMacBar?: boolean;
@@ -47,6 +49,12 @@ export interface MarkdownParserOptions {
    * 由渲染调用方注入当前主题的 getThemeTemplates(theme) 结果。
    */
   getTemplate?: (componentId: string) => string | undefined;
+  /**
+   * 取主题级扩展槽位。
+   * 优先返回当前主题包 slotDefs 中的追加槽位，返回 undefined 时不追加（仅用共享 slotDefs）。
+   * 由渲染调用方注入当前主题的 getThemeSlotDefs(theme) 结果。
+   */
+  getSlotDefs?: (componentId: string) => SlotDef[] | undefined;
 }
 
 const MAC_CODE_DOTS = ["rgb(237,108,96)", "rgb(247,193,81)", "rgb(100,200,86)"]
@@ -134,7 +142,12 @@ export const createMarkdownParser = (options: MarkdownParserOptions = {}) => {
       labelAfter: true,
     })
     .use(markdownItCheckboxEmoji)
-    .use(markdownItComponent, { getTemplate: options.getTemplate });
+    .use(markdownItComponent, {
+      getTemplate: options.getTemplate,
+      getSlotDefs: options.getSlotDefs,
+    })
+    // 基础层原生结构自动套容器：仅在带主题模板（getTemplate）时启用（复用组件管线）
+    .use(markdownItNativeLayer, { enable: options.getTemplate != null });
 
   if (options.includeSourcePosition) {
     markdownParser.use(markdownItSourcePosition);

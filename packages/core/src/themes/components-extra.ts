@@ -48,16 +48,17 @@ export const componentStylesExtra = `/* === WeMD 扩展组件样式（跟随主�
   font-weight: 600;
 }
 
-/* 右侧"关注"按钮（末段，且非唯一的首段——避免单段文案被误渲染成胶囊按钮） */
+/* 末段"关注"作为纯文字提醒：不做胶囊按钮（公众号内点击无交互，按钮形制会误导读者），
+   去掉背景/边框/圆角，仅以淡淡文字强调。 */
 #wemd .wemd-follow-bar .wemd-component-body > p:last-child:not(:first-child) {
   margin: 0;
-  padding: 4px 14px;
-  background: rgba(255, 255, 255, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 14px;
-  font-size: 12px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  font-size: 13px;
   font-weight: 500;
-  color: #ffffff;
+  color: rgba(255, 255, 255, 0.85);
   flex-shrink: 0;
 }
 
@@ -75,8 +76,8 @@ export const componentStylesExtra = `/* === WeMD 扩展组件样式（跟随主�
   text-align: center;
 }
 
-/* 第一张图作为二维码 */
-#wemd .wemd-qr-card .wemd-component-body img:first-child {
+/* 二维码图（架构改版后被 implicit-figures 包成 figure，选 img 即可） */
+#wemd .wemd-qr-card .wemd-component-body img {
   display: block;
   margin: 0 auto 12px auto;
   width: 140px;
@@ -120,26 +121,22 @@ export const componentStylesExtra = `/* === WeMD 扩展组件样式（跟随主�
   width: 100%;
 }
 
-/* 第一段作为大序号（用 accent 点缀色，跳出来） */
-#wemd .wemd-numbered-heading .wemd-component-body > p:first-child {
-  margin: 0;
-  font-size: 36px;
-  font-weight: 800;
-  line-height: 1;
-  color: var(--wemd-accent, #07c160);
-  font-family: "SF Mono", Monaco, "Helvetica Neue", sans-serif;
-  letter-spacing: -1px;
-  flex-shrink: 0;
-}
-
-/* 第二段作为标题文字 */
-#wemd .wemd-numbered-heading .wemd-component-body > p:nth-child(2) {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--wemd-text-strong, #1a1a1a);
-  line-height: 1.3;
-  flex: 1;
+/* 架构改版后：序号与标题合并为单个 h2（数字内联在标题文本，如 "01 开场与导航"）。
+   外观走全局 h2 皮肤；这里用长属性归零全局 h2 的大间距与下划线装饰，
+   避免与组件容器双重留白（不能用简写，见 section-title 说明）。 */
+#wemd .wemd-numbered-heading .wemd-component-body > h2 {
+  margin-top: 0;
+  margin-right: 0;
+  margin-bottom: 0;
+  margin-left: 0;
+  padding-top: 0;
+  padding-right: 0;
+  padding-bottom: 0;
+  padding-left: 0;
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
+  border-left: none;
 }
 
 /* === section-title 章节小标题卡片（primary 主色，跟随主题） === */
@@ -151,15 +148,28 @@ export const componentStylesExtra = `/* === WeMD 扩展组件样式（跟随主�
   border-radius: 0 6px 6px 0;
 }
 
-#wemd .wemd-section-title .wemd-component-body > p:first-child {
-  margin: 0;
+/* 章节标题（架构改版后 markdown 渲染为 h2）——用长属性逐个冲掉全局 h2 的装饰与间距
+   （不能用 margin/border 简写：内联器把简写前置，全局 h2 的长属性仍会覆盖简写） */
+#wemd .wemd-section-title .wemd-component-body > h2 {
+  margin-top: 0;
+  margin-right: 0;
+  margin-bottom: 0;
+  margin-left: 0;
+  padding-top: 0;
+  padding-right: 0;
+  padding-bottom: 0;
+  padding-left: 0;
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
+  border-left: none;
   font-size: 18px;
   font-weight: 600;
   color: var(--wemd-primary, #07c160);
   line-height: 1.4;
 }
 
-#wemd .wemd-section-title .wemd-component-body > p:first-child strong {
+#wemd .wemd-section-title .wemd-component-body > h2 strong {
   color: var(--wemd-primary, #07c160);
 }
 
@@ -257,14 +267,20 @@ export const componentStylesExtra = `/* === WeMD 扩展组件样式（跟随主�
   letter-spacing: 0.5px;
 }
 
-/* 如果第一张是图片，作为背景图 */
-#wemd .wemd-hero-banner .wemd-component-body img:first-child {
+/* 背景图：模板用 <p class="wemd-hb-image"> 包裹（见 defaultTemplates），
+   仅当存在背景图时该元素才出现，故作为 banner 首个子元素铺满 */
+#wemd .wemd-hero-banner .wemd-component-body > .wemd-hb-image {
   position: absolute;
   inset: 0;
+  margin: 0;
+  z-index: -1;
+}
+
+#wemd .wemd-hero-banner .wemd-component-body > .wemd-hb-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  z-index: -1;
+  display: block;
   margin: 0;
 }
 
@@ -508,7 +524,11 @@ export const componentStylesExtra = `/* === WeMD 扩展组件样式（跟随主�
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
 }
 
-#wemd .wemd-styled-table .wemd-sbt-table table th {
+/* th/td 用浅路径（#wemd .wemd-styled-table th/td）而非深路径 .wemd-sbt-table table th/td：
+   深路径特异性 1,2,3 会盖过主题按组件级写的浅路径覆盖（1,1,1），导致主题皮肤失效。
+   浅路径（1,1,1）仍能盖过通用 #wemd table tr td（1,0,3），且主题浅/深路径覆盖都能生效
+   （源头避免：见 theme-craftsmanship 踩坑表「styled-table 主题皮肤不生效」）。 */
+#wemd .wemd-styled-table th {
   background: var(--wemd-primary, #07c160);
   color: #ffffff;
   font-weight: 600;
@@ -519,7 +539,7 @@ export const componentStylesExtra = `/* === WeMD 扩展组件样式（跟随主�
   letter-spacing: 0.3px;
 }
 
-#wemd .wemd-styled-table .wemd-sbt-table table td {
+#wemd .wemd-styled-table td {
   padding: 10px 16px;
   font-size: 14px;
   color: var(--wemd-text-soft, #334155);
@@ -527,6 +547,7 @@ export const componentStylesExtra = `/* === WeMD 扩展组件样式（跟随主�
   background: #ffffff;
 }
 
+/* 行级斑马纹/末行去线保留深路径（作用于行，与主题的 th/td 皮肤属性不冲突） */
 #wemd .wemd-styled-table .wemd-sbt-table table tr:nth-child(even) td {
   background: var(--wemd-bg-soft, #f7f8fa);
 }
@@ -668,6 +689,16 @@ export const componentStylesExtra = `/* === WeMD 扩展组件样式（跟随主�
   background: linear-gradient(180deg, var(--wemd-bg-card, #fff), var(--wemd-bg-soft, #f7f8fa));
 }
 
+/* 品牌文字列（品牌名 / slogan / 版权），默认与 logo 一起垂直居中 */
+#wemd .wemd-brand-sign .wemd-bs-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  min-width: 0;
+}
+
 #wemd .wemd-brand-sign .wemd-bs-wrapper[data-divider="false"] {
   border: none;
   background: transparent;
@@ -677,10 +708,25 @@ export const componentStylesExtra = `/* === WeMD 扩展组件样式（跟随主�
 #wemd .wemd-brand-sign .wemd-bs-wrapper[data-style="inline"] {
   flex-direction: row;
   justify-content: flex-start;
+  align-items: center;
   text-align: left;
   border: none;
   background: transparent;
   padding: 12px 0;
+  gap: 12px;
+}
+
+/* inline：logo 左侧，品牌名右侧，slogan / 版权向下左对齐 */
+#wemd .wemd-brand-sign .wemd-bs-wrapper[data-style="inline"] .wemd-bs-text {
+  align-items: flex-start;
+  text-align: left;
+  gap: 4px;
+  flex: 1;
+}
+
+#wemd .wemd-brand-sign .wemd-bs-wrapper[data-style="inline"] .wemd-bs-subtext {
+  border-top: none;
+  padding-top: 0;
 }
 
 #wemd .wemd-brand-sign .wemd-bs-logo {
@@ -699,6 +745,15 @@ export const componentStylesExtra = `/* === WeMD 扩展组件样式（跟随主�
   font-size: 24px;
   font-weight: 700;
   color: var(--wemd-primary, #07c160);
+}
+
+/* body 首段 logo 图片：按容器指定尺寸显示，不变形 */
+#wemd .wemd-brand-sign .wemd-bs-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  border-radius: inherit;
 }
 
 #wemd .wemd-brand-sign .wemd-bs-brand-line {

@@ -4,6 +4,9 @@ export * from "./components-extra";
 export * from "./components-extended";
 export * from "./components-faq";
 export * from "./components-magazine";
+export * from "./components-eastern-notes";
+export * from "./template-library";
+export * from "./templates-eastern-notes";
 export * from "./theme-variables";
 
 export * from "./code-github";

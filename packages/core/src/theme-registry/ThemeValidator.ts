@@ -27,12 +27,13 @@ import {
   SUPPORTED_SDK_VERSIONS,
 } from "./componentRegistry";
 import {
-  PSEUDO_ELEMENT_REGEX,
   STRUCTURAL_PSEUDO_REGEX,
   EXTERNAL_LINK_REGEX,
   FORBIDDEN_TAG_REGEX,
   ZIP_ASSET_URL_REGEX,
   FORBIDDEN_CSS_PATTERNS,
+  findForbiddenPseudoElement,
+  stripCssComments,
 } from "../wechatCompat/whitelist";
 
 // ============================================================
@@ -131,19 +132,21 @@ function scanVariantCss(css: string, path: string): ValidationError[] {
 
   if (!css || typeof css !== "string") return errors;
 
-  // 检查伪元素
-  if (PSEUDO_ELEMENT_REGEX.test(css)) {
-    const match = css.match(PSEUDO_ELEMENT_REGEX);
+  // 检查伪元素（注释感知 + 中和感知：纯 content: none 中和规则放行，
+  // 与内置主题 #wemd .wemd-xxx::before { content: none } 的处理一致）
+  const forbiddenPseudo = findForbiddenPseudoElement(css);
+  if (forbiddenPseudo) {
     errors.push({
       path: `${path}`,
-      message: `variantCss 包含禁用的伪元素 ${match?.[0] ?? "::"}。微信公众号不支持伪元素，复制到公众号后样式会静默丢失`,
+      message: `variantCss 包含禁用的伪元素 ${forbiddenPseudo}。微信公众号不支持伪元素，复制到公众号后样式会静默丢失`,
       fix: "移除伪元素 ::before/::after，改用额外的 HTML 元素或 background-image 实现",
     });
   }
 
-  // 检查结构伪类
-  if (STRUCTURAL_PSEUDO_REGEX.test(css)) {
-    const match = css.match(STRUCTURAL_PSEUDO_REGEX);
+  // 检查结构伪类（先剥离注释，避免注释中的关键词误报）
+  const noComments = stripCssComments(css);
+  if (STRUCTURAL_PSEUDO_REGEX.test(noComments)) {
+    const match = noComments.match(STRUCTURAL_PSEUDO_REGEX);
     errors.push({
       path: `${path}`,
       message: `variantCss 包含禁用的结构伪类 ${match?.[0] ?? ":nth-child"}。微信公众号不支持，请用 class 选择器替代`,
@@ -151,8 +154,8 @@ function scanVariantCss(css: string, path: string): ValidationError[] {
     });
   }
 
-  // 检查外链
-  if (EXTERNAL_LINK_REGEX.test(css)) {
+  // 检查外链（先剥离注释）
+  if (EXTERNAL_LINK_REGEX.test(noComments)) {
     errors.push({
       path: `${path}`,
       message: "variantCss 包含外链 url(http...)，禁止引用外部资源",

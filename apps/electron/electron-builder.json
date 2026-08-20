@@ -4,6 +4,11 @@
   "directories": {
     "output": "release"
   },
+  "publish": {
+    "provider": "github",
+    "owner": "ldlkuz",
+    "repo": "gzh-wemd"
+  },
   "files": ["dist/**/*", "assets/**/*", "package.json", "!**/.DS_Store"],
   "extraResources": [
     {

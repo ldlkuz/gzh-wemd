@@ -317,6 +317,11 @@
   border-color: transparent;
 }
 
+/* 复制示例按钮：靠右放置，与视图切换区分开 */
+.preview-source-toggle .sample-copy-btn {
+  margin-left: auto;
+}
+
 .theme-form-fields {
   flex: 1;
   min-width: 300px;

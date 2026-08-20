@@ -1,0 +1,28 @@
+{
+  "concept_name": "铅字晨报",
+  "core_concept": "以老式铅字印刷与新闻纸质感为视觉意象，用油墨黑、报纸米、报头红与衬线排版，表达「被油墨定格的时间」",
+  "visual_metaphors": [
+    {
+      "metaphor_name": "铅字印刷机",
+      "reason": "从报纸的印刷工艺推导：活字排版、油墨压痕、铅字反白标题，复古报纸最本质的质感来源",
+      "visual_objects": ["lead type blocks", "ink impression", "column rules", "masthead banner"],
+      "material_language": ["newsprint paper", "printing ink", "machined metal type"]
+    },
+    {
+      "metaphor_name": "晨报茶桌",
+      "reason": "从阅读场景推导：展开的早报、晨光、手边咖啡，把报纸气质落到日常怀旧",
+      "visual_objects": ["folded morning paper", "coffee ring", "reading glasses"],
+      "material_language": ["warm paper", "soft morning light"]
+    },
+    {
+      "metaphor_name": "档案室剪报",
+      "reason": "从收藏记忆推导：发黄的剪报、索引卡、档案袋，强调报纸作为「时间的收藏」",
+      "visual_objects": ["yellowed clippings", "index cards", "archive folder", "rubber stamp"],
+      "material_language": ["aged paper", "ink stamp", "manila card"]
+    }
+  ],
+  "emotional_direction": {
+    "primary": "warm nostalgic",
+    "secondary": "rigorous record"
+  }
+}

@@ -609,7 +609,7 @@ export const productCardPromoCss = `/* === product-card 促销强调 === */
 // brand-sign 变体（3 个）
 // ============================================================
 
-/** brand-sign inline 水平一行（段落间插入） */
+/** brand-sign inline 水平一行（段落间插入）：logo 左 + 品牌名/ slogan/ 版权 右侧竖排 */
 export const brandSignInlineCss = `/* === brand-sign inline === */
 #wemd .wemd-brand-sign[data-variant="inline"] {
   margin: 20px 0;
@@ -617,7 +617,17 @@ export const brandSignInlineCss = `/* === brand-sign inline === */
 #wemd .wemd-brand-sign[data-variant="inline"] .wemd-bs-wrapper {
   flex-direction: row;
   justify-content: flex-start;
+  align-items: center;
+  gap: 12px;
   padding: 12px 0;
+}
+#wemd .wemd-brand-sign[data-variant="inline"] .wemd-bs-text {
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
 }
 #wemd .wemd-brand-sign[data-variant="inline"] .wemd-bs-logo {
   width: 32px;
@@ -639,8 +649,11 @@ export const brandSignInlineCss = `/* === brand-sign inline === */
   letter-spacing: 0.3px;
 }
 #wemd .wemd-brand-sign[data-variant="inline"] .wemd-bs-slogan {
-  margin-left: auto;
   font-size: 12px;
+}
+#wemd .wemd-brand-sign[data-variant="inline"] .wemd-bs-subtext {
+  border-top: none;
+  padding-top: 0;
 }`;
 
 /** brand-sign stacked 纵向堆叠（文末品牌签名） */

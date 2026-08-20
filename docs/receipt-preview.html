@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>购物小票 · 主题视觉稿</title>
+<style>
+  /* ===== 设计基调：热敏小票 Thermal Receipt =====
+     一张刚从收银机撕下的热敏小票：
+     - 米白热敏纸 #f7f5ee + 锯齿票边（纯渐变）
+     - 等宽字体、------ 虚线分隔、点线小票行
+     - 墨黑正文 + 红色合计（热敏机常见双色）
+     - 全部真实 DOM，无伪元素、无整篇背景、无按钮式互动 */
+  :root {
+    --paper: #f7f5ee;
+    --paper-2: #efece1;
+    --ink: #1f1d1a;
+    --ink-soft: #6b675e;
+    --red: #cf2323;
+    --line: #c9c4b5;
+    --mono: "SF Mono", "Cascadia Code", "Roboto Mono", Consolas, monospace;
+    --sans: "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background:
+      radial-gradient(1000px 540px at 50% -8%, #faf7f0 0%, #eee8da 60%, #e2d9c4 100%);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    padding: 46px 16px 90px;
+  }
+
+  .note {
+    max-width: 560px;
+    margin: 0 auto 30px;
+    padding: 18px 22px;
+    background: rgba(255,255,255,0.6);
+    border: 1px solid #e2dbca;
+    border-left: 4px solid var(--red);
+    font-size: 13px;
+    line-height: 1.9;
+    color: var(--ink-soft);
+  }
+  .note b { color: var(--ink); }
+  .note .k { color: var(--red); font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; }
+
+  /* ===== 小票容器（热敏纸 + 锯齿票边） ===== */
+  #wemd {
+    max-width: 560px;
+    margin: 0 auto;
+    background: var(--paper);
+    padding: 0 30px 36px;
+    border-left: 1px solid #e4dfd0;
+    border-right: 1px solid #e4dfd0;
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.9;
+    letter-spacing: 0.02em;
+  }
+
+  /* 顶部/底部锯齿票边（纯渐变三角形，无伪元素） */
+  .teeth {
+    display: block;
+    height: 12px;
+    margin: 0 -30px;
+    background:
+      linear-gradient(135deg, var(--paper) 0 50%, transparent 50%) 0 0/14px 14px repeat-x,
+      linear-gradient(-135deg, var(--paper) 0 50%, transparent 50%) 7px 0/14px 14px repeat-x;
+  }
+  .teeth.bottom { transform: rotate(180deg); margin-top: 26px; }
+
+  #wemd p {
+    margin: 0 0 14px;
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1.9;
+    font-family: var(--sans);
+    text-align: justify;
+  }
+  #wemd p b { color: var(--ink); font-weight: 700; }
+  #wemd em { font-style: normal; color: var(--red); }
+  #wemd strong { color: var(--ink); }
+
+  /* ---------- 票头 ---------- */
+  .ticket-head {
+    margin: 0 -30px;
+    padding: 24px 30px 14px;
+    border-bottom: 1px dashed var(--line);
+    text-align: center;
+  }
+  .ticket-head .store {
+    font-family: var(--sans);
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    color: var(--ink);
+  }
+  .ticket-head .sub {
+    margin-top: 6px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--ink-soft);
+  }
+  .ticket-head .meta {
+    margin-top: 14px;
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink);
+    letter-spacing: 0.04em;
+  }
+
+  /* ---------- 虚线分隔 ---------- */
+  .dash {
+    display: block;
+    margin: 16px 0;
+    border-top: 1px dashed var(--line);
+    text-align: center;
+    font-size: 0;
+  }
+  .dash .stars {
+    position: relative;
+    top: -8px;
+    background: var(--paper);
+    padding: 0 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--ink-soft);
+  }
+
+  /* ---------- 商品行（点线 + 右对齐金额） ---------- */
+  .row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin: 8px 0;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--ink);
+  }
+  .row .name { white-space: nowrap; }
+  .row .dots { flex: 1; border-bottom: 1px dotted var(--ink-soft); transform: translateY(-4px); }
+  .row .price { white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .row .note {
+    width: 100%;
+    font-size: 11px;
+    color: var(--ink-soft);
+  }
+
+  /* ---------- 合计（红色大字） ---------- */
+  .total {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin: 20px 0 8px;
+    padding: 12px 0;
+    border-top: 1px dashed var(--line);
+    font-family: var(--mono);
+  }
+  .total .label { font-size: 13px; letter-spacing: 0.2em; color: var(--ink); }
+  .total .amount { font-size: 26px; font-weight: 800; color: var(--red); letter-spacing: -0.01em; }
+  .payline {
+    display: flex;
+    justify-content: space-between;
+    margin: 6px 0;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--ink);
+  }
+  .payline .k { color: var(--ink-soft); }
+
+  /* ---------- 单号章节 ---------- */
+  .sec {
+    margin: 26px 0 14px;
+    padding: 10px 0;
+    border-top: 1px dashed var(--line);
+    border-bottom: 1px dashed var(--line);
+    text-align: center;
+  }
+  .sec .no { font-family: var(--mono); font-size: 12px; letter-spacing: 0.3em; color: var(--red); font-weight: 700; }
+  .sec .t { margin-top: 4px; font-family: var(--sans); font-size: 18px; font-weight: 700; color: var(--ink); }
+
+  /* ---------- 金句票（顾客留言） ---------- */
+  .quote {
+    margin: 24px 0;
+    padding: 18px 20px;
+    border: 1px dashed var(--ink-soft);
+    text-align: center;
+  }
+  .quote .text { font-family: var(--sans); font-size: 16px; font-weight: 700; color: var(--ink); line-height: 1.9; }
+  .quote .author { display: block; margin-top: 10px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; color: var(--red); }
+
+  /* ---------- 数据（数量统计行） ---------- */
+  .stats { margin: 20px 0; }
+  .stats .st {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 7px 0;
+    border-bottom: 1px dotted var(--line);
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--ink);
+  }
+  .stats .st:last-child { border-bottom: none; }
+  .stats .st .n { font-size: 16px; font-weight: 700; color: var(--red); font-variant-numeric: tabular-nums; }
+
+  /* ---------- 明细表 ---------- */
+  table { width: 100%; border-collapse: collapse; margin: 18px 0; }
+  thead th {
+    padding: 8px 0;
+    border-top: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-align: left;
+    color: var(--ink);
+  }
+  tbody td {
+    padding: 7px 0;
+    border-bottom: 1px dotted var(--line);
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--ink);
+  }
+  tbody td .num { color: var(--red); font-weight: 700; }
+
+  /* ---------- 积分明细（时间线） ---------- */
+  .log { margin: 20px 0; }
+  .log .ev {
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+    padding: 7px 0;
+    border-bottom: 1px dotted var(--line);
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+  .log .ev .date { color: var(--red); font-weight: 700; white-space: nowrap; }
+  .log .ev .txt { color: var(--ink); }
+
+  /* ---------- 售后步骤 ---------- */
+  .steps { margin: 20px 0; }
+  .steps .st {
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+    padding: 7px 0;
+    border-bottom: 1px dotted var(--line);
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--ink);
+  }
+  .steps .st .n { color: var(--red); font-weight: 700; }
+
+  /* ---------- 小票大分隔 ---------- */
+  .divider { margin: 24px 0; text-align: center; font-family: var(--mono); font-size: 12px; letter-spacing: 0.3em; color: var(--ink-soft); }
+
+  /* ---------- 会员卡（集章） ---------- */
+  .member {
+    margin: 26px 0;
+    padding: 20px;
+    border: 2px solid var(--ink);
+    text-align: center;
+    background: var(--paper-2);
+  }
+  .member .label { font-family: var(--mono); font-size: 12px; letter-spacing: 0.24em; color: var(--ink); }
+  .member .brand { margin-top: 8px; font-family: var(--sans); font-size: 20px; font-weight: 800; letter-spacing: 0.12em; color: var(--ink); }
+  .member .brand .red { color: var(--red); }
+  .member .meta { margin-top: 10px; font-family: var(--mono); font-size: 11px; color: var(--ink-soft); }
+
+  /* ---------- 条形码 + 底部 ---------- */
+  .barcode {
+    display: block;
+    height: 40px;
+    margin: 18px auto 10px;
+    background: repeating-linear-gradient(90deg, var(--ink) 0 2px, transparent 2px 4px, var(--ink) 4px 5px, transparent 5px 8px, var(--ink) 8px 11px, transparent 11px 12px);
+    opacity: 0.85;
+  }
+  .tail { text-align: center; }
+  .tail .thanks { font-family: var(--sans); font-size: 15px; font-weight: 700; letter-spacing: 0.3em; color: var(--ink); }
+  .tail .serial { margin-top: 8px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; color: var(--ink-soft); }
+
+  /* ---------- 关注条（去按钮） ---------- */
+  .subscribe {
+    margin: 26px 0 0;
+    padding: 12px 14px;
+    border: 1px dashed var(--ink-soft);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+  .subscribe .t { color: var(--ink); }
+  .subscribe .act { color: var(--red); font-weight: 700; letter-spacing: 0.1em; }
+
+  .copy {
+    margin: 18px 0 0;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-soft);
+    letter-spacing: 0.06em;
+  }
+</style>
+</head>
+<body>
+
+  <div class="note">
+    <span class="k">THERMAL RECEIPT · 购物小票 · 视觉稿</span><br>
+    <b>本版不套现有骨架：</b>真实收银小票 —— 锯齿票边、热敏纸、等宽字体、虚线/点线分隔、
+    红色合计、条形码。全部真实 DOM，无伪元素、无按钮式互动。
+  </div>
+
+  <div id="wemd">
+
+    <span class="teeth"></span>
+
+    <!-- 票头 -->
+    <section class="ticket-head">
+      <div class="store">森野杂货铺</div>
+      <div class="sub">SENYE GENERAL STORE · 018</div>
+      <div class="meta">
+        <span>NO. 20260819-0088</span>
+        <span>2026-08-19 20:40</span>
+      </div>
+      <div class="meta">
+        <span>收银：鹿鸣</span>
+        <span>台号：T-02</span>
+      </div>
+    </section>
+
+    <div class="dash"><span class="stars">★ ★ ★ ★ ★</span></div>
+
+    <!-- 商品清单 -->
+    <div class="row"><span class="name">莫兰迪马克杯</span><span class="dots"></span><span class="price">35.00</span></div>
+    <div class="row"><span class="name">手工藤编篮</span><span class="dots"></span><span class="price">48.00</span></div>
+    <div class="row"><span class="name">山野干花香包</span><span class="dots"></span><span class="price">22.50</span></div>
+    <div class="row"><span class="name">原木托盘（小）</span><span class="dots"></span><span class="price">18.00</span></div>
+
+    <div class="payline"><span class="k">小计</span><span>123.50</span></div>
+    <div class="payline"><span class="k">会员折扣 9 折</span><span>-12.35</span></div>
+
+    <!-- 合计 -->
+    <div class="total">
+      <span class="label">应收合计</span>
+      <span class="amount">¥111.15</span>
+    </div>
+    <div class="payline"><span class="k">微信支付</span><span>111.15</span></div>
+    <div class="payline"><span class="k">找零</span><span>0.00</span></div>
+
+    <div class="dash"><span class="stars">＊ ＊ ＊ ＊ ＊</span></div>
+
+    <!-- 章节（单号） -->
+    <section class="sec">
+      <div class="no">单号 · 01</div>
+      <div class="t">今日份清单</div>
+    </section>
+
+    <p>这是一张用 <em>购物小票</em> 主题排版的小票式文章——每一行都是一笔"记录"，每一段都像从收银机里打印出来。适合清单合集、生活记录、轻松内容。</p>
+
+    <!-- 金句票 -->
+    <section class="quote">
+      <p class="text">把日子过成一张整洁的小票：明细清楚，合计温柔。</p>
+      <span class="author">— 小票手帐 · 卷首</span>
+    </section>
+
+    <!-- 数据（数量统计） -->
+    <section class="stats">
+      <div class="st"><span>在售商品</span><span class="n">44 件</span></div>
+      <div class="st"><span>今日售出</span><span class="n">108 件</span></div>
+      <div class="st"><span>回头客</span><span class="n">62%</span></div>
+    </section>
+
+    <!-- 明细表 -->
+    <table>
+      <thead><tr><th>货号</th><th>品名</th><th>数量</th><th>金额</th></tr></thead>
+      <tbody>
+        <tr><td class="num">M-01</td><td>马克杯</td><td>2</td><td class="num">70.00</td></tr>
+        <tr><td class="num">B-03</td><td>藤编篮</td><td>1</td><td class="num">48.00</td></tr>
+        <tr><td class="num">F-08</td><td>干花香包</td><td>3</td><td class="num">67.50</td></tr>
+      </tbody>
+    </table>
+
+    <!-- 积分明细（时间线） -->
+    <section class="log">
+      <div class="ev"><span class="date">+3.5</span><span class="txt">购买 莫兰迪马克杯</span></div>
+      <div class="ev"><span class="date">+4.8</span><span class="txt">购买 手工藤编篮</span></div>
+      <div class="ev"><span class="date">+2.2</span><span class="txt">购买 山野干花香包</span></div>
+    </section>
+
+    <!-- 售后步骤 -->
+    <section class="steps">
+      <div class="st"><span class="n">1.</span>凭小票 7 天内可退换</div>
+      <div class="st"><span class="n">2.</span>保留完整商品吊牌</div>
+      <div class="st"><span class="n">3.</span>到店出示本小票</div>
+    </section>
+
+    <div class="divider">· · · · · · · · · ·</div>
+
+    <!-- 会员卡（集章） -->
+    <section class="member">
+      <div class="label">森野 · 集章卡</div>
+      <div class="brand">SEN<span class="red">YE</span> 会员</div>
+      <div class="meta">累计消费 ¥ 1,286 · 再集 2 章升金卡</div>
+    </section>
+
+    <!-- 条形码 + 底部 -->
+    <span class="barcode"></span>
+    <div class="tail">
+      <div class="thanks">欢迎再来</div>
+      <div class="serial">THANK YOU · 谢谢惠顾 · 20260819-0088</div>
+    </div>
+
+    <!-- 关注条（去按钮） -->
+    <section class="subscribe">
+      <span class="t">长按识别关注「森野杂货铺」</span>
+      <span class="act">关注</span>
+    </section>
+
+    <div class="copy">© 2026 SENYE · 本单为购物小票主题视觉稿</div>
+
+    <span class="teeth bottom"></span>
+
+  </div>
+
+</body>
+</html>

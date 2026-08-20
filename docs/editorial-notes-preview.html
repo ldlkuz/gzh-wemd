@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>编辑部手记 · 主题视觉稿</title>
+<style>
+  /* ===== 设计基调：纸媒编辑部 Newsroom Editorial =====
+     不套现有骨架，纯编辑设计先行：
+     - 报纸暖纸 #faf8f2 · 墨黑铅字 #1c1a17 · 编辑部红 #d0342c（唯一强调色）
+     - 左对齐编辑式排版：刊头/眉题/超大引号/栏线/数据块/版权页
+     - 全部真实 DOM，无伪元素、无整篇背景、无按钮式互动 */
+  :root {
+    --ink: #1c1a17;
+    --ink-2: #33302b;
+    --lead: #6b6760;
+    --paper: #faf8f2;
+    --paper-2: #f1ede2;
+    --rule: #d9d3c4;
+    --rule-strong: #1c1a17;
+    --red: #d0342c;
+    --red-soft: #f3e0da;
+    --serif: "Georgia", "Noto Serif SC", "Songti SC", "STSong", "Source Han Serif SC", "PingFang SC", serif;
+    --mono: "SF Mono", "Cascadia Code", Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background:
+      radial-gradient(1100px 560px at 50% -10%, #fdfbf5 0%, #efe9db 60%, #e3dbc8 100%);
+    color: var(--ink);
+    font-family: var(--serif);
+    -webkit-font-smoothing: antialiased;
+    padding: 40px 16px 90px;
+  }
+
+  .note {
+    max-width: 740px;
+    margin: 0 auto 36px;
+    padding: 18px 22px;
+    background: rgba(255,255,255,0.6);
+    border: 1px solid #e2dbca;
+    border-left: 4px solid var(--red);
+    border-radius: 2px;
+    font-size: 13px;
+    line-height: 1.9;
+    color: var(--lead);
+    letter-spacing: 0.04em;
+  }
+  .note b { color: var(--ink); }
+  .note .k { color: var(--red); font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; }
+
+  /* ===== 文章容器（报纸暖纸） ===== */
+  #wemd {
+    max-width: 700px;
+    margin: 0 auto;
+    background: var(--paper);
+    padding: 0 0 60px;
+    border: 1px solid #e4decf;
+    border-top: 3px solid var(--ink);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 16px;
+    line-height: 1.95;
+    letter-spacing: 0.01em;
+    overflow: hidden;
+  }
+
+  /* 内容列 */
+  .col { padding: 0 40px; }
+
+  #wemd p {
+    margin: 0 0 26px;
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 2;
+    text-align: justify;
+  }
+  #wemd p b { color: var(--ink); font-weight: 700; }
+  #wemd em { font-style: italic; color: var(--red); }
+  #wemd strong { color: var(--ink); }
+
+  /* 首字下沉（真实 span） */
+  .lede .dropcap {
+    float: left;
+    font-size: 62px;
+    line-height: 0.86;
+    font-weight: 700;
+    color: var(--red);
+    padding: 4px 10px 0 0;
+  }
+
+  /* ---------- 刊头（Masthead） ---------- */
+  .masthead {
+    margin: 0;
+    padding: 30px 40px 0;
+  }
+  .masthead .topline {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--lead);
+  }
+  .masthead .topline .red { color: var(--red); font-weight: 700; }
+  .masthead .title {
+    margin: 34px 0 0;
+    font-family: var(--serif);
+    font-size: 46px;
+    font-weight: 800;
+    line-height: 1.18;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .masthead .title .amp { color: var(--red); font-style: italic; font-weight: 400; }
+  .masthead .rules {
+    display: flex;
+    gap: 6px;
+    margin-top: 26px;
+  }
+  .masthead .rules .thick { width: 96px; height: 4px; background: var(--ink); }
+  .masthead .rules .thin { flex: 1; height: 1px; background: var(--rule); }
+  .masthead .byline {
+    margin-top: 16px;
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--lead);
+    text-transform: uppercase;
+  }
+  .masthead .lede {
+    margin-top: 34px;
+    padding: 0 0 30px;
+    border-bottom: 2px solid var(--rule-strong);
+  }
+
+  /* ---------- 眉题（eyebrow） ---------- */
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 46px 0 0;
+  }
+  .eyebrow .kicker {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--red);
+    white-space: nowrap;
+  }
+  .eyebrow .line { flex: 1; height: 1px; background: var(--rule); }
+
+  /* ---------- 标题 ---------- */
+  #wemd h1 {
+    margin: 18px 0 0;
+    font-family: var(--serif);
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1.3;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+  }
+  #wemd h2 {
+    margin: 40px 0 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+  }
+  #wemd h3 {
+    margin: 30px 0 14px;
+    font-family: var(--serif);
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+  }
+  #wemd h4 {
+    margin: 24px 0 12px;
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--red);
+  }
+
+  /* ---------- 章节（编辑号 + 栏线） ---------- */
+  .chap {
+    margin: 54px 0 22px;
+    padding-top: 18px;
+    border-top: 3px solid var(--ink);
+  }
+  .chap .no {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    color: var(--red);
+  }
+  .chap .row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 8px;
+  }
+  .chap .row .t {
+    font-family: var(--serif);
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+  }
+  .chap .row .meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    color: var(--lead);
+    white-space: nowrap;
+  }
+
+  /* ---------- 大引语（编辑式：左对齐超大引号） ---------- */
+  .pull {
+    margin: 42px 0 42px 10px;
+    padding: 10px 0 12px 28px;
+    border-left: 3px solid var(--red);
+    position: relative;
+  }
+  .pull .qmark {
+    position: absolute;
+    top: -14px; left: -6px;
+    font-family: Georgia, serif;
+    font-size: 66px;
+    line-height: 1;
+    color: var(--red);
+    opacity: 0.9;
+  }
+  .pull .text {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.7;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+    text-align: left;
+  }
+  .pull .who {
+    display: block;
+    margin-top: 14px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--lead);
+    text-transform: uppercase;
+  }
+
+  /* ---------- 编辑数据块 ---------- */
+  .stats {
+    margin: 40px 0;
+    border-top: 3px solid var(--ink);
+    border-bottom: 1px solid var(--rule);
+  }
+  .stats .row {
+    display: flex;
+  }
+  .stats .item {
+    flex: 1;
+    padding: 22px 18px 20px;
+    border-left: 1px solid var(--rule);
+  }
+  .stats .item:first-child { border-left: none; }
+  .stats .value {
+    font-family: var(--serif);
+    font-size: 34px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .stats .label {
+    margin-top: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--red);
+    text-transform: uppercase;
+  }
+
+  /* ---------- 表格（栏线编辑表） ---------- */
+  .table-wrap {
+    margin: 36px 0;
+    border-top: 3px solid var(--ink);
+    border-bottom: 1px solid var(--rule);
+  }
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    padding: 13px 14px;
+    border-bottom: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    color: var(--red);
+    text-align: left;
+  }
+  tbody td {
+    padding: 13px 14px;
+    border-bottom: 1px solid #ece6d8;
+    font-family: var(--serif);
+    font-size: 14px;
+    color: var(--ink);
+  }
+  tbody td .num { font-family: var(--mono); color: var(--red); font-weight: 700; }
+  tbody tr:last-child td { border-bottom: none; }
+
+  /* ---------- 档案时间线（编年） ---------- */
+  .archive {
+    margin: 38px 0;
+    border-left: 1px solid var(--rule);
+    padding-left: 24px;
+  }
+  .archive .head {
+    margin: 0 0 20px -24px;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    color: var(--red);
+    text-transform: uppercase;
+  }
+  .archive .ev {
+    position: relative;
+    padding: 0 0 22px 18px;
+  }
+  .archive .ev .dot {
+    position: absolute;
+    left: -31px; top: 8px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--ink);
+  }
+  .archive .ev .date {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--red);
+  }
+  .archive .ev .txt {
+    margin-top: 4px;
+    font-size: 15px;
+    line-height: 1.9;
+    color: var(--ink);
+  }
+
+  /* ---------- 编辑流程步骤 ---------- */
+  .steps { margin: 36px 0; }
+  .steps .head {
+    margin-bottom: 18px;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    color: var(--red);
+    text-transform: uppercase;
+  }
+  .steps .st {
+    position: relative;
+    margin: 0 0 12px;
+    padding: 16px 18px 16px 54px;
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--ink);
+    font-size: 15px;
+    line-height: 1.9;
+    color: var(--ink);
+  }
+  .steps .st .n {
+    position: absolute;
+    left: 20px; top: 18px;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--red);
+  }
+  .steps .st b { color: var(--ink); }
+
+  /* ---------- 栏线分隔 ---------- */
+  .divider {
+    margin: 46px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .divider .thick { width: 64px; height: 4px; background: var(--ink); }
+  .divider .thin { flex: 1; height: 1px; background: var(--rule); }
+  .divider .glyph { color: var(--red); font-family: Georgia, serif; font-size: 16px; }
+
+  /* ---------- 版权页（colophon） ---------- */
+  .colophon {
+    margin: 58px 0 0;
+    padding: 40px 40px 36px;
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .colophon .mark {
+    font-family: var(--serif);
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    color: var(--paper);
+  }
+  .colophon .mark .amp { color: var(--red); }
+  .colophon .meta {
+    margin-top: 18px;
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    color: #b9b2a4;
+    text-transform: uppercase;
+  }
+  .colophon .line {
+    display: block;
+    height: 1px;
+    margin: 22px 0;
+    background: #4a453e;
+  }
+  .colophon .editors {
+    font-family: var(--serif);
+    font-size: 13px;
+    line-height: 2;
+    color: #cfc9bb;
+  }
+  .colophon .editors b { color: var(--paper); }
+
+  /* ---------- 订阅条（去按钮） ---------- */
+  .subscribe {
+    margin: 0;
+    padding: 18px 24px;
+    background: var(--paper-2);
+    border-top: 1px solid var(--rule);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+  }
+  .subscribe .t {
+    font-size: 14px;
+    color: var(--ink);
+    letter-spacing: 0.04em;
+    flex: 1;
+  }
+  .subscribe .act {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    color: var(--red);
+    flex-shrink: 0;
+    border: none;
+    background: transparent;
+    padding: 0;
+    text-transform: uppercase;
+  }
+
+  .copy {
+    margin: 0;
+    padding: 18px 24px 0;
+    font-size: 12px;
+    color: var(--lead);
+  }
+  .copy p { font-size: 12px; color: var(--lead); margin: 0 0 4px; text-align: center; }
+</style>
+</head>
+<body>
+
+  <div class="note">
+    <span class="k">NEWSROOM EDITORIAL · 编辑部手记 · 视觉稿</span><br>
+    <b>本版不套现有骨架：</b>纯编辑设计先行 —— 报纸暖纸 + 墨黑铅字 + 编辑部红唯一强调色，
+    左对齐编辑式排版：刊头/眉题/超大引号/栏线/数据块/版权页。无伪元素、无按钮式互动。
+  </div>
+
+  <div id="wemd">
+
+    <!-- 刊头 -->
+    <section class="masthead">
+      <div class="topline">
+        <span>编辑部手记 · NEWSROOM</span>
+        <span class="red">ISSUE 04</span>
+      </div>
+      <h1 class="title">让好的内容，<span class="amp">找到</span>它的读者</h1>
+      <div class="rules">
+        <span class="thick"></span><span class="thin"></span>
+      </div>
+      <div class="byline">
+        <span>深度 · 长文 · 编辑精选</span>
+        <span>2026.08.19</span>
+      </div>
+      <p class="lede"><span class="dropcap">在</span>这个信息过载的时代，编辑的价值不是生产更多，而是替读者剪去噪音。本刊相信：一篇被认真编辑过的长文，仍能找到愿意读到最后的人。</p>
+    </section>
+
+    <div class="col">
+
+      <!-- 眉题 + 文章标题 -->
+      <div class="eyebrow">
+        <span class="kicker">Cover Story</span><span class="line"></span>
+      </div>
+      <h1>编辑，是内容的守门人</h1>
+      <p><b>好编辑</b>不写稿，却决定一篇文章的生死。他从海量素材里挑出主线，把每句话放到它该在的位置，让 <em>信息的秩序</em> 成为读者阅读时的隐性地图。</p>
+
+      <!-- 章节 -->
+      <section class="chap">
+        <span class="no">NO. 01</span>
+        <div class="row">
+          <span class="t">从选题到见刊</span>
+          <span class="meta">p. 03–09</span>
+        </div>
+      </section>
+
+      <h3>一、选题：编辑部的一天从问"为什么是现在"开始</h3>
+      <p>选题会没有固定流程，但总有一个问题被反复追问：<b>这件事，为什么值得读者此刻花十分钟？</b>能通过这道问题的选题，才有资格进入下一道工序。</p>
+
+      <!-- 大引语 -->
+      <section class="pull">
+        <span class="qmark">“</span>
+        <p class="text">编辑不是删减，而是把一万种可能，收敛成最必要的那一个。</p>
+        <span class="who">— 编辑部手记 · 卷首语</span>
+      </section>
+
+      <h3>二、结构：一篇文章只有一个主句</h3>
+      <p>我们把每篇长文压缩成一句话放进标题，再把这句话展开回全文。写作者负责热情，编辑负责 <em>结构</em> —— 让读者不需要重读，就能记住。</p>
+
+      <!-- 编辑数据块 -->
+      <section class="stats">
+        <div class="row">
+          <div class="item"><div class="value">44</div><div class="label">组件总数</div></div>
+          <div class="item"><div class="value">1</div><div class="label">唯一强调色</div></div>
+          <div class="item"><div class="value">∞</div><div class="label">内容的可能性</div></div>
+        </div>
+      </section>
+
+      <!-- 表格 -->
+      <section class="table-wrap">
+        <table>
+          <thead><tr><th>工序</th><th>页数</th><th>责任人</th></tr></thead>
+          <tbody>
+            <tr><td>选题</td><td class="num">03</td><td>策划编辑</td></tr>
+            <tr><td>采写</td><td class="num">09</td><td>特约作者</td></tr>
+            <tr><td>编校</td><td class="num">21</td><td>责任编辑</td></tr>
+            <tr><td>排版</td><td class="num">33</td><td>美术编辑</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 档案时间线 -->
+      <section class="archive">
+        <div class="head">From the Archives</div>
+        <div class="ev"><span class="dot"></span><div class="date">2019</div><div class="txt">编辑部创刊，确立"深度优先"</div></div>
+        <div class="ev"><span class="dot"></span><div class="date">2022</div><div class="txt">月发行量破十万</div></div>
+        <div class="ev"><span class="dot"></span><div class="date">2026</div><div class="txt">完成编辑部全流程数字化</div></div>
+      </section>
+
+      <!-- 编辑流程 -->
+      <section class="steps">
+        <div class="head">The Editorial Flow</div>
+        <div class="st"><span class="n">01</span>选题 → 大纲 → 初稿</div>
+        <div class="st"><span class="n">02</span>结构重构 · 事实核查</div>
+        <div class="st"><span class="n">03</span>编校 → 排版 → 见刊</div>
+      </section>
+
+      <!-- 栏线分隔 -->
+      <section class="divider">
+        <span class="thick"></span><span class="glyph">◆</span><span class="thin"></span>
+      </section>
+
+      <h2>结语：编辑的克制</h2>
+      <p>好的编辑懂得什么时候该停。排版不堆砌、篇幅不注水、强调不滥用 —— <b>克制，是最难的编辑手艺</b>。愿你读到此处，已感到一篇文章被认真对待的分量。</p>
+
+      <!-- 版权页 -->
+      <section class="colophon">
+        <div class="mark">编辑部<span class="amp">·</span>手记</div>
+        <div class="meta">
+          <span>Newsroom Editorial</span>
+          <span>Vol. 04</span>
+        </div>
+        <span class="line"></span>
+        <div class="editors">
+          <b>策划编辑</b> 林间　·　<b>责任编辑</b> 山风<br>
+          <b>美术编辑</b> 鹿鸣　·　<b>特约作者</b> 纸上客
+        </div>
+      </section>
+
+      <!-- 订阅条（去按钮） -->
+      <section class="subscribe">
+        <span class="t">点击上方蓝字关注编辑部，每周一篇深度长文</span>
+        <span class="act">订阅</span>
+      </section>
+
+      <!-- 版权 -->
+      <section class="copy">
+        <p>© 2026 Newsroom Editorial · 保留所有权利</p>
+        <p>本文使用编辑部手记主题视觉稿排版</p>
+      </section>
+
+    </div>
+
+  </div>
+
+</body>
+</html>

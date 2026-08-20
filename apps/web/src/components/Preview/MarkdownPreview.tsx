@@ -3,6 +3,7 @@ import mermaid from "mermaid";
 import {
   createMarkdownParser,
   getThemeTemplates,
+  getThemeSlotDefs,
   processHtml,
   type ComponentStyleOverride,
   type ThemeDefinition,
@@ -186,11 +187,13 @@ export function MarkdownPreview({ onScrollSyncReady }: MarkdownPreviewProps) {
     | undefined;
   const parser = useMemo(() => {
     const templates = getThemeTemplates(themeDefinition);
+    const slotDefs = getThemeSlotDefs(themeDefinition);
     return createMarkdownParser({
       showMacBar,
       mathRenderer: "katex",
       includeSourcePosition: true,
       getTemplate: (componentId) => templates.get(componentId),
+      getSlotDefs: (componentId) => slotDefs.get(componentId),
     });
   }, [showMacBar, themeDefinition]);
 

@@ -5,6 +5,7 @@
  */
 import { describe, it, expect } from "vitest";
 import { renderTemplate } from "../../../services/template/renderer";
+import type { TemplateJSON } from "../../../services/template/types";
 
 const article = `## 一、发生了什么？一份"穿透力极强"的备查资料清单
 
@@ -13,7 +14,7 @@ const article = `## 一、发生了什么？一份"穿透力极强"的备查资�
 // 模拟 AI 生成的 Template JSON：
 // - 标题段（第1段）被转成 section-title 组件，不再用 article-section 引用
 // - 正文段（第2段）用 article-section 引用
-const template = {
+const template: TemplateJSON = {
   version: "2.0",
   layout: [
     {

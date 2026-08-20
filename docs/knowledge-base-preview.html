@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>知识库文章 · 主题视觉稿</title>
+<style>
+  /* ===== 设计基调：知识档案库 Knowledge Archive =====
+     一座文献档案馆，每个知识点都是柜子里的一份档案卡：
+     - 米白档案纸 #fbf9f3 + 墨蓝主色 #31517f
+     - 索书号 / 档案编号用等宽字体
+     - 分类标签页（靛蓝/苔绿/赭黄/陶土）+ 档案脊粗色边
+     - 全部真实 DOM，无伪元素、无整篇背景、无按钮式互动 */
+  :root {
+    --paper: #fbf9f3;
+    --ink: #2a2622;
+    --ink-soft: #7a7265;
+    --primary: #31517f;
+    --line: #ddd6c6;
+    --mono: "SF Mono", "Cascadia Code", "Roboto Mono", Consolas, monospace;
+    --sans: "PingFang SC", "Microsoft YaHei", sans-serif;
+    --serif: "Source Han Serif SC", "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
+    --c-indigo: #31517f;
+    --c-moss: #6f7f5a;
+    --c-ochre: #c9a24b;
+    --c-clay: #b8724e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background:
+      radial-gradient(900px 520px at 50% -6%, #fdfbf5 0%, #f3eee2 60%, #e7e0d0 100%);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    padding: 46px 16px 90px;
+  }
+
+  .note {
+    max-width: 620px;
+    margin: 0 auto 30px;
+    padding: 18px 22px;
+    background: rgba(255,255,255,0.6);
+    border: 1px solid #e6dfcf;
+    border-left: 4px solid var(--primary);
+    font-size: 13px;
+    line-height: 1.9;
+    color: var(--ink-soft);
+  }
+  .note b { color: var(--ink); }
+  .note .k { color: var(--primary); font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; }
+
+  /* ===== 档案正文容器 ===== */
+  #wemd {
+    max-width: 620px;
+    margin: 0 auto;
+    background: var(--paper);
+    padding: 0 34px 40px;
+    border-left: 1px solid #e8e1d2;
+    border-right: 1px solid #e8e1d2;
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.9;
+  }
+
+  #wemd p {
+    margin: 0 0 14px;
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.9;
+    text-align: justify;
+  }
+  #wemd p b { color: var(--ink); font-weight: 700; }
+  #wemd p strong { color: var(--primary); font-weight: 700; }
+  #wemd em { font-style: normal; color: var(--primary); }
+
+  /* ---------- 档案馆刊眉 ---------- */
+  .masthead {
+    margin: 0 -34px;
+    padding: 20px 34px 14px;
+    border-bottom: 2px solid var(--ink);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .masthead .brand {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.28em;
+    color: var(--ink);
+  }
+  .masthead .brand .red { color: var(--primary); }
+  .masthead .no {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    color: var(--ink-soft);
+  }
+
+  /* ---------- 条目头 ---------- */
+  .entry {
+    margin: 26px 0 10px;
+    text-align: left;
+  }
+  .entry .label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.24em;
+    color: var(--primary);
+  }
+  .entry .title {
+    margin-top: 6px;
+    font-family: var(--serif);
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    line-height: 1.45;
+  }
+  .entry .meta {
+    margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 22px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+  }
+  .entry .meta .shelf { color: var(--primary); font-weight: 700; }
+
+  /* ---------- 分类标签页 ---------- */
+  .tag {
+    display: inline-block;
+    padding: 2px 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: #ffffff;
+  }
+  .tag.indigo { background: #31517f; }
+  .tag.moss { background: #6f7f5a; }
+  .tag.ochre { background: #c9a24b; }
+  .tag.clay { background: #b8724e; }
+
+  /* ---------- 条目索引（书后索引） ---------- */
+  .toc { margin: 28px 0; }
+  .toc .head {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    color: var(--primary);
+    margin-bottom: 10px;
+  }
+  .toc .row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 6px 0;
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .toc .row .idx { font-family: var(--mono); color: var(--primary); min-width: 26px; }
+  .toc .row .dots { flex: 1; border-bottom: 1px dotted var(--ink-soft); transform: translateY(-3px); }
+  .toc .row .pg { font-family: var(--mono); font-size: 12px; color: var(--ink-soft); }
+
+  /* ---------- 档案卡（分类标签页 + 档案脊） ---------- */
+  .card {
+    margin: 26px 0;
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--primary);
+    box-shadow: 0 2px 6px rgba(60,52,42,0.05);
+  }
+  .card .tab { display: block; padding: 4px 12px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; color: #fff; }
+  .card .body { padding: 16px 18px 18px; }
+  .card .body p { margin-bottom: 10px; }
+  .card .body p:last-child { margin-bottom: 0; }
+  .card .body b { font-family: var(--serif); font-weight: 800; }
+  .card.moss { border-left-color: #6f7f5a; }
+  .card.ochre { border-left-color: #c9a24b; }
+  .card.clay { border-left-color: #b8724e; }
+
+  /* ---------- 术语对开页 ---------- */
+  .terms { margin: 24px 0; border-top: 1px solid var(--ink); }
+  .terms .tr {
+    display: flex;
+    gap: 16px;
+    padding: 10px 0;
+    border-bottom: 1px dotted var(--line);
+    font-size: 14px;
+  }
+  .terms .tr .term { flex: 0 0 110px; font-weight: 700; color: var(--ink); }
+  .terms .tr .def { flex: 1; color: var(--ink-soft); line-height: 1.8; }
+
+  /* ---------- 档案摘录（引用框） ---------- */
+  .quote {
+    margin: 24px 0;
+    padding: 16px 20px;
+    background: #f1f4f9;
+    border: 1px solid #d9e0ec;
+    border-left: 4px solid var(--primary);
+  }
+  .quote .text { font-family: var(--sans); font-size: 15px; font-weight: 600; line-height: 1.9; color: var(--ink); }
+  .quote .src { display: block; margin-top: 10px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; color: var(--primary); }
+
+  /* ---------- 数据（条目统计） ---------- */
+  .stats { margin: 24px 0; display: flex; flex-wrap: wrap; gap: 14px; }
+  .stats .st {
+    flex: 1 1 130px;
+    border: 1px solid var(--line);
+    background: #fff;
+    padding: 12px 14px;
+    text-align: center;
+  }
+  .stats .st .n { font-family: var(--mono); font-size: 22px; font-weight: 800; color: var(--primary); }
+  .stats .st .l { display: block; margin-top: 4px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; color: var(--ink-soft); }
+
+  /* ---------- 资料对照表 ---------- */
+  table { width: 100%; border-collapse: collapse; margin: 20px 0; font-family: var(--sans); font-size: 14px; }
+  thead th {
+    padding: 9px 0;
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-align: left;
+    color: var(--ink);
+  }
+  tbody td { padding: 8px 0; border-bottom: 1px dotted var(--line); color: var(--ink); }
+  tbody td .mono { font-family: var(--mono); color: var(--primary); font-size: 12px; }
+
+  /* ---------- 修订记录（时间线） ---------- */
+  .log { margin: 24px 0; }
+  .log .ev {
+    display: flex;
+    gap: 14px;
+    align-items: baseline;
+    padding: 7px 0;
+    border-bottom: 1px dotted var(--line);
+    font-size: 14px;
+  }
+  .log .ev .date { font-family: var(--mono); font-size: 12px; color: var(--primary); white-space: nowrap; font-weight: 700; }
+  .log .ev .txt { color: var(--ink); }
+
+  /* ---------- 检索路径（步骤） ---------- */
+  .steps { margin: 24px 0; border-top: 1px solid var(--ink); }
+  .steps .st {
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+    padding: 9px 0;
+    border-bottom: 1px dotted var(--line);
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .steps .st .n { font-family: var(--mono); font-weight: 800; color: var(--primary); min-width: 22px; }
+
+  /* ---------- 代码框（档案查询） ---------- */
+  .code {
+    margin: 24px 0;
+    background: #232a38;
+    border-radius: 0;
+    border: 1px solid #2c3547;
+    overflow: hidden;
+  }
+  .code .bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: #1c2230;
+    border-bottom: 1px solid #2c3547;
+  }
+  .code .bar .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+  .code .bar .dot.r { background: #c25450; }
+  .code .bar .dot.y { background: #d8a24a; }
+  .code .bar .dot.g { background: #58a06b; }
+  .code .bar .t { margin-left: 8px; font-family: var(--mono); font-size: 11px; color: #8fa0b8; }
+  .code pre {
+    padding: 14px 16px;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.8;
+    color: #d7e0ee;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .code pre .k { color: #7fb0e8; }
+  .code pre .s { color: #9ecb8a; }
+
+  /* ---------- 档案袋（结尾） ---------- */
+  .bag {
+    margin: 30px 0;
+    padding: 24px 20px;
+    background: linear-gradient(135deg, #26324a 0%, #1d2536 100%);
+    border: 1px solid #2c3547;
+    text-align: center;
+    color: #f2f5fa;
+  }
+  .bag .lbl { font-family: var(--mono); font-size: 11px; letter-spacing: 0.28em; color: #9fb0cd; }
+  .bag .t { margin-top: 10px; font-family: var(--serif); font-size: 21px; font-weight: 800; letter-spacing: 0.1em; color: #f2f5fa; }
+  .bag .t em { color: #7fb0e8; font-style: normal; }
+  .bag .meta { margin-top: 12px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; color: #9fb0cd; }
+
+  /* ---------- 订阅更新（关注，去按钮） ---------- */
+  .sub {
+    margin: 24px 0 0;
+    padding: 12px 14px;
+    border: 1px dashed var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+  }
+  .sub .t { color: var(--ink); }
+  .sub .act { font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em; color: var(--primary); font-weight: 700; border-bottom: 1px dotted var(--primary); }
+
+  .copy { margin: 16px 0 0; text-align: center; font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; color: var(--ink-soft); }
+
+  /* ===== 分类色系统：每个章节类别 = 一种颜色（看色即知类别） ===== */
+  .sec-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 26px 0 8px;
+  }
+  .sec-head .t {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--ink);
+  }
+  .sec-head .line { flex: 1; border-top: 1px solid var(--line); }
+
+  /* 分类色 = 章节色：概念=靛蓝 / 术语·路径=苔绿 / 摘录=赭黄 / 修订=陶土 */
+  .terms { border-top-color: var(--c-moss); }
+  .terms .tr .term { color: var(--c-moss); }
+  .quote { border-left-color: var(--c-ochre); }
+  .quote .src { color: var(--c-ochre); }
+  .steps { border-top-color: var(--c-moss); }
+  .steps .st .n { color: var(--c-moss); }
+  .log .ev .date { color: var(--c-clay); }
+  .log .ev { border-left: 3px solid transparent; padding-left: 10px; }
+
+  /* 归档章（红色橡皮章，旋转，真实元素） */
+  .stamp {
+    display: inline-block;
+    padding: 5px 13px;
+    border: 2px solid #b23a2e;
+    color: #b23a2e;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    line-height: 1.5;
+    transform: rotate(-6deg);
+    flex-shrink: 0;
+  }
+  .stamp .cn { font-family: var(--serif); letter-spacing: 0.12em; }
+</style>
+</head>
+<body>
+
+  <div class="note">
+    <span class="k">KNOWLEDGE ARCHIVE · 知识库文章 · 视觉稿</span><br>
+    <b>本版不套现有骨架：</b>文献档案馆 —— 索书号、档案卡、分类标签页、条目索引、术语对开页、修订记录、档案袋。
+    全部真实 DOM，无伪元素、无按钮式互动。
+  </div>
+
+  <div id="wemd">
+
+    <!-- 刊眉 -->
+    <section class="masthead">
+      <span class="brand">KNOWLEDGE <span class="red">ARCHIVE</span> · 知识档案库</span>
+      <span class="no">KN-2026-019</span>
+    </section>
+
+    <!-- 条目标头 -->
+    <section class="entry">
+      <div class="label">条目 · ENTRY</div>
+      <div class="title">知识库写作的七个原则</div>
+      <div class="meta">
+        <span>索书号 <span class="shelf">KD.0001</span></span>
+        <span>归档 2026-08-19</span>
+        <span>修订 v2.3</span>
+        <span class="tag indigo">方法论</span>
+      </div>
+    </section>
+
+    <p>知识库不是文章的堆叠，而是<span>归档</span>系统。本条目定义知识库文章的结构骨架：每个知识点都有编号、有出处、有修订记录，让读者像查档案一样找到答案。</p>
+
+    <!-- 条目索引 -->
+    <section class="toc">
+      <div class="head">条目索引 · INDEX</div>
+      <div class="row"><span class="idx">1</span>概念定义与边界 <span class="dots"></span><span class="pg">03</span></div>
+      <div class="row"><span class="idx">2</span>术语对开页 <span class="dots"></span><span class="pg">04</span></div>
+      <div class="row"><span class="idx">3</span>检索与修订记录 <span class="dots"></span><span class="pg">06</span></div>
+      <div class="row"><span class="idx">4</span>归档与检索路径 <span class="dots"></span><span class="pg">08</span></div>
+    </section>
+
+    <!-- 档案卡（概念定义） -->
+    <section class="card">
+      <span class="tab indigo">条目 01 · 概念定义</span>
+      <div class="body">
+        <p><b>知识库文章</b>：以"可检索、可修订、可溯源"为目标组织的结构化文章。与随笔不同，它强调<span>编号</span>、<span>定义</span>、<span>出处</span>三个要素。</p>
+        <p>边界：知识库文章服务于"找答案"，不求文采铺陈，但求条目自洽、交叉引用。</p>
+      </div>
+    </section>
+
+    <!-- 术语对开页 -->
+    <section class="sec-head"><span class="tag moss">术语</span><span class="t">TERMS</span><span class="line"></span></section>
+    <section class="terms">
+      <div class="tr"><span class="term">条目</span><span class="def">知识库的最小单元，拥有唯一编号与修订版本。</span></div>
+      <div class="tr"><span class="term">索书号</span><span class="def">条目的归档坐标，如 KD.0001，用于物理定位。</span></div>
+      <div class="tr"><span class="term">交叉引用</span><span class="def">条目间通过编号建立关系，形成知识网络。</span></div>
+    </section>
+
+    <!-- 档案摘录 -->
+    <section class="sec-head"><span class="tag ochre">摘录</span><span class="t">EXCERPT</span><span class="line"></span></section>
+    <section class="quote">
+      <p class="text">知识库的价值不在存量，而在"能不能被再次找到"。</p>
+      <span class="src">— 《知识库写作的七个原则》· 卷首批注</span>
+    </section>
+
+    <!-- 数据（条目统计） -->
+    <section class="stats">
+      <div class="st"><span class="n">44</span><span class="l">在库条目</span></div>
+      <div class="st"><span class="n">7</span><span class="l">大类归档</span></div>
+      <div class="st"><span class="n">92%</span><span class="l">可检索率</span></div>
+    </section>
+
+    <!-- 资料对照表 -->
+    <table>
+      <thead><tr><th>编号</th><th>条目</th><th>分类</th><th>状态</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">KD.0001</td><td>写作原则</td><td>方法论</td><td class="mono">ACTIVE</td></tr>
+        <tr><td class="mono">KD.0002</td><td>术语表</td><td>规范</td><td class="mono">ACTIVE</td></tr>
+        <tr><td class="mono">KD.0003</td><td>检索路径</td><td>操作</td><td class="mono">DRAFT</td></tr>
+      </tbody>
+    </table>
+
+    <!-- 修订记录 -->
+    <section class="sec-head"><span class="tag clay">修订</span><span class="t">REVISION</span><span class="line"></span><span class="stamp"><span class="cn">归档</span> · ARCHIVED</span></section>
+    <section class="log">
+      <div class="ev"><span class="date">2026-08-19</span><span class="txt">修订 v2.3 · 新增交叉引用规则</span></div>
+      <div class="ev"><span class="date">2026-07-02</span><span class="txt">修订 v2.2 · 术语对开页改两栏</span></div>
+      <div class="ev"><span class="date">2026-05-11</span><span class="txt">归档 v2.0 · 条目编号体系上线</span></div>
+    </section>
+
+    <!-- 检索路径（步骤） -->
+    <section class="sec-head"><span class="tag moss">路径</span><span class="t">ROUTE</span><span class="line"></span></section>
+    <section class="steps">
+      <div class="st"><span class="n">1.</span>按索书号定位条目</div>
+      <div class="st"><span class="n">2.</span>核对修订版本号</div>
+      <div class="st"><span class="n">3.</span>通过交叉引用展开相关条目</div>
+    </section>
+
+    <!-- 代码框 -->
+    <div class="code">
+      <div class="bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="t">archive.query — 档案检索</span></div>
+<pre><span class="k">SELECT</span> title, shelf, version
+<span class="k">FROM</span> knowledge_base
+<span class="k">WHERE</span> category = <span class="s">'方法论'</span>
+  <span class="k">AND</span> status = <span class="s">'ACTIVE'</span>
+<span class="k">ORDER BY</span> shelf;</pre>
+    </div>
+
+    <!-- 档案袋（结尾） -->
+    <section class="bag">
+      <div class="lbl">ARCHIVAL BOX · 档案袋</div>
+      <div class="t">知识 <em>常新</em>，条目常青</div>
+      <div class="meta">KD.0001 · 归档 2026-08-19 · 修订 v2.3</div>
+    </section>
+
+    <!-- 订阅更新 -->
+    <section class="sub">
+      <span class="t">有新的修订，第一时间通知我</span>
+      <span class="act">订阅更新</span>
+    </section>
+
+    <div class="copy">© 2026 KNOWLEDGE ARCHIVE · 本条目为知识库主题视觉稿</div>
+
+  </div>
+
+</body>
+</html>

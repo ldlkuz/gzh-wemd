@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>清晰指南 · 全新设计（学习手册风）</title>
+<!--
+  主题：清晰指南（Clear Guide）· 全新概念 ——「一本被荧光笔认真学过的手册」
+  场景：教程 / 文档 / 操作指南 / 上手手册
+  设计语言：暖纸为底 + 荧光黄划重点 + 橙红签名 + 便利贴批注 + 手写编号。
+           像一本被前人认真学过、翻旧了、贴满标签的手册——亲切、有温度、重点一眼可见。
+  所有装饰均为真实 DOM（荧光条 / 便利贴 / 胶带 / 手写线），无伪元素。
+-->
+<style>
+  :root{
+    --paper:#faf6ef;        /* 纸底 */
+    --paper-deep:#f2ead9;   /* 深一档纸 */
+    --paper-line:#e6dcc7;   /* 纸线 */
+    --ink:#2b2118;          /* 墨 */
+    --ink-soft:#6b5d4f;     /* 淡墨 */
+    --hi:#ffe14d;           /* 荧光黄 */
+    --hi-soft:#fff3ad;      /* 淡荧光 */
+    --orange:#e8590c;       /* 橙红签名 */
+    --orange-deep:#c2410c;
+    --blue:#2f6fbf;         /* 蓝批注 */
+    --green:#2f9e5f;
+    --mono:"SF Mono","Cascadia Code",Consolas,"JetBrains Mono",monospace;
+    --serif:"Noto Serif SC","Source Han Serif SC","Songti SC","STSong",serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:linear-gradient(170deg,#efe7d6 0%,#faf6ef 40%,#efe6d2 100%);
+    font-family:"PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif;
+    color:var(--ink);padding:36px 14px 64px;
+  }
+  #wemd{
+    max-width:680px;margin:0 auto;position:relative;
+    background:var(--paper);border-radius:6px;overflow:hidden;
+    box-shadow:0 18px 50px rgba(80,60,30,.16);
+  }
+  /* 纸面左右内侧线（真实元素，模拟翻旧书页） */
+  #wemd::before{display:none;}
+
+  /* ============ 封面：书封 + 便利贴 ============ */
+  .cover{
+    position:relative;padding:46px 32px 40px;color:var(--ink);overflow:hidden;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.35), rgba(255,255,255,0)),
+      repeating-linear-gradient(0deg, rgba(120,90,40,.03) 0 2px, rgba(120,90,40,0) 2px 6px);
+    border-bottom:2px solid var(--paper-line);
+  }
+  .cover .tape{
+    position:absolute;top:-10px;left:50%;transform:translateX(-50%) rotate(-2deg);
+    width:150px;height:26px;background:rgba(255,225,77,.55);
+    border:1px solid rgba(200,170,40,.25);
+  }
+  .cover .stamp{
+    position:absolute;top:26px;right:26px;width:64px;height:64px;border-radius:50%;
+    border:2px dashed var(--orange);color:var(--orange);
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);font-size:10px;line-height:1.5;text-align:center;
+    letter-spacing:.08em;transform:rotate(12deg);opacity:.85;
+  }
+  .cover .kicker{
+    position:relative;display:inline-flex;align-items:center;gap:10px;
+    font-size:12px;letter-spacing:.28em;color:var(--ink-soft);
+  }
+  .cover .kicker .dash{width:26px;height:2px;background:var(--orange);}
+  .cover h1{
+    position:relative;margin-top:16px;font-family:var(--serif);font-weight:800;
+    font-size:32px;line-height:1.5;letter-spacing:.02em;color:var(--ink);
+  }
+  .cover h1 .hi{background:linear-gradient(180deg,transparent 58%,var(--hi) 58%,var(--hi) 92%,transparent 92%);
+    padding:0 2px;}
+  .cover .lede{
+    position:relative;margin-top:16px;font-size:14px;line-height:2.1;color:var(--ink-soft);
+    max-width:540px;
+  }
+  .cover .lede b{color:var(--ink);}
+  .cover .meta{position:relative;display:flex;flex-wrap:wrap;gap:10px;margin-top:24px;}
+  .cover .meta span{
+    font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--ink);
+    padding:4px 11px;border:1px solid var(--paper-line);border-radius:4px;
+    background:#fffdf8;
+  }
+  .cover .meta span b{color:var(--orange);font-weight:700;}
+
+  /* ============ 章节头：手写编号 + 下划线重点 ============ */
+  .sec{display:flex;align-items:baseline;gap:14px;margin:46px 30px 20px;}
+  .sec .no{
+    font-family:var(--serif);font-size:34px;font-weight:800;color:var(--orange);
+    line-height:1;transform:rotate(-6deg);flex-shrink:0;
+  }
+  .sec h2{
+    font-family:var(--serif);font-size:22px;font-weight:700;color:var(--ink);
+    letter-spacing:.02em;line-height:1.5;
+  }
+  .sec h2 .und{background:linear-gradient(180deg,transparent 62%,var(--hi) 62%,var(--hi) 92%,transparent 92%);
+    padding:0 3px;}
+  .sec .line{flex:1;height:1px;background:var(--paper-line);margin-left:4px;}
+
+  /* ============ 目录：手写清单 + 荧光编号 ============ */
+  .toc{margin:6px 30px 0;padding:22px 24px;background:#fffdf8;
+    border:1px solid var(--paper-line);border-radius:6px;position:relative;}
+  .toc .corner{position:absolute;top:0;left:0;width:0;height:0;
+    border-top:22px solid var(--hi);border-right:22px solid transparent;}
+  .toc .t-hd{
+    font-family:var(--serif);font-size:13px;font-weight:700;letter-spacing:.2em;
+    color:var(--orange);margin-bottom:14px;
+  }
+  .toc .t-item{display:flex;align-items:center;gap:14px;padding:10px 0;border-bottom:1px dashed var(--paper-line);}
+  .toc .t-item:last-child{border-bottom:none;}
+  .toc .t-item .no{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--orange);
+    min-width:26px;}
+  .toc .t-item .tx{font-size:14.5px;color:var(--ink);}
+  .toc .t-item .tx .hi{background:linear-gradient(180deg,transparent 60%,var(--hi-soft) 60%,var(--hi-soft) 90%,transparent 90%);}
+
+  /* ============ 步骤：荧光编号卡 + 便利贴批注 ============ */
+  .steps{margin:8px 30px 0;}
+  .stp{display:flex;gap:18px;padding:18px 0;border-bottom:1px dashed var(--paper-line);position:relative;}
+  .stp:last-child{border-bottom:none;}
+  .stp .ln{
+    flex-shrink:0;width:42px;height:42px;border-radius:50%;
+    background:var(--hi);color:var(--ink);font-family:var(--serif);font-weight:800;
+    font-size:20px;display:flex;align-items:center;justify-content:center;
+    box-shadow:0 3px 0 rgba(200,170,40,.35);
+    transform:rotate(-4deg);
+  }
+  .stp .bd{flex:1;padding-top:4px;}
+  .stp .bd p{font-size:14.5px;line-height:2;color:var(--ink);}
+  .stp .bd p b{color:var(--orange-deep);}
+  .stp .bd p .hi{background:linear-gradient(180deg,transparent 58%,var(--hi-soft) 58%,var(--hi-soft) 92%,transparent 92%);}
+  .stp .note-tag{
+    display:inline-block;margin-top:8px;padding:5px 11px;font-size:12px;line-height:1.7;
+    color:var(--ink);background:#fff3ad;border:1px solid #e8d476;
+    transform:rotate(-1deg);box-shadow:2px 3px 0 rgba(200,170,40,.15);
+  }
+  .stp .note-tag b{color:var(--blue);}
+
+  /* ============ 代码窗：暖纸 + 荧光文件名条 ============ */
+  .code{margin:8px 30px 0;border:1px solid var(--paper-line);border-radius:6px;overflow:hidden;
+    background:#fffdf8;}
+  .code .cbar{
+    display:flex;align-items:center;gap:8px;padding:9px 14px;
+    background:var(--paper-deep);border-bottom:1px solid var(--paper-line);
+  }
+  .code .dots{display:flex;gap:6px;}
+  .code .dots i{width:10px;height:10px;border-radius:50%;display:block;}
+  .code .dots i.r{background:#f2a29b;}
+  .code .dots i.y{background:#f2cf6b;}
+  .code .dots i.g{background:#9bcfa0;}
+  .code .lang{margin-left:6px;color:var(--ink-soft);font-family:var(--mono);font-size:11px;letter-spacing:.06em;}
+  .code .fname{
+    margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--orange);
+    background:var(--hi-soft);padding:2px 8px;border-radius:3px;
+  }
+  .code pre{padding:16px 18px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.85;color:var(--ink);}
+  .code .c-k{color:#b4480a;font-weight:600;}
+  .code .c-s{color:#1d6f3c;}
+  .code .c-c{color:var(--ink-soft);}
+  .code .c-n{color:#2f6fbf;}
+
+  /* ============ 提示：便利贴 ============ */
+  .note{margin:26px 30px 0;padding:18px 20px 16px;position:relative;
+    background:#fff3ad;border:1px solid #e8d476;border-radius:3px;
+    box-shadow:4px 5px 0 rgba(200,170,40,.14);transform:rotate(-.4deg);}
+  .note .flag{
+    font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--orange-deep);
+    font-weight:800;
+  }
+  .note p{margin-top:8px;font-size:14px;line-height:2;color:var(--ink);}
+  .note p b{color:var(--orange-deep);}
+
+  /* ============ 结论：整段荧光重点 ============ */
+  .concl{margin:30px 30px 0;padding:22px 24px;position:relative;
+    background:linear-gradient(180deg,transparent 30%,var(--hi) 30%,var(--hi) 100%);
+    border-left:5px solid var(--orange);}
+  .concl .flag{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--orange-deep);font-weight:800;}
+  .concl p{margin-top:10px;font-family:var(--serif);font-size:16px;line-height:2;color:var(--ink);font-weight:700;}
+  .concl .src{margin-top:10px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--ink-soft);}
+
+  /* ============ 表格：手写纸表 ============ */
+  .table-wrap{margin:8px 30px 0;border:1px solid var(--paper-line);border-radius:6px;overflow:hidden;background:#fffdf8;}
+  .tbl{width:100%;border-collapse:collapse;font-size:13px;}
+  .tbl thead th{
+    background:var(--paper-deep);color:var(--ink);font-weight:700;text-align:left;
+    padding:11px 14px;font-size:12px;letter-spacing:.08em;
+    border-bottom:2px solid var(--paper-line);
+  }
+  .tbl td{padding:11px 14px;border-top:1px solid var(--paper-line);
+    font-family:var(--mono);font-size:12.5px;color:var(--ink);}
+  .tbl tr.alt{background:var(--hi-soft);}
+  .tbl .ok{color:#1d6f3c;font-weight:700;}
+  .tbl .warn{color:var(--orange-deep);font-weight:700;}
+
+  /* ============ 分隔线：手写波浪 ============ */
+  .divider{display:flex;align-items:center;gap:16px;margin:42px 30px 0;}
+  .divider .ln{flex:1;height:2px;border-bottom:2px dashed var(--paper-line);}
+  .divider .g{color:var(--orange);font-family:var(--serif);font-size:15px;letter-spacing:.2em;transform:rotate(-3deg);}
+
+  /* ============ 文末：手写落款 ============ */
+  .footer{margin-top:44px;padding:36px 24px;text-align:center;color:var(--ink);
+    background:var(--paper-deep);border-top:2px solid var(--paper-line);}
+  .footer .f-ec{font-family:var(--serif);font-size:23px;font-weight:800;letter-spacing:.18em;color:var(--orange-deep);}
+  .footer .f-en{margin-top:12px;font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--ink-soft);}
+  .footer .f-line{width:52px;height:3px;background:var(--orange);margin:18px auto 0;border-radius:2px;transform:rotate(-2deg);}
+</style>
+</head>
+<body>
+  <div id="wemd">
+
+    <!-- ===== 封面：书封 + 胶带 + 印章 ===== -->
+    <header class="cover">
+      <div class="tape"></div>
+      <div class="stamp">学习<br>手册</div>
+      <span class="kicker"><span class="dash"></span>清晰指南&nbsp;·&nbsp;快速上手</span>
+      <h1>从零搭好第一条<br>自动化流程，<span class="hi">照着做就行</span></h1>
+      <p class="lede">别急着背功能列表。这本手册像被前人认真学过——<b>重点已划好、坑已标出</b>，你只需跟着编号一步步走，先把最小可用流程跑通。</p>
+      <div class="meta">
+        <span>用时 <b>10min</b></span>
+        <span>难度 <b>入门</b></span>
+        <span>前置 <b>无</b></span>
+      </div>
+    </header>
+
+    <!-- ===== 01 目录 ===== -->
+    <div class="sec"><span class="no">01</span><h2>这一章<span class="und">学什么</span></h2><span class="line"></span></div>
+    <div class="toc">
+      <div class="corner"></div>
+      <div class="t-hd">目 录</div>
+      <div class="t-item"><span class="no">1.</span><span class="tx">创建流程<span class="hi">骨架</span></span></div>
+      <div class="t-item"><span class="no">2.</span><span class="tx">配置<span class="hi">触发条件</span></span></div>
+      <div class="t-item"><span class="no">3.</span><span class="tx">接入<span class="hi">通知</span>并运行</span></div>
+    </div>
+
+    <!-- ===== 02 步骤 ===== -->
+    <div class="sec"><span class="no">02</span><h2>三步<span class="und">做完</span></h2><span class="line"></span></div>
+    <div class="steps">
+      <div class="stp"><span class="ln">1</span>
+        <div class="bd">
+          <p><b>创建骨架</b>：运行初始化命令，生成最小可用的流程目录与配置。</p>
+          <span class="note-tag"><b>提示</b>：目录名用英文小写，避免踩坑。</span>
+        </div></div>
+      <div class="stp"><span class="ln">2</span>
+        <div class="bd">
+          <p><b>配置触发</b>：指定「何时启动」——<span class="hi">定时、事件、手动</span>三选一。</p>
+        </div></div>
+      <div class="stp"><span class="ln">3</span>
+        <div class="bd">
+          <p><b>运行验证</b>：启动后看日志，确认每一步都执行到位再放手。</p>
+          <span class="note-tag"><b>注意</b>：先跑通再优化，别一上来就加一堆分支。</span>
+        </div></div>
+    </div>
+
+    <!-- ===== 03 代码 ===== -->
+    <div class="sec"><span class="no">03</span><h2>最小<span class="und">配置</span></h2><span class="line"></span></div>
+    <div class="code">
+      <div class="cbar">
+        <span class="dots"><i class="r"></i><i class="y"></i><i class="g"></i></span>
+        <span class="lang">yaml</span>
+        <span class="fname">guide.yaml</span>
+      </div>
+      <pre><span class="c-k">name</span>: my-flow
+<span class="c-k">trigger</span>: on_schedule
+<span class="c-k">schedule</span>: <span class="c-s">"0 9 * * 1"</span>
+<span class="c-k">steps</span>:
+  - <span class="c-k">fetch</span>: api/report
+  - <span class="c-k">notify</span>: wechat   <span class="c-c"># 跑完通知我</span></pre>
+    </div>
+
+    <!-- ===== 04 提示 ===== -->
+    <div class="sec"><span class="no">04</span><h2>重点<span class="und">提醒</span></h2><span class="line"></span></div>
+    <div class="note">
+      <span class="flag">TIP</span>
+      <p><b>先跑通，再优化。</b>第一版保持最小；确认链路能通后，再逐步加错误重试、分支与通知细节。</p>
+    </div>
+
+    <!-- 结论：整段荧光 -->
+    <div class="concl">
+      <span class="flag">DONE</span>
+      <p>到这里，你已经拥有一条可运行的最小流程。剩下的事情，交给迭代。</p>
+      <span class="src">— 清晰指南 · 上手手册</span>
+    </div>
+
+    <!-- ===== 05 速查表 ===== -->
+    <div class="sec"><span class="no">05</span><h2>命令<span class="und">速查</span></h2><span class="line"></span></div>
+    <div class="table-wrap">
+      <table class="tbl">
+        <thead><tr><th>命令</th><th>作用</th><th>状态</th></tr></thead>
+        <tbody>
+          <tr><td>guide init</td><td>生成骨架</td><td class="ok">可用</td></tr>
+          <tr class="alt"><td>guide run</td><td>执行流程</td><td class="ok">可用</td></tr>
+          <tr><td>guide pause</td><td>暂停流程</td><td class="ok">可用</td></tr>
+          <tr class="alt"><td>guide rollback</td><td>回滚版本</td><td class="warn">v2+</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="divider"><span class="ln"></span><span class="g">✦ ✦ ✦</span><span class="ln"></span></div>
+
+    <!-- ===== 文末 ===== -->
+    <footer class="footer">
+      <div class="f-ec">清晰指南</div>
+      <div class="f-en">CLEAR GUIDE · 上手手册</div>
+      <div class="f-line"></div>
+    </footer>
+
+  </div>
+</body>
+</html>

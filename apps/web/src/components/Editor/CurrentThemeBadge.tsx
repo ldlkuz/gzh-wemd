@@ -47,9 +47,6 @@ export function CurrentThemeBadge() {
       </span>
       <span className="current-theme-badge__label">
         <span className="current-theme-badge__name">{themeName}</span>
-        <span className="current-theme-badge__tag">
-          {themeType === "custom" ? "自定义" : "内置"}
-        </span>
       </span>
       <ChevronRight size={12} className="current-theme-badge__chev" />
     </button>

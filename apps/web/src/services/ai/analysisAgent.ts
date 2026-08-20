@@ -9,12 +9,8 @@
  * AI 在约束内自由创作，确保每篇气质一致但表达不同。
  */
 import { formatAiHttpError, getAiConfig, validateAiConfig } from "./aiConfig";
-import {
-  DESIGN_PATTERNS,
-  PATTERN_LABELS,
-  getPattern,
-  type ComponentSlot,
-} from "./designPatterns";
+import { DESIGN_PATTERNS, PATTERN_LABELS, getPattern } from "./designPatterns";
+import { COMPONENT_RULES } from "./componentRules";
 import { type ArticleProfile } from "./articleProfile";
 import type { LayoutPreference } from "@wemd/core";
 import type { Audience, DesignConstraints } from "./types";
@@ -47,7 +43,7 @@ export interface AnalysisResult {
 }
 
 /** 阶段1 输出：文章类型 + 画像 + 设计语言 + 槽位计划 */
-interface PlanResult {
+export interface PlanResult {
   type: string;
   reason: string;
   confidence: number;
@@ -91,6 +87,53 @@ export const AVAILABLE_COMPONENTS = [
   "styled-table",
   "hero-banner",
   "faq",
+  // 内容驱动（补充）
+  "magazine-cover",
+  "full-quote",
+  "text-card",
+  "end-card",
+  "callout",
+  "steps",
+  "accordion",
+  "resource-list",
+  // 位置驱动（补充）
+  "section-divider",
+] as const;
+
+/**
+ * 组件按 AI 处理方式分两类：
+ * - 内容驱动：需从原文提炼/保留内容才有价值，AI 必须读懂原文并控制不编造
+ * - 位置驱动：内容固定或从结构直接取，关键是放对位置，几乎无编造风险
+ */
+export const CONTENT_DRIVEN_COMPONENTS = [
+  "hero-banner",
+  "toc-nav",
+  "quote-card",
+  "cta-card",
+  "callout-pro",
+  "stats-block",
+  "timeline",
+  "faq",
+  "styled-table",
+  "code-frame",
+  "magazine-cover",
+  "full-quote",
+  "text-card",
+  "end-card",
+  "callout",
+  "steps",
+  "accordion",
+  "resource-list",
+] as const;
+
+export const POSITION_DRIVEN_COMPONENTS = [
+  "divider-fancy",
+  "section-title",
+  "numbered-heading",
+  "tag-label",
+  "share-card",
+  "follow-bar",
+  "section-divider",
 ] as const;
 
 /** 阶段1：构建识别文章类型 + 主题约束 + slotPlan 的 prompt */
@@ -98,6 +141,7 @@ function buildPlanPrompt(
   audience?: Audience,
   themeLayout?: LayoutPreference,
   constraints?: DesignConstraints,
+  allowed?: readonly string[],
 ): string {
   const patternList = PATTERN_LABELS.map(
     (p) =>
@@ -120,11 +164,18 @@ function buildPlanPrompt(
       ? `\n\n## 设计目标（用户偏好，软建议）\n${constraints.designGoal === "reading" ? "优先保证阅读流畅性，组件仅用于强调重点，允许大量普通正文" : constraints.designGoal === "visual" ? "优先追求视觉表现力，可以增加视觉模块，强化节奏感" : constraints.designGoal === "infoDensity" ? "优先信息表达效率，多用表格、时间轴、对比等结构化组件" : "在阅读体验和视觉表现之间取得平衡"}\n注意：这是软建议，主题约束优先于此偏好。`
       : "";
 
+  // 用户勾选的组件范围（硬约束，AI 只能在清单内选择）
+  const allowedHint =
+    allowed && allowed.length > 0
+      ? `\n\n## 允许使用的组件（用户勾选，必须遵守）\n${allowed.join("、")}\n注意：slotPlan 中的组件必须全部来自以上清单，不要使用清单外的组件。`
+      : "";
+
   return [
     "你是一个资深公众号版式设计师。你的任务是阅读用户的文章，识别文章类型，在主题约束下选择最匹配的版式设计。",
     audienceHint,
     themeHint,
     goalHint,
+    allowedHint,
     "",
     "## 判断原则（按优先级）",
     "",
@@ -161,13 +212,12 @@ function buildPlanPrompt(
     "",
     "## slotPlan 规则",
     "",
-    "1. 从所选模式的 head/body/tail 槽位中挑选要启用的组件",
-    "2. required 槽位必须启用，非 required 视文章内容决定",
-    "3. repeatable 组件 count 可 >1（如教程有 3 个章节，numbered-heading count=3）",
-    "4. 非 repeatable 组件 count 只能是 1",
+    "1. 只能使用「允许使用的组件」清单中的组件，不要用清单外的",
+    "2. 根据文章类型与内容，为每个选中的组件判断适合的位置：head=开头 / body=中段 / tail=结尾",
+    "3. 组件数量应符合排版密度（主题约束），不要过度堆砌",
+    "4. 同一组件 count 可 >1（如多章节时 numbered-heading count=章节数），基于实际内容估算",
     "5. 顺序按 head → body → tail 排列",
-    "6. count 必须基于文章实际内容估算",
-    "7. 如果有主题约束，优先选择主题偏好组件中的 match 项",
+    "6. 主题偏好组件优先",
     "",
     "## 判断示例（few-shot）",
     "",
@@ -199,31 +249,114 @@ function buildPlanPrompt(
   ].join("\n");
 }
 
-/** 阶段2：构建填充 insertions 的 prompt */
-function buildExecutePrompt(plan: PlanResult): string {
+/** 单个已展开的组件槽位（含 section 与第几个） */
+interface SlotItem {
+  slot: { component: string; extractRule: string };
+  section: "head" | "body" | "tail";
+  idx: number;
+}
+
+/** 阶段2 的一个批次：负责某段原文 + 该段的组件槽位 */
+export interface ExecuteBatch {
+  slots: SlotItem[];
+  /** 该批对应的原文片段（段落以空行拼接） */
+  excerpt: string;
+  /** 该批第一段在全局的段落索引（1-based），用于位置换算 */
+  startPara: number;
+  /** 是否包含全文（短文单批时 true，此时位置用全局段索引） */
+  full?: boolean;
+}
+
+/** 把 slotPlan 条目展开为实际组件槽位列表（规则来自组件级规则表，不再依赖 pattern 槽位） */
+export function expandSlots(items: PlanResult["slotPlan"]): SlotItem[] {
+  const slots: SlotItem[] = [];
+  for (const item of items) {
+    const rule = COMPONENT_RULES[item.component];
+    if (!rule) continue;
+    for (let i = 0; i < item.count; i++) {
+      slots.push({
+        slot: { component: item.component, extractRule: rule.extractRule },
+        section: item.section,
+        idx: i,
+      });
+    }
+  }
+  return slots;
+}
+
+/** 按空行切分段落（与 applyInsertions 的段落定义一致）。先统一换行，避免 CRLF 下空行切分失败 */
+export function splitParagraphs(markdown: string): string[] {
+  return markdown
+    .replace(/\r\n?/g, "\n")
+    .split(/\n{2,}/)
+    .map((block) => block.trim())
+    .filter((block) => block.length > 0);
+}
+
+/**
+ * 阶段2 分批：head/body/tail 对应前/中/后各 1/3 原文分 3 批，
+ * 每批只传对应片段控制 token。段落过少（≤ 6）时退回单批（全文），
+ * 保持短文行为与旧逻辑一致。
+ */
+export function buildExecuteBatches(
+  plan: PlanResult,
+  paragraphs: string[],
+): ExecuteBatch[] {
+  const total = paragraphs.length;
+  const singleBatch = (): ExecuteBatch[] => {
+    const slots = expandSlots(plan.slotPlan);
+    if (slots.length === 0) return [];
+    return [{ slots, excerpt: paragraphs.join("\n\n"), startPara: 1, full: true }];
+  };
+
+  if (total <= 6) return singleBatch();
+
+  const headEnd = Math.max(1, Math.floor(total / 3));
+  const tailStart = Math.min(total, Math.ceil((total * 2) / 3));
+  const ranges: Array<{
+    section: "head" | "body" | "tail";
+    start: number;
+    end: number;
+  }> = [
+    { section: "head", start: 1, end: headEnd },
+    { section: "body", start: headEnd + 1, end: tailStart },
+    { section: "tail", start: tailStart + 1, end: total },
+  ];
+
+  const batches: ExecuteBatch[] = [];
+  for (const r of ranges) {
+    const items = plan.slotPlan.filter((i) => i.section === r.section);
+    const slots = expandSlots(items);
+    if (slots.length === 0) continue; // 该区段无组件槽位 → 不调用
+    const excerpt = paragraphs.slice(r.start - 1, r.end).join("\n\n");
+    batches.push({ slots, excerpt, startPara: r.start });
+  }
+  return batches;
+}
+
+/** 把批内相对段索引（段后:j）换算为全局段索引（段后:startPara+j-1）；文首/文末不变 */
+export function convertBatchAnchors(
+  insertions: Insertion[],
+  startPara: number,
+): Insertion[] {
+  return insertions.map((ins) => {
+    const m = ins.at.match(/^段后:(\d+)$/);
+    if (!m) return ins;
+    return { ...ins, at: `段后:${startPara + parseInt(m[1], 10) - 1}` };
+  });
+}
+
+/** 阶段2：构建填充 insertions 的 prompt（分批，只给该批片段） */
+function buildBatchExecutePrompt(
+  plan: PlanResult,
+  batch: ExecuteBatch,
+): string {
   const pattern = getPattern(plan.type);
   if (!pattern) {
     throw new Error(`未知文章类型: ${plan.type}`);
   }
 
-  // 根据 slotPlan 展开实际的组件清单（含 extractRule）
-  const slots: Array<{ slot: ComponentSlot; section: string; idx: number }> =
-    [];
-  for (const item of plan.slotPlan) {
-    const sectionSlots =
-      item.section === "head"
-        ? pattern.head
-        : item.section === "body"
-          ? pattern.body
-          : pattern.tail;
-    const slot = sectionSlots.find((s) => s.component === item.component);
-    if (!slot) continue;
-    for (let i = 0; i < item.count; i++) {
-      slots.push({ slot, section: item.section, idx: i });
-    }
-  }
-
-  const slotDesc = slots
+  const slotDesc = batch.slots
     .map((s, i) => {
       const pos =
         s.section === "head" ? "头部" : s.section === "body" ? "中段" : "尾部";
@@ -231,58 +364,65 @@ function buildExecutePrompt(plan: PlanResult): string {
     })
     .join("\n\n");
 
+  // 组件按处理方式分类：内容驱动（需提炼、禁编造）/ 位置驱动（内容固定、重点是位置）
+  const contentList = CONTENT_DRIVEN_COMPONENTS.join(" / ");
+  const positionList = POSITION_DRIVEN_COMPONENTS.join(" / ");
+
+  // 该批对应的原文范围说明（决定 at 锚点的填法）
+  const isHeadOnly = batch.slots.every((s) => s.section === "head");
+  const isTailOnly = batch.slots.every((s) => s.section === "tail");
+  const rangeNote = batch.full
+    ? "你负责的是全文。位置用'段后:N'（N 为全文段落索引，从 1 起）；头部组件可用'文首'，尾部组件可用'文末'。"
+    : isHeadOnly
+      ? "你负责的是全文开头部分。位置用'文首'或'段后:1'。"
+      : isTailOnly
+        ? "你负责的是全文结尾部分。位置用'文末'。"
+        : `你负责的是全文第 ${batch.startPara} 段开始的一段原文（只给了这段，未给全文）。位置用'段后:j'，j 是这段原文内的相对段落索引（第 1 段从 1 起），程序会自动换算为全文位置。`;
+
   return [
-    "你是一个资深公众号版式设计师。前一步已识别文章类型并选好版式配方，现在你的任务是根据文章内容，填充每个组件的具体内容，并决定插入位置。",
+    "你是一个资深公众号版式设计师。前一步已识别文章类型并选好版式配方，现在你的任务是根据你负责的原文片段，填充组件的具体内容，并决定插入位置。",
     "",
     `## 文章类型：${pattern.label}`,
     `## 版式节奏：${pattern.rhythm}`,
     "",
+    rangeNote,
+    "",
     "## 需要填充的组件槽位",
     "",
     slotDesc,
+    "",
+    "## 组件分类处理策略",
+    "",
+    `- 【内容驱动】必须从原文提炼/保留内容，不得编造事实、数据、人物，body 严格基于原文（可精简措辞）：${contentList}`,
+    `- 【位置驱动】内容固定或从标题结构直接取，重点是放对位置，无需深读提炼：${positionList}`,
+    "- 位置驱动组件（如 divider-fancy）body 可留空；内容驱动组件若原文无对应内容，body 留空，不要硬凑",
     "",
     "## 输出要求",
     "",
     "1. 只输出 JSON，不要代码块包裹，不要任何解释",
     '2. JSON 结构：{"insertions": [...]}',
     "3. 每个 insertion 包含字段：",
-    '   - at: 插入位置，取值为 "文首" / "文末" / "段后:N"（N 为段落索引，从 1 起）',
+    "   - at: 插入位置，按上面的位置说明填写（\"文首\" / \"文末\" / \"段后:N\"）",
     "   - component: 组件名（必须与上面槽位一致）",
     "   - props: 组件属性对象（可为 {}）",
     "   - body: 组件内容（按提炼规则生成，不要照抄原文）",
-    "   - reason: 给用户看的理由（一句话，引用文章具体内容）",
+    "   - reason: 给用户看的理由（一句话，引用片段具体内容）",
     "",
     "## 提炼规则",
     "",
     "1. body 必须按槽位的『提炼规则』生成，不要照抄原文整段",
-    "2. head 槽位 at 用'文首'或'段后:1'",
-    "3. tail 槽位 at 用'文末'",
-    "4. body 槽位 at 根据文章结构选'段后:N'，N 必须是有效段落索引",
-    "5. 槽位顺序就是插入顺序，不要打乱",
-    "6. reason 必须具体（如'第 3 段是核心金句，适合用 quote-card 突出'）",
-    "7. body 长度控制：单个组件 body ≤ 200 字，避免冗长",
-    "",
-    "## 输出示例（few-shot）",
-    "",
-    "示例1（教程类，toc-nav 槽位）：",
-    "  原文含章节『安装/配置/部署』",
-    '  → {"at":"文首","component":"toc-nav","props":{},"body":"目录\\n\\n- 安装\\n- 配置\\n- 部署","reason":"提取三个章节作为目录，便于读者预览"}',
-    "",
-    "示例2（故事类，quote-card 槽位）：",
-    "  原文第 4 段是人物台词『这一切都是值得的』",
-    '  → {"at":"段后:4","component":"quote-card","props":{"author":"创始人"},"body":"这一切都是值得的","reason":"第 4 段人物台词是情感转折点，适合金句卡片"}',
-    "",
-    "示例3（数据类，stats-block 槽位）：",
-    "  原文含『收入 1.2 亿，增长 45%』",
-    '  → {"at":"段后:2","component":"stats-block","props":{},"body":"核心指标\\n\\n- 营收 **1.2亿**\\n- 同比增长 **45%**","reason":"第 2 段含关键数据，提取为数据块强化视觉"}',
+    "2. 位置严格按上面的位置说明填写",
+    "3. 槽位顺序就是插入顺序，不要打乱",
+    "4. reason 必须具体（如'片段第 2 段是核心金句，适合用 quote-card 突出'）",
+    "5. body 长度控制：单个组件 body ≤ 200 字，避免冗长",
     "",
     "## 约束",
     "",
     "1. 不修改原文，只建议插入位置",
     "2. insertions 数量必须等于槽位数量，一一对应",
-    "3. 如果某个槽位无法填充（文章无对应内容），body 留空字符串",
+    "3. 如果某个槽位无法填充（片段无对应内容），body 留空字符串",
     "4. 不要在 body 里添加原文没有的内容（如虚构作者名、编造数据、编造用户评价）",
-    "5. at 中的段后 N 必须是文章实际存在的段落索引，不能超过总段落数",
+    "5. '段后:N'不能超过你负责的原文总段落数",
     "6. component 必须是槽位中列出的组件，不要生成 author-card / related-posts / copyright-notice / image-text-row 等需要外部信息的组件",
   ].join("\n");
 }
@@ -448,17 +588,25 @@ export async function analyzeArticle(
   audience?: Audience,
   constraints?: DesignConstraints,
   themeLayout?: LayoutPreference,
+  allowedComponents?: readonly string[],
 ): Promise<AnalysisResult> {
   const effectiveConstraints: DesignConstraints = constraints ?? {
     safetyLimit: 20,
     designGoal: "auto",
   };
 
+  // 用户勾选的组件范围（硬约束），未勾选时兜底为全局白名单
+  const allowed =
+    allowedComponents && allowedComponents.length > 0
+      ? allowedComponents
+      : AVAILABLE_COMPONENTS;
+
   // 阶段1：识别类型 + 画像 + 主题约束 + 设计目标 → 槽位计划
   const planPrompt = buildPlanPrompt(
     audience,
     themeLayout,
     effectiveConstraints,
+    allowed,
   );
   const planContent = await callLLM(planPrompt, markdown, 0.3);
   const plan = parsePlanResponse(planContent);
@@ -467,12 +615,19 @@ export async function analyzeArticle(
     return { insertions: [] };
   }
 
+  // 槽位计划只保留用户勾选范围内的组件（确定性兜底）
+  const planComponentCount = plan.slotPlan.length;
+  plan.slotPlan = plan.slotPlan.filter((item) =>
+    (allowed as readonly string[]).includes(item.component),
+  );
+
   // unknown 兜底
   if (plan.type === "unknown" || plan.confidence < 0.6) {
     return {
       insertions: [],
       articleType: plan.type,
-      typeReason: plan.reason || "文章类型不明确，暂不推荐版式",
+      typeReason:
+        plan.reason || "文章较短或类型不明确，暂不推荐版式",
     };
   }
 
@@ -480,7 +635,10 @@ export async function analyzeArticle(
     return {
       insertions: [],
       articleType: plan.type,
-      typeReason: plan.reason,
+      typeReason:
+        planComponentCount > 0
+          ? "勾选的组件都不适合这篇文章，试试勾选更多组件或调整选择"
+          : plan.reason || "未找到适合这篇文章的组件",
     };
   }
 
@@ -510,13 +668,25 @@ export async function analyzeArticle(
     .filter(Boolean)
     .join("\n");
 
-  // 阶段2：填充 insertions
-  const executePrompt = buildExecutePrompt(plan);
-  const executeContent = await callLLM(executePrompt, markdown, 0.5);
-  const insertions = parseExecuteResponse(executeContent);
+  // 阶段2：分批填充 insertions（全局决策已定，每批只传对应片段控制 token）
+  const paragraphs = splitParagraphs(markdown);
+  const batches = buildExecuteBatches(plan, paragraphs);
+  const allInsertions: Insertion[] = [];
+  for (const batch of batches) {
+    const batchPrompt = buildBatchExecutePrompt(plan, batch);
+    const batchContent = await callLLM(batchPrompt, batch.excerpt, 0.5);
+    const batchInsertions = parseExecuteResponse(batchContent);
+    // 批内相对段索引 → 全局段索引
+    allInsertions.push(
+      ...convertBatchAnchors(batchInsertions, batch.startPara),
+    );
+  }
 
-  // 按安全上限裁剪（兜底约束，不是目标数量）
-  const limitedInsertions = insertions.slice(
+  // 只保留用户勾选范围内的组件（确定性兜底），再按安全上限裁剪
+  const inScope = allInsertions.filter((i) =>
+    (allowed as readonly string[]).includes(i.component),
+  );
+  const limitedInsertions = inScope.slice(
     0,
     effectiveConstraints.safetyLimit,
   );

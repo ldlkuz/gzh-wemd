@@ -6,7 +6,7 @@
   "type": "prompt",
   "tags": ["wemd", "theme", "design", "brand"],
   "output": {
-    "format": "BrandVisualTheme JSON",
-    "downstream": "wemd-compiler-skill"
+    "format": ".wemd-theme 主题包",
+    "downstream": "GZH-WeMD 主程序导入"
   }
 }

@@ -88,12 +88,21 @@ contextBridge.exposeInMainWorld('electron', {
             ipcRenderer.on('update:error', handler);
             return handler;
         },
+        onUpdateDownloaded: (callback: (data: {
+            latestVersion: string;
+            releaseNotes?: string;
+        }) => void) => {
+            const handler = (_event: IpcRendererEvent, data: any) => callback(data);
+            ipcRenderer.on('update:dowloaded', handler);
+            return handler;
+        },
         removeUpdateListener: (handler: any) => {
             ipcRenderer.removeListener('update:available', handler);
             ipcRenderer.removeListener('update:upToDate', handler);
             ipcRenderer.removeListener('update:error', handler);
         },
         openReleases: () => ipcRenderer.invoke('update:openReleases'),
+        restartAndInstall: () => ipcRenderer.invoke('update:restartAndInstall'),
     },
 
     shell: {

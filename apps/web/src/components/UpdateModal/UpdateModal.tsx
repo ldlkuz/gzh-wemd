@@ -7,6 +7,7 @@ interface UpdateModalProps {
   latestVersion: string;
   currentVersion: string;
   releaseNotes?: string;
+  downloaded?: boolean;
   onClose: () => void;
   onDownload: () => void;
   onSkipVersion: () => void;
@@ -15,6 +16,7 @@ interface UpdateModalProps {
 export function UpdateModal({
   latestVersion,
   releaseNotes,
+  downloaded = false,
   onClose,
   onDownload,
   onSkipVersion,
@@ -45,8 +47,12 @@ export function UpdateModal({
           <img src={iconSrc} alt="WeMD" width={64} height={64} />
         </div>
 
-        <h2 className="update-modal-title">发现新版本</h2>
-        <p className="update-modal-version">WeMD {latestVersion} 已发布</p>
+        <h2 className="update-modal-title">
+          {downloaded ? "更新已就绪" : "发现新版本"}
+        </h2>
+        <p className="update-modal-version">
+          {downloaded ? "WeMD 已下载，重启即可安装" : `WeMD ${latestVersion} 已发布`}
+        </p>
 
         {releaseNotes && (
           <button
@@ -65,18 +71,22 @@ export function UpdateModal({
         )}
 
         <div className="update-modal-actions">
-          <button className="update-modal-btn secondary" onClick={onClose}>
-            稍后提醒
-          </button>
+          {!downloaded && (
+            <button className="update-modal-btn secondary" onClick={onClose}>
+              稍后提醒
+            </button>
+          )}
           <button className="update-modal-btn primary" onClick={onDownload}>
-            <Download size={16} />
-            前往下载
+            {downloaded ? <Download size={16} /> : null}
+            {downloaded ? "重启并安装" : "前往下载"}
           </button>
         </div>
 
-        <button className="update-modal-skip" onClick={onSkipVersion}>
-          跳过此版本
-        </button>
+        {!downloaded && (
+          <button className="update-modal-skip" onClick={onSkipVersion}>
+            跳过此版本
+          </button>
+        )}
       </div>
     </div>
   );

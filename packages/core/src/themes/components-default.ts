@@ -37,8 +37,6 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
 #wemd .wemd-quote-card {
   margin: 32px 0;
   padding: 28px 16px;
-  border-top: 3px solid var(--wemd-primary, #07c160);
-  border-bottom: 3px solid var(--wemd-primary, #07c160);
   box-sizing: border-box;
 }
 
@@ -143,7 +141,7 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
 /* === code-frame 代码框（带标题/语言标签） === */
 #wemd .wemd-code-frame {
   margin: 24px 0;
-  border-radius: 8px;
+  border-radius: var(--wemd-border-radius, 8px);
   overflow: hidden;
   border: 1px solid var(--wemd-border, #e2e8f0);
   background: var(--wemd-bg-soft, #f8fafc);
@@ -192,7 +190,9 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
   box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
 }
 
-/* 左侧色条（默认用 primary，语义类型用固定色） */
+/* 左侧色条：统一跟随主题主色 var(--wemd-primary)。
+   （原 type 变体用固定语义色，脱离主题导致竖条与主题风格冲突，故移除；
+   type 语义仅通过标题图标区分，见下方图标规则。） */
 #wemd .wemd-callout-pro::before {
   content: "";
   position: absolute;
@@ -202,13 +202,6 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
   width: 4px;
   background: var(--wemd-primary, #07c160);
 }
-
-/* type 变体（固定语义色，不跟随主题，保证语义一致性） */
-#wemd .wemd-callout-pro[data-props*="\\"type\\":\\"info\\""]::before { background: #3b82f6; }
-#wemd .wemd-callout-pro[data-props*="\\"type\\":\\"success\\""]::before { background: #10b981; }
-#wemd .wemd-callout-pro[data-props*="\\"type\\":\\"warning\\""]::before { background: #f59e0b; }
-#wemd .wemd-callout-pro[data-props*="\\"type\\":\\"danger\\""]::before { background: #ef4444; }
-#wemd .wemd-callout-pro[data-props*="\\"type\\":\\"tip\\""]::before { background: #8b5cf6; }
 
 /* 标题（第一段，含 strong 或纯文本） */
 #wemd .wemd-callout-pro .wemd-component-body > p:first-child {
@@ -221,12 +214,12 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
   gap: 6px;
 }
 
-/* type 标签前缀 */
-#wemd .wemd-callout-pro[data-props*="\\"type\\":\\"info\\""] .wemd-component-body > p:first-child::before { content: "ℹ️"; }
-#wemd .wemd-callout-pro[data-props*="\\"type\\":\\"success\\""] .wemd-component-body > p:first-child::before { content: "✅"; }
-#wemd .wemd-callout-pro[data-props*="\\"type\\":\\"warning\\""] .wemd-component-body > p:first-child::before { content: "⚠️"; }
-#wemd .wemd-callout-pro[data-props*="\\"type\\":\\"danger\\""] .wemd-component-body > p:first-child::before { content: "❌"; }
-#wemd .wemd-callout-pro[data-props*="\\"type\\":\\"tip\\""] .wemd-component-body > p:first-child::before { content: "💡"; }
+/* type 标签前缀（图标由渲染期 data-type 注入，物化逻辑见 pseudoElementInline） */
+#wemd .wemd-callout-pro[data-type="info"] .wemd-component-body > p:first-child::before { content: "ℹ️"; }
+#wemd .wemd-callout-pro[data-type="success"] .wemd-component-body > p:first-child::before { content: "✅"; }
+#wemd .wemd-callout-pro[data-type="warning"] .wemd-component-body > p:first-child::before { content: "⚠️"; }
+#wemd .wemd-callout-pro[data-type="danger"] .wemd-component-body > p:first-child::before { content: "❌"; }
+#wemd .wemd-callout-pro[data-type="tip"] .wemd-component-body > p:first-child::before { content: "💡"; }
 
 /* 正文段落 */
 #wemd .wemd-callout-pro .wemd-component-body > p {
@@ -274,13 +267,20 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
   border: 1px solid var(--wemd-primary-light, #d1fae5);
 }
 
+/* 标题（可选，首段纯文字） */
+#wemd .wemd-stats-block .wemd-sb-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--wemd-text-strong, #1e293b);
+  margin: 0 0 12px 0;
+}
+
 /* 数据条目容器 */
 #wemd .wemd-stats-block .wemd-sb-items {
   list-style: none;
   padding: 0;
   margin: 0;
 }
-
 /* 每条数据一行（value + label 两端对齐） */
 #wemd .wemd-stats-block .wemd-sb-items-item {
   display: flex;
@@ -307,33 +307,17 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
   margin: 24px 0;
 }
 
-/* 标题段落 */
-#wemd .wemd-image-grid .wemd-component-body > p:first-child {
-  font-size: 14px;
-  color: var(--wemd-text-soft, #64748b);
-  text-align: center;
-  margin: 0 0 12px 0;
-  letter-spacing: 0.3px;
-}
-
-/* 用列表项承载图片：每张图片为一项 */
-#wemd .wemd-image-grid .wemd-component-body ul,
-#wemd .wemd-image-grid .wemd-component-body ol {
+/* 架构改版后 markdown 渲染为单个 <p> 内多张 <img>（无 ul/ol），p 即网格容器 */
+#wemd .wemd-image-grid .wemd-component-body > p {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 8px;
-  padding: 0;
-  list-style: none;
-  margin: 0;
-}
-
-#wemd .wemd-image-grid .wemd-component-body li {
   margin: 0;
   padding: 0;
-  list-style: none;
+  text-align: left;
 }
 
-#wemd .wemd-image-grid .wemd-component-body li img {
+#wemd .wemd-image-grid .wemd-component-body > p img {
   width: 100%;
   height: auto;
   display: block;
@@ -341,12 +325,13 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
   margin: 0;
 }
 
-/* 单图时也居中显示 */
-#wemd .wemd-image-grid .wemd-component-body > p > img:only-child {
-  display: block;
-  margin: 0 auto;
-  max-width: 100%;
-  border-radius: 6px;
+/* 兼容：标题段（p 中无图时作为说明文字） */
+#wemd .wemd-image-grid .wemd-component-body > p:not(:has(img)) {
+  font-size: 14px;
+  color: var(--wemd-text-soft, #64748b);
+  text-align: center;
+  margin: 0 0 12px 0;
+  letter-spacing: 0.3px;
 }
 
 /* === author-card 作者卡片 === */
@@ -469,11 +454,14 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
 }
 
 /* 圆点（primary 边框，真实元素以兼容微信）。
-   水平居中落在容器左边框上：border(2) + padding(20) = item 起点 x=22，
-   left:-27 使圆点中心 = 22 - 27 + 6 = 1 = 边框中心。 */
+   尺寸无关居中：left:-21px 让圆点左边缘对准竖线中心（item 起点=border2+padding20，
+   竖线中心在 -21），transform:translateX(-50%) 再左移自身半宽 → 圆心始终落在竖线中心，
+   与圆点尺寸无关。主题只需改 size/color，无需重算 left（旧方案 left:-27px 只对 12px 成立，
+   主题改小圆点即偏出竖线）。自设布局的主题须加 transform:none 关掉此居中。 */
 #wemd .wemd-timeline .wemd-tl-dot {
   position: absolute;
-  left: -27px;
+  left: -21px;
+  transform: translateX(-50%);
   top: 14px;
   width: 12px;
   height: 12px;

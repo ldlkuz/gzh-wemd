@@ -1,0 +1,24 @@
+<section class="wemd-component wemd-product-card" data-component="product-card">
+{{#if image}}<section class="wemd-pc-image">{{slot:image}}</section>{{/if}}
+<section class="wemd-pc-header">
+{{#if badge}}<section class="wemd-pc-badge">{{slot:badge}}</section>{{/if}}
+{{#if title}}<section class="wemd-pc-title">{{slot:title}}</section>{{/if}}
+{{#if subtitle}}<section class="wemd-pc-subtitle">{{slot:subtitle}}</section>{{/if}}
+</section>
+{{#if description}}<section class="wemd-pc-description">{{slot:description}}</section>{{/if}}
+{{#if price}}<section class="wemd-pc-price-row">
+<section class="wemd-pc-price">{{slot:price}}</section>
+<section class="wemd-pc-original">{{slot:originalPrice}}</section>
+</section>{{/if}}
+{{#if rating}}<section class="wemd-pc-meta-row">
+<section class="wemd-pc-rating">{{slot:rating}}</section>
+<section class="wemd-pc-sales">{{slot:sales}}</section>
+<section class="wemd-pc-stock">{{slot:stock}}</section>
+</section>{{/if}}
+{{#if button}}<section class="wemd-pc-button">{{slot:button}}</section>{{/if}}
+{{#if tags}}<section class="wemd-pc-tags">
+{{#each tags}}
+<span class="wemd-pc-tag">{{this.tag}}</span>
+{{/each}}
+</section>{{/if}}
+</section>

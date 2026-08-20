@@ -110,11 +110,11 @@ describe("Template Renderer 集成测试", () => {
     const html = parser.render(result.markdown);
 
     expect(html).toContain("wemd-hero-banner");
-    expect(html).toContain("wemd-toc-nav");
+    // 基础层组件（toc-nav/stats-block）不再产 :::，渲染为原生 HTML
+    expect(html).toContain("<ul>");
     expect(html).toContain("wemd-numbered-heading");
     expect(html).toContain("wemd-quote-card");
     expect(html).toContain("wemd-callout-pro");
-    expect(html).toContain("wemd-stats-block");
     expect(html).toContain("wemd-share-card");
 
     expect(html).toContain("七月好物");
@@ -138,8 +138,9 @@ describe("Template Renderer 集成测试", () => {
 
     expect(html).toContain('data-component="hero-banner"');
     expect(html).toContain('data-component="quote-card"');
-    expect(html).toContain('data-component="toc-nav"');
-    expect(html).toContain('data-component="stats-block"');
+    // 基础层组件输出原生 HTML，不再带 data-component
+    expect(html).not.toContain('data-component="toc-nav"');
+    expect(html).not.toContain('data-component="stats-block"');
   });
 
   it("props 被正确序列化为 data-props", () => {

@@ -281,7 +281,7 @@ export const componentStylesExtended = `/* === WeMD 扩展组件样式（跟随�
   margin-bottom: 0;
 }
 
-/* === accordion 折叠面板（微信无交互，静态展开卡片） === */
+/* === accordion 问答块（微信无折叠交互，始终展开的上下堆叠展示） === */
 #wemd .wemd-accordion {
   margin: 22px 0;
   padding: 4px 0;
@@ -307,14 +307,6 @@ export const componentStylesExtended = `/* === WeMD 扩展组件样式（跟随�
   margin-top: 0;
 }
 
-#wemd .wemd-accordion .wemd-component-body > p.wemd-q::before {
-  content: "＋";
-  display: inline-block;
-  margin-right: 8px;
-  color: var(--wemd-primary, #07c160);
-  font-weight: 700;
-}
-
 #wemd .wemd-accordion .wemd-component-body > p.wemd-q + p {
   margin: 0 0 14px;
   padding: 10px 16px 12px;
@@ -334,6 +326,29 @@ export const componentStylesExtended = `/* === WeMD 扩展组件样式（跟随�
   border-left: 5px solid var(--wemd-primary, #07c160);
 }
 
+/* 架构改版后 pullquote 有两种结构：
+   - 原生 > 引用 自动识别：body > blockquote
+   - 显式 ::: pullquote 容器：body > p
+   统一用长属性逐个冲掉内层自带左边框/底色/圆角，只留卡片左竖条，避免双重叠加
+   （不能用简写：内联器把简写前置，.multiquote-* 的 border-left 长属性仍会覆盖） */
+#wemd .wemd-pullquote .wemd-component-body > blockquote {
+  margin-top: 0;
+  margin-right: 0;
+  margin-bottom: 0;
+  margin-left: 0;
+  padding-top: 0;
+  padding-right: 0;
+  padding-bottom: 0;
+  padding-left: 0;
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
+  border-left: none;
+  background: transparent;
+  border-radius: 0;
+}
+
+#wemd .wemd-pullquote .wemd-component-body > blockquote p,
 #wemd .wemd-pullquote .wemd-component-body > p {
   margin: 0;
   font-size: 17px;
@@ -342,6 +357,7 @@ export const componentStylesExtended = `/* === WeMD 扩展组件样式（跟随�
   color: var(--wemd-text-strong, #1a1a1a);
 }
 
+#wemd .wemd-pullquote .wemd-component-body > blockquote p:first-child::before,
 #wemd .wemd-pullquote .wemd-component-body > p:first-child::before {
   content: "“";
   color: var(--wemd-primary, #07c160);
@@ -383,6 +399,12 @@ export const componentStylesExtended = `/* === WeMD 扩展组件样式（跟随�
   font-size: 13px;
   color: var(--wemd-text-soft, #64748b);
   white-space: nowrap;
+}
+
+/* markdown 的 --- 会在 divider body 内生成 <hr>，与左右侧线叠加成三线（源头避免：
+   所有主题的纯 --- 分隔都应只有左右侧线，hr 是噪音）。 */
+#wemd .wemd-divider .wemd-component-body hr {
+  display: none;
 }
 
 #wemd .wemd-divider .wemd-component-body:empty::before {

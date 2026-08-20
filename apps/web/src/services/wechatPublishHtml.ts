@@ -2,6 +2,7 @@ import {
   processHtml,
   createMarkdownParser,
   getThemeTemplates,
+  getThemeSlotDefs,
 } from "@wemd/core";
 import type { ThemeDefinition } from "@wemd/core";
 import katexCss from "katex/dist/katex.min.css?raw";
@@ -155,10 +156,12 @@ export async function buildWechatPublishHtml(
 
   try {
     const templates = getThemeTemplates(options.themeDefinition);
+    const slotDefs = getThemeSlotDefs(options.themeDefinition);
     const parser = createMarkdownParser({
       mathRenderer: "katex",
       showMacBar: options.showMacBar === true,
       getTemplate: (componentId) => templates.get(componentId),
+      getSlotDefs: (componentId) => slotDefs.get(componentId),
     });
     const rawHtml = parser.render(markdown);
     const themedCss = buildCopyCss(css);

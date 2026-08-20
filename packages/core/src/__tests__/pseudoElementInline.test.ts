@@ -27,8 +27,8 @@ describe("微信伪元素物化", () => {
 :::`,
     );
     expect(out).toContain('class="wemd-mat"');
-    // 色条：背景为 info 语义色
-    expect(out).toContain("background: #3b82f6");
+    // 色条：跟随主题主色（默认主题 → #07c160），不再强制 type 语义色
+    expect(out).toContain("background: #07c160");
     // 图标显示
     expect(out).toContain("\u2139\uFE0F");
   });
@@ -79,7 +79,7 @@ describe("微信伪元素物化", () => {
     expect(out).toMatch(/class="wemd-mat"/);
   });
 
-  it("accordion：物化问题前缀 ＋", () => {
+  it("accordion：微信无折叠，上下堆叠展示（不画折叠符号）", () => {
     const out = renderForExport(
       `::: accordion
 **标题一**
@@ -91,10 +91,11 @@ describe("微信伪元素物化", () => {
 内容二
 :::`,
     );
-    // 至少两个物化 span（两个问题）
-    const mats = out.match(/class="wemd-mat"/g) || [];
-    expect(mats.length).toBeGreaterThanOrEqual(2);
-    expect(out).toContain("\uFF0B");
+    // 问题段仍保留、回答段仍在，构成上下堆叠问答
+    expect(out).toContain("wemd-accordion");
+    expect(out).toContain("wemd-q");
+    // 共享样式不再定义折叠"＋"伪元素，导出不产生折叠符号 span
+    expect(out).not.toContain("\uFF0B");
   });
 
   it("pullquote：物化引号", () => {
@@ -105,6 +106,33 @@ describe("微信伪元素物化", () => {
     );
     expect(out).toMatch(/class="wemd-mat"/);
     expect(out).toContain("\u201C");
+  });
+
+  it("pullquote：原生 > 引用（blockquote 结构）物化引号并冲掉内层装饰", () => {
+    // 应用环境开启了基础层自动套容器（getTemplate），原生 > 引用才被套成 pullquote
+    const parserWithNative = createMarkdownParser({ getTemplate: () => undefined });
+    const raw = parserWithNative.render(
+      "> 这是原生引用内容，应套 pullquote 卡片。\n> 第二行引用。",
+    );
+    const css = getComponentCss();
+    const out = processHtml(raw, css, true, true);
+    // blockquote 结构下引号也要物化
+    expect(out).toContain("\u201C");
+    expect(out).toMatch(/class="wemd-mat"/);
+    // 内层 blockquote 的左边框/底色被组件长属性冲掉，避免与卡片左竖条双重叠加
+    const bq = out.match(/<blockquote[^>]*>/g)?.[0] ?? "";
+    expect(bq).toContain("border-left: none");
+    expect(bq).toContain("background: transparent");
+  });
+
+  it("divider-fancy：无 label 时输出默认装饰点（{{else}} 分支）", () => {
+    const out = renderForExport(
+      `::: divider-fancy
+:::`,
+    );
+    expect(out).toContain("wemd-df-dots");
+    expect(out).toContain("· · ·");
+    expect(out).not.toContain("wemd-df-text");
   });
 
   it("divider：物化左右分隔线", () => {

@@ -25,8 +25,8 @@ export type TemplateData = Record<string, string | ListItem[]>;
 const SLOT_RE = /\{\{slot:([a-zA-Z0-9_-]+)\}\}/g;
 /** 手写正则：匹配 `{{#each key}}...{{/each}}`（非贪婪，不支持嵌套 each） */
 const EACH_RE = /\{\{#each ([a-zA-Z0-9_-]+)\}\}([\s\S]*?)\{\{\/each\}\}/;
-/** 手写正则：匹配 `{{#if key}}...{{/if}}`（全局替换，支持多个非嵌套 if 块） */
-const IF_RE = /\{\{#if ([a-zA-Z0-9_-]+)\}\}([\s\S]*?)\{\{\/if\}\}/g;
+/** 手写正则：匹配 `{{#if key}}...{{else}}...{{/if}}`（全局替换，支持多个非嵌套 if 块与 else 分支） */
+const IF_RE = /\{\{#if ([a-zA-Z0-9_-]+)\}\}([\s\S]*?)(?:\{\{else\}\}([\s\S]*?))?\{\{\/if\}\}/g;
 /** 手写正则：匹配 `{{this.field}}` */
 const THIS_FIELD_RE = /\{\{this\.([a-zA-Z0-9_-]+)\}\}/g;
 
@@ -52,8 +52,8 @@ export function fillTemplate(template: string, data: TemplateData): string {
       .trim();
   });
 
-  // 2. 处理 if 块：key 有非空内容时才保留内部模板（内部 slot 占位后续统一填充）
-  out = out.replace(IF_RE, (_full, key: string, inner: string) => {
+  // 2. 处理 if 块：key 有非空内容时保留主分支，否则用 else 分支（若无 else 则置空）
+  out = out.replace(IF_RE, (_full, key: string, inner: string, alt: string) => {
     const value = data[key];
     const present =
       typeof value === "string"
@@ -61,7 +61,7 @@ export function fillTemplate(template: string, data: TemplateData): string {
         : Array.isArray(value)
           ? value.length > 0
           : false;
-    return present ? inner : "";
+    return present ? inner : alt ?? "";
   });
 
   // 3. 处理剩余 slot 占位符

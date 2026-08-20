@@ -209,6 +209,32 @@ describe("slotParsers 复杂扩展组件", () => {
     expect(result.subText).toBeUndefined();
   });
 
+  it("brand-sign：首段 Logo 图片 + 品牌名 + slogan + style + 版权", () => {
+    const result = parseComponentSlots(
+      parser(),
+      "brand-sign",
+      "!`https://via.placeholder.com/64x64`\n\n**WeMD**\n\n优雅排版，不止所见\n\nstyle=inline divider=true\n\n*© 2026 WeMD Team*",
+    );
+    expect(result.logo).toContain('src="https://via.placeholder.com/64x64"');
+    expect(result.logo).toContain("wemd-bs-logo-img");
+    expect(result.brandName).toBe("WeMD");
+    expect(result.slogan).toBe("优雅排版，不止所见");
+    expect(result.style).toBe("inline");
+    expect(result.divider).toBe("true");
+    expect(result.subText).toBe("© 2026 WeMD Team");
+  });
+
+  it("brand-sign：标准 markdown 图片 ![](url) 也能识别为 logo", () => {
+    const result = parseComponentSlots(
+      parser(),
+      "brand-sign",
+      "![logo](https://img.example.com/logo.png)\n\n**我的品牌**\n\n让世界更好",
+    );
+    expect(result.logo).toContain('src="https://img.example.com/logo.png"');
+    expect(result.brandName).toBe("我的品牌");
+    expect(result.slogan).toBe("让世界更好");
+  });
+
   it("resource-list：结构化条目", () => {
     const result = parseComponentSlots(
       parser(),

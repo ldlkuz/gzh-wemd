@@ -1,7 +1,7 @@
 /**
- * pack-theme.cjs — 阶段7：主题打包
+ * pack-theme.cjs — 主题打包
  *
- * 读取 BrandVisualTheme.json + CSS 文件，生成：
+ * 读取 AI 端到端产出（themes/{theme}/manifest.json + css/{theme}.css + templates.json），生成：
  *   - manifest.json（ThemePackageManifest 格式，含组件 variantCss）
  *   - brand.md（品牌描述）
  *   - styles/components.css（完整 CSS，微信兼容清理）
@@ -25,7 +25,7 @@ const THEME_NAME = process.argv[2] || "intelligent-precision";
 const THEME_DIR = path.join(ROOT, "themes", THEME_NAME);
 
 const CSS_FILE = path.join(THEME_DIR, "css", `${THEME_NAME}.css`);
-const BRAND_THEME_FILE = path.join(THEME_DIR, "BrandVisualTheme.json");
+const MANIFEST_FILE = path.join(THEME_DIR, "manifest.json");
 const THEME_PACKAGE_DIR = path.join(THEME_DIR, "package");
 
 // 主题未提供对应 CSS 变量时的回退色
@@ -106,10 +106,24 @@ function resolveCssVars(css, vars) {
  * 采用逐行扫描 + 大括号深度跟踪的方式，确保只移除匹配的规则块，
  * 不会误删其他规则块的内容。
  */
-function cleanVariantCss(css) {
-  // 选择器中包含这些模式时，整条规则块将被移除
+/**
+ * 清理 CSS 中的微信不兼容特性
+ *
+ * @param {string} css - 源 CSS
+ * @param {boolean} [preserveNeutralizers=true] - 是否保留「纯中和规则」。
+ *   - true（components.css 全量路径）：保留 `::before/::after + content: none`，
+ *     与内置主题 `#wemd .wemd-xxx::before { content: none }` 同理，只抑制共享
+ *     伪元素装饰（callout-pro 左竖条 / divider 侧线），本身不产生视觉；缺失会
+ *     导致预览与导出出现双竖条/双线。
+ *   - false（逐组件 variantCss 路径）：剥离中和规则。中和规则只放 components.css
+ *     （注入顺序最末）。放 variantCss 会因含 #wemd 导致 normalizeVariantCss 短路，
+ *     不再为同组件其他变体规则补 #wemd 前缀 → 特异性不足被共享样式覆盖。
+ */
+function cleanVariantCss(css, preserveNeutralizers = true) {
+  // 选择器中包含这些模式时，整条规则块将被移除。
+  // 唯一例外：纯中和规则（::before/::after + 仅 content: none）在 preserveNeutralizers=true 时保留。
   const disallowedSelectorPatterns = [
-    /::(before|after)/,                                                                  // 伪元素
+    /::(before|after)/,                                                                  // 伪元素（中和规则除外）
     /:hover/,                                                                            // 悬停伪类
     /:(first-child|last-child|first-of-type|last-of-type)/,                              // 结构伪类（不含 nth）
     /:nth-child\s*\(/,                                                                   // nth-child
@@ -122,82 +136,107 @@ function cleanVariantCss(css) {
   let i = 0;
 
   while (i < lines.length) {
-    const line = lines[i];
-    const trimmed = line.trim();
+    const trimmed = lines[i].trim();
 
     // -------------------------------------------------------
     // 跳过 @keyframes / @media 块（含嵌套大括号）
     // -------------------------------------------------------
     if (/@(keyframes|media)\b/.test(trimmed)) {
-      let depth = 0;
-      let started = false;
+      i = skipBlock(lines, i);
+      continue;
+    }
+
+    // -------------------------------------------------------
+    // 定位逻辑块：从当前行向前找到含 { 的选择器行（支持多行选择器）
+    // -------------------------------------------------------
+    let braceLine = -1;
+    for (let j = i; j < lines.length; j++) {
+      if (lines[j].includes("{")) { braceLine = j; break; }
+    }
+    if (braceLine === -1) {
+      // 无更多规则块，剩余行原样保留（仅清理 animation 行）
       while (i < lines.length) {
-        const l = lines[i];
-        for (const ch of l) {
-          if (ch === "{") depth++;
-          if (ch === "}") depth--;
+        if (!/^\s*(animation|animation-delay)\s*:/.test(lines[i])) {
+          result.push(lines[i]);
         }
         i++;
-        if (started && depth === 0) break;
-        if (depth > 0) started = true;
       }
-      continue;
+      break;
     }
 
-    // -------------------------------------------------------
-    // 判断当前行是否为选择器行（单行选择器，以 { 结尾）
-    // -------------------------------------------------------
-    if (trimmed.includes("{") && !trimmed.startsWith("/*") && !trimmed.startsWith("*")) {
-      // 检查选择器是否包含不兼容模式
-      const hasIssue = disallowedSelectorPatterns.some((p) => p.test(trimmed));
+    // 选择器文本 = 起始行到 { 之前的所有内容
+    const selectorText = (
+      lines.slice(i, braceLine).join("\n") +
+      lines[braceLine].slice(0, lines[braceLine].indexOf("{"))
+    ).trim();
 
-      if (hasIssue) {
-        // 单行规则（如 p:last-child { margin:0; }）— 跳过当前行即可
-        if (trimmed.includes("}")) {
-          i++;
-          continue;
-        }
-        // 多行规则块 — 跟踪大括号深度跳过整个块
-        let depth = 0;
-        let started = false;
-        while (i < lines.length) {
-          const l = lines[i];
-          for (const ch of l) {
-            if (ch === "{") depth++;
-            if (ch === "}") depth--;
-          }
-          i++;
-          if (started && depth === 0) break;
-          if (depth > 0) started = true;
-        }
-        continue;
+    // 块结束 = 从 braceLine 开始括号平衡到 0
+    let depth = 0;
+    let end = braceLine;
+    for (; end < lines.length; end++) {
+      for (const ch of lines[end]) {
+        if (ch === "{") depth++;
+        if (ch === "}") depth--;
       }
+      if (depth <= 0) break;
     }
+    const blockLines = lines.slice(i, end + 1);
 
-    // -------------------------------------------------------
-    // 移除 animation / animation-delay 属性行
-    // -------------------------------------------------------
-    if (/^\s*(animation|animation-delay)\s*:/.test(trimmed)) {
-      i++;
-      // 如果该属性后有 !important 也在同一行，一并跳过
-      continue;
+    // 检查选择器是否含禁用模式时先剥离注释：注释里的关键词（如「根 + body」的 +、
+    // 说明文字中的 ::before/:hover）不是代码，不该触发整块移除。
+    const noCommentSelector = selectorText.replace(/\/\*[\s\S]*?\*\//g, "");
+    const hasIssue = disallowedSelectorPatterns.some((p) =>
+      p.test(noCommentSelector),
+    );
+    const isNeutralizer = isPureNeutralizer(selectorText, blockLines);
+
+    if (!hasIssue || (preserveNeutralizers && isNeutralizer)) {
+      // 保留：无兼容问题，或（保留模式下）纯中和规则（content: none）
+      result.push(...stripAnimationLines(blockLines));
     }
-
-    // 保留当前行
-    result.push(line);
-    i++;
+    // 否则整块移除（选择器 + 声明一起）
+    i = end + 1;
   }
 
   // 清理多余空行
-  let output = result.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+  return result.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+}
 
-  // 清理残留在选择器行中的 ::before / ::after（多行选择器剩余部分，无规则块）
-  output = output.replace(/^.*::(before|after).*$/gm, "");
+/** 跳过整块（@keyframes/@media），返回下一行下标 */
+function skipBlock(lines, startIdx) {
+  let depth = 0;
+  let started = false;
+  let i = startIdx;
+  while (i < lines.length) {
+    for (const ch of lines[i]) {
+      if (ch === "{") depth++;
+      if (ch === "}") depth--;
+    }
+    i++;
+    if (started && depth === 0) break;
+    if (depth > 0) started = true;
+  }
+  return i;
+}
 
-  // 再次清理多余空行
-  output = output.replace(/\n{3,}/g, "\n\n").trim();
+/**
+ * 是否为「纯中和规则」：选择器含 ::before/::after，且声明块仅 content: none
+ * （可带 !important，与内置主题 eastern-notes 的中和写法一致）。
+ * 这类规则不产生视觉，必须保留，否则共享伪元素装饰会在预览/导出时叠加成双。
+ */
+function isPureNeutralizer(selectorText, blockLines) {
+  if (!/::(before|after)/.test(selectorText)) return false;
+  const joined = blockLines.join("\n").replace(/\/\*[\s\S]*?\*\//g, "");
+  const m = joined.match(/\{([\s\S]*)\}/);
+  const body = m ? m[1].replace(/\s+/g, " ").trim() : "";
+  return /^content\s*:\s*none\s*(!important)?\s*;?$/.test(body);
+}
 
-  return output;
+/** 移除块内的 animation / animation-delay 属性行 */
+function stripAnimationLines(blockLines) {
+  return blockLines.filter(
+    (l) => !/^\s*(animation|animation-delay)\s*:/.test(l),
+  );
 }
 
 // ============================================================
@@ -206,11 +245,16 @@ function cleanVariantCss(css) {
 
 /**
  * 将 #wemd .wemd-xxx 选择器转换为 .wemd-xxx[data-variant="future-frontier"]
+ *
+ * 注意：`(?!::)` 负向前瞻让「纯中和规则」（#wemd .wemd-xxx::before { content: none }）
+ * 保持原选择器不变。中和规则是针对共享伪元素装饰的（非本主题变体样式），
+ * 转为 [data-variant] 形式后物化器按 `.wemd-xxx::before` 字面子串匹配不到，
+ * 导出时仍会物化共享竖条 → 双竖条。
  */
 function convertSelector(css, componentName) {
   const variantName = THEME_NAME;
   const pattern = new RegExp(
-    `#wemd\\s+(\\.wemd-${componentName})(?=[\\s{,:])`,
+    `#wemd\\s+(\\.wemd-${componentName})(?!::)(?=[\\s{,:])`,
     "g",
   );
   return css.replace(pattern, (match, className) => {
@@ -282,6 +326,18 @@ function extractComponentCss(fullCss, componentName) {
     break;
   }
 
+  // 同时以「下一个分区注释头」（/* =====...）作为结束边界，
+  // 避免把下一组件的注释头划进当前组件（如 divider 注释里的 ::before/::after
+  // 被带进 stats-block 的 variantCss，导致校验误报伪元素）。
+  const sectionRe = /\/\*[ \t]*={2,}/g;
+  sectionRe.lastIndex = selectorIdx + 1;
+  let secMatch;
+  while ((secMatch = sectionRe.exec(fullCss)) !== null) {
+    if (secMatch.index < selectorIdx || secMatch.index >= endIdx) break;
+    endIdx = secMatch.index;
+    break;
+  }
+
   return fullCss.slice(startIdx, endIdx).trim();
 }
 
@@ -311,7 +367,7 @@ function findUndefinedVars(css, vars) {
 
 console.log("📖 读取输入文件...");
 
-const brandTheme = JSON.parse(fs.readFileSync(BRAND_THEME_FILE, "utf-8"));
+const themeManifest = JSON.parse(fs.readFileSync(MANIFEST_FILE, "utf-8"));
 const fullCss = fs.readFileSync(CSS_FILE, "utf-8");
 
 // ============================================================
@@ -425,8 +481,10 @@ for (const compName of COMPONENTS_WITH_CSS) {
     // 2. 解析 CSS 变量引用（var(--xxx) → 实际值）
     const resolvedCss = resolveCssVars(convertedCss, cssVars);
     // 3. 移除微信不兼容特性（伪元素、结构伪类、@keyframes 等）
-    //    完整 CSS 保留在 styles/components.css 中
-    const cleanedCss = cleanVariantCss(resolvedCss);
+    //    完整 CSS 保留在 styles/components.css 中。
+    //    variantCss 剥离纯中和规则（content: none）——中和只放 components.css
+    //    （注入最末层），放 variantCss 会破坏 normalizeVariantCss 的特异性补全。
+    const cleanedCss = cleanVariantCss(resolvedCss, false);
     // 4. 校验未定义 CSS 变量（resolveCssVars 会保留未定义 var() 原样）
     const undefVars = findUndefinedVars(cleanedCss, cssVars);
     if (undefVars.size > 0) {
@@ -469,30 +527,19 @@ if (undefinedVarErrors.length > 0) {
 // 构建 layout 偏好
 // ============================================================
 
-const brandAnchorComponents =
-  brandTheme.component_strategy?.brand_anchor?.map((c) => c.component) || [];
-const preferredComponents = [
-  ...brandAnchorComponents,
-  ...(brandTheme.component_strategy?.content || []),
-  ...(brandTheme.component_strategy?.utility || []),
-];
-
-const defaultVariants = {};
-for (const compName of brandAnchorComponents) {
-  defaultVariants[compName] = THEME_NAME;
+const manifestLayout = themeManifest.layout || {};
+const preferredComponents = manifestLayout.preferredComponents || [];
+const defaultVariants = manifestLayout.defaultVariants || {};
+for (const compName of preferredComponents) {
+  if (defaultVariants[compName] === undefined) {
+    defaultVariants[compName] = THEME_NAME;
+  }
 }
 
-// 从品牌视觉语言推导 tone 和 density
-const tone = brandTheme.visual_language?.color_direction?.contrast === "soft"
-  ? ["calm", "natural", "warm", "organic"]
-  : brandTheme.visual_language?.color_direction?.contrast === "high"
-    ? ["bold", "dynamic", "high-contrast"]
-    : ["balanced", "harmonious"];
-const density = brandTheme.visual_language?.layout?.density === "spacious"
-  ? "low"
-  : brandTheme.visual_language?.layout?.density === "compact"
-    ? "high"
-    : "medium";
+const tone = Array.isArray(manifestLayout.tone)
+  ? manifestLayout.tone
+  : ["balanced", "harmonious"];
+const density = manifestLayout.density || "medium";
 
 const layout = {
   preferredComponents,
@@ -505,11 +552,9 @@ const layout = {
 // 构建 manifest
 // ============================================================
 
-const brandNameForMeta = brandTheme.brand?.brand_identity?.name
-  || brandTheme.brand?.name
-  || "云间茶舍";
-const brandKeywords =
-  brandTheme.brand?.keywords?.map((k) => k.replace(/-/g, "-")) || [];
+const brandInfo = themeManifest.brand || {};
+const brandNameForMeta = themeManifest.meta?.name || brandInfo.name || "WeMD Theme";
+const brandKeywords = themeManifest.meta?.keywords || [];
 
 const manifest = {
   sdkVersion: "1.0.0",
@@ -517,10 +562,10 @@ const manifest = {
     id: THEME_NAME,
     name: brandNameForMeta,
     description:
-      brandTheme.concept?.core_concept ||
-      "以山野雾气与慢煮茶香为视觉意象，用克制的暖调与不疾不徐的节奏表达手工温度",
+      themeManifest.meta?.description ||
+      "由 wemd-theme-designer 生成的品牌视觉主题",
     keywords: brandKeywords,
-    version: "1.0.0",
+    version: themeManifest.meta?.version || "1.0.0",
   },
   tokens: {
     color: colorMapping,
@@ -531,7 +576,7 @@ const manifest = {
   },
   components,
   layout,
-  codeTheme: "github-light",
+  codeTheme: themeManifest.codeTheme || "github-light",
 };
 
 // ============================================================
@@ -540,14 +585,22 @@ const manifest = {
 
 console.log("📝 构建 brand.md...");
 
-const brandName = brandTheme.brand?.brand_identity?.name || brandTheme.brand?.name || "云间茶舍";
-const brandType = brandTheme.brand?.brand_identity?.type || brandTheme.brand?.type || "product";
-const brandPersonality = brandTheme.brand?.personality?.join("、") || "calm, artisanal, authentic, refined";
-const brandKeywordsMd = brandTheme.brand?.keywords?.join("、") || "mountain-fog、handcrafted、slow、nature、ritual";
-const brandAudience = brandTheme.brand?.audience?.join("、") || "tea enthusiasts, slow-living seekers";
-const brandEmotion = brandTheme.brand?.emotion?.join("、") || "serenity, warmth, ritual";
-const conceptName = brandTheme.concept?.concept_name || "山雾慢煮";
-const coreConcept = brandTheme.concept?.core_concept || "";
+const brandName = brandInfo.name || brandNameForMeta;
+const brandType = brandInfo.type || "product";
+const brandPersonality = Array.isArray(brandInfo.personality)
+  ? brandInfo.personality.join("、")
+  : "calm, artisanal, authentic";
+const brandKeywordsMd = Array.isArray(brandInfo.keywords)
+  ? brandInfo.keywords.join("、")
+  : brandKeywords.join("、");
+const brandAudience = Array.isArray(brandInfo.audience)
+  ? brandInfo.audience.join("、")
+  : "";
+const brandEmotion = Array.isArray(brandInfo.emotion)
+  ? brandInfo.emotion.join("、")
+  : "";
+const conceptName = brandInfo.conceptName || "";
+const coreConcept = brandInfo.coreConcept || themeManifest.meta?.description || "";
 
 const brandMd = `# ${brandName}
 

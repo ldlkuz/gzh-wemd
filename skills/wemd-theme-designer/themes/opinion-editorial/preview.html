@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>观点评论 · Opinion Editorial · 视觉稿</title>
+<style>
+  :root{
+    --bg:#f6f4ee;
+    --ink:#16181d;
+    --ink-soft:#5b5f68;
+    --accent:#d6453d;
+    --accent-soft:#f3e0dc;
+    --blue:#1f3a5f;
+    --line:rgba(22,24,29,.14);
+    --sans:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+    --serif:"Noto Serif SC","Songti SC","SimSun","Source Han Serif SC",Georgia,serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#e7e4dc;font-family:var(--serif);color:var(--ink);-webkit-font-smoothing:antialiased}
+  main{width:min(680px,92vw);margin:0 auto}
+
+  /* ============ 封面：深墨蓝黑 + 超大无衬线标题 ============ */
+  .cover{
+    position:relative;
+    color:#f4f1e8;
+    background:
+      radial-gradient(120% 90% at 85% -10%, rgba(214,69,61,.28) 0%, transparent 55%),
+      linear-gradient(160deg,#1a1f2e 0%,#10131c 70%,#0b0e15 100%);
+    padding:clamp(52px,9vw,84px) clamp(24px,5vw,40px) clamp(40px,7vw,60px);
+    overflow:hidden;
+  }
+  .cover::after{
+    content:"";
+    position:absolute;inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size:34px 34px;
+    pointer-events:none;
+  }
+  .cover-inner{position:relative}
+  .kicker{
+    font-family:var(--sans);
+    font-size:12px;
+    letter-spacing:.42em;
+    color:#d6453d;
+    margin-bottom:clamp(22px,4vw,34px);
+    display:flex;align-items:center;gap:14px;
+  }
+  .kicker::before{content:"";width:34px;height:2px;background:#d6453d}
+  .cover h1{
+    font-family:var(--sans);
+    font-weight:800;
+    font-size:clamp(34px,7.4vw,58px);
+    line-height:1.12;
+    letter-spacing:.01em;
+  }
+  .cover .subtitle{
+    margin-top:clamp(18px,3vw,26px);
+    font-size:clamp(14px,2.2vw,17px);
+    line-height:2;
+    color:rgba(244,241,232,.72);
+    max-width:34em;
+  }
+  .cover .meta{
+    margin-top:clamp(26px,4.5vw,38px);
+    display:flex;align-items:center;gap:16px;
+    font-family:var(--sans);
+    font-size:12px;
+    letter-spacing:.22em;
+    color:rgba(244,241,232,.5);
+  }
+  .cover .meta .dot{width:3px;height:3px;border-radius:50%;background:rgba(244,241,232,.4)}
+
+  /* ============ 核心观点 ============ */
+  .takeaway{
+    background:#fffdf7;
+    border:1px solid var(--line);
+    border-left:3px solid var(--accent);
+    padding:clamp(24px,4vw,34px) clamp(22px,4vw,32px);
+    margin:clamp(-18px,-2vw,-8px) 0 0;
+    position:relative;
+  }
+  .takeaway .label{
+    font-family:var(--sans);
+    font-size:11px;
+    letter-spacing:.4em;
+    color:var(--accent);
+    margin-bottom:14px;
+  }
+  .takeaway p{
+    font-size:clamp(19px,3vw,24px);
+    line-height:1.95;
+    font-weight:700;
+    letter-spacing:.02em;
+  }
+
+  /* ============ 正文 ============ */
+  .body{padding:clamp(40px,7vw,64px) 0 0}
+  .para{margin-bottom:2.2em;font-size:clamp(16px,2.2vw,18px);line-height:2.15;text-align:justify}
+  .para strong{color:var(--accent);font-weight:700}
+  .para em{font-style:normal;color:var(--blue);font-weight:600}
+
+  /* 分论点小节 */
+  .point{padding-top:clamp(28px,5vw,44px)}
+  .point-head{display:flex;align-items:baseline;gap:16px;margin-bottom:18px}
+  .point-no{font-family:var(--sans);font-size:13px;font-weight:800;color:var(--accent);letter-spacing:.1em}
+  .point-title{font-family:var(--sans);font-size:clamp(19px,3vw,24px);font-weight:800;letter-spacing:.02em}
+
+  /* 引述 */
+  .quote{
+    margin:clamp(32px,6vw,48px) 0;
+    border-left:3px solid var(--blue);
+    padding:6px 0 6px 22px;
+  }
+  .quote p{font-size:clamp(17px,2.5vw,20px);line-height:2.05;font-weight:600;color:var(--blue)}
+  .quote .src{margin-top:10px;font-family:var(--sans);font-size:12px;letter-spacing:.24em;color:var(--ink-soft)}
+
+  /* 金句 */
+  .punchline{
+    text-align:center;
+    padding:clamp(34px,6vw,52px) 10px;
+    margin:clamp(32px,6vw,52px) 0;
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+  }
+  .punchline p{
+    font-family:var(--sans);
+    font-weight:800;
+    font-size:clamp(20px,3.6vw,28px);
+    line-height:1.6;
+    letter-spacing:.03em;
+  }
+  .punchline .tag{
+    margin-top:16px;
+    font-family:var(--sans);
+    font-size:11px;
+    letter-spacing:.4em;
+    color:var(--accent);
+  }
+
+  /* 结尾落款 */
+  .signoff{
+    text-align:center;
+    padding:clamp(40px,7vw,64px) 0 clamp(56px,8vw,80px);
+  }
+  .signoff .rule{width:56px;height:2px;background:var(--accent);margin:0 auto 26px}
+  .signoff .name{font-family:var(--sans);font-weight:800;font-size:16px;letter-spacing:.3em}
+  .signoff .date{margin-top:12px;font-family:var(--sans);font-size:11.5px;letter-spacing:.3em;color:var(--ink-soft)}
+</style>
+</head>
+<body>
+<main>
+  <!-- 封面 -->
+  <header class="cover">
+    <div class="cover-inner">
+      <div class="kicker">观点 · OPINION</div>
+      <h1>慢，是另一种快</h1>
+      <p class="subtitle">当所有人都在抢着抵达，被落下的人，也许正看清整张地图。关于效率、内卷与选择的三个反直觉判断。</p>
+      <div class="meta"><span>专栏 · 一周观察</span><span class="dot"></span><span>2026.08.20</span></div>
+    </div>
+  </header>
+
+  <!-- 核心观点 -->
+  <section class="takeaway">
+    <div class="label">核心观点 · TAKEAWAY</div>
+    <p>真正拉开差距的，从来不是跑得多快，而是知道什么时候不该跑。</p>
+  </section>
+
+  <!-- 正文 -->
+  <div class="body">
+    <p class="para">这篇文章想聊一个反直觉的事实：<strong>我们大部分的努力，其实都花在了错误的加速度上。</strong>效率越高，越接近一种集体的原地打转——不是因为不努力，而是因为努力的方向被同质化了。</p>
+
+    <section class="point">
+      <div class="point-head"><span class="point-no">01</span><span class="point-title">快，正在变成一种表演</span></div>
+      <p class="para">朋友圈里最多的不是结果，而是"我在努力"的姿态。<em>忙碌本身被包装成了美德</em>，可当我们把时间切成碎片塞满每个缝隙，真正能产生复利的长思考，反而无处安放。</p>
+      <p class="para">一个简单的问题值得被反复问：我做的这件事，三年后还重要吗？如果答案是否定的，那么它现在的"紧急"，多半是别人制造的。</p>
+    </section>
+
+    <section class="point">
+      <div class="point-head"><span class="point-no">02</span><span class="point-title">停下来，才会看见路线</span></div>
+      <p class="para">被赶着走的人只看得见脚下，慢下来的人看得见路标。很多看似"被落下"的时刻，其实是换轨的唯一窗口——只是当时没有人替你按暂停。</p>
+    </section>
+
+    <aside class="quote">
+      <p>我们不是因为走得慢而失败，而是因为从不停下，以至于走了很远的弯路，却以为那是唯一的路。</p>
+      <div class="src">—— 关于效率的第三个判断</div>
+    </aside>
+
+    <section class="point">
+      <div class="point-head"><span class="point-no">03</span><span class="point-title">选择比速度更需要勇气</span></div>
+      <p class="para">快，是执行的品质；慢，是选择的品质。<strong>真正的成年人，不是跑得最快的那个，而是敢于说"这里不该跑"的那个。</strong>前者决定你走多远，后者决定你往哪走。</p>
+    </section>
+  </div>
+
+  <!-- 金句 -->
+  <section class="punchline">
+    <p>慢，不是停下来不前进，<br>而是停下来，把方向摆正。</p>
+    <div class="tag">本周观点 · WEEKLY TAKE</div>
+  </section>
+
+  <!-- 落款 -->
+  <footer class="signoff">
+    <div class="rule"></div>
+    <div class="name">观点评论</div>
+    <div class="date">OPINION EDITORIAL · 2026.08.20</div>
+  </footer>
+</main>
+</body>
+</html>

@@ -57,11 +57,10 @@ describe("built-in themes", () => {
 
   it("深色代码块主题使用可读的深色语法高亮配色", () => {
     const darkCodeThemeIds = [
-      "modern-editorial",
       "data-blueprint",
       "eastern-notes",
-      "clear-guide",
-      "whitespace-gallery",
+      "knowledge-base",
+      "sunset-film",
     ];
 
     for (const themeId of darkCodeThemeIds) {

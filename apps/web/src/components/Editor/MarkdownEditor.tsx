@@ -18,13 +18,13 @@ import { Toolbar } from "./Toolbar";
 import { SearchPanel } from "./SearchPanel";
 import { SaveIndicator } from "./SaveIndicator";
 import { openAiSettings, isAiConfigured } from "../../services/ai/aiConfig";
-import { textToMarkdown } from "../../services/ai/aiService";
-import { AiDesignPanel } from "./AiDesignPanel";
+import { convertTextToMarkdown } from "../../services/ai/markdownPipeline";
+import { AiLayoutPanel } from "./AiLayoutPanel";
 import {
-  generateTemplate,
-  type TemplateGenerationResult,
-} from "../../services/template";
-import type { Audience, DesignConstraints } from "../../services/ai/types";
+  analyzeArticle,
+  type Insertion,
+} from "../../services/ai/analysisAgent";
+import { applyInsertions } from "../../services/ai/applyInsertions";
 import toast from "react-hot-toast";
 import "./MarkdownEditor.css";
 import { customKeymap } from "./editorShortcuts";
@@ -76,14 +76,15 @@ export function MarkdownEditor({
   const [showSearch, setShowSearch] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
   const [showAuthorSuggestions, setShowAuthorSuggestions] = useState(false);
-  // AI 设计统一状态
-  const [showAiDesign, setShowAiDesign] = useState(false);
-  // 模板排版模式状态
-  const [templateLoading, setTemplateLoading] = useState(false);
-  const [templateResult, setTemplateResult] =
-    useState<TemplateGenerationResult | null>(null);
-  const [isTemplatePreviewing, setIsTemplatePreviewing] = useState(false);
-  const templateOriginalRef = useRef<string | null>(null);
+  // AI 排版（插入式）状态
+  const [showAiLayout, setShowAiLayout] = useState(false);
+  const [aiLayoutLoading, setAiLayoutLoading] = useState(false);
+  const [aiInsertions, setAiInsertions] = useState<Insertion[]>([]);
+  const [aiArticleType, setAiArticleType] = useState<string | undefined>();
+  const [aiTypeReason, setAiTypeReason] = useState<string | undefined>();
+  const [aiLayoutPreviewing, setAiLayoutPreviewing] = useState(false);
+  // 预览撤销：记录插入预览前的原文
+  const aiLayoutOriginalRef = useRef<string | null>(null);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -320,6 +321,7 @@ export function MarkdownEditor({
     prefix: string,
     suffix: string,
     placeholder: string,
+    opts?: { selectFirstLine?: boolean },
   ) => {
     const view = viewRef.current;
     if (!view) return;
@@ -332,6 +334,14 @@ export function MarkdownEditor({
     const textToInsert = selectedText || placeholder;
     const fullText = prefix + textToInsert + suffix;
 
+    let anchor = selection.from + prefix.length;
+    let head = anchor + textToInsert.length;
+    // 组件插入：自动选中首个占位符（插入正文的第一行），用户可直接打字覆盖
+    if (opts?.selectFirstLine) {
+      const firstLineEnd = textToInsert.indexOf("\n");
+      head = firstLineEnd === -1 ? head : anchor + firstLineEnd;
+    }
+
     view.dispatch({
       changes: {
         from: selection.from,
@@ -339,8 +349,8 @@ export function MarkdownEditor({
         insert: fullText,
       },
       selection: {
-        anchor: selection.from + prefix.length,
-        head: selection.from + prefix.length + textToInsert.length,
+        anchor,
+        head,
       },
     });
 
@@ -375,7 +385,7 @@ export function MarkdownEditor({
       mode === "selection" ? "AI 正在转换选区..." : "AI 正在转换整篇...",
     );
     try {
-      const markdown = await textToMarkdown({ text: inputText, mode });
+      const markdown = await convertTextToMarkdown({ text: inputText, mode });
       if (isSelection) {
         view.dispatch({
           changes: { from: sel.from, to: sel.to, insert: markdown },
@@ -401,8 +411,9 @@ export function MarkdownEditor({
     }
   };
 
-  // AI 设计：打开统一面板
+  // AI 排版（插入式）：打开面板，由用户在面板内勾选组件后生成
   const handleOpenAiDesign = () => {
+    if (aiLayoutLoading) return;
     const view = viewRef.current;
     if (!view) return;
 
@@ -418,63 +429,16 @@ export function MarkdownEditor({
       return;
     }
 
-    setShowAiDesign(true);
+    setShowAiLayout(true);
   };
 
-  // 模板排版模式：生成模板
-  const handleGenerateTemplateInner = async (
-    audience?: Audience,
-    constraints?: DesignConstraints,
-  ) => {
+  // 运行 AI 版式分析：在用户勾选的组件范围内生成
+  const runAiLayoutAnalysis = async (selectedComponents?: string[]) => {
     const view = viewRef.current;
     if (!view) return;
-
-    if (!isAiConfigured()) {
-      toast.error("请先在 AI 设置中完成服务配置");
-      openAiSettings();
-      return;
-    }
-
-    const text = view.state.doc.toString().trim();
-    if (!text) {
-      toast.error("编辑器没有内容可分析");
-      return;
-    }
-
-    // 如果正在预览，先恢复原文
-    if (isTemplatePreviewing && templateOriginalRef.current !== null) {
-      view.dispatch({
-        changes: {
-          from: 0,
-          to: view.state.doc.length,
-          insert: templateOriginalRef.current,
-        },
-      });
-      setMarkdown(templateOriginalRef.current);
-      templateOriginalRef.current = null;
-      setIsTemplatePreviewing(false);
-    }
-
-    // 检测纯文本：排版内部自动准备 Markdown，但不污染编辑器原文。
-    // 转换结果仅用于排版生成，用户粘贴的原始文字保持不变，
-    // 预览/应用时才以排版结果切换编辑器内容。
-    let activeText = text;
-    const hasMarkdownSyntax =
-      /^#{1,6}\s|^\s*[-*+]\s|^\s*\d+\.\s|`|\[.+\]\(.+\)|!\[|:::|\*\*|__/m.test(
-        text,
-      );
-    if (!hasMarkdownSyntax) {
-      const toastId = toast.loading("检测到纯文本，正在为排版准备内容...");
-      try {
-        activeText = await textToMarkdown({ text, mode: "full" });
-        toast.success("内容已就绪", { id: toastId });
-      } catch (e) {
-        toast.error("内容准备失败，以原文排版", { id: toastId });
-      }
-    }
-
-    setTemplateLoading(true);
-    setTemplateResult(null);
+    // 基于真原文分析（预览中时编辑器内容被替换，需回退）
+    const source = aiLayoutOriginalRef.current ?? view.state.doc.toString();
+    setAiLayoutLoading(true);
     try {
       // 获取当前主题的 layout 偏好，传递给 AI
       const themeId = useThemeStore.getState().themeId;
@@ -483,106 +447,67 @@ export function MarkdownEditor({
       const customTheme = customThemes.find((t) => t.id === themeId);
       // 优先使用导入主题自身的 layout，其次回退到内置主题
       const themeLayout = customTheme?.definition?.layout || builtInDef?.layout;
-      // AI 主题的品牌语言（brand.md）
-      const brandText = customTheme?.brandText;
-      const result = await generateTemplate(
-        activeText,
+      const result = await analyzeArticle(
+        source,
+        undefined,
         undefined,
         themeLayout,
-        audience,
-        constraints,
-        brandText,
+        selectedComponents,
       );
-      setTemplateResult(result);
+      setAiInsertions(result.insertions);
+      setAiArticleType(result.articleType);
+      setAiTypeReason(result.typeReason);
     } catch (e) {
-      toast.error((e as Error).message || "AI 生成失败");
+      toast.error((e as Error).message || "AI 分析失败");
+      setAiInsertions([]);
     } finally {
-      setTemplateLoading(false);
+      setAiLayoutLoading(false);
     }
   };
 
-  // 重置模板结果（重新生成时恢复原文）
-  const handleResetTemplate = () => {
-    setTemplateResult(null);
-    if (templateOriginalRef.current !== null) {
-      const view = viewRef.current;
-      if (view) {
-        view.dispatch({
-          changes: {
-            from: 0,
-            to: view.state.doc.length,
-            insert: templateOriginalRef.current,
-          },
-        });
-        setMarkdown(templateOriginalRef.current);
-      }
-      templateOriginalRef.current = null;
-      setIsTemplatePreviewing(false);
-    }
-  };
-
-  // Template 模式：预览全文
-  const handleTemplatePreview = (result: TemplateGenerationResult) => {
+  // 整体预览：应用全部建议到编辑器（基于真原文，可撤销）
+  const handlePreviewAllLayout = () => {
     const view = viewRef.current;
-    if (!view) return;
-
-    // 保存原文
-    const original = view.state.doc.toString();
-    templateOriginalRef.current = original;
-
-    // 替换为渲染后的 Markdown
+    if (!view || aiInsertions.length === 0) return;
+    if (aiLayoutOriginalRef.current === null) {
+      aiLayoutOriginalRef.current = view.state.doc.toString();
+    }
+    const base = aiLayoutOriginalRef.current;
+    const next = applyInsertions(base, aiInsertions);
     view.dispatch({
-      changes: {
-        from: 0,
-        to: view.state.doc.length,
-        insert: result.rendered.markdown,
-      },
+      changes: { from: 0, to: view.state.doc.length, insert: next },
     });
-    setMarkdown(result.rendered.markdown);
-    setIsTemplatePreviewing(true);
-
-    // 滚动到顶部
-    setTimeout(() => {
-      const container = document.querySelector(".preview-container");
-      if (container) {
-        (container as HTMLElement).scrollTo({ top: 0, behavior: "smooth" });
-      }
-    }, 120);
+    setMarkdown(next);
+    setAiLayoutPreviewing(true);
   };
 
-  // Template 模式：撤销预览
-  const handleTemplateUndoPreview = () => {
+  // 撤销预览：恢复原文
+  const handleUndoLayoutPreview = () => {
     const view = viewRef.current;
-    if (!view || templateOriginalRef.current === null) return;
-
-    const original = templateOriginalRef.current;
+    if (!view || aiLayoutOriginalRef.current === null) return;
+    const original = aiLayoutOriginalRef.current;
     view.dispatch({
       changes: { from: 0, to: view.state.doc.length, insert: original },
     });
     setMarkdown(original);
-    templateOriginalRef.current = null;
-    setIsTemplatePreviewing(false);
+    aiLayoutOriginalRef.current = null;
+    setAiLayoutPreviewing(false);
   };
 
-  // Template 模式：应用到文章
-  const handleTemplateApply = (result: TemplateGenerationResult) => {
+  // 一键应用全部建议
+  const handleApplyAllLayout = () => {
     const view = viewRef.current;
-    if (!view) return;
-
-    // 保存原文，以便重新生成时恢复
-    templateOriginalRef.current = view.state.doc.toString();
-
+    if (!view || aiInsertions.length === 0) return;
+    const base = aiLayoutOriginalRef.current ?? view.state.doc.toString();
+    const next = applyInsertions(base, aiInsertions);
     view.dispatch({
-      changes: {
-        from: 0,
-        to: view.state.doc.length,
-        insert: result.rendered.markdown,
-      },
+      changes: { from: 0, to: view.state.doc.length, insert: next },
     });
-    setMarkdown(result.rendered.markdown);
-    toast.success("已应用杂志级排版");
-    setShowAiDesign(false);
-    setIsTemplatePreviewing(false);
+    setMarkdown(next);
+    aiLayoutOriginalRef.current = null;
+    setAiLayoutPreviewing(false);
+    setShowAiLayout(false);
+    toast.success(`已应用 ${aiInsertions.length} 个组件`);
     view.focus();
   };
 
@@ -630,7 +555,7 @@ export function MarkdownEditor({
         onOpenAi={handleOpenAi}
         aiLoading={aiLoading}
         onOpenAiDesign={handleOpenAiDesign}
-        aiDesignLoading={templateLoading}
+        aiDesignLoading={aiLayoutLoading}
       />
       <div className="editor-meta-bar">
         <div className="editor-meta-field editor-meta-field-title">
@@ -754,18 +679,18 @@ export function MarkdownEditor({
         </div>
         <SaveIndicator />
       </div>
-      <AiDesignPanel
-        open={showAiDesign}
-        onClose={() => setShowAiDesign(false)}
-        // 模板排版模式
-        templateLoading={templateLoading}
-        templateResult={templateResult}
-        onGenerateTemplate={handleGenerateTemplateInner}
-        onApplyTemplate={handleTemplateApply}
-        onPreviewTemplate={handleTemplatePreview}
-        onUndoTemplatePreview={handleTemplateUndoPreview}
-        isTemplatePreviewing={isTemplatePreviewing}
-        onResetTemplate={handleResetTemplate}
+      <AiLayoutPanel
+        open={showAiLayout}
+        loading={aiLayoutLoading}
+        insertions={aiInsertions}
+        onClose={() => setShowAiLayout(false)}
+        onGenerate={runAiLayoutAnalysis}
+        onPreviewAll={handlePreviewAllLayout}
+        onUndoPreview={handleUndoLayoutPreview}
+        onApplyAll={handleApplyAllLayout}
+        isPreviewing={aiLayoutPreviewing}
+        articleType={aiArticleType}
+        typeReason={aiTypeReason}
       />
     </div>
   );

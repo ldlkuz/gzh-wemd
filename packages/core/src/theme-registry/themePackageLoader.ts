@@ -16,10 +16,11 @@ import { validateThemePackageManifest, scanSvgSafety } from "./ThemeValidator";
 import type { ThemePackageManifest } from "../theme-schema/types";
 import type { ValidationError } from "../theme-schema/types";
 import {
-  PSEUDO_ELEMENT_REGEX,
   STRUCTURAL_PSEUDO_REGEX,
   EXTERNAL_LINK_REGEX,
   FORBIDDEN_TAG_REGEX,
+  findForbiddenPseudoElement,
+  stripCssComments,
 } from "../wechatCompat/whitelist";
 
 // ============================================================
@@ -62,23 +63,26 @@ export type LoaderResult = LoaderSuccess | LoaderFailure;
 function scanCssSafety(css: string, filePath: string): ValidationError[] {
   const errors: ValidationError[] = [];
 
-  if (PSEUDO_ELEMENT_REGEX.test(css)) {
-    const match = css.match(PSEUDO_ELEMENT_REGEX);
+  // 伪元素：注释感知 + 中和感知（纯 content: none 中和规则放行，与内置主题一致）
+  const forbiddenPseudo = findForbiddenPseudoElement(css);
+  if (forbiddenPseudo) {
     errors.push({
       path: filePath,
-      message: `styles/components.css 包含禁用的伪元素 ${match?.[0] ?? "::"}。微信公众号不支持伪元素，复制到公众号后样式会静默丢失`,
+      message: `styles/components.css 包含禁用的伪元素 ${forbiddenPseudo}。微信公众号不支持伪元素，复制到公众号后样式会静默丢失`,
     });
   }
 
-  if (STRUCTURAL_PSEUDO_REGEX.test(css)) {
-    const match = css.match(STRUCTURAL_PSEUDO_REGEX);
+  // 其余检查先剥离注释，避免注释中的关键词误报
+  const noComments = stripCssComments(css);
+  if (STRUCTURAL_PSEUDO_REGEX.test(noComments)) {
+    const match = noComments.match(STRUCTURAL_PSEUDO_REGEX);
     errors.push({
       path: filePath,
       message: `styles/components.css 包含禁用的结构伪类 ${match?.[0] ?? ":nth-child"}。微信公众号不支持，请用 class 选择器替代`,
     });
   }
 
-  if (EXTERNAL_LINK_REGEX.test(css)) {
+  if (EXTERNAL_LINK_REGEX.test(noComments)) {
     errors.push({
       path: filePath,
       message: "styles/components.css 包含外链 url(http...)，禁止引用外部资源",

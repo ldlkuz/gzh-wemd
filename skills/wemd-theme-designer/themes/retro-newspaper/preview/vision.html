@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REVIVE DAILY · 复古日报 · 主题视觉稿</title>
+<style>
+  :root{
+    --ink:#2b2118;          /* 油墨黑 */
+    --ink-soft:#6b5f4d;     /* 淡墨 */
+    --paper:#f5efe0;        /* 新闻纸米 */
+    --paper-soft:#ece2cf;   /* 纸影 */
+    --accent:#9e1f12;       /* 报头红 */
+    --line:#c9b98f;         /* 铅线棕 */
+    --serif:Georgia,"Times New Roman","Songti SC","STSong","SimSun",serif;
+    --sans:"Helvetica Neue",Arial,"PingFang SC","Microsoft YaHei",sans-serif;
+    --mono:"Courier New",Consolas,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:var(--serif);background:var(--paper);color:var(--ink);
+       -webkit-font-smoothing:antialiased;line-height:1.9}
+  .sheet{max-width:420px;margin:0 auto;padding:18px 16px 40px;background:var(--paper)}
+
+  /* ============ 报头 Masthead ============ */
+  .masthead{text-align:center;padding:6px 0 14px}
+  .mast-kicker{
+    font-family:var(--mono);font-size:10px;letter-spacing:.34em;
+    color:var(--ink-soft);text-transform:uppercase;margin-bottom:8px;
+  }
+  .mast-title{
+    font-family:var(--serif);font-size:44px;font-weight:900;
+    letter-spacing:.04em;line-height:1;color:var(--ink);
+  }
+  .mast-title i{font-style:normal;color:var(--accent)}
+  .mast-rule{display:block;border-top:3px double var(--ink);margin:12px 0 0}
+  .mast-meta{
+    display:flex;justify-content:space-between;padding:8px 2px 0;
+    font-family:var(--mono);font-size:9px;letter-spacing:.18em;
+    color:var(--ink-soft);text-transform:uppercase;
+  }
+  .mast-meta b{color:var(--accent);font-weight:700}
+
+  /* ============ 头版标题 ============ */
+  .headline{padding:18px 0 4px}
+  .headline .lede{
+    font-family:var(--sans);font-size:10px;font-weight:700;
+    letter-spacing:.3em;color:var(--accent);text-transform:uppercase;
+    display:flex;align-items:center;gap:8px;margin-bottom:10px;
+  }
+  .headline .lede::before,.headline .lede::after{content:"";flex:1;border-top:1px solid var(--line)}
+  .headline h1{
+    font-size:34px;font-weight:900;line-height:1.18;letter-spacing:-.01em;
+    text-align:center;margin-bottom:8px;
+  }
+  .headline .sub{text-align:center;font-size:13px;color:var(--ink-soft);font-style:italic}
+
+  /* ============ 正文段落 ============ */
+  .prose{margin:16px 0}
+  .prose p{
+    font-size:15px;color:var(--ink);text-align:justify;
+    text-indent:2em;margin:0 0 12px;
+  }
+  .prose p.lead{text-indent:0;font-size:16px}
+  .prose p.lead::first-letter{font-size:34px;font-weight:900;float:left;line-height:1;
+    margin:4px 6px 0 0;color:var(--accent)}
+
+  /* ============ 栏目分隔（真实元素） ============ */
+  .col-band{
+    display:flex;align-items:center;gap:10px;margin:20px 0 12px;
+  }
+  .col-band i{flex:1;border-top:1px solid var(--line)}
+  .col-band b{
+    font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.28em;
+    color:var(--accent);text-transform:uppercase;white-space:nowrap;
+  }
+
+  /* ============ 引用块 ============ */
+  .quote{
+    margin:20px 0;padding:14px 16px;background:var(--paper-soft);
+    border-left:4px solid var(--accent);position:relative;
+  }
+  .quote .mark{font-family:var(--serif);font-size:34px;color:var(--accent);line-height:1}
+  .quote p{font-size:16px;font-weight:600;font-style:italic;color:var(--ink);margin:6px 0 8px}
+  .quote cite{
+    display:block;font-family:var(--mono);font-style:normal;font-size:9px;
+    letter-spacing:.22em;color:var(--ink-soft);text-transform:uppercase;
+  }
+
+  /* ============ 数据栏（复古表格） ============ */
+  .tally{
+    margin:16px 0;border:1px solid var(--ink);border-collapse:collapse;width:100%;
+  }
+  .tally th{
+    background:var(--ink);color:var(--paper);font-family:var(--sans);
+    font-size:11px;letter-spacing:.16em;padding:8px 10px;text-align:left;font-weight:700;
+  }
+  .tally td{
+    font-size:13px;padding:8px 10px;border-bottom:1px solid var(--line);color:var(--ink);
+  }
+  .tally tr:last-child td{border-bottom:none}
+  .tally td b{color:var(--accent);font-weight:700}
+
+  /* ============ 图片配图 ============ */
+  .plate{margin:18px 0}
+  .plate .frame{border:1px solid var(--line);background:var(--paper-soft);padding:6px}
+  .plate .frame img{display:block;width:100%;height:220px;object-fit:cover;filter:sepia(.35) contrast(.95)}
+  .plate .cap{
+    display:flex;justify-content:space-between;align-items:baseline;
+    margin-top:8px;font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--ink-soft);
+  }
+  .plate .cap i{font-style:normal;color:var(--accent)}
+
+  /* ============ 菱形分隔（真实元素） ============ */
+  .diamond-rule{
+    display:flex;align-items:center;justify-content:center;gap:10px;margin:18px 0;
+    color:var(--accent);
+  }
+  .diamond-rule i{width:40px;border-top:1px solid var(--line)}
+  .diamond-rule span{font-size:11px;color:var(--accent)}
+
+  /* ============ 收尾 ============ */
+  .colophon{margin:22px 0 0;padding-top:12px;border-top:2px solid var(--ink);text-align:center}
+  .colophon .brand{font-size:18px;font-weight:900;letter-spacing:.08em}
+  .colophon .brand i{font-style:normal;color:var(--accent)}
+  .colophon .meta{
+    margin-top:6px;font-family:var(--mono);font-size:9px;letter-spacing:.2em;
+    color:var(--ink-soft);text-transform:uppercase;
+  }
+  .colophon .copyright{
+    margin-top:14px;font-family:var(--mono);font-size:8px;letter-spacing:.16em;
+    color:var(--ink-soft);border-top:1px solid var(--line);padding-top:8px;
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <!-- 报头 -->
+  <div class="masthead">
+    <div class="mast-kicker">Est. 1926 · Daily Edition</div>
+    <div class="mast-title">复古<i>日报</i></div>
+    <span class="mast-rule"></span>
+    <div class="mast-meta">
+      <span>Vol. 01</span>
+      <span>No. 0833</span>
+      <span>2026.08.19</span>
+      <span><b>星期三</b></span>
+    </div>
+  </div>
+
+  <!-- 头版标题 -->
+  <div class="headline">
+    <div class="lede">头版 · Front Page</div>
+    <h1>「铅字停驻的时光」<br>旧报纸里的城市记忆</h1>
+    <div class="sub">—— 油墨将往事定格，一纸一墨皆成档案</div>
+  </div>
+
+  <!-- 正文 -->
+  <div class="prose">
+    <p class="lead">清晨六点，报摊的铁架哐当作响。摊主把一叠还带着油墨温度的报纸码齐，晨风翻过微微发黄的纸页，铅字的气味在巷口慢慢散开。</p>
+    <p>我们早已习惯在屏幕上划走一条条消息，却很少再为一则"昨日新闻"驻足。而报纸不同——它印下的每一个字，都像被油墨按进纸里，带着不可更改的分量。那些关于老城拆迁的报道、街头手艺人的人物特写、午夜电台的栏目预告，如今都成了档案架上泛黄的册页。</p>
+    <p>这份主题想做的，正是把「报纸」这件旧物请回来：用铅字般的墨黑、新闻纸的米黄、报头的朱红，让排版回到印刷术的诚实与郑重。</p>
+  </div>
+
+  <div class="col-band"><i></i><b>专栏 · Column</b><i></i></div>
+
+  <!-- 引用 -->
+  <div class="quote">
+    <div class="mark">“</div>
+    <p>好的报纸不是把消息堆在一起，而是把值得记住的，郑重地按进纸里。</p>
+    <cite>—— 主编手记 · 印刷厂的灯</cite>
+  </div>
+
+  <!-- 数据栏 -->
+  <table class="tally">
+    <tr><th>栏目</th><th>版面</th><th>发行</th></tr>
+    <tr><td>城市记忆</td><td>头版 · A1</td><td><b>38,000</b></td></tr>
+    <tr><td>手艺人列传</td><td>文化 · B3</td><td><b>21,000</b></td></tr>
+    <tr><td>午夜电台</td><td>副刊 · C2</td><td><b>17,500</b></td></tr>
+  </table>
+
+  <!-- 图片配图 -->
+  <div class="plate">
+    <div class="frame">
+      <img src="https://picsum.photos/seed/retro-press/800/440" alt="老式铅字印刷机">
+    </div>
+    <div class="cap"><span>印 刷 车 间 · 铅 字 排 版</span><i>摄于老报馆</i></div>
+  </div>
+
+  <div class="diamond-rule"><i></i><span>◆</span><i></i></div>
+
+  <!-- 收尾 -->
+  <div class="colophon">
+    <div class="brand">复古<i>日报</i></div>
+    <div class="meta">本主题由 WeMD 生成 · 让排版回到印刷术的郑重</div>
+    <div class="copyright">© 2026 REVIVE DAILY · 保留所有权利 · 刊号 CN-1926-0833</div>
+  </div>
+
+</div>
+</body>
+</html>

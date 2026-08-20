@@ -48,6 +48,18 @@
   color: #64748b;
 }
 
+.ai-layout-empty-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.ai-layout-empty-actions .ai-layout-refresh-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .ai-layout-empty svg {
   color: #c4b5fd;
   margin-bottom: 12px;
@@ -57,6 +69,24 @@
   font-size: 13px;
   color: #94a3b8;
   margin-top: 4px;
+}
+
+.ai-layout-empty-reason {
+  margin-top: 8px;
+  padding: 6px 12px;
+  background: #faf5ff;
+  border: 1px solid #ede9fe;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #6b21a8;
+  max-width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ai-layout-empty-reason strong {
+  color: #7c3aed;
+  font-weight: 600;
 }
 
 .ai-layout-refresh-btn {
@@ -131,18 +161,6 @@
   box-shadow: 0 2px 8px rgba(139, 92, 246, 0.08);
 }
 
-.ai-layout-item-accepted {
-  background: #f0fdf4;
-  border-color: #bbf7d0;
-  opacity: 0.7;
-}
-
-.ai-layout-item-skipped {
-  background: #f8fafc;
-  border-color: #e2e8f0;
-  opacity: 0.5;
-}
-
 .ai-layout-item-header {
   display: flex;
   align-items: center;
@@ -173,78 +191,75 @@
   line-height: 1.5;
 }
 
-/* 预览中提示 */
-.ai-layout-item-preview-tip {
+/* 选择组件视图 */
+.ai-layout-select {
+  padding: 16px 20px;
+}
+
+.ai-layout-select-hint {
+  margin: 0 0 12px 0;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.ai-layout-select-group {
+  margin-bottom: 14px;
+}
+
+.ai-layout-select-group:last-child {
+  margin-bottom: 0;
+}
+
+.ai-layout-select-group-head {
   display: flex;
-  align-items: center;
-  gap: 4px;
-  margin: 0 0 8px 0;
-  padding: 6px 10px;
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  border-radius: 4px;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.ai-layout-select-group-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #7c3aed;
+}
+
+.ai-layout-select-group-hint {
   font-size: 12px;
-  color: #15803d;
+  color: #94a3b8;
 }
 
-/* 正在预览的条目高亮 */
-.ai-layout-item-previewing {
-  border-color: #07c160 !important;
-  box-shadow: 0 0 0 2px rgba(7, 193, 96, 0.15);
-}
-
-/* 操作按钮 */
-.ai-layout-item-actions {
+.ai-layout-select-grid {
   display: flex;
-  gap: 6px;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-height: 40vh;
+  overflow-y: auto;
+  padding: 2px;
 }
 
-.ai-layout-action-btn {
+.ai-layout-select-chip {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 4px 10px;
+  padding: 6px 12px;
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 4px;
-  font-size: 12px;
+  border-radius: 16px;
+  font-size: 13px;
   color: #475569;
   cursor: pointer;
   transition: all 0.15s;
 }
 
-.ai-layout-action-btn:hover:not(:disabled) {
+.ai-layout-select-chip:hover {
   border-color: #c4b5fd;
+}
+
+.ai-layout-select-chip.is-checked {
+  background: #faf5ff;
+  border-color: #a78bfa;
   color: #7c3aed;
-}
-
-.ai-layout-action-btn:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-.ai-layout-action-accept:hover:not(:disabled),
-.ai-layout-action-accept.is-active {
-  border-color: #86efac;
-  color: #16a34a;
-  background: #f0fdf4;
-}
-
-.ai-layout-action-accept.is-active {
-  font-weight: 600;
-  box-shadow: inset 0 0 0 1px #86efac;
-}
-
-.ai-layout-action-skip:hover:not(:disabled),
-.ai-layout-action-skip.is-active {
-  border-color: #fda4af;
-  color: #e11d48;
-  background: #fff1f2;
-}
-
-.ai-layout-action-skip.is-active {
-  font-weight: 600;
-  box-shadow: inset 0 0 0 1px #fda4af;
+  font-weight: 500;
 }
 
 /* 底部 */
@@ -275,17 +290,6 @@
   cursor: pointer;
   transition: all 0.15s;
   border: 1px solid transparent;
-}
-
-.ai-layout-footer-skip {
-  background: #ffffff;
-  border-color: #e2e8f0;
-  color: #64748b;
-}
-
-.ai-layout-footer-skip:hover {
-  border-color: #cbd5e1;
-  color: #475569;
 }
 
 .ai-layout-footer-apply {
@@ -326,130 +330,6 @@
   }
 }
 
-/* ===== Template 模式面板 ===== */
-
-.template-layout-panel .modal-panel {
-  max-width: 520px;
-}
-
-.template-stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 8px;
-}
-
-.template-stat-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: #6b21a8;
-}
-
-.template-stat-item strong {
-  color: #7c3aed;
-  font-size: 13px;
-}
-
-.template-stat-sub {
-  color: #a78bfa;
-  margin-left: 2px;
-}
-
-/* 警告 */
-.template-warnings {
-  padding: 8px 16px;
-  background: #fffbeb;
-  border-bottom: 1px solid #fde68a;
-}
-
-.template-warning-item {
-  font-size: 12px;
-  color: #92400e;
-  padding: 2px 0;
-}
-
-/* 组件清单 */
-.template-components-section {
-  padding: 12px 16px;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.template-components-toggle {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  width: 100%;
-  padding: 0;
-  background: none;
-  border: none;
-  font-size: 13px;
-  color: #475569;
-  cursor: pointer;
-  font-weight: 500;
-}
-
-.template-components-count {
-  margin-left: auto;
-  padding: 1px 8px;
-  background: #ede9fe;
-  color: #7c3aed;
-  border-radius: 10px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.template-components-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 10px;
-}
-
-.template-component-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  font-size: 12px;
-  color: #475569;
-}
-
-.template-component-name {
-  font-weight: 500;
-}
-
-.template-component-count {
-  color: #94a3b8;
-  font-size: 11px;
-}
-
-.template-components-empty {
-  width: 100%;
-  text-align: center;
-  padding: 12px;
-  color: #94a3b8;
-  font-size: 12px;
-}
-
-/* 预览提示 */
-.template-preview-hint {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 10px 16px;
-  font-size: 12px;
-  color: #07c160;
-  background: #f0fdf4;
-  border-bottom: 1px solid #bbf7d0;
-  flex: 1;
-}
-
 /* 底部按钮 */
 .ai-layout-footer-regenerate {
   background: #ffffff;
@@ -472,6 +352,20 @@
 
 .ai-layout-footer-regenerate .spinning {
   animation: ai-layout-spin 1s linear infinite;
+}
+
+.ai-layout-footer-back {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  color: #64748b;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ai-layout-footer-back:hover:not(:disabled) {
+  border-color: #cbd5e1;
+  color: #475569;
 }
 
 .ai-layout-footer-preview {

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>节气历 · 主题视觉稿</title>
+<style>
+  /* ===== 设计基调：节气历 Nong-Li Almanac =====
+     一本按节气翻页的时令历：
+     - 宣纸米 #f7f1e3 + 朱砂红 #c23a2b + 黛青 #2f4858 + 鎏金 #c9a227
+     - 节气签、日历格、倒计时块、节气印章、对仗排版
+     - 全部真实 DOM，无伪元素、无整篇背景、无按钮式互动
+     注：本页为预览理想态；导出时 #wemd 不设整篇背景（交给编辑器）。 */
+  :root {
+    --paper: #f7f1e3;
+    --ink: #3a2e24;
+    --ink-soft: #8a7a60;
+    --red: #c23a2b;
+    --indigo: #2f4858;
+    --gold: #c9a227;
+    --line: #e2d5b8;
+    --mono: "SF Mono", "Cascadia Code", "Roboto Mono", Consolas, monospace;
+    --sans: "PingFang SC", "Microsoft YaHei", sans-serif;
+    --serif: "Source Han Serif SC", "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background:
+      radial-gradient(900px 520px at 50% -6%, #faf5e9 0%, #f1e7d2 60%, #e7d9bc 100%);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    padding: 46px 16px 90px;
+  }
+
+  .note {
+    max-width: 620px;
+    margin: 0 auto 30px;
+    padding: 18px 22px;
+    background: rgba(255,255,255,0.6);
+    border: 1px solid #e6dcc4;
+    border-left: 4px solid var(--red);
+    font-size: 13px;
+    line-height: 1.9;
+    color: var(--ink-soft);
+  }
+  .note b { color: var(--ink); }
+  .note .k { color: var(--red); font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; }
+
+  /* ===== 节气历正文容器 ===== */
+  #wemd {
+    max-width: 620px;
+    margin: 0 auto;
+    background: var(--paper);
+    padding: 0 34px 44px;
+    border-left: 1px solid #eadfc6;
+    border-right: 1px solid #eadfc6;
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.9;
+  }
+
+  #wemd p {
+    margin: 0 0 14px;
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.9;
+    text-align: justify;
+  }
+  #wemd p b { color: var(--red); font-weight: 700; }
+  #wemd p strong { color: var(--indigo); font-weight: 700; }
+  #wemd em { font-style: normal; color: var(--gold); font-weight: 700; }
+
+  /* ---------- 刊眉 ---------- */
+  .masthead {
+    margin: 0 -34px;
+    padding: 18px 34px 14px;
+    border-bottom: 2px solid var(--red);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .masthead .brand { font-family: var(--serif); font-size: 16px; font-weight: 800; letter-spacing: 0.14em; color: var(--red); }
+  .masthead .brand .en { font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; color: var(--ink-soft); }
+  .masthead .no { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; color: var(--ink-soft); }
+
+  /* ---------- 节气封面（大节气名 + 农历 + 日历格 + 倒计时） ---------- */
+  .cover { margin: 26px 0 28px; }
+  .cover .frame {
+    position: relative;
+    padding: 26px 24px 24px;
+    border: 2px solid var(--ink);
+    outline: 1px solid var(--gold);
+    outline-offset: 4px;
+    background:
+      linear-gradient(rgba(201,162,39,0.10) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,162,39,0.10) 1px, transparent 1px);
+    background-size: 26px 26px;
+    text-align: center;
+  }
+  .cover .frame .lunar {
+    font-family: var(--serif);
+    font-size: 13px;
+    letter-spacing: 0.3em;
+    color: var(--ink-soft);
+  }
+  .cover .frame .term {
+    margin-top: 10px;
+    font-family: var(--serif);
+    font-size: 56px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    color: var(--red);
+  }
+  .cover .frame .meeting {
+    margin-top: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.26em;
+    color: var(--indigo);
+  }
+  .cover .countdown {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    gap: 10px;
+    margin-top: 18px;
+    padding: 10px 0;
+    border-top: 1px dashed var(--red);
+    border-bottom: 1px dashed var(--red);
+    font-family: var(--serif);
+  }
+  .cover .countdown .lbl { font-size: 13px; letter-spacing: 0.2em; color: var(--ink); }
+  .cover .countdown .num { font-size: 30px; font-weight: 900; color: var(--red); }
+  .cover .countdown .unit { font-size: 13px; color: var(--ink-soft); }
+  .cover .stamp {
+    position: absolute;
+    right: 14px;
+    top: 14px;
+    width: 52px;
+    height: 52px;
+    border: 2px solid var(--red);
+    color: var(--red);
+    font-family: var(--serif);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.3;
+    padding-top: 10px;
+    transform: rotate(6deg);
+    text-align: center;
+    letter-spacing: 0.12em;
+    opacity: 0.9;
+  }
+  .cover .meta {
+    margin-top: 8px;
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--ink-soft);
+  }
+
+  /* ---------- 节气章节头 ---------- */
+  .sec { margin: 30px 0 16px; display: flex; align-items: baseline; gap: 12px; }
+  .sec .no { font-family: var(--mono); font-size: 13px; font-weight: 700; letter-spacing: 0.2em; color: var(--gold); }
+  .sec .t { font-family: var(--serif); font-size: 24px; font-weight: 800; letter-spacing: 0.06em; color: var(--ink); }
+  .sec .line { flex: 1; border-top: 1px solid var(--line); }
+
+  /* ---------- 谚语金句卡 ---------- */
+  .proverb {
+    margin: 26px 0;
+    padding: 18px 22px;
+    background: #fffaf0;
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--gold);
+    text-align: center;
+  }
+  .proverb .text { font-family: var(--serif); font-size: 18px; font-weight: 700; line-height: 1.9; color: var(--ink); }
+  .proverb .text em { color: var(--red); font-style: normal; }
+  .proverb .src { display: block; margin-top: 10px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; color: var(--indigo); }
+
+  /* ---------- 时令数据 ---------- */
+  .data { margin: 24px 0; display: flex; flex-wrap: wrap; gap: 12px; }
+  .data .d {
+    flex: 1 1 150px;
+    padding: 14px 12px;
+    background: #fffaf0;
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--red);
+    text-align: center;
+  }
+  .data .d .n { font-family: var(--serif); font-size: 26px; font-weight: 800; color: var(--red); }
+  .data .d .l { display: block; margin-top: 4px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; color: var(--ink-soft); }
+
+  /* ---------- 节气对照表 ---------- */
+  table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
+  thead th {
+    padding: 9px 0;
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-align: left;
+    color: var(--ink);
+  }
+  tbody td { padding: 8px 0; border-bottom: 1px dotted var(--line); color: var(--ink); }
+  tbody td .t { font-family: var(--serif); color: var(--red); font-weight: 700; }
+  tbody td .m { font-family: var(--mono); color: var(--indigo); font-size: 12px; }
+
+  /* ---------- 全年节气历（时间线） ---------- */
+  .almanac { margin: 24px 0; }
+  .almanac .ev {
+    display: flex;
+    gap: 14px;
+    align-items: baseline;
+    padding: 8px 0;
+    border-bottom: 1px dotted var(--line);
+    font-size: 14px;
+  }
+  .almanac .ev .date { font-family: var(--mono); font-size: 12px; color: var(--indigo); white-space: nowrap; font-weight: 700; }
+  .almanac .ev .txt { font-family: var(--serif); color: var(--ink); }
+  .almanac .ev .txt b { color: var(--red); }
+
+  /* ---------- 顺时养生（步骤） ---------- */
+  .steps { margin: 24px 0; border-top: 1px solid var(--line); }
+  .steps .st {
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+    padding: 9px 0;
+    border-bottom: 1px dotted var(--line);
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .steps .st .n { font-family: var(--serif); font-weight: 800; color: var(--red); min-width: 22px; }
+
+  /* ---------- 倒计时块（特色） ---------- */
+  .count {
+    margin: 26px 0;
+    padding: 20px 24px;
+    background: linear-gradient(135deg, #2f4858 0%, #22323e 100%);
+    border: 1px solid #3a5566;
+    text-align: center;
+    color: #f7f1e3;
+  }
+  .count .lbl { font-family: var(--mono); font-size: 11px; letter-spacing: 0.3em; color: #c9a227; }
+  .count .big { margin-top: 10px; font-family: var(--serif); font-size: 44px; font-weight: 900; letter-spacing: 0.1em; color: #f7f1e3; }
+  .count .big em { color: #c9a227; font-style: normal; }
+  .count .meta { margin-top: 10px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; color: #9db3c4; }
+
+  /* ---------- 收束 ---------- */
+  .end {
+    margin: 30px 0;
+    padding: 26px 20px;
+    background: #fffaf0;
+    border: 2px solid var(--ink);
+    outline: 1px solid var(--gold);
+    outline-offset: 4px;
+    text-align: center;
+  }
+  .end .lbl { font-family: var(--mono); font-size: 11px; letter-spacing: 0.3em; color: var(--indigo); }
+  .end .t { margin-top: 12px; font-family: var(--serif); font-size: 24px; font-weight: 800; letter-spacing: 0.1em; color: var(--ink); }
+  .end .t em { color: var(--red); font-style: normal; }
+  .end .meta { margin-top: 12px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; color: var(--ink-soft); }
+
+  /* ---------- 关注（去按钮） ---------- */
+  .sub {
+    margin: 24px 0 0;
+    padding: 12px 14px;
+    border: 1px dashed var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+  }
+  .sub .t { color: var(--ink); }
+  .sub .act { font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em; color: var(--red); font-weight: 700; border-bottom: 1px dotted var(--red); }
+
+  .copy { margin: 16px 0 0; text-align: center; font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; color: var(--ink-soft); }
+</style>
+</head>
+<body>
+
+  <div class="note">
+    <span class="k">NONG-LI ALMANAC · 节气历 · 视觉稿</span><br>
+    <b>本版为整篇结构预览、不套骨架：</b>节气封面（大节气名 + 农历 + 日历格 + 倒计时 + 印章）、谚语卡、
+    时令数据、节气对照表、全年节气历、顺时养生、深色倒计时块、收束。全部真实 DOM，无伪元素、无按钮式互动。
+  </div>
+
+  <div id="wemd">
+
+    <!-- 刊眉 -->
+    <section class="masthead">
+      <span class="brand">节气历 <span class="en">NONG-LI ALMANAC</span></span>
+      <span class="no">甲辰年 · 卷柒</span>
+    </section>
+
+    <!-- 节气封面 -->
+    <section class="cover">
+      <div class="frame">
+        <span class="stamp">廿<br>四<br>节<br>气</span>
+        <div class="lunar">甲辰年 · 七月廿三 · 处暑前</div>
+        <div class="term">立秋</div>
+        <div class="meeting">BEGINNING OF AUTUMN · 2026.08.07</div>
+        <div class="countdown">
+          <span class="lbl">距处暑</span>
+          <span class="num">15</span>
+          <span class="unit">天</span>
+        </div>
+      </div>
+      <div class="meta">
+        <span>斗指西南 · 太阳黄经 135°</span>
+        <span>农历七月</span>
+        <span>宜 · 贴秋膘</span>
+      </div>
+    </section>
+
+    <p>立秋是秋天的第一张牌。从这一天起，凉风至、白露生、寒蝉鸣。<b>节气历</b>把时令装进日历：每一个节气都有一句谚语、一组物候、一道该吃的菜——<em>顺时而食，顺时而养</em>。</p>
+
+    <!-- 节气章节头 -->
+    <section class="sec">
+      <span class="no">节气 · 第 13</span>
+      <span class="t">立秋三候</span>
+      <span class="line"></span>
+    </section>
+
+    <!-- 谚语金句 -->
+    <section class="proverb">
+      <p class="text">立秋之日凉风至，<em>一场秋雨一场寒</em>。</p>
+      <span class="src">— 《月令七十二候集解》</span>
+    </section>
+
+    <!-- 时令数据 -->
+    <section class="data">
+      <div class="d"><span class="n">28℃</span><span class="l">日均气温</span></div>
+      <div class="d"><span class="n">24</span><span class="l">昼夜温差</span></div>
+      <div class="d"><span class="n">一候</span><span class="l">凉风至</span></div>
+      <div class="d"><span class="n">二候</span><span class="l">白露生</span></div>
+    </section>
+
+    <!-- 节气对照表 -->
+    <table>
+      <thead><tr><th>节气</th><th>公历</th><th>宜</th><th>习俗</th></tr></thead>
+      <tbody>
+        <tr><td class="t">立秋</td><td class="m">08/07</td><td>贴秋膘</td><td class="m">啃秋</td></tr>
+        <tr><td class="t">处暑</td><td class="m">08/22</td><td>开渔</td><td class="m">放河灯</td></tr>
+        <tr><td class="t">白露</td><td class="m">09/07</td><td>饮白露茶</td><td class="m">收清露</td></tr>
+      </tbody>
+    </table>
+
+    <!-- 全年节气历 -->
+    <section class="almanac">
+      <div class="ev"><span class="date">02/04</span><span class="txt"><b>立春</b> · 东风解冻，蛰虫始振</span></div>
+      <div class="ev"><span class="date">03/05</span><span class="txt"><b>惊蛰</b> · 春雷响，万物长</span></div>
+      <div class="ev"><span class="date">06/05</span><span class="txt"><b>芒种</b> · 忙收忙种，夏至将至</span></div>
+      <div class="ev"><span class="date">08/07</span><span class="txt"><b>立秋</b> · 凉风至，贴秋膘</span></div>
+      <div class="ev"><span class="date">12/07</span><span class="txt"><b>大雪</b> · 至此而雪盛也</span></div>
+    </section>
+
+    <!-- 顺时养生 -->
+    <section class="steps">
+      <div class="st"><span class="n">1.</span>早睡早起，与鸡俱兴</div>
+      <div class="st"><span class="n">2.</span>少辛增酸，润肺防燥</div>
+      <div class="st"><span class="n">3.</span>登高望远，收敛神气</div>
+    </section>
+
+    <!-- 倒计时块 -->
+    <section class="count">
+      <div class="lbl">COUNTDOWN · 倒计时</div>
+      <div class="big">距<b><em>冬至</em></b><br>还有 135 天</div>
+      <div class="meta">一阳来复 · 阴极之至 · 阳气始生</div>
+    </section>
+
+    <!-- 收束 -->
+    <section class="end">
+      <div class="lbl">一年终 · 一岁除</div>
+      <div class="t">顺时而食，<em>不时不食</em></div>
+      <div class="meta">甲辰年 · 廿四节气 · 卷柒</div>
+    </section>
+
+    <!-- 关注 -->
+    <section class="sub">
+      <span class="t">下一个节气到来时，第一个提醒你</span>
+      <span class="act">关注</span>
+    </section>
+
+    <div class="copy">© 2026 节气历 · 本卷为节气历主题视觉稿</div>
+
+  </div>
+
+</body>
+</html>

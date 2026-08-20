@@ -1,0 +1,348 @@
+{
+  "sdkVersion": "1.0.0",
+  "meta": {
+    "id": "retro-newspaper",
+    "name": "复古日报",
+    "description": "铅字印刷风 · 油墨黑 / 新闻纸米 / 报头红，衬线排版，适合怀旧、文化、历史、手作类内容",
+    "keywords": [
+      "复古",
+      "报纸",
+      "铅字",
+      "油墨",
+      "新闻纸"
+    ],
+    "version": "1.0.0"
+  },
+  "tokens": {
+    "color": {
+      "primary": "#9e1f12",
+      "primaryDark": "#6b1a0d",
+      "primaryLight": "#c9b98f",
+      "secondary": "#c9b98f",
+      "accent": "#B9823E",
+      "background": "#f5efe0",
+      "bgSoft": "#ece2cf",
+      "bgCard": "#f5efe0",
+      "bgMuted": "#ece2cf",
+      "textStrong": "#2b2118",
+      "textNormal": "#6b5f4d",
+      "textSoft": "#8a7a63",
+      "border": "#c9b98f",
+      "borderSoft": "#9e1f12"
+    },
+    "typography": {
+      "fontFamily": "Georgia, \"Times New Roman\", \"Songti SC\", \"SimSun\", serif",
+      "fontSize": "16px",
+      "lineHeight": "1.75",
+      "letterSpacing": 0,
+      "heading": {
+        "h1": {
+          "fontSize": 32,
+          "color": "#2b2118",
+          "marginTop": 32,
+          "marginBottom": 16,
+          "fontWeight": "700"
+        },
+        "h2": {
+          "fontSize": 24,
+          "color": "#2b2118",
+          "marginTop": 24,
+          "marginBottom": 12,
+          "fontWeight": "700"
+        },
+        "h3": {
+          "fontSize": 20,
+          "color": "#2b2118",
+          "marginTop": 20,
+          "marginBottom": 10,
+          "fontWeight": "600"
+        },
+        "h4": {
+          "fontSize": 18,
+          "color": "#6b5f4d",
+          "marginTop": 16,
+          "marginBottom": 8,
+          "fontWeight": "600"
+        }
+      },
+      "codeFontFamily": "\"Courier New\", Consolas, monospace"
+    },
+    "spacing": {
+      "pagePadding": 20,
+      "paragraphMargin": 16
+    },
+    "border": {
+      "radius": 8
+    },
+    "shadow": {
+      "enabled": true,
+      "value": "0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06)"
+    }
+  },
+  "components": {
+    "magazine-cover": {
+      "enabled": true,
+      "variant": "retro-newspaper",
+      "variantCss": "/* ============ 焦点：magazine-cover 报头封面 ============ */\n.wemd-magazine-cover[data-variant=\"retro-newspaper\"] {\n  margin: 0 0 24px;\n  padding: 20px 18px;\n  text-align: center;\n  border: 1px solid #c9b98f;\n  background: #ece2cf;\n}\n.wemd-magazine-cover[data-variant=\"retro-newspaper\"] .wemd-mc-rule-top,\n.wemd-magazine-cover[data-variant=\"retro-newspaper\"] .wemd-mc-rule-bottom {\n  display: block;\n  height: 0;\n  border-top: 3px double #2b2118;\n  margin: 0 0 12px;\n}\n.wemd-magazine-cover[data-variant=\"retro-newspaper\"] .wemd-mc-rule-bottom {\n  margin: 12px 0 0;\n}\n.wemd-magazine-cover[data-variant=\"retro-newspaper\"] .wemd-mc-title {\n  font-size: 26px;\n  font-weight: 900;\n  letter-spacing: 0.04em;\n  color: #2b2118;\n  line-height: 1.3;\n}\n.wemd-magazine-cover[data-variant=\"retro-newspaper\"] .wemd-mc-title strong {\n  color: #9e1f12;\n  font-weight: 900;\n}\n.wemd-magazine-cover[data-variant=\"retro-newspaper\"] .wemd-mc-subtitle {\n  margin-top: 6px;\n  font-size: 12px;\n  letter-spacing: 0.22em;\n  color: #6b5f4d;\n  text-transform: uppercase;\n}\n.wemd-magazine-cover[data-variant=\"retro-newspaper\"] .wemd-mc-divider {\n  /* 共享把它做成 4px 红条（width/height/background），本主题用作文字分隔（—— 或 · · ·），\n     需覆盖掉共享红条，否则出现「红条 + 内嵌 hr」双线。 */\n  width: auto;\n  height: auto;\n  background: none;\n  border-radius: 0;\n  margin: 12px 0;\n  font-size: 12px;\n  color: #9e1f12;\n  letter-spacing: 0.3em;\n}\n.wemd-magazine-cover[data-variant=\"retro-newspaper\"] .wemd-mc-desc {\n  margin-top: 10px;\n  font-size: 14px;\n  color: #6b5f4d;\n  line-height: 1.7;\n}"
+    },
+    "hero-banner": {
+      "enabled": true,
+      "variant": "",
+      "variantCss": ""
+    },
+    "product-card": {
+      "enabled": true,
+      "variant": "",
+      "variantCss": ""
+    },
+    "brand-sign": {
+      "enabled": true,
+      "variant": "",
+      "variantCss": ""
+    },
+    "cta-card": {
+      "enabled": true,
+      "variant": "",
+      "variantCss": ""
+    },
+    "quote-card": {
+      "enabled": true,
+      "variant": "retro-newspaper",
+      "variantCss": "/* ============ 焦点：quote-card 红竖条引用 ============ */\n.wemd-quote-card[data-variant=\"retro-newspaper\"] {\n  margin: 20px 0;\n  padding: 14px 16px;\n  background: #ece2cf;\n  border-left: 4px solid #9e1f12;\n}\n.wemd-quote-card[data-variant=\"retro-newspaper\"] .wemd-qc-mark {\n  display: block;\n  font-family: Georgia, serif;\n  font-size: 34px;\n  line-height: 1;\n  color: #9e1f12;\n}\n.wemd-quote-card[data-variant=\"retro-newspaper\"] .wemd-qc-quote {\n  margin: 6px 0 8px;\n  font-size: 16px;\n  font-style: italic;\n  font-weight: 600;\n  color: #2b2118;\n  line-height: 1.7;\n}\n.wemd-quote-card[data-variant=\"retro-newspaper\"] .wemd-qc-author {\n  font-family: \"Courier New\", Consolas, monospace;\n  font-size: 10px;\n  letter-spacing: 0.22em;\n  color: #6b5f4d;\n  text-transform: uppercase;\n}"
+    },
+    "testimonial-card": {
+      "enabled": true,
+      "variant": "",
+      "variantCss": ""
+    },
+    "full-quote": {
+      "enabled": true,
+      "variant": "",
+      "variantCss": ""
+    },
+    "end-card": {
+      "enabled": true,
+      "variant": "retro-newspaper",
+      "variantCss": "/* ============ 焦点：end-card 报尾刊号 ============ */\n.wemd-end-card[data-variant=\"retro-newspaper\"] {\n  margin: 28px 0 0;\n  padding: 14px 16px 18px;\n  text-align: center;\n  border-top: 2px solid #2b2118;\n  border-bottom: 1px solid #c9b98f;\n}\n.wemd-end-card[data-variant=\"retro-newspaper\"] .wemd-ec-rule {\n  display: block;\n  height: 0;\n  border-top: 1px solid #c9b98f;\n  margin-bottom: 14px;\n}\n.wemd-end-card[data-variant=\"retro-newspaper\"] .wemd-ec-title {\n  font-size: 18px;\n  font-weight: 900;\n  letter-spacing: 0.08em;\n  color: #2b2118;\n}\n.wemd-end-card[data-variant=\"retro-newspaper\"] .wemd-ec-title strong {\n  color: #9e1f12;\n  font-weight: 900;\n}\n.wemd-end-card[data-variant=\"retro-newspaper\"] .wemd-ec-subtitle {\n  margin-top: 6px;\n  font-family: \"Courier New\", Consolas, monospace;\n  font-size: 10px;\n  letter-spacing: 0.2em;\n  color: #6b5f4d;\n  text-transform: uppercase;\n}\n.wemd-end-card[data-variant=\"retro-newspaper\"] .wemd-ec-deco {\n  margin-top: 10px;\n  font-size: 12px;\n  color: #9e1f12;\n}"
+    },
+    "share-card": {
+      "enabled": true,
+      "variant": "",
+      "variantCss": ""
+    },
+    "qr-card": {
+      "enabled": true,
+      "variant": "",
+      "variantCss": ""
+    },
+    "follow-bar": {
+      "enabled": true,
+      "variant": "",
+      "variantCss": ""
+    },
+    "stats-block": {
+      "enabled": true,
+      "variant": "retro-newspaper",
+      "variantCss": "/* ============ Content：stats-block 数据栏 ============ */\n.wemd-stats-block[data-variant=\"retro-newspaper\"] {\n  margin: 18px 0;\n  padding: 14px 16px;\n  background: #ece2cf;\n  border: 1px solid #c9b98f;\n}\n.wemd-stats-block[data-variant=\"retro-newspaper\"] .wemd-sb-items-value {\n  font-family: Georgia, serif;\n  font-size: 22px;\n  font-weight: 900;\n  color: #9e1f12;\n}\n.wemd-stats-block[data-variant=\"retro-newspaper\"] .wemd-sb-items-label {\n  font-size: 12px;\n  color: #6b5f4d;\n  letter-spacing: 0.1em;\n}"
+    },
+    "callout-pro": {
+      "enabled": true,
+      "variant": "retro-newspaper",
+      "variantCss": ".wemd-callout-pro[data-variant=\"retro-newspaper\"] {\n  margin: 18px 0;\n  padding: 14px 16px;\n  background: #ece2cf;\n  border-left: 3px solid #9e1f12;\n  border-top: 1px solid #c9b98f;\n  border-bottom: 1px solid #c9b98f;\n  border-right: 1px solid #c9b98f;\n}\n.wemd-callout-pro[data-variant=\"retro-newspaper\"] .wemd-component-body p {\n  font-size: 14px;\n}"
+    },
+    "author-card": {
+      "enabled": true,
+      "variant": "",
+      "variantCss": ""
+    },
+    "section-title": {
+      "enabled": true,
+      "variant": "retro-newspaper",
+      "variantCss": "/* ============ Content：section-title 报纸栏目标题 ============ */\n.wemd-section-title[data-variant=\"retro-newspaper\"] {\n  /* 共享把它做成卡片（bg + 左边条 + 圆角 + padding），本主题用作报纸栏目标题（文字 + 下红线），\n     需清掉共享卡片，否则出现「卡片底 + 左红条 + 下红线」三重样式。 */\n  background: transparent;\n  border-left: none;\n  border-radius: 0;\n  padding: 0 0 6px;\n  margin: 26px 0 12px;\n  border-bottom: 2px solid #9e1f12;\n}\n.wemd-section-title[data-variant=\"retro-newspaper\"] .wemd-component-body {\n  font-size: 19px;\n  font-weight: 800;\n  color: #2b2118;\n  line-height: 1.4;\n}"
+    },
+    "numbered-heading": {
+      "enabled": true,
+      "variant": "retro-newspaper",
+      "variantCss": "/* ============ Content：numbered-heading 编号标题 ============ */\n.wemd-numbered-heading[data-variant=\"retro-newspaper\"] {\n  margin: 24px 0 12px;\n  padding-bottom: 6px;\n  border-bottom: 1px solid #c9b98f;\n}\n.wemd-numbered-heading[data-variant=\"retro-newspaper\"] .wemd-component-body {\n  font-size: 18px;\n  font-weight: 800;\n  color: #2b2118;\n  line-height: 1.4;\n}"
+    },
+    "section-divider": {
+      "enabled": true,
+      "variant": "retro-newspaper",
+      "variantCss": "/* ============ 焦点：section-divider 栏目分隔带 ============ */\n.wemd-section-divider[data-variant=\"retro-newspaper\"] {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  margin: 28px 0 18px;\n}\n.wemd-section-divider[data-variant=\"retro-newspaper\"] .wemd-sd-part {\n  font-family: \"Courier New\", Consolas, monospace;\n  font-size: 11px;\n  letter-spacing: 0.14em;\n  color: #6b5f4d;\n  white-space: nowrap;\n}\n.wemd-section-divider[data-variant=\"retro-newspaper\"] .wemd-sd-line {\n  flex: 1;\n  height: 0;\n  border-top: 1px solid #c9b98f;\n}\n.wemd-section-divider[data-variant=\"retro-newspaper\"] .wemd-sd-title {\n  font-size: 13px;\n  font-weight: 700;\n  letter-spacing: 0.2em;\n  color: #9e1f12;\n  white-space: nowrap;\n  text-transform: uppercase;\n}"
+    },
+    "image-card": {
+      "enabled": true,
+      "variant": "retro-newspaper",
+      "variantCss": "/* ============ Content：image-card 图片卡 ============ */\n.wemd-image-card[data-variant=\"retro-newspaper\"] {\n  margin: 18px 0;\n  padding: 6px;\n  background: #ece2cf;\n  border: 1px solid #c9b98f;\n}\n.wemd-image-card[data-variant=\"retro-newspaper\"] .wemd-ic-image img {\n  border-radius: 0;\n}\n.wemd-image-card[data-variant=\"retro-newspaper\"] .wemd-ic-caption {\n  margin-top: 8px;\n  font-family: \"Courier New\", Consolas, monospace;\n  font-size: 10px;\n  letter-spacing: 0.14em;\n  color: #6b5f4d;\n}"
+    },
+    "image-text-row": {
+      "enabled": true,
+      "variant": "",
+      "variantCss": ""
+    },
+    "image-grid": {
+      "enabled": true,
+      "variant": "",
+      "variantCss": ""
+    },
+    "image-compare": {
+      "enabled": true,
+      "variant": "",
+      "variantCss": ""
+    },
+    "text-card": {
+      "enabled": true,
+      "variant": "retro-newspaper",
+      "variantCss": "/* ============ Content：text-card 正文卡（纸底细线） ============ */\n.wemd-text-card[data-variant=\"retro-newspaper\"] {\n  margin: 18px 0;\n  padding: 16px;\n  background: #ece2cf;\n  border: 1px solid #c9b98f;\n}\n.wemd-text-card[data-variant=\"retro-newspaper\"] .wemd-component-body p {\n  margin: 0 0 10px;\n}"
+    },
+    "image-caption": {
+      "enabled": true,
+      "variant": "",
+      "variantCss": ""
+    },
+    "two-column-cards": {
+      "enabled": true,
+      "variant": "",
+      "variantCss": ""
+    },
+    "resource-list": {
+      "enabled": true,
+      "variant": "",
+      "variantCss": ""
+    },
+    "timeline": {
+      "enabled": true,
+      "variant": "retro-newspaper",
+      "variantCss": "/* ============ Content：timeline 时间线 ============ */\n.wemd-timeline[data-variant=\"retro-newspaper\"] {\n  margin: 18px 0;\n  padding: 14px 16px;\n  background: #ece2cf;\n  border: 1px solid #c9b98f;\n}\n.wemd-timeline[data-variant=\"retro-newspaper\"] .wemd-tl-title {\n  font-size: 14px;\n  font-weight: 700;\n  letter-spacing: 0.14em;\n  color: #9e1f12;\n  margin-bottom: 10px;\n}\n.wemd-timeline[data-variant=\"retro-newspaper\"] .wemd-tl-item {\n  display: flex;\n  align-items: baseline;\n  gap: 8px;\n  padding: 4px 0;\n}\n.wemd-timeline[data-variant=\"retro-newspaper\"] .wemd-tl-dot {\n  /* 共享圆点已做尺寸无关居中（left:-21px + translateX(-50%)），圆心自动落在竖线中心，\n     与尺寸无关。这里只需改尺寸与颜色，不要自己写 left（会破坏居中）。 */\n  width: 6px;\n  height: 6px;\n  border-radius: 50%;\n  background: #9e1f12;\n  border: none; /* 实心红点：去掉共享白底红环 */\n}\n.wemd-timeline[data-variant=\"retro-newspaper\"] .wemd-tl-text {\n  font-size: 14px;\n  color: #2b2118;\n}"
+    },
+    "styled-table": {
+      "enabled": true,
+      "variant": "retro-newspaper",
+      "variantCss": "/* ============ 焦点：styled-table 报纸表格 ============ */\n.wemd-styled-table[data-variant=\"retro-newspaper\"] {\n  margin: 18px 0;\n  border: 1px solid #2b2118;\n}\n.wemd-styled-table[data-variant=\"retro-newspaper\"] .wemd-sbt-table table th {\n  background: #2b2118;\n  color: #f5efe0;\n  font-family: \"Helvetica Neue\", Arial, \"PingFang SC\", sans-serif;\n  font-size: 12px;\n  letter-spacing: 0.14em;\n  padding: 9px 10px;\n  text-align: left;\n  font-weight: 700;\n}\n.wemd-styled-table[data-variant=\"retro-newspaper\"] .wemd-sbt-table table td {\n  font-size: 13px;\n  padding: 8px 10px;\n  color: #2b2118;\n  border: none;\n  border-bottom: 1px solid #c9b98f;\n  background: transparent;\n}\n.wemd-styled-table[data-variant=\"retro-newspaper\"] .wemd-sbt-table table td strong {\n  color: #9e1f12;\n  font-weight: 700;\n}"
+    },
+    "table": {
+      "enabled": true,
+      "variant": "",
+      "variantCss": ""
+    },
+    "faq": {
+      "enabled": true,
+      "variant": "",
+      "variantCss": ""
+    },
+    "accordion": {
+      "enabled": true,
+      "variant": "",
+      "variantCss": ""
+    },
+    "steps": {
+      "enabled": true,
+      "variant": "",
+      "variantCss": ""
+    },
+    "toc-nav": {
+      "enabled": true,
+      "variant": "",
+      "variantCss": ""
+    },
+    "series-nav": {
+      "enabled": true,
+      "variant": "",
+      "variantCss": ""
+    },
+    "related-posts": {
+      "enabled": true,
+      "variant": "",
+      "variantCss": ""
+    },
+    "code-frame": {
+      "enabled": true,
+      "variant": "retro-newspaper",
+      "variantCss": "/* ============ Content：code-frame 代码（纸底深字） ============ */\n.wemd-code-frame[data-variant=\"retro-newspaper\"] {\n  margin: 18px 0;\n  border: 1px solid #c9b98f;\n  background: #ece2cf;\n}\n.wemd-code-frame[data-variant=\"retro-newspaper\"] .wemd-cf-title {\n  padding: 8px 12px;\n  font-family: \"Courier New\", Consolas, monospace;\n  font-size: 11px;\n  letter-spacing: 0.12em;\n  color: #6b5f4d;\n  background: #e2d7bd;\n  border-bottom: 1px solid #c9b98f;\n}\n.wemd-code-frame[data-variant=\"retro-newspaper\"] .wemd-cf-code pre {\n  margin: 0;\n  padding: 14px 16px;\n  overflow-x: auto;\n  font-family: \"Courier New\", Consolas, monospace;\n  font-size: 13px;\n  line-height: 1.8;\n  color: #2b2118;\n  background: transparent;\n}\n.wemd-code-frame[data-variant=\"retro-newspaper\"] .wemd-cf-code pre code {\n  background: transparent;\n  color: #2b2118;\n}"
+    },
+    "code-block": {
+      "enabled": true,
+      "variant": "",
+      "variantCss": ""
+    },
+    "pullquote": {
+      "enabled": true,
+      "variant": "retro-newspaper",
+      "variantCss": "/* 共享 pullquote 根元素自带 border-left:5px + 卡片底/圆角；主题用 body 的\n   border-left 表达竖条，必须覆盖根元素去掉共享竖条，否则根 + body 双条。 */\n.wemd-pullquote[data-variant=\"retro-newspaper\"] {\n  background: transparent;\n  border-left: none;\n  border-radius: 0;\n  padding: 0;\n}\n.wemd-pullquote[data-variant=\"retro-newspaper\"] .wemd-component-body {\n  margin: 18px 0;\n  padding: 10px 14px;\n  border-left: 4px solid #9e1f12;\n  font-size: 16px;\n  font-style: italic;\n  font-weight: 600;\n  color: #2b2118;\n  background: transparent;\n}"
+    },
+    "tag-label": {
+      "enabled": true,
+      "variant": "",
+      "variantCss": ""
+    },
+    "divider-fancy": {
+      "enabled": true,
+      "variant": "retro-newspaper",
+      "variantCss": "/* ============ 焦点：divider-fancy 菱形分隔 ============ */\n.wemd-divider-fancy[data-variant=\"retro-newspaper\"] {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n  margin: 20px 0;\n  color: #9e1f12;\n}\n.wemd-divider-fancy[data-variant=\"retro-newspaper\"] .wemd-df-label {\n  /* 共享 .wemd-df-label 有 width:100%（共享结构把线嵌在 label 内），\n     本主题自定义骨架把线放在 label 两侧，须把 width 归 auto，否则 label 独占整行 */\n  width: auto;\n  font-size: 11px;\n  letter-spacing: 0.24em;\n  color: #6b5f4d;\n  text-transform: uppercase;\n  white-space: nowrap;\n}\n.wemd-divider-fancy[data-variant=\"retro-newspaper\"] .wemd-df-line {\n  flex: 1;\n  height: 0;\n  border-top: 1px solid #c9b98f;\n}\n.wemd-divider-fancy[data-variant=\"retro-newspaper\"] .wemd-df-glyph {\n  font-size: 11px;\n  color: #9e1f12;\n}"
+    },
+    "divider": {
+      "enabled": true,
+      "variant": "retro-newspaper",
+      "variantCss": ".wemd-divider[data-variant=\"retro-newspaper\"] {\n  margin: 22px 0;\n}\n.wemd-divider[data-variant=\"retro-newspaper\"] .wemd-component-body {\n  height: 0;\n  border-top: 1px solid #c9b98f;\n  border-bottom: 1px solid #c9b98f;\n  padding: 2px 0;\n  color: transparent;\n}\n/* markdown 的 --- 会在 divider body 内生成 <hr>，双线中间会多出一条 hr 线（三线）。\n   隐藏它，只留主题的上下双线。 */\n.wemd-divider[data-variant=\"retro-newspaper\"] .wemd-component-body hr {\n  display: none;\n}"
+    },
+    "copyright-notice": {
+      "enabled": true,
+      "variant": "retro-newspaper",
+      "variantCss": "/* ============ Utility：copyright-notice 版权 ============ */\n.wemd-copyright-notice[data-variant=\"retro-newspaper\"] .wemd-component-body {\n  margin: 20px 0 0;\n  padding-top: 10px;\n  border-top: 1px solid #c9b98f;\n  font-family: \"Courier New\", Consolas, monospace;\n  font-size: 10px;\n  letter-spacing: 0.14em;\n  color: #8a7a63;\n  text-align: center;\n}"
+    },
+    "article-section": {
+      "enabled": true,
+      "variant": "",
+      "variantCss": ""
+    }
+  },
+  "layout": {
+    "preferredComponents": [
+      "magazine-cover",
+      "section-divider",
+      "quote-card",
+      "end-card",
+      "divider-fancy",
+      "styled-table",
+      "section-title",
+      "numbered-heading",
+      "pullquote",
+      "text-card",
+      "image-card",
+      "image-caption",
+      "callout-pro",
+      "timeline",
+      "stats-block",
+      "code-frame",
+      "divider",
+      "copyright-notice"
+    ],
+    "density": "medium",
+    "tone": [
+      "warm",
+      "nostalgic",
+      "editorial"
+    ],
+    "defaultVariants": {
+      "magazine-cover": "retro-newspaper",
+      "section-divider": "retro-newspaper",
+      "quote-card": "retro-newspaper",
+      "end-card": "retro-newspaper",
+      "divider-fancy": "retro-newspaper",
+      "styled-table": "retro-newspaper",
+      "section-title": "retro-newspaper",
+      "numbered-heading": "retro-newspaper",
+      "pullquote": "retro-newspaper",
+      "text-card": "retro-newspaper",
+      "image-card": "retro-newspaper",
+      "image-caption": "retro-newspaper",
+      "callout-pro": "retro-newspaper",
+      "timeline": "retro-newspaper",
+      "stats-block": "retro-newspaper",
+      "code-frame": "retro-newspaper",
+      "divider": "retro-newspaper",
+      "copyright-notice": "retro-newspaper"
+    }
+  },
+  "codeTheme": "github-light"
+}

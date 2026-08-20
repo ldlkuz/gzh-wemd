@@ -30,6 +30,7 @@ import { parseComponentProps } from "./component/parseProps";
 import { parseComponentSlots } from "./component/slotParsers";
 import { fillTemplate } from "./component/templateFiller";
 import { getDefaultTemplate } from "./component/defaultTemplates";
+import type { SlotDef } from "./component/slotTypes";
 
 const COMPONENT_MARKER = ":::";
 // 组件名允许：小写字母、数字、连字符
@@ -41,11 +42,18 @@ export interface MarkdownItComponentOptions {
    * 返回 undefined 时回退到内置默认骨架（getDefaultTemplate）。
    */
   getTemplate?: (componentId: string) => string | undefined;
+  /**
+   * 取主题级扩展槽位：优先返回当前主题包 slotDefs 中的追加槽位，
+   * 返回 undefined 时不追加（仅用共享 slotDefs）。
+   */
+  getSlotDefs?: (componentId: string) => SlotDef[] | undefined;
 }
 
 interface ComponentBlockInfo {
   name: string;
   propsRaw: string;
+  /** 起始行 `::: name` 之后紧跟着的行内内容（仅 tag-label 支持，如 `::: tag-label #a #b`） */
+  inlineContent: string;
 }
 
 /**
@@ -63,13 +71,21 @@ function matchComponentOpen(line: string): ComponentBlockInfo | null {
   // 提取 name 和可选的 {props}
   // 形如：quote-card 或 quote-card{author="x"} 或 quote-card {author="x"}
   const match = rest.match(/^([a-z][a-z0-9-]*)\s*(\{[^}]*\})?\s*$/);
-  if (!match) return null;
+  if (match) {
+    const name = match[1];
+    if (!COMPONENT_NAME_RE.test(name)) return null;
+    const propsRaw = match[2] ? match[2].slice(1, -1) : "";
+    return { name, propsRaw, inlineContent: "" };
+  }
 
-  const name = match[1];
-  if (!COMPONENT_NAME_RE.test(name)) return null;
+  // 扩展：tag-label 允许把标签写在同一行 `::: tag-label #设计 #排版`
+  // （其余组件仍要求 `::: name{props}` 独占一行，内容在后续行）
+  const tagMatch = rest.match(/^(tag-label)\s+(.+)$/);
+  if (tagMatch) {
+    return { name: tagMatch[1], propsRaw: "", inlineContent: tagMatch[2] };
+  }
 
-  const propsRaw = match[2] ? match[2].slice(1, -1) : "";
-  return { name, propsRaw };
+  return null;
 }
 
 /**
@@ -137,7 +153,11 @@ function componentRule(
   // 语义与 markdown-it 原生 fence 规则一致（见 fence.mjs 中 state.getLines 用法）。
   const baseIndent = state.sCount[startLine];
   token.meta = {
-    rawContent: state.getLines(startLine + 1, closeLine, baseIndent, true),
+    rawContent:
+      // tag-label 行内标签：把起始行 `::: tag-label #a #b` 的标签并入内容，
+      // 让 slot-parser 能像后续行内容一样处理（其余组件 inlineContent 恒为空）。
+      (info.inlineContent ? info.inlineContent + "\n" : "") +
+      state.getLines(startLine + 1, closeLine, baseIndent, true),
   };
 
   const closeToken = state.push("component_close", "section", -1);
@@ -284,7 +304,12 @@ export default function markdownItComponent(
 
     const template =
       resolveThemeTemplate(componentName) ?? getDefaultTemplate(componentName);
-    const slotContent = parseComponentSlots(md, componentName, rawContent);
+    const slotContent = parseComponentSlots(
+      md,
+      componentName,
+      rawContent,
+      opts?.getSlotDefs?.(componentName),
+    );
     const filled = fillTemplate(template, slotContent);
 
     // 组件内部经 renderBody 渲染的子串会注入"相对子串"的错误行号锚点，

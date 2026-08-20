@@ -19,7 +19,31 @@ const syntaxItems = [
   { syntax: "**文字**{.class}", desc: "行内/图片属性" },
 ];
 
-// 组件语法速查
+// 基础层结构（原生 Markdown，由主题皮肤自动美化，不使用 :::）
+const baseLayerItems = [
+  {
+    syntax: "| 列1 | 列2 |\n|---|---|\n| 值1 | 值2 |",
+    desc: "表格（列宽自适应 + 皮肤）",
+  },
+  {
+    syntax: "**里程碑**\n- **2024-01** 立项\n- **2024-03** 上线",
+    desc: "时间线",
+  },
+  {
+    syntax: "**产品图集**\n- ![](url1)\n- ![](url2)",
+    desc: "图片网格",
+  },
+  {
+    syntax: "**关键指标**\n- 团队规模 **15人**\n- 日均浪费 **2.5h**",
+    desc: "数据块（键+加粗数值）",
+  },
+  {
+    syntax: '**示例** `js`\n```js\nconst a = 1\n```',
+    desc: "代码块（可带标题/语言标签）",
+  },
+];
+
+// 组件语法速查（仅杂志层，能自动生成的视觉组件）
 const componentItems = [
   {
     syntax: '::: quote-card{author="作者"}\n金句内容\n:::',
@@ -35,24 +59,8 @@ const componentItems = [
     desc: "强化提示框（info/success/warning/danger/tip）",
   },
   {
-    syntax: '::: code-frame{lang="js" title="标题"}\n```js\ncode\n```\n:::',
-    desc: "代码框（带标题）",
-  },
-  {
-    syntax: "::: stats-block\n标题\n- 项 **数值**\n:::",
-    desc: "数据统计块",
-  },
-  {
-    syntax: "::: image-grid\n标题\n- ![](url)\n:::",
-    desc: "图片网格（2 列）",
-  },
-  {
     syntax: "::: author-card\n![](头像)\n**姓名** *角色*\n简介\n:::",
     desc: "作者卡片",
-  },
-  {
-    syntax: "::: timeline\n标题\n- **节点** 描述\n:::",
-    desc: "时间线（带圆点竖线）",
   },
   {
     syntax: '::: faq{title="常见问题"}\n**问题一**\n回答内容\n:::',
@@ -108,6 +116,15 @@ export function SyntaxHelpPopover() {
           <div className="syntax-help-header">Markdown 语法速查</div>
           <div className="syntax-help-list">
             {syntaxItems.map((item, idx) => (
+              <div key={idx} className="syntax-help-row">
+                <code>{item.syntax}</code>
+                <span>{item.desc}</span>
+              </div>
+            ))}
+          </div>
+          <div className="syntax-help-header">基础层结构（原生 Markdown）</div>
+          <div className="syntax-help-list">
+            {baseLayerItems.map((item, idx) => (
               <div key={idx} className="syntax-help-row">
                 <code>{item.syntax}</code>
                 <span>{item.desc}</span>

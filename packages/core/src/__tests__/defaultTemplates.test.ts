@@ -148,6 +148,22 @@ describe("defaultTemplates 渲染", () => {
     expect(html).toContain("const");
   });
 
+  it("divider-fancy：有 label 渲染左右线 + 文字，无 label 走 {{else}} 渲染默认装饰点", () => {
+    // 有 label：左右横线 + 文字
+    const withLabel = fillTemplate(getDefaultTemplate("divider-fancy"), {
+      label: "分隔",
+    });
+    expect(withLabel).toContain("wemd-df-line-left");
+    expect(withLabel).toContain("wemd-df-line-right");
+    expect(withLabel).toContain("wemd-df-text");
+    expect(withLabel).toContain("分隔");
+    // 无 label：必须走 {{else}} 分支，输出装饰点而不是空 label
+    const withoutLabel = fillTemplate(getDefaultTemplate("divider-fancy"), {});
+    expect(withoutLabel).toContain("wemd-df-dots");
+    expect(withoutLabel).toContain("· · ·");
+    expect(withoutLabel).not.toContain("wemd-df-text");
+  });
+
   it("无法识别组件回退到单一 body 槽，不丢内容", () => {
     const data = parseComponentSlots(
       parser(),

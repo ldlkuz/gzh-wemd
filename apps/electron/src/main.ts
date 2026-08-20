@@ -1,7 +1,7 @@
 import { app, BrowserWindow, session } from "electron";
 import { createMenu } from "./menu";
 import { registerIpcHandlers } from "./ipc";
-import { checkForUpdates } from "./updater";
+import { checkForUpdates, initAutoUpdate } from "./updater";
 import { configureAppIdentity, createWindow } from "./window";
 import { stopWatching } from "./watch/workspaceWatcher";
 
@@ -60,10 +60,11 @@ app.whenReady().then(() => {
 
   createMenu(getMainWindow);
 
-  // 暂不自动检查更新，保留代码结构以备后续启用
-  // setTimeout(() => {
-  //   checkForUpdates(mainWindow);
-  // }, 3000);
+  // 初始化自动更新（electron-updater 事件 → IPC），启动约 3 秒后静默检查一次
+  initAutoUpdate(mainWindow);
+  setTimeout(() => {
+    checkForUpdates(mainWindow);
+  }, 3000);
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {

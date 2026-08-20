@@ -32,6 +32,24 @@ import {
 
 const ARTICLE_SECTION = "article-section";
 
+/**
+ * 基础层组件：有原生 Markdown 语法对应，视觉交给主题 CSS 皮肤。
+ * 渲染时直接输出原生 body（不包 `:::`），与"基础层全部去 :::"对齐。
+ * 这些组件即使被旧模板/AI 引用，也会渲染为原生结构而非私有语法。
+ */
+const NATIVE_COMPONENTS = new Set([
+  "timeline",
+  "related-posts",
+  "toc-nav",
+  "tag-label",
+  "styled-table",
+  "stats-block",
+  "image-caption",
+  "copyright-notice",
+  "code-frame",
+  "image-grid",
+]);
+
 /** 标题类组件：content.title 即替代了原文中对应的 Markdown 标题段 */
 const TITLE_COMPONENTS = new Set([
   "section-title",
@@ -89,21 +107,31 @@ function findConsumedHeadingIndexes(
   return indexes;
 }
 
+/** Markdown 标题段正则：`#` ~ `######` 开头 */
+const HEADING_RE = /^\s*(#{1,6})\s+(.+)$/;
+
 /**
- * 从 article-section 抽取的正文中，移除被标题组件消费的 Markdown 标题段。
- * 例如 AI 把 `## 一、...` 转成 section-title 后，article-section 引用范围内
- * 若包含该标题段，也应剔除，否则与组件标题重复。
+ * 基础层标题处理（不依赖 AI，方案 A）：
+ * - 已被 AI 标题组件（section-title/hero-banner 等）消费的标题段 → 剔除，
+ *   避免与组件标题重复；
+ * - 其余标题段 → **保持原生 Markdown 标题语法原样输出**，由解析器渲染成
+ *   h1~h6，视觉交给主题 CSS 对原生元素上色。
+ *
+ * 基础层对齐 md 语法：不再产 `:::` 私有语法包装；`#` 即标题，无需手写组件。
  */
 function stripConsumedHeadings(
   markdown: string,
   consumedTitleSet: Set<string>,
 ): string {
-  const paragraphs = markdown.split(/\n\s*\n/);
-  const kept = paragraphs.filter((p) => {
-    if (!/^\s*#{1,6}\s+/.test(p)) return true; // 非标题段一律保留
-    return !consumedTitleSet.has(normalizeForMatch(p));
-  });
-  return kept.join("\n\n");
+  return markdown
+    .split(/\n\s*\n/)
+    .filter(
+      (p) =>
+        !(
+          HEADING_RE.test(p) && consumedTitleSet.has(normalizeForMatch(p))
+        ),
+    )
+    .join("\n\n");
 }
 
 /** 各组件的默认 DesignIntent（AI 未提供 design 时使用） */
@@ -458,6 +486,10 @@ function renderComponentNode(node: LayoutNode): string {
 
   try {
     const body = renderer(node.content || {});
+    // 基础层组件：输出原生 Markdown，不包 ::: 私有语法
+    if (NATIVE_COMPONENTS.has(node.component)) {
+      return body || "";
+    }
     const propsStr = stringifyProps(node.props);
     return wrapComponent(node.component, propsStr, body || " ");
   } catch (e) {
@@ -499,7 +531,7 @@ function renderArticleSection(
     return null;
   }
 
-  // 剔除范围内被标题组件消费的 Markdown 标题段（如 `## ` 已转成 section-title）
+  // 基础层标题处理：剔除已被 AI 标题组件消费的标题段，其余保持原生 md 语法
   let markdown = stripConsumedHeadings(result.text, consumedTitleSet);
 
   if (!markdown.trim()) {
@@ -507,10 +539,9 @@ function renderArticleSection(
     return null;
   }
 
-  // 根据 design.emphasis 决定是否卡片化正文
-  if (node.design?.emphasis === "high") {
-    markdown = wrapComponent("text-card", "", markdown);
-  }
+  // 基础层不再产任何 ::: 私有语法（包括 text-card 包裹正文）：
+  // 正文永远保持原生 Markdown，由解析器 + 主题 CSS 对原生元素上色。
+  // 若 AI 需要卡片化正文，应改用真正独立的杂志层组件引用内容区域。
 
   return {
     markdown,

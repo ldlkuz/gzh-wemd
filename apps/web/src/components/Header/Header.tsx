@@ -31,6 +31,7 @@ import {
   ChevronsUp,
   ChevronsDown,
   Sparkles,
+  Bug,
 } from "lucide-react";
 import { useUITheme } from "../../hooks/useUITheme";
 import { useWindowControls } from "../../hooks/useWindowControls";
@@ -118,7 +119,14 @@ const WindowControls = ({ fixed = false }: { fixed?: boolean }) => {
   );
 };
 
-export function Header() {
+interface HeaderProps {
+  /** 调试预览面板开关状态（由 App 持有） */
+  debugMode?: boolean;
+  /** 切换调试预览面板 */
+  onToggleDebug?: () => void;
+}
+
+export function Header({ debugMode = false, onToggleDebug }: HeaderProps) {
   const { copyToWechat, copyAsHtml } = useEditorStore();
   const [showThemePanel, setShowThemePanel] = useState(false);
   const [showStorageModal, setShowStorageModal] = useState(false);
@@ -285,6 +293,20 @@ export function Header() {
               title="AI 设置"
             >
               <Sparkles size={18} strokeWidth={2} />
+            </button>
+            <button
+              className={`btn-icon-only ${
+                debugMode ? "is-active" : ""
+              }`}
+              onClick={onToggleDebug}
+              title={
+                debugMode
+                  ? "关闭调试预览（公众号模拟）"
+                  : "开启调试预览（公众号模拟内核，对比最终效果）"
+              }
+              aria-pressed={debugMode}
+            >
+              <Bug size={18} strokeWidth={2} />
             </button>
             <button
               className="btn-icon-only"

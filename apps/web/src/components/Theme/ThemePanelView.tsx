@@ -14,6 +14,7 @@ import {
   Terminal,
 } from "lucide-react";
 import type { MutableRefObject } from "react";
+import { useState } from "react";
 import { Modal } from "../common";
 import type {
   CustomTheme,
@@ -22,6 +23,7 @@ import type {
 import type { ValidationError } from "@wemd/core";
 import { ThemeDesigner, type DesignerVariables } from "./ThemeDesigner";
 import { ThemeLivePreview } from "./ThemeLivePreview";
+import { resolveAppAssetPath } from "../../utils/assetPath";
 
 interface ThemePanelViewProps {
   open: boolean;
@@ -156,6 +158,29 @@ export function ThemePanelView({
 }: ThemePanelViewProps) {
   if (!open) return null;
 
+  // 复制示例文章到剪贴板：优先当前主题的 samples/<themeId>.md，缺失回退 default.md
+  const [sampleCopied, setSampleCopied] = useState(false);
+  const handleCopySample = async () => {
+    const themeId = themeDefinition?.meta.id;
+    const paths = themeId
+      ? [`samples/${themeId}.md`, "samples/default.md"]
+      : ["samples/default.md"];
+    for (const path of paths) {
+      try {
+        const response = await fetch(resolveAppAssetPath(path));
+        if (response.ok) {
+          const markdown = await response.text();
+          await navigator.clipboard.writeText(markdown);
+          setSampleCopied(true);
+          window.setTimeout(() => setSampleCopied(false), 1500);
+          return;
+        }
+      } catch {
+        /* 网络失败则尝试下一个候选路径 */
+      }
+    }
+  };
+
   return (
     <div className="theme-overlay" onClick={onClose}>
       <div
@@ -242,9 +267,6 @@ export function ThemePanelView({
                         />
                       )}
                       <span className="theme-item-name">{item.name}</span>
-                      {item.readOnly && (
-                        <span className="theme-item-badge">AI</span>
-                      )}
                     </button>
                   ))}
                 </div>
@@ -462,6 +484,15 @@ export function ThemePanelView({
                       >
                         <Eye size={14} />
                         示例内容
+                      </button>
+                      <button
+                        type="button"
+                        className="toggle-btn sample-copy-btn"
+                        onClick={handleCopySample}
+                        title="复制示例文章到剪贴板"
+                      >
+                        <Copy size={14} />
+                        {sampleCopied ? "已复制" : "复制示例"}
                       </button>
                     </div>
                     <ThemeLivePreview

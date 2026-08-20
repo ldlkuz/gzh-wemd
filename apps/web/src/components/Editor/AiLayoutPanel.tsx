@@ -1,16 +1,17 @@
 /**
- * AI 设计版式 —— 方案面板
+ * AI 排版 —— 简化版
  *
- * 显示 AI 返回的插入建议，用户可：
- * - 点"预览效果"→ 插入编辑器，右侧预览框显示真实效果
- * - 点"撤销预览"→ 恢复原文
- * - 点"采纳"→ 标记保留（不立即插入）
- * - 点"跳过"→ 标记丢弃
- * - 最后点"全部采纳"→ 批量应用所有标记的建议
+ * 流程：勾选组件 → AI 在勾选范围内生成插入建议 → 整体预览 → 一键应用。
+ * 不再逐条预览/采纳/跳过，AI 只在用户允许的组件里选型并生成，交互降到最低。
  */
 import { useState, useEffect } from "react";
-import { Check, X, Eye, EyeOff, Sparkles, Loader2 } from "lucide-react";
+import { Check, Eye, EyeOff, Loader2, RefreshCw, Sparkles } from "lucide-react";
 import type { Insertion } from "../../services/ai/analysisAgent";
+import {
+  AVAILABLE_COMPONENTS,
+  CONTENT_DRIVEN_COMPONENTS,
+  POSITION_DRIVEN_COMPONENTS,
+} from "../../services/ai/analysisAgent";
 import { Modal } from "../common/Modal";
 import "./AiLayoutPanel.css";
 
@@ -23,14 +24,16 @@ interface AiLayoutPanelProps {
   insertions: Insertion[];
   /** 关闭面板 */
   onClose: () => void;
-  /** 采纳指定建议（已筛选后的子集）—— 用于"全部采纳"批量应用 */
-  onApply: (insertions: Insertion[]) => void;
-  /** 预览单条建议：插入编辑器，右侧预览框显示 */
-  onPreview: (insertion: Insertion) => void;
+  /** 生成排版：传入用户勾选的组件范围 */
+  onGenerate: (selectedComponents: string[]) => void;
+  /** 整体预览：应用全部建议到编辑器 */
+  onPreviewAll: () => void;
   /** 撤销预览：恢复原文 */
   onUndoPreview: () => void;
-  /** 重新分析 */
-  onRefresh?: () => void;
+  /** 一键应用全部建议 */
+  onApplyAll: () => void;
+  /** 当前是否正在预览 */
+  isPreviewing: boolean;
   /** 识别出的文章类型（如 tutorial/story/data/opinion） */
   articleType?: string;
   /** 类型识别理由 */
@@ -44,6 +47,10 @@ export const COMPONENT_LABELS: Record<string, string> = {
   "cta-card": "行动号召",
   "code-frame": "代码框",
   "callout-pro": "提示框",
+  callout: "提示框",
+  steps: "分步引导",
+  accordion: "折叠面板",
+  "resource-list": "资料清单",
   "stats-block": "数据统计",
   "image-grid": "图片网格",
   "author-card": "作者卡片",
@@ -82,125 +89,162 @@ export const ARTICLE_TYPE_LABELS: Record<string, string> = {
   product: "产品营销类",
 };
 
-type ItemStatus = "pending" | "accepted" | "skipped";
+/** 勾选清单分组：基于内容（需提炼）/ 找位置直接加（内容固定） */
+const COMPONENT_GROUPS = [
+  {
+    key: "content",
+    label: "基于内容 · 需提炼原文",
+    hint: "AI 从原文提炼内容，不得编造",
+    ids: [...CONTENT_DRIVEN_COMPONENTS],
+  },
+  {
+    key: "position",
+    label: "找位置直接加 · 内容固定",
+    hint: "装饰/标题/标签，重点是放对位置",
+    ids: [...POSITION_DRIVEN_COMPONENTS],
+  },
+];
 
 export function AiLayoutPanel({
   open,
   loading,
   insertions,
   onClose,
-  onApply,
-  onPreview,
+  onGenerate,
+  onPreviewAll,
   onUndoPreview,
-  onRefresh,
+  onApplyAll,
+  isPreviewing,
   articleType,
   typeReason,
 }: AiLayoutPanelProps) {
-  // 每条建议的状态
-  const [statuses, setStatuses] = useState<ItemStatus[]>([]);
-  // 当前正在预览的索引（null 表示未预览）
-  const [previewingIdx, setPreviewingIdx] = useState<number | null>(null);
+  // 勾选的组件范围（默认全选）
+  const [selected, setSelected] = useState<string[]>([]);
+  // 是否已发起生成（区分"未生成"与"生成为空"）
+  const [generated, setGenerated] = useState(false);
 
-  // insertions 变化时重置状态
   useEffect(() => {
-    setStatuses(insertions.map(() => "pending"));
-    setPreviewingIdx(null);
-  }, [insertions]);
+    if (open) {
+      setSelected([...AVAILABLE_COMPONENTS]);
+      setGenerated(false);
+    }
+  }, [open]);
 
-  // 关闭面板前清理预览
+  const toggleComponent = (id: string) => {
+    setSelected((prev) =>
+      prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id],
+    );
+  };
+
+  const handleGenerate = () => {
+    if (selected.length === 0 || loading) return;
+    setGenerated(true);
+    onGenerate(selected);
+  };
+
   const handleClose = () => {
-    if (previewingIdx !== null) {
-      onUndoPreview();
-      setPreviewingIdx(null);
-    }
+    if (isPreviewing) onUndoPreview();
     onClose();
   };
 
-  /** 点击预览：相同条目则关闭，不同条目则直接切换（onPreview 内部自动撤销旧预览） */
-  const handlePreview = (idx: number) => {
-    if (previewingIdx === idx) {
-      // 当前正在预览这一条，再点则撤销
-      onUndoPreview();
-      setPreviewingIdx(null);
-      return;
-    }
-    // 切换到新条目预览（handlePreviewInsertion 会自动基于真原文插入，无需先撤销）
-    onPreview(insertions[idx]);
-    setPreviewingIdx(idx);
-  };
-
-  /** 标记采纳：先撤销预览 */
-  const handleAccept = (idx: number) => {
-    if (previewingIdx === idx) {
-      onUndoPreview();
-      setPreviewingIdx(null);
-    }
-    setStatuses((prev) => {
-      const next = [...prev];
-      next[idx] = next[idx] === "accepted" ? "pending" : "accepted";
-      return next;
-    });
-  };
-
-  /** 标记跳过：先撤销预览 */
-  const handleSkip = (idx: number) => {
-    if (previewingIdx === idx) {
-      onUndoPreview();
-      setPreviewingIdx(null);
-    }
-    setStatuses((prev) => {
-      const next = [...prev];
-      next[idx] = next[idx] === "skipped" ? "pending" : "skipped";
-      return next;
-    });
-  };
-
-  const handleApplyAll = () => {
-    if (previewingIdx !== null) {
-      onUndoPreview();
-      setPreviewingIdx(null);
-    }
-    const accepted = insertions.filter((_, i) => statuses[i] === "accepted");
-    if (accepted.length === 0) return;
-    onApply(accepted);
-  };
-
-  const handleSkipAll = () => {
-    if (previewingIdx !== null) {
-      onUndoPreview();
-      setPreviewingIdx(null);
-    }
-    setStatuses(insertions.map(() => "skipped"));
-    onClose();
-  };
-
-  const acceptedCount = statuses.filter((s) => s === "accepted").length;
+  // 选择组件视图
+  const renderSelectView = () => (
+    <>
+      <div className="ai-layout-select">
+        <p className="ai-layout-select-hint">
+          勾选希望 AI 使用的组件，AI 将只在勾选范围内挑选合适的组件。
+        </p>
+        {COMPONENT_GROUPS.map((group) => (
+          <div key={group.key} className="ai-layout-select-group">
+            <div className="ai-layout-select-group-head">
+              <span className="ai-layout-select-group-label">
+                {group.label}
+              </span>
+              <span className="ai-layout-select-group-hint">{group.hint}</span>
+            </div>
+            <div className="ai-layout-select-grid">
+              {group.ids.map((id) => {
+                const label = COMPONENT_LABELS[id] || id;
+                const checked = selected.includes(id);
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    className={`ai-layout-select-chip ${checked ? "is-checked" : ""}`}
+                    onClick={() => toggleComponent(id)}
+                  >
+                    {checked && <Check size={12} />}
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="ai-layout-footer">
+        <span className="ai-layout-footer-count">
+          已勾选 <strong>{selected.length}</strong> / {AVAILABLE_COMPONENTS.length}
+        </span>
+        <button
+          className="ai-layout-footer-btn ai-layout-footer-apply"
+          onClick={handleGenerate}
+          disabled={selected.length === 0 || loading}
+        >
+          <Sparkles size={14} />
+          生成排版
+        </button>
+      </div>
+    </>
+  );
 
   return (
     <Modal
       open={open}
       onClose={handleClose}
-      title="AI 设计版式建议"
+      title="AI 排版"
       className="ai-layout-panel"
     >
       {loading ? (
         <div className="ai-layout-loading">
           <Loader2 size={32} className="spinning" />
-          <p>AI 正在分析文章...</p>
+          <p>AI 正在分析文章并挑选组件...</p>
           <p className="ai-layout-loading-hint">通常需要 3-15 秒</p>
         </div>
+      ) : !generated ? (
+        renderSelectView()
       ) : insertions.length === 0 ? (
         <div className="ai-layout-empty">
           <Sparkles size={32} />
           <p>AI 没有发现适合插入组件的位置</p>
-          <p className="ai-layout-empty-hint">
-            可能文章太短，或当前内容不需要组件增强。
-          </p>
-          {onRefresh && (
-            <button className="ai-layout-refresh-btn" onClick={onRefresh}>
-              重新分析
-            </button>
+          {(articleType || typeReason) && (
+            <p className="ai-layout-empty-reason">
+              {articleType && ARTICLE_TYPE_LABELS[articleType] && (
+                <>
+                  识别为 <strong>{ARTICLE_TYPE_LABELS[articleType]}</strong> 文章
+                </>
+              )}
+              {typeReason ? ` · ${typeReason}` : ""}
+            </p>
           )}
+          <p className="ai-layout-empty-hint">
+            可尝试勾选更多组件，或调整文章内容后重新生成。
+          </p>
+          <div className="ai-layout-empty-actions">
+            <button
+              className="ai-layout-refresh-btn"
+              onClick={() => setGenerated(false)}
+            >
+              返回选择组件
+            </button>
+            <button
+              className="ai-layout-refresh-btn"
+              onClick={handleGenerate}
+              disabled={loading}
+            >
+              重新生成
+            </button>
+          </div>
         </div>
       ) : (
         <>
@@ -213,90 +257,66 @@ export function AiLayoutPanel({
                 )}
               </div>
             )}
-            AI 共建议 <strong>{insertions.length}</strong>{" "}
-            个组件。点「预览效果」在右侧预览框查看真实渲染，满意后点「采纳」标记。
+            AI 在勾选范围内挑选了 <strong>{insertions.length}</strong>{" "}
+            个组件。点击「预览效果」在右侧预览框查看，满意后「应用到文章」。
           </div>
 
           <ul className="ai-layout-list">
-            {insertions.map((ins, idx) => {
-              const status = statuses[idx] || "pending";
-              const label = COMPONENT_LABELS[ins.component] || ins.component;
-              const isPreviewing = previewingIdx === idx;
-              const isOtherPreviewing =
-                previewingIdx !== null && previewingIdx !== idx;
-              return (
-                <li
-                  key={idx}
-                  className={`ai-layout-item ai-layout-item-${status} ${isPreviewing ? "ai-layout-item-previewing" : ""}`}
-                >
-                  <div className="ai-layout-item-header">
-                    <span className="ai-layout-item-badge">{label}</span>
-                    <span className="ai-layout-item-at">@ {ins.at}</span>
-                  </div>
-                  <p className="ai-layout-item-reason">{ins.reason}</p>
-
-                  {isPreviewing && (
-                    <div className="ai-layout-item-preview-tip">
-                      <EyeOff size={12} />
-                      正在右侧预览框显示效果
-                    </div>
-                  )}
-
-                  <div className="ai-layout-item-actions">
-                    <button
-                      className={`ai-layout-action-btn ai-layout-action-preview ${isPreviewing ? "is-active" : ""}`}
-                      onClick={() => handlePreview(idx)}
-                      disabled={isOtherPreviewing}
-                    >
-                      {isPreviewing ? (
-                        <>
-                          <EyeOff size={14} />
-                          撤销预览
-                        </>
-                      ) : (
-                        <>
-                          <Eye size={14} />
-                          预览效果
-                        </>
-                      )}
-                    </button>
-                    <button
-                      className={`ai-layout-action-btn ai-layout-action-accept ${status === "accepted" ? "is-active" : ""}`}
-                      onClick={() => handleAccept(idx)}
-                    >
-                      <Check size={14} />
-                      {status === "accepted" ? "已标记采纳" : "采纳"}
-                    </button>
-                    <button
-                      className={`ai-layout-action-btn ai-layout-action-skip ${status === "skipped" ? "is-active" : ""}`}
-                      onClick={() => handleSkip(idx)}
-                    >
-                      <X size={14} />
-                      {status === "skipped" ? "已跳过" : "跳过"}
-                    </button>
-                  </div>
-                </li>
-              );
-            })}
+            {insertions.map((ins, idx) => (
+              <li key={idx} className="ai-layout-item">
+                <div className="ai-layout-item-header">
+                  <span className="ai-layout-item-badge">
+                    {COMPONENT_LABELS[ins.component] || ins.component}
+                  </span>
+                  <span className="ai-layout-item-at">@ {ins.at}</span>
+                </div>
+                <p className="ai-layout-item-reason">{ins.reason}</p>
+              </li>
+            ))}
           </ul>
 
           <div className="ai-layout-footer">
-            <span className="ai-layout-footer-count">
-              已标记采纳 <strong>{acceptedCount}</strong> / {insertions.length}
-            </span>
             <div className="ai-layout-footer-buttons">
               <button
-                className="ai-layout-footer-btn ai-layout-footer-skip"
-                onClick={handleSkipAll}
+                className="ai-layout-footer-btn ai-layout-footer-regenerate"
+                onClick={handleGenerate}
+                disabled={loading}
               >
-                全部跳过
+                <RefreshCw size={14} />
+                重新生成
+              </button>
+              <button
+                className="ai-layout-footer-btn ai-layout-footer-back"
+                onClick={() => setGenerated(false)}
+              >
+                返回选择
+              </button>
+            </div>
+            <div className="ai-layout-footer-buttons">
+              <button
+                className={`ai-layout-footer-btn ${isPreviewing ? "ai-layout-footer-preview-active" : "ai-layout-footer-preview"}`}
+                onClick={() =>
+                  isPreviewing ? onUndoPreview() : onPreviewAll()
+                }
+              >
+                {isPreviewing ? (
+                  <>
+                    <EyeOff size={14} />
+                    撤销预览
+                  </>
+                ) : (
+                  <>
+                    <Eye size={14} />
+                    预览效果
+                  </>
+                )}
               </button>
               <button
                 className="ai-layout-footer-btn ai-layout-footer-apply"
-                onClick={handleApplyAll}
-                disabled={acceptedCount === 0}
+                onClick={onApplyAll}
               >
-                全部采纳（{acceptedCount}）
+                <Check size={14} />
+                应用到文章
               </button>
             </div>
           </div>

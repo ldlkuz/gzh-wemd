@@ -27,30 +27,6 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
     },
   },
   {
-    component: "toc-nav",
-    description: "目录导航，列出文章主要章节",
-    example: {
-      title: "目录",
-      items: ["第一章", "第二章", "第三章"],
-    },
-  },
-  {
-    component: "numbered-heading",
-    description: "带序号的章节标题",
-    propsExample: { index: "01" },
-    example: {
-      title: "章节标题",
-    },
-  },
-  {
-    component: "section-title",
-    description: "段落小标题，用于分节",
-
-    example: {
-      title: "小标题文字",
-    },
-  },
-  {
     component: "quote-card",
     description: "金句/引言卡片，突出显示引用内容",
     propsExample: { author: "作者名" },
@@ -65,17 +41,6 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
     example: {
       title: "提示标题",
       body: "提示内容说明",
-    },
-  },
-  {
-    component: "stats-block",
-    description: "数据统计块，展示关键指标",
-    example: {
-      title: "核心数据",
-      items: [
-        { label: "指标一", value: "100" },
-        { label: "指标二", value: "200" },
-      ],
     },
   },
   {
@@ -106,13 +71,6 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
     },
   },
   {
-    component: "tag-label",
-    description: "标签组，展示关键词标签",
-    example: {
-      tags: ["标签1", "标签2", "标签3"],
-    },
-  },
-  {
     component: "follow-bar",
     description: "关注引导条：引导文案 + 关注按钮",
     example: {
@@ -123,31 +81,6 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
   {
     component: "divider-fancy",
     description: "装饰性分割线",
-    example: {},
-  },
-  {
-    component: "styled-table",
-    description: "美化表格（内容为 markdown 表格原文，不建议 AI 生成）",
-    example: {
-      title: "表格标题",
-    },
-  },
-  {
-    component: "timeline",
-    description: "时间线组件：标题 + 时间线条目列表（time + event）",
-    example: {
-      title: "产品发展历程",
-      items: [
-        { time: "2024-01", event: "项目立项，确定技术方向" },
-        { time: "2024-06", event: "v1.0 正式发布" },
-        { time: "2025-01", event: "用户突破 10 万" },
-      ],
-    },
-  },
-  {
-    component: "code-frame",
-    description: "代码框（内容为代码原文，不建议 AI 生成）",
-    propsExample: { title: "示例代码", lang: "javascript" },
     example: {},
   },
   {
@@ -317,18 +250,6 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
   },
   // === 补充缺失的组件 schema ===
   {
-    component: "image-grid",
-    description: "图片画廊/多图网格，展示多张图片",
-    example: {
-      title: "夏日旅行记录",
-      images: [
-        "https://example.com/photo1.jpg",
-        "https://example.com/photo2.jpg",
-        "https://example.com/photo3.jpg",
-      ],
-    },
-  },
-  {
     component: "author-card",
     description: "作者卡片：头像 + 作者名 + 职位/头衔 + 简介",
     example: {
@@ -336,28 +257,6 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
       name: "张三",
       title: "资深前端工程师",
       bio: "专注前端工程化与可视化方向，分享实战经验。",
-    },
-  },
-  {
-    component: "related-posts",
-    description: "相关推荐文章列表，文末引导继续阅读",
-    example: {
-      title: "延伸阅读",
-      posts: [
-        { title: "Vue3 组合式 API 最佳实践", url: "https://example.com/1" },
-        { title: "TypeScript 进阶技巧", url: "https://example.com/2" },
-        { title: "前端性能优化指南", url: "https://example.com/3" },
-      ],
-    },
-  },
-  {
-    component: "copyright-notice",
-    description: "版权声明：版权年份 + 作者 + 许可协议，或自定义声明文本",
-
-    example: {
-      year: "2026",
-      author: "WeMD Team",
-      license: "转载请注明出处",
     },
   },
   {
@@ -379,15 +278,6 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
     },
   },
   {
-    component: "image-caption",
-    description: "图片说明：图片 + 斜体说明文字（caption 样式）",
-
-    example: {
-      src: "https://example.com/photo.jpg",
-      caption: "摄于 2026 年盛夏，海边日落",
-    },
-  },
-  {
     component: "image-compare",
     description: "图片对比：前后两张图并排，用于展示变化/对比",
 
@@ -395,19 +285,6 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
       before: "https://example.com/before.jpg",
       after: "https://example.com/after.jpg",
       caption: "改造前 vs 改造后",
-    },
-  },
-  {
-    component: "table",
-    description: "原始数据表格：表头 + 多行数据，适合结构化数据对比",
-
-    example: {
-      title: "配置对比表",
-      headers: ["版本", "价格", "功能"],
-      rows: [
-        { cells: ["基础版", "¥99", "核心功能"] },
-        { cells: ["旗舰版", "¥199", "全部功能"] },
-      ],
     },
   },
   {
@@ -419,27 +296,6 @@ export const COMPONENT_CONTENT_SCHEMAS: ComponentContentSchema[] = [
         { title: "常见问题一", body: "这是答案内容。" },
         { title: "常见问题二", body: "这是答案内容。" },
       ],
-    },
-  },
-  {
-    component: "steps",
-    description: "步骤条：分步骤说明操作流程，带序号",
-
-    example: {
-      title: "使用步骤",
-      items: [
-        { title: "第一步", description: "说明文字" },
-        { title: "第二步", description: "说明文字" },
-      ],
-    },
-  },
-  {
-    component: "code-block",
-    description: "代码块：展示代码/命令片段，带语言高亮",
-    propsExample: { lang: "javascript" },
-    example: {
-      code: "console.log('hello')",
-      lang: "javascript",
     },
   },
   {
@@ -468,23 +324,18 @@ export function getComponentSchema(
   return COMPONENT_CONTENT_SCHEMAS.find((s) => s.component === component);
 }
 
-/** AI 可自动生成的组件（已覆盖主题全部组件，AI 可按文章表达自由选用） */
+/** AI 可自动生成的组件（杂志层/功能块，AI 只从这些里选；基础层用原生 Markdown） */
 export const AI_GENERATABLE_COMPONENTS = [
   // 品牌锚点 / 头部
   "hero-banner",
   "magazine-cover",
-  "toc-nav",
   "section-divider",
-  "numbered-heading",
-  "section-title",
   // 内容增强
   "quote-card",
   "callout-pro",
-  "stats-block",
   "faq",
   "share-card",
   "cta-card",
-  "tag-label",
   "follow-bar",
   "divider-fancy",
   "article-section",
@@ -495,15 +346,8 @@ export const AI_GENERATABLE_COMPONENTS = [
   "pullquote",
   "divider",
   "accordion",
-  "steps",
-  "table",
-  "styled-table",
-  "code-frame",
-  "code-block",
   // 图片类
   "image-card",
-  "image-grid",
-  "image-caption",
   "image-text-row",
   "image-compare",
   // 品牌/转化/辅助
@@ -513,8 +357,5 @@ export const AI_GENERATABLE_COMPONENTS = [
   "testimonial-card",
   "series-nav",
   "author-card",
-  "related-posts",
-  "copyright-notice",
   "qr-card",
-  "timeline",
 ];

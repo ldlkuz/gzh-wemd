@@ -1,0 +1,11 @@
+<section class="wemd-component wemd-stats-block" data-component="stats-block">
+<div class="wemd-sb-title">{{slot:title}}</div>
+<div class="wemd-sb-items">
+{{#each items}}
+<div class="wemd-sb-items-item">
+<div class="wemd-sb-items-value">{{this.value}}</div>
+<div class="wemd-sb-items-label">{{this.label}}</div>
+</div>
+{{/each}}
+</div>
+</section>

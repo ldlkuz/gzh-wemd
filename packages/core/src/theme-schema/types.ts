@@ -9,6 +9,7 @@
  *
  * Theme JSON → ThemeRenderer → CSS
  */
+import type { SlotDef } from "../plugins/component/slotTypes";
 // ============================================================
 // Layer 1: Meta
 // ============================================================
@@ -159,7 +160,7 @@ export type PreferredComponent =
       reason?: string;
     };
 
-/** 风格基调枚举（warm温暖/minimal极简/elegant优雅/rational理性/serious严肃/modern现代/playful活泼） */
+/** 风格基调枚举（warm温暖/minimal极简/elegant优雅/rational理性/serious严肃/modern现代/playful活泼/editorial编辑/handmade手作/organic自然/retro复古/nostalgic怀旧） */
 export type Tone =
   | "warm"
   | "minimal"
@@ -167,7 +168,12 @@ export type Tone =
   | "rational"
   | "serious"
   | "modern"
-  | "playful";
+  | "playful"
+  | "editorial"
+  | "handmade"
+  | "organic"
+  | "retro"
+  | "nostalgic";
 
 /** 所有合法 tone 值，供运行时校验使用 */
 export const VALID_TONES: Tone[] = [
@@ -178,6 +184,11 @@ export const VALID_TONES: Tone[] = [
   "serious",
   "modern",
   "playful",
+  "editorial",
+  "handmade",
+  "organic",
+  "retro",
+  "nostalgic",
 ];
 
 /** 给 AI 的排版建议 */
@@ -212,6 +223,13 @@ export interface ThemeDefinition {
    * 内置主题与 AI 生成主题（ThemePackageManifest）共用此字段与渲染链路，无特殊分支。
    */
   templates?: Record<string, string>;
+  /**
+   * 主题级扩展槽位（组件 id → 追加槽位数组）。
+   * 让主题骨架能消费共享 slotDefs 之外的额外内容（如封面图、作者、日期、标签）。
+   * 解析时合并到共享槽位：key 冲突以主题扩展为准。
+   * 其他主题未声明时，扩展槽对应内容走 leftover body 兜底降级为正文渲染，不丢内容。
+   */
+  slotDefs?: Record<string, SlotDef[]>;
   /** 代码高亮主题：github（亮色）/ github-dark（暗色） */
   codeTheme?: "github" | "github-dark";
 }

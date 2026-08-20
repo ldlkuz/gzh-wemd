@@ -64,7 +64,7 @@ export interface LegacyThemeDefinition {
 export const isThemeSelectable = (theme: CustomTheme): boolean =>
   theme.isSelectable !== false;
 
-/** 12 个内置主题的 ID 顺序 */
+/** 15 个内置主题的 ID 顺序 */
 const BUILTIN_THEME_ORDER: Array<{ id: string; name: string }> = [
   { id: "default", name: "默认主题" },
   { id: "data-blueprint", name: "数据蓝图" },
@@ -78,6 +78,11 @@ const BUILTIN_THEME_ORDER: Array<{ id: string; name: string }> = [
   { id: "modern-editorial", name: "编辑部手记" },
   { id: "receipt", name: "购物小票" },
   { id: "sunset-film", name: "落日胶片" },
+  { id: "silent-keynote", name: "无声发布" },
+  { id: "storybook", name: "故事集" },
+  { id: "shopping-guide", name: "好物种草" },
+  { id: "food-atlas", name: "美食图谱" },
+  { id: "stay-notes", name: "民宿纪" },
 ];
 
 /**
@@ -87,7 +92,7 @@ const BUILTIN_THEME_ORDER: Array<{ id: string; name: string }> = [
 function buildBuiltInTheme(id: string, name: string): CustomTheme {
   const definition = getBuiltInThemeDefinition(id);
   if (!definition) {
-    // 防御性兜底：BUILTIN_THEME_ORDER 中 12 个 id 都在 builtin-themes/index.ts 有对应项
+    // 防御性兜底：BUILTIN_THEME_ORDER 中 13 个 id 都在 builtin-themes/index.ts 有对应项
     throw new Error(`内置主题缺失：${id}`);
   }
   const css = renderTheme(definition);

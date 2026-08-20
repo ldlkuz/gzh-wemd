@@ -59,7 +59,9 @@ jobs:
         with:
           name: GZH-WeMD ${{ github.ref_name }}
           generate_release_notes: true
-          files: apps/electron/release/WeMD-*-arm64-mac.zip
+          files: |
+            apps/electron/release/WeMD-*-arm64-mac.zip
+            apps/electron/release/latest-mac.yml
 
   build-windows:
     runs-on: windows-latest
@@ -100,7 +102,10 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
-          files: apps/electron/release/*.exe
+          files: |
+            apps/electron/release/*.exe
+            apps/electron/release/latest.yml
+          fail_on_unmatched_files: false
 
   build-linux:
     runs-on: ubuntu-latest
@@ -141,4 +146,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
-          files: apps/electron/release/*.AppImage
+          files: |
+            apps/electron/release/*.AppImage
+            apps/electron/release/latest-linux.yml
+          fail_on_unmatched_files: false

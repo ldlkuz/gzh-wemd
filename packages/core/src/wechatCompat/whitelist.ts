@@ -30,6 +30,36 @@ export const FORBIDDEN_TAG_REGEX = /<(style|script)\b/i;
 export const ZIP_ASSET_URL_REGEX =
   /url\s*\(\s*['"]?\s*assets\/[^'")\s]+['"]?\s*\)/i;
 
+/** 剥离 CSS 注释，避免注释里的关键词（如 ::before）被误判为规则 */
+export function stripCssComments(css: string): string {
+  return css.replace(/\/\*[\s\S]*?\*\//g, "");
+}
+
+/**
+ * 检测 CSS 中「真正违规」的伪元素规则；无违规返回 null，违规返回命中的伪元素串。
+ *
+ * 两个例外放行（与内置主题的处理一致）：
+ * 1. 注释中的 ::before/::after —— 不是规则，不该误报（先剥离注释）；
+ * 2. 纯中和规则 `sel::before/::after { content: none }` —— 只用于抑制共享组件
+ *    的伪元素装饰（callout-pro 左竖条 / divider 侧线等），本身不产生视觉，
+ *    物化器遇到 content: none 会跳过物化，微信端不残留。缺失反而导致双装饰。
+ *    参考内置主题：components-clear-guide / components-eastern-notes 等。
+ */
+export function findForbiddenPseudoElement(css: string): string | null {
+  const noComments = stripCssComments(css);
+  const ruleRe =
+    /([^{}]*::(?:before|after|marker|selection|first-letter|first-line|placeholder|backdrop|spelling-error|grammar-error)[^{}]*)\{([^{}]*)\}/gi;
+  let m: RegExpExecArray | null;
+  while ((m = ruleRe.exec(noComments)) !== null) {
+    const body = m[2].trim();
+    // 纯中和规则（仅 content: none，可带 !important）放行
+    if (/^content\s*:\s*none\s*(!important)?\s*;?$/.test(body)) continue;
+    const hit = m[0].match(/::[a-z-]+/i)?.[0] ?? "::before";
+    return hit;
+  }
+  return null;
+}
+
 /** 统一的微信兼容规则（含稳定 id，供快照 / layer3 按 id 引用） */
 export interface ForbiddenCssRule {
   /** 稳定标识。layer3 等消费方据此从快照重建，禁止再手抄正则 */

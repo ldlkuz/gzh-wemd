@@ -1,0 +1,14 @@
+<section class="wemd-component wemd-testimonial-card" data-component="testimonial-card">
+<span class="wemd-tc-mark">“</span>
+{{#if quote}}<section class="wemd-tc-quote">{{slot:quote}}</section>{{/if}}
+{{#if source}}<section class="wemd-tc-source">{{slot:source}}</section>{{/if}}
+<section class="wemd-tc-person">
+{{#if avatar}}<section class="wemd-tc-avatar">{{slot:avatar}}</section>{{/if}}
+<section class="wemd-tc-person-meta">
+{{#if name}}<section class="wemd-tc-name">{{slot:name}}</section>{{/if}}
+{{#if title}}<section class="wemd-tc-title">{{slot:title}}</section>{{/if}}
+{{#if company}}<section class="wemd-tc-company">{{slot:company}}</section>{{/if}}
+</section>
+</section>
+{{#if companyLogo}}<section class="wemd-tc-company-logo">{{slot:companyLogo}}</section>{{/if}}
+</section>

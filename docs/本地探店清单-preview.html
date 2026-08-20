@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>本地探店清单 · 手帐版</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#f2ece1}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans SC",Arial,sans-serif;
+  color:#3a3326;
+  line-height:1.75;
+}
+.article{
+  width:100%;
+  max-width:430px;
+  margin:0 auto;
+  background:#fbf7ef;
+  overflow:hidden;
+}
+
+/* ======== 头栏：胶带 + 本期索引 ======== */
+.tape{display:block;position:relative;margin:26px auto 0;width:150px;padding:7px 12px;background:#d8c69a;color:#4c4429;font-size:11px;letter-spacing:.3em;text-align:center;transform:rotate(-2deg);box-shadow:0 1px 3px rgba(60,50,20,.12);font-family:"Georgia","Songti SC",serif;}
+.tape::after{content:"";position:absolute;left:10%;right:10%;top:0;height:3px;background:rgba(120,105,70,.15);}
+
+/* ======== 封面 ======== */
+.hero{
+  position:relative;
+  margin:18px 14px 0;
+  border-radius:20px;
+  overflow:hidden;
+  min-height:400px;
+  color:#fff;
+  background:
+    linear-gradient(180deg,rgba(30,25,15,.05) 0%,rgba(30,25,15,.05) 38%,rgba(30,25,15,.72) 78%,rgba(30,25,15,.92) 100%),
+    url("https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1000&q=85") center/cover;
+}
+.hero-cat{
+  position:absolute;top:18px;left:18px;
+  display:inline-block;padding:6px 13px;
+  background:rgba(251,247,239,.94);color:#59744a;
+  font-size:11px;letter-spacing:.18em;font-weight:600;border-radius:6px;
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
+}
+.hero-pin{
+  position:absolute;top:12px;right:16px;width:9px;height:9px;
+  background:#b6452f;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,.3);opacity:.9;
+}
+.hero-text{position:absolute;left:22px;right:22px;bottom:22px;}
+.hero-kicker{color:#e9ddc2;font-family:"Georgia","Songti SC",serif;font-size:13px;letter-spacing:.22em;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.hero-kicker::before{content:"";width:26px;height:2px;background:#c7b37c;}
+.hero h1{font-family:Georgia,"Songti SC","STSong",serif;font-size:34px;font-weight:700;line-height:1.12;letter-spacing:.02em;margin-bottom:10px;}
+.hero .slogan{display:inline-block;margin:2px 0 14px;padding:5px 13px;background:#59744a;color:#f7f2e7;font-size:13px;letter-spacing:.06em;border-radius:5px;}
+.hero p{color:#efe7d7;font-size:13.5px;max-width:90%;opacity:.95;}
+/* 入场动画 */
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.hero-cat{animation:rise .6s .1s both}
+.hero h1{animation:rise .6s .25s both}
+.hero .slogan{animation:rise .5s .4s both}
+.hero p{animation:rise .6s .55s both}
+
+/* ======== 导语 ======== */
+.intro{position:relative;margin:26px 18px 4px;padding:20px 4px 6px;}
+.intro .intro-tag{display:inline-block;font-family:"Georgia","Songti SC",serif;color:#59744a;font-size:12px;letter-spacing:.14em;margin-bottom:10px;}
+.intro .intro-tag b{font-size:16px;margin-right:8px;}
+.intro p{font-size:16.5px;line-height:1.9;font-weight:600;color:#3a3326;}
+
+/* ======== 引导句 ======== */
+.section-title{display:flex;align-items:center;gap:12px;margin:32px 20px 20px;}
+.section-title .no{font-family:Georgia,serif;font-size:26px;font-weight:700;color:#59744a;line-height:1;letter-spacing:.02em;}
+.section-title .txt{flex:1;}
+.section-title .txt b{display:block;font-family:"Songti SC","STSong",serif;font-size:19px;font-weight:700;color:#3a3326;letter-spacing:.02em;}
+.section-title .txt span{font-size:11px;color:#a2977e;letter-spacing:.18em;}
+.section-title .line{width:40px;height:2px;background:#c7b37c;}
+
+/* ======== 探店卡 ======== */
+.shop{position:relative;margin:26px 18px;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 6px 22px rgba(70,55,20,.10);}
+.shop:nth-child(odd){transform:rotate(-.6deg)}
+.shop:nth-child(even){transform:rotate(.6deg)}
+.shop-photo{position:relative;height:220px;overflow:hidden;}
+.shop-photo img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .8s ease;}
+.shop:hover .shop-photo img{transform:scale(1.06)}
+.store-no{
+  position:absolute;top:14px;left:-3px;
+  background:#59744a;color:#f7f2e7;
+  font-family:Georgia,serif;font-size:18px;font-weight:700;letter-spacing:.04em;
+  padding:6px 12px 6px 14px;border-radius:4px 10px 10px 4px;
+  box-shadow:0 3px 8px rgba(0,0,0,.25);
+}
+.store-no::after{content:"";position:absolute;right:7px;top:50%;width:3px;height:3px;background:rgba(247,242,231,.8);border-radius:50%;transform:translateY(-50%);}
+.price-tag{
+  position:absolute;right:14px;top:14px;
+  background:#2c2720;color:#f5ead6;
+  font-family:Georgia,serif;font-size:12px;letter-spacing:.04em;
+  padding:5px 11px;border-radius:20px;
+  display:flex;flex-direction:column;align-items:center;line-height:1.3;
+}
+.price-tag small{font-size:9px;color:#cabfa4;letter-spacing:.1em;}
+.price-tag b{font-size:13px;}
+.shop-photo .tape-span{position:absolute;left:50%;bottom:12px;transform:translateX(-50%) rotate(1deg);background:#d8c69a;color:#4c4429;font-size:10px;letter-spacing:.28em;padding:5px 16px;box-shadow:0 1px 3px rgba(60,50,20,.18);opacity:.9;white-space:nowrap;}
+.shop-body{padding:0 18px 20px;}
+.shop-name{margin:16px 0 6px;font-family:"Songti SC","STSong",serif;font-size:23px;font-weight:700;color:#3a3326;display:flex;align-items:baseline;gap:10px;}
+.shop-name small{font-size:11px;color:#8f7f58;letter-spacing:.12em;}
+.shop-meta{display:flex;flex-wrap:wrap;gap:6px 16px;margin:8px 0 12px;font-size:12.5px;color:#8a7b60;}
+.shop-meta span{display:flex;align-items:center;gap:4px;}
+.shop-meta .dot{width:7px;height:7px;border-radius:50%;background:#59744a;flex:none;}
+.shop-meta span.day .dot{background:#c7a53f;}
+.shop-desc{margin:0 0 14px;font-size:14.5px;color:#4f4636;line-height:1.85;text-align:justify;}
+.shop-desc b{color:#59744a;font-weight:700;}
+.shop-tags{display:flex;flex-wrap:wrap;gap:7px;}
+.tag{display:inline-block;padding:4px 11px;border:1px solid #b6c4a0;border-radius:20px;color:#59744a;background:#f3f6ee;font-size:11.5px;}
+.tag.filled{background:#59744a;color:#f7f2e7;border-color:#59744a;}
+
+/* ======== 值得一试清单 ======== */
+.more{margin:26px 18px;padding:20px 18px;background:#fff;border:1px solid #e4dcc9;border-radius:18px;}
+.more-head{display:flex;align-items:center;gap:8px;margin-bottom:14px;font-family:"Songti SC","STSong",serif;font-size:17px;font-weight:700;color:#3a3326;}
+.more-head .check{color:#59744a;font-size:20px;}
+.more-item{display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px dashed #dfd6c0;}
+.more-item:last-child{border-bottom:0;}
+.more-img{flex:0 0 64px;width:64px;height:58px;border-radius:10px;overflow:hidden;}
+.more-img img{width:100%;height:100%;object-fit:cover;display:block;}
+.more-txt{flex:1;min-width:0;}
+.more-txt b{display:block;font-size:15px;color:#3a3326;margin-bottom:3px;}
+.more-txt span{font-size:12px;color:#a2977e;line-height:1.5;display:block;}
+
+/* ======== 金句 ======== */
+.quote{margin:30px 18px 8px;padding:24px 20px;text-align:center;position:relative;}
+.quote::before{content:"✦";position:absolute;left:50%;top:0;transform:translateX(-50%);color:#c7b37c;font-size:14px;}
+.quote p{font-family:"Songti SC","STSong",serif;font-size:18px;line-height:2;color:#4a4130;font-weight:600;}
+.quote p b{color:#59744a;}
+.quote small{display:block;margin-top:10px;color:#a2977e;font-size:11px;letter-spacing:.2em;}
+
+/* ======== 落款 ======== */
+.signoff{margin:30px 18px 40px;text-align:center;}
+.signoff .rule{width:46px;height:3px;background:#59744a;border-radius:4px;margin:0 auto 18px;}
+.signoff .name{font-size:15px;font-weight:700;color:#3a3326;letter-spacing:.24em;}
+.signoff .date{margin-top:8px;font-size:10.5px;color:#a2977e;letter-spacing:.24em;font-family:Georgia,serif;}
+
+@media(max-width:380px){
+  .hero{min-height:360px}
+  .hero h1{font-size:30px}
+  .shop-photo{height:195px}
+}
+</style>
+</head>
+<body>
+<article class="article">
+
+  <!-- 头栏 -->
+  <span class="tape">本周 · 美食探店</span>
+
+  <!-- 封面 -->
+  <header class="hero">
+    <span class="hero-cat">本地美食探店</span>
+    <span class="hero-pin"></span>
+    <div class="hero-text">
+      <p class="hero-kicker">FOOD HUNT · 去找好吃的</p>
+      <h1>周末，去找好吃的</h1>
+      <div class="slogan">捡到值得再来的味道</div>
+      <p>不追网红店排队，只记那些让人愿意推开第二次门的店。本期四家，都在走路能到的范围里。</p>
+    </div>
+  </header>
+
+  <!-- 导语 -->
+  <section class="intro">
+    <div class="intro-tag"><b>「</b>这份探店的标准</div>
+    <p>好吃是底线，但 <b>「愿意再来」</b> 才是入选的理由 —— 食材、火候、服务，三者缺一不可。</p>
+  </section>
+
+  <!-- 核心探店 -->
+  <div class="section-title">
+    <span class="no">01</span>
+    <div class="txt"><b>本期探店 · 四家</b><span>FOUR FOOD PICKS</span></div>
+    <span class="line"></span>
+  </div>
+
+  <section class="shop">
+    <div class="shop-photo">
+      <img src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=900&q=85" alt="浓汤叉烧拉面">
+      <span class="store-no">01</span>
+      <div class="price-tag"><small>人均</small><b>¥38</b></div>
+      <span class="tape-span">值得为它专程来一趟</span>
+    </div>
+    <div class="shop-body">
+      <h2 class="shop-name">面屋·小满<small>NOODLE</small></h2>
+      <div class="shop-meta">
+        <span><i class="dot"></i>中山路 · 巷子口</span>
+        <span class="day"><i class="dot"></i>11:00 – 20:30</span>
+      </div>
+      <p class="shop-desc">汤底是自家熬的骨汤，叉烧软到能直接抿化。老板记得常客的辣度，<b>人多时别催，等得起</b>。</p>
+      <div class="shop-tags"><span class="tag filled">必点招牌</span><span class="tag">浓汤拉面</span><span class="tag">不排队</span></div>
+    </div>
+  </section>
+
+  <section class="shop">
+    <div class="shop-photo">
+      <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=900&q=85" alt="手冲咖啡">
+      <span class="store-no">02</span>
+      <div class="price-tag"><small>人均</small><b>¥26</b></div>
+      <span class="tape-span">坐一下午也不腻</span>
+    </div>
+    <div class="shop-body">
+      <h2 class="shop-name">满杯·豆灰<small>COFFEE</small></h2>
+      <div class="shop-meta">
+        <span><i class="dot"></i>梧桐街 · 二楼</span>
+        <span class="day"><i class="dot"></i>09:00 – 22:00</span>
+      </div>
+      <p class="shop-desc">手冲豆单每周换，冰美式干净不涩。窗边位看梧桐叶影，<b>自带电脑也没人赶你</b>。</p>
+      <div class="shop-tags"><span class="tag filled">办公友好</span><span class="tag">手冲现选</span><span class="tag">安静</span></div>
+    </div>
+  </section>
+
+  <section class="shop">
+    <div class="shop-photo">
+      <img src="https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=900&q=85" alt="焦糖奶油蛋糕">
+      <span class="store-no">03</span>
+      <div class="price-tag"><small>人均</small><b>¥32</b></div>
+      <span class="tape-span">甜咸都做得稳</span>
+    </div>
+    <div class="shop-body">
+      <h2 class="shop-name">小时候·甜品屋<small>DESSERT</small></h2>
+      <div class="shop-meta">
+        <span><i class="dot"></i>老城 · 拐角院</span>
+        <span class="day"><i class="dot"></i>12:00 – 21:00</span>
+      </div>
+      <p class="shop-desc">焦糖奶油蛋糕是招牌，甜得克制。还有全家桶装的现烤司康，**买回家第二天吃也松软**。</p>
+      <div class="shop-tags"><span class="tag filled">孩子也爱</span><span class="tag">甜而不腻</span><span class="tag">可外带</span></div>
+    </div>
+  </section>
+
+  <section class="shop">
+    <div class="shop-photo">
+      <img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=85" alt="家常菜小馆">
+      <span class="store-no">04</span>
+      <div class="price-tag"><small>人均</small><b>¥45</b></div>
+      <span class="tape-span">像回家吃饭</span>
+    </div>
+    <div class="shop-body">
+      <h2 class="shop-name">外婆·小方桌<small>HOMEMADE</small></h2>
+      <div class="shop-meta">
+        <span><i class="dot"></i>学院路 · 菜场边</span>
+        <span class="day"><i class="dot"></i>10:30 – 21:00</span>
+      </div>
+      <p class="shop-desc">菜单就一页，都是当季家常菜。油盐都正，价格实在，<b>适合一周里给自己一顿像样的饭</b>。</p>
+      <div class="shop-tags"><span class="tag filled">份量实诚</span><span class="tag">家常味</span><span class="tag">性价比高</span></div>
+    </div>
+  </section>
+
+  <!-- 值得一试 -->
+  <section class="more">
+    <div class="more-head"><span class="check">✓</span>顺手记下 · 下次路过试试</div>
+    <div class="more-item">
+      <div class="more-img"><img src="https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?auto=format&fit=crop&w=300&q=70" alt="生煎包"></div>
+      <div class="more-txt"><b>生煎·老周</b><span>皮脆肉馅鲜，刚出炉趁热吃</span></div>
+    </div>
+    <div class="more-item">
+      <div class="more-img"><img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=300&q=70" alt="披萨"></div>
+      <div class="more-txt"><b>胡同披萨</b><span>薄底烤得脆，芝士拉丝</span></div>
+    </div>
+    <div class="more-item">
+      <div class="more-img"><img src="https://images.unsplash.com/photo-1496116218417-1a781b1c416c?auto=format&fit=crop&w=300&q=70" alt="糖水铺"></div>
+      <div class="more-txt"><b>凉夏·糖水</b><span>绿豆沙绵密，甜度刚好</span></div>
+    </div>
+  </section>
+
+  <!-- 金句 -->
+  <section class="quote">
+    <p>「好吃不靠评分，<br>是<b>推开门，尝一口，再回来</b>的。」</p>
+    <small>—— 美食探店手帐 · 每周一探 ——</small>
+  </section>
+
+  <!-- 落款 -->
+  <footer class="signoff">
+    <div class="rule"></div>
+    <div class="name">美食探店手帐</div>
+    <div class="date">FOOD HUNT · 2026.08.20</div>
+  </footer>
+
+</article>
+</body>
+</html>

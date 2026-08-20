@@ -1,7 +1,7 @@
 export * from "./MarkdownParser";
 export * from "./ThemeProcessor";
 export * from "./themes";
-export { renderTheme, getThemeTemplates } from "./theme-renderer/index";
+export { renderTheme, getThemeTemplates, getThemeSlotDefs } from "./theme-renderer/index";
 export type { RenderThemeOptions } from "./theme-renderer/index";
 export { getVariantCss } from "./components/index";
 export {
@@ -73,6 +73,7 @@ export {
   getComponentAbbr,
   getFallbackSlotDef,
 } from "./plugins/component/slotDefs";
+export { getComponentSampleMarkdown } from "./plugins/component/slotSamples";
 export type {
   ComponentSlotDef,
   SlotDef,

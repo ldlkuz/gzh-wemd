@@ -132,6 +132,25 @@ describe("markdown-it-component 语法解析", () => {
     expect(html).toContain("wemd-df-label");
   });
 
+  it("tag-label：支持把 #标签 写在同一行（行内标签语法）", () => {
+    const md = "::: tag-label #设计系统 #公众号排版 #组件化 #WeMD\n:::";
+    const html = parser.render(md);
+    expect(html).toContain('data-component="tag-label"');
+    // 每个标签拆成独立 <p>，供 CSS 渲染为独立胶囊
+    expect(html).toContain("<p>#设计系统</p>");
+    expect(html).toContain("<p>#公众号排版</p>");
+    expect(html).toContain("<p>#组件化</p>");
+    expect(html).toContain("<p>#WeMD</p>");
+  });
+
+  it("tag-label：内容在下一行（多行写法）同样渲染", () => {
+    const md = "::: tag-label\n#设计系统\n#公众号排版\n:::";
+    const html = parser.render(md);
+    expect(html).toContain('data-component="tag-label"');
+    expect(html).toContain("<p>#设计系统</p>");
+    expect(html).toContain("<p>#公众号排版</p>");
+  });
+
   it("props 为空对象时仍正常输出", () => {
     const md = "::: divider-fancy\n:::";
     const html = parser.render(md);
@@ -249,6 +268,27 @@ describe("markdown-it-component 新增组件渲染", () => {
     expect(html).toContain("wemd-sb-items");
     expect(html).toContain("用户数 1,234");
     expect(html).toContain("收入 ¥9,800");
+  });
+
+  it("stats-block：首段标题 + 标签在前/数值加粗在后（顺序无关映射 value/label）", () => {
+    const md = [
+      "::: stats-block",
+      "核心数据",
+      "",
+      "- 组件总数",
+      "  **44**",
+      "- 原型分组",
+      "  **7**",
+      ":::",
+    ].join("\n");
+    const html = parser.render(md);
+    // 首段纯文字作为标题，不再丢失
+    expect(html).toContain('class="wemd-sb-title">核心数据</div>');
+    // 加粗数字 → value（大字），非加粗文字 → label（小字）
+    expect(html).toMatch(/wemd-sb-items-value[^>]*>44<\/div>/);
+    expect(html).toMatch(/wemd-sb-items-label[^>]*>组件总数<\/div>/);
+    expect(html).toMatch(/wemd-sb-items-value[^>]*>7<\/div>/);
+    expect(html).toMatch(/wemd-sb-items-label[^>]*>原型分组<\/div>/);
   });
 
   it("image-grid 渲染图片列表", () => {

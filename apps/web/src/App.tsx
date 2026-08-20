@@ -4,6 +4,7 @@ import { Toaster } from "react-hot-toast";
 import { Header } from "./components/Header/Header";
 import { FileSidebar } from "./components/Sidebar/FileSidebar";
 import { EditorPreviewWorkspace } from "./components/Workspace/EditorPreviewWorkspace";
+import { DebugPreviewPanel } from "./components/Preview/DebugPreviewPanel";
 import { useFileSystem } from "./hooks/useFileSystem";
 import { useMobileView } from "./hooks/useMobileView";
 import { MobileToolbar } from "./components/common/MobileToolbar";
@@ -50,8 +51,12 @@ interface ElectronUpdateAPI {
     callback: (data: { currentVersion: string }) => void,
   ) => () => void;
   onUpdateError?: (callback: () => void) => () => void;
+  onUpdateDownloaded?: (
+    callback: (data: UpdateEventData) => void,
+  ) => () => void;
   removeUpdateListener?: (handler: (() => void) | undefined) => void;
   openReleases?: () => void;
+  restartAndInstall?: () => void;
 }
 
 function App() {
@@ -83,11 +88,12 @@ function App() {
 
   const isElectron = platform.isElectron;
 
-  // 更新提示状态
+  // 更新提示状态（available=待下载提示；downloaded=已下载可重启安装）
   const [updateInfo, setUpdateInfo] = useState<{
     latestVersion: string;
     currentVersion: string;
     releaseNotes: string;
+    status: "available" | "downloaded";
   } | null>(null);
 
   // 监听 Electron 更新事件
@@ -108,6 +114,18 @@ function App() {
           latestVersion: data.latestVersion,
           currentVersion: data.currentVersion,
           releaseNotes: data.releaseNotes || "",
+          status: "available",
+        });
+      },
+    );
+
+    const downloadedHandler = electron.update.onUpdateDownloaded?.(
+      (data: UpdateEventData) => {
+        setUpdateInfo({
+          latestVersion: data.latestVersion,
+          currentVersion: data.currentVersion || "",
+          releaseNotes: data.releaseNotes || "",
+          status: "downloaded",
         });
       },
     );
@@ -132,6 +150,8 @@ function App() {
       if (upToDateHandler)
         electron.update?.removeUpdateListener?.(upToDateHandler);
       if (errorHandler) electron.update?.removeUpdateListener?.(errorHandler);
+      if (downloadedHandler)
+        electron.update?.removeUpdateListener?.(downloadedHandler);
     };
   }, [isElectron]);
 
@@ -140,9 +160,33 @@ function App() {
     const saved = localStorage.getItem("wemd-show-history");
     return saved !== "false";
   });
+  const [debugMode, setDebugMode] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem("wemd-debug-mode") === "true";
+  });
+  const [debugWidth, setDebugWidth] = useState<string>(
+    debugMode ? "430px" : "0px",
+  );
   const [historyWidth, setHistoryWidth] = useState<string>(
     showHistory ? "280px" : "0px",
   );
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("wemd-debug-mode", String(debugMode));
+    } catch {
+      /* 忽略持久化错误 */
+    }
+  }, [debugMode]);
+
+  useEffect(() => {
+    if (debugMode) {
+      setDebugWidth("430px");
+      return;
+    }
+    const timer = window.setTimeout(() => setDebugWidth("0px"), 350);
+    return () => window.clearTimeout(timer);
+  }, [debugMode]);
 
   useEffect(() => {
     try {
@@ -166,8 +210,9 @@ function App() {
     () =>
       ({
         "--history-width": historyWidth,
+        "--debug-width": debugWidth,
       }) as CSSProperties,
-    [historyWidth],
+    [historyWidth, debugWidth],
   );
 
   // Electron 模式：强制选择工作区
@@ -197,11 +242,12 @@ function App() {
             latestVersion={updateInfo.latestVersion}
             currentVersion={updateInfo.currentVersion}
             releaseNotes={updateInfo.releaseNotes}
+            downloaded={updateInfo.status === "downloaded"}
             onClose={() => setUpdateInfo(null)}
             onDownload={() => {
               (
                 window.electron as { update?: ElectronUpdateAPI }
-              )?.update?.openReleases?.();
+              )?.update?.restartAndInstall?.();
               setUpdateInfo(null);
             }}
             onSkipVersion={() => {
@@ -255,7 +301,10 @@ function App() {
             },
           }}
         />
-        <Header />
+        <Header
+          debugMode={debugMode}
+          onToggleDebug={() => setDebugMode((prev) => !prev)}
+        />
         <main
           className={mainClass}
           style={mainStyle}
@@ -293,6 +342,21 @@ function App() {
             showHistory={showHistory}
             onToggleHistory={() => setShowHistory((prev) => !prev)}
           />
+
+          {/* 右侧调试面板（公众号模拟内核）：参照左侧 history-pane 抽屉逻辑滑入滑出 */}
+          <div
+            className={`debug-pane ${debugMode ? "is-visible" : "is-hidden"}`}
+            aria-hidden={!debugMode}
+          >
+            <div className="debug-pane__content">
+              {ready && (
+                <DebugPreviewPanel
+                  open={debugMode}
+                  onClose={() => setDebugMode(false)}
+                />
+              )}
+            </div>
+          </div>
 
           {/* 移动端底部工具栏 */}
           {isMobile && (

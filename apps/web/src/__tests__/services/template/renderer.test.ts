@@ -234,7 +234,9 @@ describe("renderTemplate", () => {
     };
     const result = renderTemplate(template, sampleArticle);
     expect(result.markdown).toContain("::: hero-banner");
-    expect(result.markdown).toContain("::: toc-nav");
+    // 基础层组件（toc-nav 等）不再产 :::，输出原生 Markdown 列表
+    expect(result.markdown).not.toContain("::: toc-nav");
+    expect(result.markdown).toMatch(/^- 冰丝凉席$/m);
     expect(result.markdown).toContain('::: numbered-heading{index="01"}');
     expect(result.markdown).toContain('::: quote-card{author="用户评价"}');
     expect(result.markdown).toContain("::: share-card");
@@ -334,6 +336,86 @@ describe("renderTemplate", () => {
     const result = renderTemplate(template, sampleArticle);
     expect(result.coverage).toBe(1);
     expect(result.warnings.some((w) => w.includes("兜底"))).toBe(false);
+  });
+
+  it("基础层不再产 :::：AI 未输出标题组件时，标题段保留原生 Markdown 语法", () => {
+    // 模拟 AI 只编排正文 article-section，不输出任何标题组件（标题交给基础层）
+    // article-section 范围 1-5 覆盖全文，其中第 1 段是 `#` 标题、第 3 段含 `##` 标题
+    const article = `# 一级标题
+
+这是第一段正文内容。
+
+## 二级标题
+
+这是第二段正文。
+
+这是第三段正文。`;
+    const template = {
+      version: "2.0",
+      layout: [
+        {
+          component: "article-section",
+          content: { fromParagraph: 1, toParagraph: 5 },
+        },
+      ],
+    };
+
+    const result = renderTemplate(template, article);
+
+    // 基础层不产 ::: 私有语法（方案 A：基础层对齐 md 语法，标题用原生 # 表达）
+    expect(result.markdown.match(/::: section-title/g)).toBeNull();
+
+    // 未被消费的标题段保持原生 Markdown 标题语法，交由解析器渲染 h1/h3
+    expect(result.markdown).toContain("# 一级标题");
+    expect(result.markdown).toContain("## 二级标题");
+
+    // 正文段必须完整保留
+    expect(result.markdown).toContain("这是第一段正文内容");
+    expect(result.markdown).toContain("这是第二段正文");
+    expect(result.markdown).toContain("这是第三段正文");
+
+    // 覆盖率应为 100%
+    expect(result.coverage).toBe(1);
+  });
+
+  it("基础层去重：已被 AI 标题组件消费的标题段不再重复转换", () => {
+    const article = `## 已被消费的标题
+
+正文段落。`;
+
+    const template: TemplateJSON = {
+      version: "2.0",
+      layout: [
+        // AI 显式输出 section-title 消费了标题段，"已被消费的标题"
+        {
+          component: "section-title",
+          content: { title: "已被消费的标题" },
+          design: {
+            purpose: "transition",
+            emphasis: "medium",
+            layout: "left",
+            tone: "professional",
+            spacing: "normal",
+            headlineSize: "xl",
+          },
+          reason: "章节标题",
+        },
+        {
+          component: "article-section",
+          content: { fromParagraph: 1, toParagraph: 2 },
+        },
+      ],
+    };
+
+    const result = renderTemplate(template, article);
+
+    // section-title 组件应只出现一次（AI 显式那个），基础层不再重复转换
+    expect(result.markdown.match(/::: section-title/g)).toHaveLength(1);
+    // 原 `## ` 标题不得以原生形式出现
+    expect(result.markdown).not.toContain("## 已被消费的标题");
+    // 正文完整
+    expect(result.markdown).toContain("正文段落");
+    expect(result.coverage).toBe(1);
   });
 });
 

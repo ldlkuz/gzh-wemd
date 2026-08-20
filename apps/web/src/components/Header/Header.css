@@ -501,6 +501,13 @@
   transform: scale(0.97);
 }
 
+/* 调试按钮激活态：主色填充，表示调试预览已开启 */
+.btn-icon-only.is-active {
+  background: var(--accent-primary);
+  color: #fff;
+  border-color: var(--accent-primary);
+}
+
 .header-right {
   display: flex;
   align-items: center;

@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WeMD 组件完整示范 · 全组件范文</title>
+<style>
+  /* ============================================================
+     WeMD 全组件范文 · 纯 HTML + CSS 静态网页
+     纯原生实现，无框架依赖，可直接双击打开
+     ============================================================ */
+  :root {
+    --bg: #f6f2ea;
+    --paper: #fffdf7;
+    --ink: #2b2420;
+    --ink-soft: #5c5348;
+    --ink-light: #9a8f7d;
+    --accent: #e8590c;
+    --accent-soft: #0b7285;
+    --amber: #f08c00;
+    --line: #e5dcc8;
+    --shadow: 0 2px 8px rgba(0,0,0,.06);
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    font-family: "PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+    line-height: 1.7;
+    color: var(--ink-soft);
+    background: var(--bg);
+    padding: 2rem 1rem;
+  }
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+    background: var(--paper);
+    border-radius: 14px;
+    box-shadow: 0 6px 24px rgba(0,0,0,.08);
+    padding: 2.5rem 2rem 3rem;
+    border: 1px solid var(--line);
+  }
+  /* 组件说明标签（标题上方小标签） */
+  .tag {
+    display: block;
+    font-size: .72rem;
+    letter-spacing: .04em;
+    color: var(--ink-light);
+    margin: 2.2rem 0 .2rem;
+    text-transform: none;
+    font-weight: 500;
+  }
+  .tag::before { content: "▸ "; color: var(--accent); }
+
+  /* ===== 标题 ===== */
+  h1, h2, h3, h4 { color: var(--ink); line-height: 1.4; font-weight: 700; }
+  h1 {
+    font-size: 1.7rem;
+    padding-left: .9rem;
+    border-left: 6px solid var(--accent);
+    margin: .4rem 0 1.6rem;
+  }
+  h2 {
+    font-size: 1.35rem;
+    border-left: 4px solid var(--accent);
+    padding-left: .8rem;
+    margin: 2rem 0 1rem;
+  }
+  h3 { font-size: 1.05rem; color: var(--accent-soft); margin: 1.5rem 0 .6rem; }
+  h4 { font-size: 1rem; color: var(--ink-light); margin: 1.2rem 0 .5rem; }
+
+  p { margin: .9rem 0; }
+  code.inline {
+    background: #f1ead9;
+    border: 1px solid var(--line);
+    padding: .05em .4em;
+    border-radius: 4px;
+    font-size: .86em;
+    font-family: "SF Mono","Consolas",monospace;
+    color: var(--accent-soft);
+  }
+
+  /* ===== pullquote 引用 ===== */
+  blockquote {
+    margin: 1.5rem 0;
+    padding: .9rem 1rem;
+    background: #f1e9d8;
+    border-left: 3px solid var(--accent);
+    border-radius: 6px;
+    color: var(--ink-soft);
+  }
+  blockquote p { margin: 0; }
+
+  /* ===== divider 分割线 ===== */
+  .divider { border: 0; border-top: 2px dashed var(--line); margin: 2rem 0; }
+
+  /* ===== hero-banner ===== */
+  .hero {
+    background: linear-gradient(135deg,#2b2420,#0b7285);
+    color: #fff;
+    border-radius: 12px;
+    padding: 2rem 1.5rem;
+    margin: 1.8rem 0;
+    text-align: center;
+  }
+  .hero h2 { color:#fff; border:0; padding:0; margin:.4rem 0; font-size:1.5rem; }
+  .hero p { color: rgba(255,255,255,.9); }
+
+  /* ===== toc-nav 目录 ===== */
+  .toc {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+    margin: 1.6rem 0;
+    background:#fcfaf3;
+  }
+  .toc h3 { margin-top:0; }
+  .toc ul { list-style:none; padding:0; margin:.4rem 0 0; }
+  .toc li { padding:.3rem 0; border-bottom:1px dashed var(--line); font-size:.95rem; }
+  .toc li:last-child{ border-bottom:0; }
+
+  /* ===== section-divider 章节分隔 ===== */
+  .section-divider {
+    margin: 2.4rem 0;
+    text-align: center;
+    border-top: 2px dashed var(--amber);
+    border-bottom: 2px dashed var(--amber);
+    padding: .3rem 0;
+    color: var(--accent);
+    font-weight:700;
+    letter-spacing:.12em;
+    font-size:1rem;
+  }
+  .section-divider small{ display:block; color:var(--ink-light); font-weight:500; letter-spacing:.1em; margin-top:.1rem;}
+
+  /* ===== text-card 正文卡片 ===== */
+  .card {
+    background:#fcfaf3;
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:1.4rem 1.4rem;
+    margin:1.6rem 0;
+    box-shadow: var(--shadow);
+  }
+  .card > *:first-child{ margin-top:0; }
+  .card > *:last-child{ margin-bottom:0; }
+
+  /* ===== quote-card 人物引言卡 ===== */
+  .quote-card{
+    background:#2b2420; color:#fff; border-radius:12px; padding:1.4rem 1.5rem; margin:1.6rem 0;
+    position:relative;
+  }
+  .quote-card::before{ content:"“"; position:absolute; top:-4px; left:14px; font-size:3rem; color:var(--amber); font-family:serif;}
+  .quote-card p{ color:rgba(255,255,255,.92); font-size:1.05rem; font-style:italic;}
+  .quote-card .author{ margin-top:.8rem; text-align:right; color:var(--amber); font-size:.9rem; }
+
+  /* ===== full-quote 整段引言 ===== */
+  .full-quote{
+    margin:1.6rem 0; padding:1.6rem 1.8rem; text-align:center; font-size:1.25rem; font-weight:600;
+    color:var(--accent-soft); border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  }
+
+  /* ===== two-column-cards ===== */
+  .cols{ display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin:1.6rem 0; }
+  @media(max-width:560px){ .cols{ grid-template-columns:1fr; } }
+  .col-item{ background:#fcfaf3; border:1px solid var(--line); border-radius:12px; padding:1.1rem 1.1rem; }
+  .col-item .ico{ font-size:1.8rem; }
+  .col-item h4{ color:var(--ink); margin:.4rem 0; }
+
+  /* ===== image-card 单图卡片 ===== */
+  .img-card{ margin:1.6rem 0; border-radius:12px; overflow:hidden; border:1px solid var(--line); box-shadow:var(--shadow);}
+  .img-card img{ width:100%; display:block; }
+
+  /* ===== image-grid 图片网格 ===== */
+  .img-grid{ display:grid; grid-template-columns:1fr 1fr; gap:.5rem; margin:1.6rem 0; border-radius:12px; overflow:hidden;}
+  .img-grid img{ width:100%; display:block; }
+
+  /* ===== image-text-row 图文横排 ===== */
+  .img-row{ display:flex; gap:1.2rem; align-items:center; margin:1.6rem 0;}
+  @media(max-width:560px){ .img-row{flex-direction:column;} }
+  .img-row img{ width:42%; border-radius:10px; }
+  .img-row p{ flex:1; }
+  @media(max-width:560px){ .img-row img{width:100%;} }
+
+  /* ===== image-compare 前后对比 ===== */
+  .compare{ display:grid; grid-template-columns:1fr 1fr; gap:.5rem; margin:1.6rem 0; position:relative;}
+  .compare img{ width:100%; border-radius:8px; }
+  .compare figcaption{ text-align:center; font-size:.8rem; color:var(--ink-light); grid-column:1/-1; margin-top:.4rem;}
+
+  /* ===== stats-block 数据统计 ===== */
+  .stats{ margin:1.6rem 0; }
+  .stat-row{ display:flex; justify-content:space-between; align-items:center; padding:.65rem .2rem; border-bottom:1px dotted var(--line);}
+  .stat-row:first-child{ font-weight:700; color:var(--ink);}
+  .stat-row .num{ font-size:1.3rem; font-weight:800; color:var(--accent); }
+
+  /* ===== styled-table 表格 ===== */
+  table{ width:100%; border-collapse:collapse; margin:1.5rem 0; font-size:.9rem; }
+  th{ background:#f1e9d8; color:var(--accent); text-align:left; padding:.55rem .6rem; border-bottom:2px solid var(--accent);}
+  td{ padding:.5rem .6rem; border-bottom:1px solid var(--line); }
+  tr:nth-child(even) td{ background:#fcfaf3; }
+
+  /* ===== timeline 时间线 ===== */
+  .timeline{ border-left:2px solid var(--accent-soft); margin:1.6rem 0 1.6rem 8px; padding-left:1.2rem;}
+  .timeline h4{ margin:0 0 .4rem; color:var(--accent-soft);}
+  .timeline .item{ position:relative; padding:.4rem 0 .9rem;}
+  .timeline .item::before{ content:""; position:absolute; left:-1.46rem; top:.5rem; width:12px; height:12px; border-radius:50%; background:var(--accent); border:2px solid #fff; box-shadow:0 0 0 2px var(--accent);}
+
+  /* ===== resource-list 资料清单 ===== */
+  .res-list{ background:#fcfaf3; border:1px solid var(--line); border-radius:12px; padding:1rem 1.2rem; margin:1.6rem 0;}
+  .res-list h4{ color:var(--ink); margin:0 0 .6rem; }
+  .res-item{ padding:.4rem 0; border-bottom:1px dashed var(--line); display:flex; gap:.6rem; align-items:center;}
+  .res-item:last-child{ border-bottom:0;}
+
+  /* ===== callout 提示框 ===== */
+  .callout{ background:#fff7e6; border:1px solid #f0d9a8; border-left:4px solid var(--amber); border-radius:8px; padding:1rem 1.1rem; margin:1.6rem 0;}
+  .callout strong{ color:var(--amber);}
+  .callout.tip{ background:#eaf5f4; border-color:#bcd9d6; border-left-color:var(--accent-soft);}
+  .callout.tip strong{ color:var(--accent-soft);}
+  .callout ul{ margin:.4rem 0 0; padding-left:1.2rem;}
+
+  /* ===== steps 分步引导 ===== */
+  .steps{ margin:1.6rem 0; }
+  .steps ol{ list-style:none; counter-reset:step; padding:0; margin:0;}
+  .steps li{ counter-increment:step; display:flex; gap:.8rem; align-items:baseline; padding:.5rem 0; border-bottom:1px dashed var(--line);}
+  .steps li::before{ content:counter(step,decimal-leading-zero); font-weight:800; color:var(--accent); font-size:1rem; min-width:1.4rem;}
+
+  /* ===== faq / accordion 折叠 ===== */
+  .faq{ margin:1.6rem 0; }
+  details{ border:1px solid var(--line); border-radius:10px; margin:.6rem 0; background:#fcfaf3; overflow:hidden;}
+  summary{ cursor:pointer; padding:.85rem 1.1rem; font-weight:600; color:var(--ink); list-style:none; display:flex; justify-content:space-between; align-items:center;}
+  summary::after{ content:"+"; color:var(--accent); font-size:1.2rem; font-weight:700;}
+  details[open] summary::after{ content:"−"; }
+  details[open] summary{ border-bottom:1px solid var(--line);}
+  .faq-body{ padding:1rem 1.1rem; }
+  .faq-body p{ margin:.4rem 0; }
+
+  /* ===== cta-card 行动号召 ===== */
+  .cta{ text-align:center; background:linear-gradient(135deg,#e8590c,#f08c00); color:#fff; border-radius:14px; padding:1.8rem 1.5rem; margin:1.6rem 0;}
+  .cta h4{ color:#fff; font-size:1.2rem; margin:0 0 .4rem;}
+  .cta p{ color:rgba(255,255,255,.92); margin:.3rem 0;}
+  .cta button{ margin-top:.8rem; background:#fff; color:var(--accent); border:0; padding:.6rem 1.4rem; border-radius:999px; font-weight:700; cursor:pointer;}
+
+  /* ===== share / follow ===== */
+  .share{ background:#2b2420; color:#fff; border-radius:12px; padding:1.2rem 1.4rem; margin:1.6rem 0; text-align:center;}
+  .follow{ background:#f1e9d8; border:1px dashed var(--accent); border-radius:10px; padding:1rem 1.2rem; margin:1.6rem 0; text-align:center;}
+
+  /* ===== qr-card ===== */
+  .qr{ text-align:center; background:#fcfaf3; border:1px solid var(--line); border-radius:12px; padding:1.5rem; margin:1.6rem 0;}
+  .qr img{ width:110px; height:110px; border-radius:8px; margin-bottom:.6rem;}
+
+  /* ===== related-posts ===== */
+  .related{ background:#fcfaf3; border:1px solid var(--line); border-radius:12px; padding:1rem 1.2rem; margin:1.6rem 0;}
+  .related h4{ color:var(--ink); margin:0 0 .5rem;}
+  .related a{ display:block; padding:.4rem 0; color:var(--accent-soft); text-decoration:none; border-bottom:1px dashed var(--line);}
+  .related a:last-child{ border-bottom:0;}
+
+  /* ===== series-nav ===== */
+  .series{ background:var(--accent-soft); color:#fff; border-radius:12px; padding:1.3rem 1.4rem; margin:1.6rem 0;}
+  .series h4{ color:#fff; margin:0 0 .4rem;}
+  .series .bar{ height:8px; background:rgba(255,255,255,.25); border-radius:99px; margin:.6rem 0; overflow:hidden;}
+  .series .bar i{ display:block; height:100%; width:75%; background:var(--amber); border-radius:99px;}
+  .series .item{padding:.25rem 0; font-size:.9rem; opacity:.9; border-bottom:1px dashed rgba(255,255,255,.3);}
+  .series .item.cur{ opacity:1; font-weight:700; }
+  .series .item:last-child{ border-bottom:0;}
+
+  /* ===== tag-label ===== */
+  .tags{ display:flex; flex-wrap:wrap; gap:.5rem; margin:1.6rem 0;}
+  .tag-chip{ background:#f1e9d8; color:var(--accent); border:1px solid var(--line); border-radius:999px; padding:.25rem .8rem; font-size:.85rem;}
+
+  /* ===== code-frame 代码块 ===== */
+  pre.code-block{ background:#2b2420; color:#f0e6d8; border-radius:10px; padding:1.2rem 1.2rem; overflow-x:auto; font-size:.86rem; line-height:1.6; margin:1.6rem 0;}
+  pre.code-block code{ font-family:"SF Mono","Consolas",monospace; color:inherit; background:none; border:0; padding:0;}
+  pre.code-block .cm{ color:#8a9ba8; }
+  pre.code-block .kw{ color:#f08c00; }
+  pre.code-block .str{ color:#7cc8c8; }
+
+  /* ===== divider-fancy ===== */
+  .dfancy{ display:flex; align-items:center; gap:.8rem; margin:1.6rem 0; color:var(--amber);}
+  .dfancy::before, .dfancy::after{ content:""; flex:1; border-top:2px solid var(--line);}
+  .dfancy span{ font-size:.8rem; letter-spacing:.2em;}
+
+  /* ===== author-card ===== */
+  .author{ display:flex; gap:1rem; align-items:center; background:#fcfaf3; border:1px solid var(--line); border-radius:12px; padding:1.2rem 1.3rem; margin:1.6rem 0;}
+  .author img{ width:70px; height:70px; border-radius:50%; object-fit:cover;}
+  .author .meta strong{ color:var(--ink); display:block;}
+  .author .meta .role{ color:var(--accent); font-size:.85rem;}
+  .author .meta p{ margin:.4rem 0 0; font-size:.9rem;}
+
+  /* ===== testimonial-card ===== */
+  .testimonial{ background:#fff7e6; border:1px solid #f0d9a8; border-radius:12px; padding:1.3rem 1.4rem; margin:1.6rem 0; position:relative; display:flex; gap:1rem; align-items:center;}
+  .testimonial img{ width:56px; height:56px; border-radius:50%; object-fit:cover; flex-shrink:0;}
+  .testimonial .quote-mark{ position:absolute; top:-6px; left:14px; font-size:2.4rem; color:var(--amber); font-family:serif;}
+  .testimonial .name{ font-weight:700; color:var(--ink);}
+  .testimonial .title{ font-size:.85rem; color:var(--ink-light); margin-top:.1rem;}
+
+  /* ===== product-card ===== */
+  .product{ display:flex; gap:1.2rem; background:#fcfaf3; border:1px solid var(--line); border-radius:12px; padding:1.3rem; margin:1.6rem 0; align-items:flex-start;}
+  .product img{ width:130px; border-radius:8px; object-fit:cover; flex-shrink:0;}
+  .product h4{ color:var(--ink);}
+  .product .price{ color:var(--accent); font-size:1.4rem; font-weight:800;}
+  .product .orig{ color:var(--ink-light); text-decoration:line-through; font-size:.9rem; margin-left:.4rem;}
+  .product .rate{ color:var(--amber);}
+  .product .buy{ color:var(--accent-soft); font-weight:600; margin-top:.3rem;}
+  @media(max-width:560px){ .product{flex-direction:column;} .product img{width:100%;} }
+
+  /* ===== article-section ===== */
+  .article-section{ border-left:3px solid var(--accent-soft); padding-left:1.1rem; margin:1.6rem 0;}
+
+  /* ===== brand-sign ===== */
+  .brand{ text-align:center; margin:1.6rem 0; padding:1.2rem; border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
+  .brand .name{ font-size:1.3rem; font-weight:800; color:var(--ink); letter-spacing:.06em;}
+  .brand .slogan{ color:var(--ink-light); font-size:.9rem; letter-spacing:.14em; margin-top:.2rem;}
+
+  /* ===== end-card ===== */
+  .end{ text-align:center; background:#2b2420; color:#fff; border-radius:14px; padding:2.2rem 1.5rem; margin:1.6rem 0;}
+  .end .thanks{ font-size:2rem; font-weight:800; letter-spacing:.16em; color:var(--amber); text-transform:uppercase;}
+  .end .sub{ color:rgba(255,255,255,.9); margin-top:.6rem;}
+  .end .deco{ font-size:1.4rem; margin-top:.8rem; color:var(--amber);}
+
+  /* ===== copyright ===== */
+  .copyright{ text-align:center; font-size:.8rem; color:var(--ink-light); margin:1.4rem 0;}
+
+  .sep-section{ border:0; border-top:2px dashed var(--amber); margin:2.6rem 0;}
+</style>
+</head>
+<body>
+<div class="page">
+
+
+
+  <!-- ═══════ 01 开场与导航 ═══════ -->
+  <h1>WeMD 组件完整示范</h1>
+
+  <span class="tag">pullquote · 基础层引用</span>
+  <blockquote>
+    <p>这是 <code class="inline">pullquote</code> 组件（原生块引用）：用于单行引语强调。本文用一篇连贯的文章完整展示 WeMD 全部组件——基础层组件使用原生 Markdown（渲染端自动识别并套用主题皮肤），杂志层与固定功能块使用 <code class="inline">:::</code> 标记。每个组件上方都标注了名称、属组与用途。</p>
+  </blockquote>
+
+  <hr class="divider">
+
+  <span class="tag">numbered-heading · 基础层编号标题</span>
+  <h2>01 开场与导航</h2>
+
+  <span class="tag">section-title · 基础层章标题</span>
+  <h3>section-title 组件</h3>
+  <p><code class="inline">section-title</code>（章标题，基础层·原生 <code class="inline">##</code>）用于给段落划分章节，强调主题。下面这个一级标题背后，正式加载的主题会把它装饰成章节标。</p>
+
+  <span class="tag">hero-banner · 杂志层头图</span>
+  <div class="hero">
+    <h2>设计之美 · 全组件一次看完</h2>
+    <p>从封面到结尾，用一篇文章认识 WeMD 的 44 个组件</p>
+    <p><em>示范文章</em></p>
+  </div>
+
+  <span class="tag">toc-nav · 杂志层目录</span>
+  <div class="toc">
+    <h3>目录</h3>
+    <ul>
+      <li>01 开场与导航</li>
+      <li>02 章节与标题</li>
+      <li>03 卡片与容器</li>
+      <li>04 数据与信息</li>
+      <li>05 交互与引导</li>
+      <li>06 代码与分割</li>
+      <li>07 结尾与版权</li>
+    </ul>
+  </div>
+
+  <span class="tag">section-divider · 杂志层章节分隔</span>
+  <div class="section-divider">PART 01<small>开场与导航</small></div>
+
+  <span class="tag">divider · 基础层分割线</span>
+  <hr class="divider">
+
+
+
+  <!-- ═══════ 02 章节与标题 ═══════ -->
+  <span class="tag">numbered-heading · 基础层编号标题</span>
+  <h2>02 章节与标题</h2>
+
+  <span class="tag">numbered-heading · 基础层</span>
+  <h3>numbered-heading 组件</h3>
+  <p><code class="inline">numbered-heading</code>（编号标题，基础层·原生 <code class="inline">## 序号 标题</code>）让章节标题自动带编号：</p>
+  <h2>01 为什么需要组件系统</h2>
+
+  <span class="tag">section-title · 基础层</span>
+  <h3>section-title 组件</h3>
+  <p>再放大一个 <code class="inline">section-title</code>：当你写普通二级标题时，主题会自动识别并装饰：</p>
+  <h2>组件让内容更有结构</h2>
+
+  <span class="tag">pullquote · 基础层</span>
+  <h3>pullquote 组件</h3>
+  <p><code class="inline">pullquote</code>（引语，基础层·原生 <code class="inline">&gt;</code>）用整行引用突出金句，适合放在段首或段尾：</p>
+  <blockquote><p>形式追随功能，但功能也需要形式的温度。</p></blockquote>
+
+  <hr class="divider">
+
+
+
+  <!-- ═══════ 03 卡片与容器 ═══════ -->
+  <span class="tag">numbered-heading · 基础层</span>
+  <h2>03 卡片与容器</h2>
+
+  <span class="tag">text-card · 杂志层</span>
+  <h3>text-card 组件</h3>
+  <p><code class="inline">text-card</code>（正文卡片，杂志层）把长段落收进卡片，缓解文字墙的压迫感：</p>
+  <div class="card">
+    <p>组件系统把内容拆解成独立的语义单元，每个单元有自己的视觉语言和交互意图。一篇文章不再是密密麻麻的文字墙，而是由卡片、引言、时间线、数据块等元素拼装而成的信息建筑。</p>
+    <p>好的组件设计应当像乐高积木：单独看每块都有意义，组合起来又能搭建出无限可能。</p>
+  </div>
+
+  <span class="tag">quote-card · 杂志层</span>
+  <h3>quote-card 组件</h3>
+  <p><code class="inline">quote-card</code>（人物引言卡，杂志层）带署名的人物引言：</p>
+  <div class="quote-card">
+    <p>约束是创造力的朋友，而非敌人。</p>
+    <div class="author">— 设计师箴言</div>
+  </div>
+
+  <span class="tag">full-quote · 杂志层</span>
+  <h3>full-quote 组件</h3>
+  <p><code class="inline">full-quote</code>（整段引言，杂志层）比极简 pullquote 更完整、占位更大：</p>
+  <div class="full-quote">愿每一次创作，都既有结构的力量，也有想象的自由。</div>
+
+  <span class="tag">two-column-cards · 杂志层</span>
+  <h3>two-column-cards 组件</h3>
+  <p><code class="inline">two-column-cards</code>（双栏卡片，杂志层）把两条并列信息并排展示：</p>
+  <div class="cols">
+    <div class="col-item">
+      <div class="ico">🎨</div>
+      <h4>色彩系统</h4>
+      <p>14 色调色板，从主色到文字色层层递进</p>
+    </div>
+    <div class="col-item">
+      <div class="ico">📐</div>
+      <h4>排版系统</h4>
+      <p>字号、行高、字距、标题层级，统一节奏</p>
+    </div>
+  </div>
+
+  <span class="tag">image-card · 基础层单图</span>
+  <h3>image-card 组件</h3>
+  <p><code class="inline">image-card</code>（单图卡片，基础层·原生独占一张图）放一张大图，渲染端识别单张独占图片自动套卡：</p>
+  <div class="img-card"><img src="https://picsum.photos/seed/wemd-design-01/800/450" alt=""></div>
+
+  <span class="tag">image-grid · 基础层多图</span>
+  <h3>image-grid 组件</h3>
+  <p><code class="inline">image-grid</code>（图片网格，基础层·原生连续多张图）多张图片并排，识别连续独占图片行自动套网格：</p>
+  <div class="img-grid">
+    <img src="https://picsum.photos/seed/wemd-grid-a/400/300" alt="">
+    <img src="https://picsum.photos/seed/wemd-grid-b/400/300" alt="">
+  </div>
+
+  <span class="tag">image-text-row · 杂志层</span>
+  <h3>image-text-row 组件</h3>
+  <p><code class="inline">image-text-row</code>（图文横排，杂志层）图片与文字左右排布，信息更紧凑：</p>
+  <div class="img-row">
+    <img src="https://picsum.photos/seed/wemd-row-01/400/280" alt="">
+    <p>图文横排让信息更紧凑，适合产品介绍和场景说明。读者无需上下滚动，一眼就能把图片和文字对应起来。</p>
+  </div>
+
+  <span class="tag">image-caption · 杂志层</span>
+  <h3>image-caption 组件</h3>
+  <p><code class="inline">image-caption</code>（图注，杂志层）为图片搭配说明文字：</p>
+  <div class="img-card">
+    <img src="https://picsum.photos/seed/wemd-caption-01/800/400" alt="">
+    <p style="padding:.6rem 1rem; font-size:.85rem; color:var(--ink-light);"><em>摄于 2026 年盛夏，海边日落 — 光影是天然的调色师。</em></p>
+  </div>
+
+  <span class="tag">image-compare · 杂志层</span>
+  <h3>image-compare 组件</h3>
+  <p><code class="inline">image-compare</code>（前后对比，杂志层）并排对比两张图，适合"修改前/后"场景：</p>
+  <figure class="compare">
+    <img src="https://picsum.photos/seed/wemd-compare-before/400/300" alt="">
+    <img src="https://picsum.photos/seed/wemd-compare-after/400/300" alt="">
+    <figcaption>修改前 · 修改后</figcaption>
+  </figure>
+
+  <hr class="divider">
+
+
+
+  <!-- ═══════ 04 数据与信息 ═══════ -->
+  <span class="tag">numbered-heading · 基础层</span>
+  <h2>04 数据与信息</h2>
+
+  <span class="tag">stats-block · 杂志层</span>
+  <h3>stats-block 组件</h3>
+  <p><code class="inline">stats-block</code>（数据统计，杂志层）用图标列表呈现核心指标：</p>
+  <div class="card">
+    <div class="stats">
+      <div class="stat-row"><span>核心数据</span></div>
+      <div class="stat-row"><span>组件总数</span><span class="num">44</span></div>
+      <div class="stat-row"><span>原型分组</span><span class="num">7</span></div>
+      <div class="stat-row"><span>色彩变量</span><span class="num">14</span></div>
+      <div class="stat-row"><span>CSS 变量</span><span class="num">31</span></div>
+    </div>
+  </div>
+
+  <span class="tag">styled-table · 基础层表格</span>
+  <h3>styled-table 组件</h3>
+  <p><code class="inline">styled-table</code>（数据表格，基础层·原生表格）用原生 Markdown 表格即可，主题自动加条纹与边框：</p>
+  <table>
+    <thead><tr><th>分组</th><th>组件数</th><th>设计重点</th></tr></thead>
+    <tbody>
+      <tr><td>signature</td><td>4</td><td>品牌渐变、Logo 放置</td></tr>
+      <tr><td>heading</td><td>4</td><td>标题层级、编号样式</td></tr>
+      <tr><td>container</td><td>10</td><td>卡片框架、内容排版</td></tr>
+      <tr><td>data</td><td>9</td><td>数据展示、表格条纹</td></tr>
+      <tr><td>interactive</td><td>6</td><td>交互提示、展开指示器</td></tr>
+      <tr><td>code</td><td>2</td><td>代码背景、语法高亮</td></tr>
+      <tr><td>divider</td><td>9</td><td>分割线、引用块装饰</td></tr>
+    </tbody>
+  </table>
+  <p>多写一张原生表格，同样会自动识别为 <code class="inline">styled-table</code>：</p>
+  <table>
+    <thead><tr><th>组件</th><th>类型</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>hero-banner</td><td>Hero</td><td>顶部头图</td></tr>
+      <tr><td>stats-block</td><td>Data</td><td>数据统计</td></tr>
+      <tr><td>callout</td><td>Interactive</td><td>提示框</td></tr>
+    </tbody>
+  </table>
+
+  <span class="tag">timeline · 杂志层</span>
+  <h3>timeline 组件</h3>
+  <p><code class="inline">timeline</code>（时间线，杂志层）用竖线时间轴呈现发展历程：</p>
+  <h4>产品发展历程</h4>
+  <div class="timeline">
+    <div class="item">2024-01 项目立项，确定技术方向</div>
+    <div class="item">2024-06 v1.0 正式发布，覆盖 33 个组件</div>
+    <div class="item">2025-01 用户突破 10 万，新增杂志级组件</div>
+    <div class="item">2026-08 组件总数达到 44 个，支持完整主题包</div>
+  </div>
+
+  <span class="tag">resource-list · 杂志层</span>
+  <h3>resource-list 组件</h3>
+  <p><code class="inline">resource-list</code>（资料清单，杂志层）罗列配套资料或附件：</p>
+  <div class="res-list">
+    <h4>配套资料包</h4>
+    <div class="res-item">📄 组件设计规范 PDF</div>
+    <div class="res-item">🎨 色彩变量速查表</div>
+    <div class="res-item">💻 主题模板代码包</div>
+    <div class="res-item">📐 排版间距参考图</div>
+  </div>
+
+  <hr class="divider">
+
+
+
+  <!-- ═══════ 05 交互与引导 ═══════ -->
+  <span class="tag">numbered-heading · 基础层</span>
+  <h2>05 交互与引导</h2>
+
+  <span class="tag">callout · 提示框</span>
+  <h3>callout 组件</h3>
+  <p><code class="inline">callout</code>（提示框）用图标引导读者注意重点：</p>
+  <div class="callout">
+    <p><strong>小提示</strong></p>
+    <p>组件不是越多越好，选择最适合内容的那几个，比堆砌所有组件更有效。</p>
+  </div>
+
+  <span class="tag">callout-pro · 进阶提示框</span>
+  <h3>callout-pro 组件</h3>
+  <p><code class="inline">callout-pro</code>（进阶提示框，杂志层）带类型与标题，适合区分 tip/warning：</p>
+  <div class="callout tip">
+    <p><strong>使用建议</strong></p>
+    <ul>
+      <li>signature 组适合放在文章开头和结尾</li>
+      <li>data 组适合穿插在论述段落之间</li>
+      <li>interactive 组适合教程和问答类内容</li>
+    </ul>
+  </div>
+
+  <span class="tag">steps · 杂志层分步</span>
+  <h3>steps 组件</h3>
+  <p><code class="inline">steps</code>（分步引导）一步一步引导操作：</p>
+  <div class="steps">
+    <ol>
+      <li><strong>选择组件</strong> — 根据内容意图挑选合适的组件类型</li>
+      <li><strong>填充内容</strong> — 用 Markdown 语法写入组件 body</li>
+      <li><strong>应用主题</strong> — 导入主题包，组件自动获得品牌化样式</li>
+    </ol>
+  </div>
+
+  <span class="tag">faq · 问答折叠</span>
+  <h3>faq 组件</h3>
+  <p><code class="inline">faq</code>（问答折叠）带标题的常见问题块：</p>
+  <div class="faq">
+    <details open>
+      <summary>组件支持嵌套吗？</summary>
+      <div class="faq-body"><p>支持。组件内部可以嵌套任意 Markdown 内容，包括其他组件。</p></div>
+    </details>
+    <details>
+      <summary>如何自定义组件样式？</summary>
+      <div class="faq-body"><p>在主题包中为对应组件编写 variantCss，选择器格式为 <code class="inline">.wemd-{组件名}[data-variant="xxx"]</code>。</p></div>
+    </details>
+    <details>
+      <summary>44 个组件都要用吗？</summary>
+      <div class="faq-body"><p>不需要。按需选择，一篇文章通常使用 8-12 个组件就足够了。</p></div>
+    </details>
+  </div>
+
+  <span class="tag">accordion · 折叠面板</span>
+  <h3>accordion 组件</h3>
+  <p><code class="inline">accordion</code>（折叠面板，杂志层）可逐项展开的手风琴：</p>
+  <div class="faq">
+    <details>
+      <summary>折叠面板一：什么是组件系统？</summary>
+      <div class="faq-body"><p>组件系统是一种内容组织方式，把文章拆解成独立的语义单元，每个单元有自己的视觉语言。它让内容创作更像搭积木，而不是写流水账。</p></div>
+    </details>
+    <details>
+      <summary>折叠面板二：如何选择合适的组件？</summary>
+      <div class="faq-body"><p>根据内容意图选择：要讲故事用 timeline，要展示数据用 stats-block，要引导行动用 cta-card。组件的 semantic 和 intent 字段可以帮助判断。</p></div>
+    </details>
+    <details>
+      <summary>折叠面板三：主题包如何工作？</summary>
+      <div class="faq-body"><p>主题包包含一套完整的设计语言（色彩、排版、间距）和每个组件的 variantCss。导入后，主程序会把组件 HTML 和主题 CSS 组合渲染出最终样式。</p></div>
+    </details>
+  </div>
+
+  <span class="tag">cta-card · 行动号召</span>
+  <h3>cta-card 组件</h3>
+  <p><code class="inline">cta-card</code>（行动召唤，杂志层）引导用户点击的行动卡片：</p>
+  <div class="cta">
+    <h4>立即体验 WeMD 设计系统</h4>
+    <p>44 个组件 · 14 色调色板 · 一键导入主题</p>
+    <p>点击下方按钮，开启你的专业排版之旅</p>
+    <button>开始体验</button>
+  </div>
+
+  <span class="tag">share-card · 分享提醒</span>
+  <h3>share-card 组件</h3>
+  <p><code class="inline">share-card</code>（分享提醒，杂志层）鼓励读者转发：</p>
+  <div class="share">如果这篇文章对你有帮助，欢迎分享给更多需要的朋友。</div>
+
+  <span class="tag">qr-card · 二维码卡片</span>
+  <h3>qr-card 组件</h3>
+  <p><code class="inline">qr-card</code>（二维码卡片，杂志层）放公众号二维码等引导关注：</p>
+  <div class="qr">
+    <img src="https://picsum.photos/seed/wemd-qr-01/200/200" alt="">
+    <p>扫码关注公众号</p>
+    <p>获取更多设计干货和主题更新</p>
+  </div>
+
+  <span class="tag">related-posts · 延伸阅读</span>
+  <h3>related-posts 组件</h3>
+  <p><code class="inline">related-posts</code>（延伸阅读，杂志层）推荐相关文章链接：</p>
+  <div class="related">
+    <h4>延伸阅读</h4>
+    <a href="#">组件设计原则：少即是多</a>
+    <a href="#">色彩系统的构建逻辑</a>
+    <a href="#">从 Markdown 到公众号排版</a>
+  </div>
+
+  <span class="tag">series-nav · 系列导航</span>
+  <h3>series-nav 组件</h3>
+  <p><code class="inline">series-nav</code>（系列导航，杂志层）标记当前所属系列与进度：</p>
+  <div class="series">
+    <h4>设计系统从 0 到 1 <small style="opacity:.7;font-weight:400;">第 3 / 4 篇</small></h4>
+    <div class="bar"><i></i></div>
+    <div class="item">第一篇：为什么需要设计系统 ✓</div>
+    <div class="item">第二篇：色彩与排版基础 ✓</div>
+    <div class="item cur">第三篇：组件系统全览 ← 当前</div>
+    <div class="item">第四篇：主题包的构建与导出</div>
+  </div>
+
+  <span class="tag">tag-label · 标签行</span>
+  <h3>tag-label 组件</h3>
+  <p><code class="inline">tag-label</code>（标签行，行内）给文章打标签，独占一行：</p>
+  <div class="tags">
+    <span class="tag-chip">#设计系统</span>
+    <span class="tag-chip">#公众号排版</span>
+    <span class="tag-chip">#组件化</span>
+    <span class="tag-chip">#WeMD</span>
+  </div>
+
+  <hr class="divider">
+
+
+
+  <!-- ═══════ 06 代码与分割 ═══════ -->
+  <span class="tag">numbered-heading · 基础层</span>
+  <h2>06 代码与分割</h2>
+
+  <span class="tag">code-frame · 基础层代码块</span>
+  <h3>code-frame 组件</h3>
+  <p><code class="inline">code-frame</code>（代码块，基础层·原生围栏代码）用原生代码栅栏，主题自动加深色底与高亮：</p>
+  <pre class="code-block"><code><span class="cm">// 主题包结构示例</span>
+<span class="kw">const</span> theme = {
+  <span class="str">meta</span>: { <span class="str">id</span>: <span class="str">"my-theme"</span>, <span class="str">name</span>: <span class="str">"我的主题"</span> },
+  tokens: {
+    color: { primary: <span class="str">"#fe2c55"</span> },
+    typography: { fontFamily: <span class="str">"sans-serif"</span> },
+  },
+  components: {
+    <span class="str">"hero-banner"</span>: {
+      enabled: <span class="kw">true</span>,
+      variant: <span class="str">"my-style"</span>,
+      variantCss: <span class="str">".wemd-hero-banner[data-variant='my-style'] { ... }"</span>,
+    },
+  },
+};</code></pre>
+
+  <span class="tag">divider-fancy · 装饰分割线</span>
+  <h3>divider-fancy 组件</h3>
+  <p><code class="inline">divider-fancy</code>（装饰分割线，杂志层）比基础 <code class="inline">divider</code> 更有装饰感：</p>
+  <div class="dfancy"><span>◆ ◆ ◆</span></div>
+
+  <span class="tag">divider · 基础层分割线</span>
+  <h3>divider 组件</h3>
+  <p><code class="inline">divider</code>（分割线，基础层·原生 <code class="inline">---</code>）再次出现，用于文末轻量分隔：</p>
+  <hr class="divider">
+
+
+
+  <!-- ═══════ 07 结尾与版权 ═══════ -->
+  <span class="tag">numbered-heading · 基础层</span>
+  <h2>07 结尾与版权</h2>
+
+  <span class="tag">author-card · 作者卡</span>
+  <h3>author-card 组件</h3>
+  <p><code class="inline">author-card</code>（作者卡，杂志层）展示文章作者信息：</p>
+  <div class="author">
+    <img src="https://picsum.photos/seed/wemd-author-01/200/200" alt="">
+    <div class="meta">
+      <strong>WeMD Team</strong>
+      <div class="role">设计工程师</div>
+      <p>专注公众号排版与内容设计系统，让每一篇文章都有专业的视觉表达。</p>
+    </div>
+  </div>
+
+  <span class="tag">testimonial-card · 用户证言</span>
+  <h3>testimonial-card 组件</h3>
+  <p><code class="inline">testimonial-card</code>（用户证言，杂志层）展示用户评价：</p>
+  <div class="testimonial">
+    <img src="https://picsum.photos/seed/wemd-test-avatar/200/200" alt="">
+    <div>
+      <div class="quote-mark">“</div>
+      <div class="name">李明</div>
+      <div class="title">产品经理 · 字节跳动</div>
+      <p style="margin:.4rem 0 0;">这套组件系统让我们的内容团队效率提升了 3 倍，排版终于不再是个体力活。</p>
+    </div>
+  </div>
+
+  <span class="tag">product-card · 产品卡</span>
+  <h3>product-card 组件</h3>
+  <p><code class="inline">product-card</code>（产品卡，杂志层）呈现产品价格与卖点：</p>
+  <div class="product">
+    <img src="https://picsum.photos/seed/wemd-product-01/400/300" alt="">
+    <div>
+      <h4>WeMD Pro 主题包</h4>
+      <p>专业版主题，含 44 个组件定制样式</p>
+      <div class="price">¥99 <span class="orig">¥199</span> <span class="rate">⭐4.9</span></div>
+      <div class="buy">立即购买 | 限时特惠</div>
+    </div>
+  </div>
+
+  <span class="tag">article-section · 正文段落槽位</span>
+  <h3>article-section 组件</h3>
+  <p><code class="inline">article-section</code>（正文段落槽位，杂志层）从原文提取指定段落，保持原文结构：</p>
+  <div class="article-section">
+    <blockquote><p>这是文章正文段落引用槽位。article-section 组件用于从原文中提取指定范围的段落，保持原文的排版结构。适合长文章中需要引用大段原文的场景。</p></blockquote>
+    <p>当你读到这里，说明已经看完了全部 44 个组件的示范。每个组件都有自己独特的视觉语言和用途，组合在一起就构成了一篇结构清晰、视觉丰富的公众号文章。</p>
+  </div>
+
+  <span class="tag">brand-sign · 品牌落款</span>
+  <h3>brand-sign 组件</h3>
+  <p><code class="inline">brand-sign</code>（品牌落款，杂志层）文末品牌签名：</p>
+  <div class="brand">
+    <div class="name">WeMD · 让排版更优雅</div>
+    <div class="slogan">激发创造，丰富生活</div>
+  </div>
+
+  <span class="tag">end-card · 结尾卡</span>
+  <h3>end-card 组件</h3>
+  <p><code class="inline">end-card</code>（结尾卡，杂志层）文章收尾的结语卡片：</p>
+  <div class="end">
+    <div class="thanks">Thanks</div>
+    <div class="sub">感谢阅读 · 期待下次相遇</div>
+    <div class="deco">✦</div>
+  </div>
+
+  <span class="tag">copyright-notice · 版权声明</span>
+  <h3>copyright-notice 组件</h3>
+  <p><code class="inline">copyright-notice</code>（版权声明，杂志层）文末版权信息：</p>
+  <div class="copyright">
+    <p>© 2026 WeMD Team. 保留所有权利。</p>
+    <p>本文使用的主题由 WeMD Theme Designer 自动生成。</p>
+  </div>
+
+  <span class="tag">follow-bar · 关注引导条</span>
+  <h3>follow-bar 组件</h3>
+  <p><code class="inline">follow-bar</code>（关注引导条，固定功能块·行内）文中或文末引导关注公众号：</p>
+  <div class="follow">点击上方蓝字关注我们，每周获取设计干货 <strong style="color:var(--accent);">关注</strong></div>
+
+</div>
+</body>
+</html>

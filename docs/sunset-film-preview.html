@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>落日胶片 · 主题视觉稿</title>
+<style>
+  /* ===== 设计基调：胶片黄昏 Sunset Film =====
+     一张刚冲印出来的 35mm 胶片，黄昏的光漏进每一格：
+     - 暖奶油纸 #f6f1ea + 落日橙 #f2762e + 暮紫 #4a2f4e + 金 #ffcf87
+     - 胶片颗粒（SVG feTurbulence 噪点，组件级非整篇）
+     - 齿孔带（repeating-linear-gradient）+ 双线片框
+     - 漏光（光晕渐变）· 全部真实 DOM，无伪元素、无整篇背景、无按钮式互动 */
+  :root {
+    --paper: #f6f1ea;
+    --ink: #352b2a;
+    --ink-soft: #8a7466;
+    --sunset: #f2762e;
+    --dusk: #4a2f4e;
+    --gold: #ffcf87;
+    --line: #e2d5c2;
+    --mono: "SF Mono", "Cascadia Code", "Roboto Mono", Consolas, monospace;
+    --sans: "PingFang SC", "Microsoft YaHei", sans-serif;
+    --serif: "Source Han Serif SC", "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background:
+      radial-gradient(900px 520px at 50% -6%, #faf5ec 0%, #f1e6d2 60%, #e6d5bc 100%);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    padding: 46px 16px 90px;
+  }
+
+  .note {
+    max-width: 600px;
+    margin: 0 auto 30px;
+    padding: 18px 22px;
+    background: rgba(255,255,255,0.6);
+    border: 1px solid #e6dcc8;
+    border-left: 4px solid var(--sunset);
+    font-size: 13px;
+    line-height: 1.9;
+    color: var(--ink-soft);
+  }
+  .note b { color: var(--ink); }
+  .note .k { color: var(--sunset); font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; }
+
+  /* 胶片颗粒（SVG feTurbulence，组件级覆盖层） */
+  .grain {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='table' tableValues='0 0.14'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.5;
+  }
+
+  /* ===== 胶片正文容器 ===== */
+  #wemd {
+    position: relative;
+    max-width: 600px;
+    margin: 0 auto;
+    background: var(--paper);
+    padding: 0 34px 40px;
+    border-left: 1px solid #e8dfce;
+    border-right: 1px solid #e8dfce;
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.9;
+  }
+
+  #wemd p {
+    margin: 0 0 14px;
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.9;
+    text-align: justify;
+  }
+  #wemd p b { color: var(--ink); font-weight: 700; }
+  #wemd p strong { color: var(--sunset); font-weight: 700; }
+  #wemd em { font-style: normal; color: var(--dusk); font-weight: 700; }
+
+  /* ---------- 胶片片头（齿孔 + 刊头） ---------- */
+  .leader { position: relative; margin: 0 -34px; }
+  .sprocket {
+    display: block;
+    height: 16px;
+    margin: 0;
+    background:
+      linear-gradient(to right, transparent 0 10px, #e8dfce 10px 14px) 0 0/22px 100% repeat-x;
+  }
+  .masthead {
+    margin: 0 -34px;
+    padding: 22px 34px 16px;
+    border-top: 1px solid var(--line);
+    border-bottom: 2px solid var(--ink);
+    text-align: center;
+  }
+  .masthead .brand {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.34em;
+    color: var(--ink);
+  }
+  .masthead .brand .sun { color: var(--sunset); }
+  .masthead .no {
+    display: block;
+    margin-top: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--ink-soft);
+  }
+
+  /* ---------- 封面静帧（齿孔 + 漏光 + 黄昏渐变） ---------- */
+  .cover { position: relative; margin: 26px 0 28px; }
+  .cover .frame {
+    position: relative;
+    padding: 20px 22px 22px;
+    border: 2px solid var(--ink);
+    outline: 1px solid var(--ink);
+    outline-offset: 4px;
+    background:
+      radial-gradient(140% 90% at 82% -12%, rgba(255,207,135,0.5) 0%, transparent 55%),
+      radial-gradient(120% 100% at 8% 108%, rgba(74,47,78,0.35) 0%, transparent 55%),
+      linear-gradient(160deg, #f9c27a 0%, #f2762e 45%, #b74f5e 78%, #4a2f4e 100%);
+    overflow: hidden;
+    text-align: center;
+    color: #fff6ea;
+  }
+  .cover .frame .kicker {
+    position: relative;
+    z-index: 1;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.34em;
+    color: rgba(255,246,234,0.85);
+  }
+  .cover .frame .title {
+    position: relative;
+    z-index: 1;
+    margin-top: 14px;
+    font-family: var(--serif);
+    font-size: 34px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    line-height: 1.3;
+    color: #fff6ea;
+    text-shadow: 0 2px 14px rgba(74,47,78,0.4);
+  }
+  .cover .frame .sub {
+    position: relative;
+    z-index: 1;
+    margin-top: 12px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.26em;
+    color: rgba(255,246,234,0.85);
+  }
+  .cover .frame .edge {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 8px;
+    background: linear-gradient(180deg, transparent, rgba(255,246,234,0.18));
+  }
+  .cover .meta {
+    margin-top: 8px;
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--ink-soft);
+  }
+
+  /* ---------- 镜头号标题 ---------- */
+  .shot { margin: 30px 0 14px; }
+  .shot .no {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.28em;
+    color: var(--sunset);
+  }
+  .shot .t {
+    margin-top: 4px;
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+  }
+  .shot .rule {
+    display: block;
+    margin-top: 8px;
+    border-top: 1px solid var(--line);
+  }
+
+  /* ---------- 漏光引语 ---------- */
+  .quote {
+    position: relative;
+    margin: 26px 0;
+    padding: 20px 22px;
+    background:
+      radial-gradient(120% 90% at 92% -8%, rgba(242,118,46,0.16) 0%, transparent 50%),
+      #fffaf0;
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--sunset);
+    overflow: hidden;
+  }
+  .quote .text {
+    position: relative;
+    z-index: 1;
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.9;
+    color: var(--ink);
+  }
+  .quote .src {
+    position: relative;
+    z-index: 1;
+    display: block;
+    margin-top: 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--dusk);
+  }
+
+  /* ---------- 拍摄参数条 ---------- */
+  .params { margin: 24px 0; border-top: 2px solid var(--ink); }
+  .params .p {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 8px 0;
+    border-bottom: 1px dotted var(--line);
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .params .p .k { font-family: var(--mono); color: var(--ink-soft); letter-spacing: 0.1em; font-size: 12px; }
+  .params .p .v { font-family: var(--mono); color: var(--dusk); font-weight: 700; }
+
+  /* ---------- 静帧图（齿孔上下 + 颗粒） ---------- */
+  .still { position: relative; margin: 28px 0; }
+  .still .strip {
+    display: block;
+    height: 14px;
+    background: linear-gradient(to right, #352b2a 0 6px, transparent 6px 10px) 0 0/16px 100% repeat-x,
+      var(--dusk);
+    opacity: 0.9;
+  }
+  .still .pic {
+    position: relative;
+    height: 200px;
+    margin: 0;
+    background:
+      linear-gradient(160deg, rgba(255,207,135,0.5), transparent 55%),
+      linear-gradient(180deg, #f9c27a 0%, #f2762e 45%, #b74f5e 78%, #4a2f4e 100%);
+    border-left: 1px solid var(--ink);
+    border-right: 1px solid var(--ink);
+    overflow: hidden;
+  }
+  .still .caption {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--ink-soft);
+  }
+
+  /* ---------- 冲印流程（步骤） ---------- */
+  .steps { margin: 24px 0; border-top: 1px solid var(--line); }
+  .steps .st {
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+    padding: 9px 0;
+    border-bottom: 1px dotted var(--line);
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .steps .st .n { font-family: var(--mono); font-weight: 800; color: var(--sunset); min-width: 22px; }
+
+  /* ---------- 暗房代码 ---------- */
+  .code {
+    position: relative;
+    margin: 24px 0;
+    background: #221d24;
+    border: 1px solid #332b36;
+    overflow: hidden;
+  }
+  .code .bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: #191520;
+    border-bottom: 1px solid #332b36;
+  }
+  .code .bar .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+  .code .bar .dot.r { background: #c25450; }
+  .code .bar .dot.y { background: #d8a24a; }
+  .code .bar .dot.g { background: #58a06b; }
+  .code .bar .t { margin-left: 8px; font-family: var(--mono); font-size: 11px; color: #c9b8c4; }
+  .code pre {
+    padding: 14px 16px;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.8;
+    color: #eadbe4;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .code pre .k { color: #ffb36b; }
+  .code pre .s { color: #cfa3d8; }
+
+  /* ---------- 冲印记录（时间线） ---------- */
+  .log { margin: 24px 0; }
+  .log .ev {
+    display: flex;
+    gap: 14px;
+    align-items: baseline;
+    padding: 7px 0;
+    border-bottom: 1px dotted var(--line);
+    font-size: 14px;
+  }
+  .log .ev .date { font-family: var(--mono); font-size: 12px; color: var(--sunset); white-space: nowrap; font-weight: 700; }
+  .log .ev .txt { color: var(--ink); }
+
+  /* ---------- 参数对照表 ---------- */
+  table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
+  thead th {
+    padding: 9px 0;
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-align: left;
+    color: var(--ink);
+  }
+  tbody td { padding: 8px 0; border-bottom: 1px dotted var(--line); color: var(--ink); }
+  tbody td .m { font-family: var(--mono); color: var(--dusk); font-size: 12px; }
+
+  /* ---------- 胶卷盘（结尾） ---------- */
+  .reel {
+    position: relative;
+    margin: 30px 0;
+    padding: 30px 20px 24px;
+    background: linear-gradient(150deg, #3a2436 0%, #241a24 100%);
+    border: 1px solid #4a3044;
+    text-align: center;
+    color: #f7ead8;
+    overflow: hidden;
+  }
+  .reel .lbl { font-family: var(--mono); font-size: 11px; letter-spacing: 0.3em; color: #d9a06a; }
+  .reel .t { margin-top: 12px; font-family: var(--serif); font-size: 22px; font-weight: 800; letter-spacing: 0.08em; color: #f7ead8; }
+  .reel .t em { color: #ffb36b; font-style: normal; }
+  .reel .meta { margin-top: 12px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; color: #c9a8b6; }
+
+  /* ---------- 关注（去按钮） ---------- */
+  .sub {
+    margin: 24px 0 0;
+    padding: 12px 14px;
+    border: 1px dashed var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+  }
+  .sub .t { color: var(--ink); }
+  .sub .act { font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em; color: var(--sunset); font-weight: 700; border-bottom: 1px dotted var(--sunset); }
+
+  .copy { margin: 16px 0 0; text-align: center; font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; color: var(--ink-soft); }
+</style>
+</head>
+<body>
+
+  <div class="note">
+    <span class="k">SUNSET FILM · 落日胶片 · 视觉稿</span><br>
+    <b>本版不套现有骨架，质感优先：</b>胶片颗粒、齿孔带、漏光、黄昏调色、暗房代码、胶卷盘。
+    全部真实 DOM（SVG 噪点为 CSS 背景图，非整篇背景），无伪元素、无按钮式互动。
+  </div>
+
+  <div id="wemd">
+
+    <!-- 片头 -->
+    <div class="leader"><span class="sprocket"></span></div>
+    <section class="masthead">
+      <span class="brand">SUNSET <span class="sun">FILM</span> · 落日胶片</span>
+      <span class="no">FRAME 019 · EXPOSED 2026 · 35MM</span>
+    </section>
+
+    <!-- 封面静帧 -->
+    <section class="cover">
+      <div class="frame">
+        <span class="grain"></span>
+        <div class="kicker">REEL ONE · 第一卷</div>
+        <div class="title">把黄昏<br>装进胶片里</div>
+        <div class="sub">SUNSET / GRAIN / LIGHT LEAK</div>
+        <span class="edge"></span>
+      </div>
+      <div class="meta">
+        <span>ISO 400</span>
+        <span>f/2.8</span>
+        <span>1/125s</span>
+        <span>50MM</span>
+      </div>
+    </section>
+
+    <p>落日不是瞬间，是一卷慢慢<strong>显影</strong>的胶片：金转橙、橙转绯、绯转暮紫。这个主题想留住的是<em>黄昏的颗粒与光晕</em>——模糊一点、温柔一点，像回忆。</p>
+
+    <!-- 镜头号标题 -->
+    <section class="shot">
+      <div class="no">镜头 · SHOT 01</div>
+      <div class="t">黄昏的三种质感</div>
+      <span class="rule"></span>
+    </section>
+
+    <!-- 漏光引语 -->
+    <section class="quote">
+      <span class="grain"></span>
+      <p class="text">最好的光，总在日落前十四分钟。</p>
+      <span class="src">— 摄影师手记 · 页脚批注</span>
+    </section>
+
+    <!-- 拍摄参数条 -->
+    <section class="params">
+      <div class="p"><span class="k">底片</span><span class="v">KODAK PORTRA 400</span></div>
+      <div class="p"><span class="k">感光度</span><span class="v">ISO 400</span></div>
+      <div class="p"><span class="k">曝光</span><span class="v">f/2.8 · 1/125s</span></div>
+      <div class="p"><span class="k">白平衡</span><span class="v">黄昏 · 暖</span></div>
+    </section>
+
+    <!-- 静帧图 -->
+    <section class="still">
+      <span class="strip"></span>
+      <div class="pic"><span class="grain"></span></div>
+      <span class="strip"></span>
+      <div class="caption">
+        <span>FRAME 019</span>
+        <span>18:46 · GOLDEN</span>
+        <span>LIGHT LEAK</span>
+      </div>
+    </section>
+
+    <!-- 冲印流程 -->
+    <section class="steps">
+      <div class="st"><span class="n">1.</span>静置显影 3'30"</div>
+      <div class="st"><span class="n">2.</span>停显后水洗 30"</div>
+      <div class="st"><span class="n">3.</span>定影 5' 再晾干</div>
+    </section>
+
+    <!-- 暗房代码 -->
+    <div class="code">
+      <div class="bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="t">darkroom.cmd — 暗房工序</span></div>
+<pre><span class="k">DEVELOP</span> <span class="s">'sunset_reel_019'</span> --temp 38C
+--time 3m30s --agitate 4x
+<span class="k">STOP</span> + <span class="k">WASH</span> 30s
+<span class="k">FIX</span> 5m <span class="k">→</span> <span class="s">'warm_gold'</span></pre>
+    </div>
+
+    <!-- 冲印记录 -->
+    <section class="log">
+      <div class="ev"><span class="date">18:38</span><span class="txt">第一卷 · 金辉显影</span></div>
+      <div class="ev"><span class="date">18:46</span><span class="txt">第二卷 · 绯霞定影</span></div>
+      <div class="ev"><span class="date">19:02</span><span class="txt">第三卷 · 暮紫收束</span></div>
+    </section>
+
+    <!-- 参数对照表 -->
+    <table>
+      <thead><tr><th>卷号</th><th>调色</th><th>质感</th></tr></thead>
+      <tbody>
+        <tr><td class="m">REEL 01</td><td>金辉</td><td class="m">GRAIN</td></tr>
+        <tr><td class="m">REEL 02</td><td>绯霞</td><td class="m">LEAK</td></tr>
+        <tr><td class="m">REEL 03</td><td>暮紫</td><td class="m">DUSK</td></tr>
+      </tbody>
+    </table>
+
+    <!-- 胶卷盘结尾 -->
+    <section class="reel">
+      <div class="lbl">END OF REEL · 收卷</div>
+      <div class="t">愿你有光，<em>留得住黄昏</em></div>
+      <div class="meta">REEL 019 · 曝光 2026 · 35MM · DEVELOPED WITH LOVE</div>
+    </section>
+
+    <!-- 关注 -->
+    <section class="sub">
+      <span class="t">下一卷冲印完成时，想第一个看到</span>
+      <span class="act">关注</span>
+    </section>
+
+    <div class="copy">© 2026 SUNSET FILM · 本卷为落日胶片主题视觉稿</div>
+
+  </div>
+
+</body>
+</html>

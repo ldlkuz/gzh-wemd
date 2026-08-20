@@ -1,16 +1,18 @@
-# Stage 6: CSS Compiler — 编译阶段
+# CSS 生成规则（Stage 3b 端到端生成 · CSS 部分）
+
+> 本文件是 **CSS 生成规则参考**（被 `prompts/03b-generate.md` 引用）。端到端生成模式下 AI 直接产出 `themes/{theme-name}/css/{theme-name}.css`，本文件的规则决定 CSS 怎么写。
 
 ## 职责
 
-将 BrandVisualTheme.json 编译为可直接在 WeMD 主程序中使用的 CSS 主题文件。
+产出可直接在 WeMD 主程序中使用的 CSS 主题文件。
 
 **核心任务**：
 
-1. 从 `design_tokens` 编译 CSS 变量系统（`#wemd { --wemd-* }`）
-2. 从 `visual_language` 编译基础样式（字体、颜色、间距）
-3. 从 `components.focal` 编译每个焦点组件的完整样式
-4. 从 `components.content` 编译克制继承的 Content 组件样式
-5. 从 `components.utility` 编译最小化的 Utility 组件样式
+1. 从主题 token / 视觉稿推导 CSS 变量系统（`#wemd { --wemd-* }`）
+2. 生成基础样式（字体、颜色、间距）
+3. 生成每个焦点组件的完整样式
+4. 生成克制继承的 Content 组件样式
+5. 生成最小化的 Utility 组件样式
 6. **将自定义 CSS 选择器翻译为 `#wemd .wemd-*` 标准选择器**
 
 ## 布局契约（Layout Contract）— 核心约束
@@ -85,19 +87,21 @@ AI 在生成 CSS 时，**必须严格遵守以下分层原则**：
 骨架（Stage 4.5）定"**哪里是视觉核心**"，本阶段（皮）定"**这个核心长什么样**"。骨架定"填哪里"，CSS 用**同一套品牌语言**填满骨架的每个结构单元。两者一对一强绑定，嵌套而非对立——CSS 的全局核心不脱离骨架另立一套：主题统一感来自"用同一套语言去填所有骨架"，组件差异性来自骨架选了不同焦点。
 
 ```text
-1. 对每个在 skeleton_intent.json 中有骨架的组件，本篇 CSS 必须完整覆盖其每个结构单元：
+1. 对每个在 `templates/*.html` 中有骨架的组件，本篇 CSS 必须完整覆盖其每个结构单元：
    slot 区、group、decoration（top-bar / corner 等）、强调、align。骨架宣告了这些，CSS 就有义务填满，不可落空。
 2. 骨架宣告而 CSS 未覆盖 = 该区域是空壳（有骨无肉），属残缺交付。编译后自检时逐组件核对骨架区域都写到了对应规则。
 3. 填充方式统一用主题全局品牌语言（格纸纹理、主题强调色、主题字体），不凭空为某个组件发明一套脱离全局的独立视觉。
 ```
 
-编译前先读 `skeleton_intent.json`，确认每个焦点组件的骨架宣告了哪些结构单元，再逐一落 CSS。
+编译前先读 `templates/*.html`，确认每个焦点组件的骨架宣告了哪些结构单元，再逐一落 CSS。
 
 ## 输入
 
 | 文件                                        | 来源                                                        |
 | ------------------------------------------- | ----------------------------------------------------------- |
-| `themes/{theme-name}/BrandVisualTheme.json` | Assembler 合并输出                                          |
+| `themes/{theme-name}/preview/vision.html`   | 已确认的视觉稿（气质锚点，决定配色/排版/装饰方向）          |
+| `themes/{theme-name}/templates/*.html`      | 自由骨架模板（宣告了每个焦点组件的结构单元）                |
+| `themes/{theme-name}/states/concept_state.json` | 选中母题（装饰来源）                                    |
 | `registry/components.json`                  | 组件注册表                                                  |
 | 主程序提供的标准选择器注册表                | WeMD 标准选择器映射（由主程序维护，skill 不复制其内部实现） |
 
@@ -165,11 +169,44 @@ AI 在生成 CSS 时，**必须严格遵守以下分层原则**：
 }
 ```
 
+## 覆盖共享组件前：先查「共享伪元素装饰清单」（硬约束）
+
+**共享组件样式（主程序内置）允许用 `::before/::after` 做装饰**（这是既有机制：预览走 CSS 级联，导出由物化器转真实元素）。主题皮肤**不能**自己写 `::before/::after` 添加装饰——但覆盖这些组件时，如果要用 `border`/背景表达同类型装饰，**必须中和共享伪元素**（`content: none`），否则预览/导出出现双条。
+
+### 共享伪元素装饰清单（覆盖这些组件时必须对照）
+
+| 组件 | 共享伪元素装饰 | 主题皮肤的处理 |
+|---|---|---|
+| `callout-pro` | `::before` 左竖条 + type 图标（p:first-child::before）+ 列表圆点 | 想用 border-left 画竖条 → 中和 `#wemd .wemd-callout-pro::before { content: none }`；type 图标/列表圆点保留共享 |
+| `divider` | `.wemd-component-body::before/::after` 左右横线（含 `:empty` 变体） | 想用上下双线/其它 → 中和 `#wemd .wemd-divider .wemd-component-body::before, #wemd .wemd-divider .wemd-component-body::after { content: none }` |
+| `pullquote` | **根元素 `border-left: 5px`（非伪元素）** + 引号字形（blockquote 首段 ::before） | 想在 body 画竖条 → 覆盖根元素 `#wemd .wemd-pullquote { border-left: none; background: transparent; border-radius: 0; padding: 0 }`，去掉共享根竖条（否则根 + body 双条）。原生 `>` 引用也自动识别为 pullquote 组件，同样受此约束 |
+| `steps` | `li::before` 序号圆点 | 想自绘序号 → 中和 `#wemd .wemd-steps .wemd-component-body li::before` |
+| `faq` | `[data-title] .wemd-component-body::before` 标题标记 | 想自绘 → 中和对应 ::before |
+| `timeline` | `.wemd-tl-dot` 已做**尺寸无关居中**（`left:-21px` + `translateX(-50%)`，圆心自动落在竖线中心） | 只改 `width/height/color` 即可，**不要自己写 `left`**（会破坏居中）；自设绝对定位布局时须加 `transform: none` |
+
+> **尺寸 / 定位耦合（本类问题的总根源）**：共享组件里某些子元素的**定位值是与尺寸绑定的**（如 timeline 圆点旧版 `left:-27px` 只对 12px 成立）。覆盖这些子元素时，改了尺寸必须同步重算定位，否则装饰错位。**优先依赖共享的尺寸无关居中**（transform 居中），不自己写死 left。
+>
+> **更多已知共享组件样式（覆盖时须「清」或「补全路径」）**：
+> - `styled-table`：共享皮肤**已改浅路径** `.wemd-styled-table th/td`（源头避免特异性脚坑）；主题写同路径或深路径 `.wemd-styled-table .wemd-sbt-table table th/td` 都能覆盖
+> - `section-title`：共享是**卡片**（bg + 左边条 + 圆角 + padding），想做成干净下划线标题须清 `background: transparent; border-left: none; border-radius: 0`
+> - `divider`：markdown `---` 会在 body 内生成 `<hr>`，**共享已 `hr { display: none }`**（源头避免三线），主题无需处理
+> - `magazine-cover .wemd-mc-divider`：共享是 4px 红条（width/height/background），用作文字分隔须清 `width: auto; height: auto; background: none`
+> - `divider-fancy .wemd-df-label`：共享 `width:100%`（线嵌 label 内），自定义骨架把线放 label 两侧时须 `width: auto`
+
+> **原则**：主题皮肤覆盖某组件时，先确认「共享装饰 vs 我要表达的装饰」是否同一视觉对象。同一对象 → 用其中一种（共享或自绘），不要叠两种；不覆盖的组件保持默认，共享装饰自然生效。
+>
+> **中和是"清除"不是"添加"**：`content: none` 清除共享伪元素，不违反"主题不写 ::before"规则（clear-guide / academic-paper / 复古报纸均如此）。
+>
+> **中和规则的交付链路（打包器自动处理，AI 无需关心落点）**：AI 在主题 CSS 里写 `#wemd .wemd-xxx::before { content: none }`（原选择器、原样书写即可）。pack 打包时：
+> - 该中和规则**保留**在 `styles/components.css`（主程序注入顺序最末 → 预览级联胜出 + 物化器取最后匹配跳过 → 无双重装饰）；
+> - 从 `manifest.components[*].variantCss` **剥离**（避免 `normalizeVariantCss` 短路、也避免转 `[data-variant]` 后物化器匹配不到）；
+> - 主程序校验器/导入器已「注释感知 + 中和感知」，纯 `content: none` 中和规则不再被误判为禁用伪元素。
+
 ## 编译规则
 
 ### 1. CSS 变量系统
 
-从 `design_tokens` 和 `visual_language` 编译：
+从视觉稿推导 CSS 变量：
 
 ```css
 #wemd {
@@ -201,6 +238,8 @@ AI 在生成 CSS 时，**必须严格遵守以下分层原则**：
 ### 2. 选择器翻译规则
 
 从预览 CSS 到 WeMD 标准选择器的映射规则。**映射依据：以主程序 Slot 契约（`slotDefs.ts` 的 `abbr` + slot 定义）和 Skeleton Compiler（`scripts/compile-skeleton.cjs`）产出的骨架模板为唯一基准，禁止凭记忆臆测 DOM 结构。**
+
+> **覆盖共享样式 = 同路径 · 同特异性（playbook 硬约束）**：主题皮肤要覆盖主程序共享组件样式时，选择器必须**写完整路径**，与共享规则同路径、同特异性（如共享写 `#wemd .wemd-magazine-cover .wemd-mc-title`，皮肤也必须写 `#wemd .wemd-magazine-cover .wemd-mc-title`）。写短了（如只写 `#wemd .wemd-mc-title`）特异性更低，内联导出按特异性排序时会被共享样式覆盖，**皮肤不生效**。排查信号：改了皮肤但导出样式没变化 → 先查选择器是否少写了一层容器 class。
 
 选择器分三类：
 
@@ -267,7 +306,7 @@ AI 在生成 CSS 时，**必须严格遵守以下分层原则**：
 | `.end-card` 标题                  | `#wemd .wemd-end-card .wemd-ec-title`                                                            |
 | `.end-card` 副文                  | `#wemd .wemd-end-card .wemd-ec-subtitle`                                                         |
 
-> 完整结构与陷阱清单见 `reference/skeleton-design-spec.md`（§7 class 推导）与主程序 `slotDefs.ts`。翻译任何组件前先查该组件的 `abbr` 与 slot 定义。
+> 骨架 class 由自由模板 + 主程序 `slotDefs.ts` 的 `abbr` 推导；翻译任何组件前先查该组件的 `abbr` 与 slot 定义。
 
 ### 3. 三分类样式差异
 
@@ -285,36 +324,32 @@ Utility:      极简样式 · 低可见度 · 无装饰 · 无动画
 
 1. **CSS 变量系统** — `#wemd` 下的 CSS 自定义属性
 2. **基础重置** — 基础样式重置（`#wemd *` 选择器）
-3. **焦点组件（focal）样式** — 按 `component_strategy.brand_anchor` 候选池顺序输出
-4. **Content 组件样式** — 按 `component_strategy.content` 顺序输出
-5. **Utility 组件样式** — 按 `component_strategy.utility` 顺序输出
+3. **焦点组件样式** — 按焦点（focal）组件顺序输出
+4. **Content 组件样式** — 按 Content 档位顺序输出
+5. **Utility 组件样式** — 按 Utility 档位顺序输出
 6. **Stack 规则** — 组件间距统一分配（`#wemd > [class]`）
 
 ## 输出
 
 | 文件                                                    | 说明                        |
 | ------------------------------------------------------- | --------------------------- |
-| `themes/{theme-name}/css/{theme-name}.css`              | 编译后的 WeMD 标准 CSS 文件 |
-| `themes/{theme-name}/preview/{theme-name}-preview.html` | 同上但保持预览 HTML 格式    |
+| `themes/{theme-name}/css/{theme-name}.css`              | 生成后的 WeMD 标准 CSS 文件 |
 
-## 编译流程
+## 生成流程（AI 直接产出 CSS 的参考步骤）
 
-### Step 1: Token Resolver
+### Step 1: Token 推导
 
-读取 `design_tokens`（受控词表）与 `visual_language`（方向性描述），生成 CSS 变量。**注意：`design_tokens` 只是受控词汇表，不含具体色值；具体 CSS 值由 Compiler 结合 `components.*.design.direction` 的意图推导。**
+从已确认的视觉稿（`preview/vision.html`）与选中母题推导 CSS 变量。**视觉稿里 `:root` 的 CSS 变量定义（`--ink/--paper/--accent` 等）是主要来源**；具体色值由 AI 结合视觉稿气质推导。
 
 ```text
-design_tokens.emphasis（词表档位）→ --wemd-emphasis-*（如 --wemd-emphasis-high）
-design_tokens.decoration（词表档位）→ --wemd-decoration-*
-visual_language.color_direction.character → 色彩性格（推导具体色板）
-visual_language.typography.character → 字体气质（推导字重/字号）
-visual_language.layout.density → 布局密度（推导间距档位）
-design_tokens.contrast（词表档位）→ 对比度档位
+视觉稿颜色/对比 → 色彩性格（推导具体色板）
+视觉稿排版气质   → 字体气质（推导字重/字号）
+视觉稿密度/节奏 → 布局密度（推导间距档位）
 ```
 
 ### Step 2: Base Style
 
-从 `visual_language` 生成基础样式：
+从视觉稿生成基础样式：
 
 - `color` → 背景色、文字色
 - `typography` → 字体栈、字重、字号
@@ -323,9 +358,9 @@ design_tokens.contrast（词表档位）→ 对比度档位
 
 ### Step 3: Component Style
 
-按三分类编译组件样式：
+按三分类生成组件样式：
 
-- **焦点组件（focal）** → 从 `components.focal` 提取设计方向，生成完整 CSS
+- **焦点组件（focal）** → 深度设计，生成完整 CSS
 - **Content** → 继承基础样式，克制装饰
 - **Utility** → 最小化样式
 
@@ -392,7 +427,7 @@ design_tokens.contrast（词表档位）→ 对比度档位
 
 1. 所有选择器是否以 `#wemd` 开头
 2. 所有 `wemd-*` 类名是否与"主程序提供的标准选择器注册表"中定义的一致
-3. 是否包含所有焦点组件的样式（数量由 component_strategy 决定，动态检查）
+3. 是否包含所有焦点组件的样式（数量由焦点组件清单决定，动态检查）
 4. 是否包含至少 3 个 Content 组件的样式
 5. 是否包含至少 3 个 Utility 组件的样式
 6. CSS 变量名是否使用 `--wemd-` 前缀
@@ -402,3 +437,6 @@ design_tokens.contrast（词表档位）→ 对比度档位
 10. **微信替代检查**：是否出现了微信不支持的表达（伪元素、动画、结构伪类、`@media`、兄弟选择器、`position:absolute`）？若出现，是否已按"禁止 → 替代对照表"提供了微信兼容替代，并在注释里说明？（若被删除而非替代，检查是否真的没有等价表达）
 11. **窄屏可承载性检查**：是否存在依赖宽幅/多栏才能成立的构图？若有，是否已收敛为单栏流式布局？
 12. **容器水平内边距检查**：所有卡片/容器类组件的水平内边距是否统一引用 `var(--wemd-space-inline)`？是否存在硬编码的具体值（1.25rem/1.5rem 等）？若有，必须替换为 `var(--wemd-space-inline)`。
+13. **同路径同特异性检查（playbook §1）**：皮肤覆盖共享组件样式的选择器是否写了**完整路径**（`#wemd .wemd-容器 .wemd-子元素`）？是否与共享规则同特异性？写短了会导致内联导出时皮肤被共享覆盖、不生效。
+14. **配色可读性检查（playbook §2）**：逐组件核对「前景/背景是否可读、是否撞色」——深色背景元素配浅色文字（不被共享 `var()` 覆盖成同色系深色）；浅色/白色背景元素配深色文字。深底深字、浅底浅字即不可读，必须修正。
+15. **无重复装饰检查**：覆盖了「共享伪元素装饰清单」里的组件时，是否中和了对应共享 `::before/::after`（`content: none`）？导出后同一装饰线/条是否只出现一条（无双竖条/双线）？

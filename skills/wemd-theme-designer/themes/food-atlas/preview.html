@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>食事图谱 · Food Atlas · 视觉稿</title>
+<style>
+  :root{
+    --paper:#f6efe2;      /* 暖米纸张底 */
+    --parch:#fffaf0;      /* 卡纸 */
+    --ink:#33261d;        /* 石墨墨色 */
+    --ink-soft:#8a7566;   /* 弱墨 */
+    --tomato:#c8442b;     /* 番茄红强调 */
+    --olive:#5a6b3b;      /* 橄榄绿次强调 */
+    --mustard:#d9a441;    /* 芥末黄 */
+    --line:rgba(51,38,29,.16);
+    --sans:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+    --serif:Georgia,"Noto Serif SC","Songti SC","SimSun","Source Han Serif SC",serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#d9cfbd;font-family:var(--serif);color:var(--ink);-webkit-font-smoothing:antialiased}
+  main{width:min(680px,94vw);margin:0 auto;background:var(--paper)}
+  section,header,footer{opacity:0;transform:translateY(22px);transition:opacity .8s ease,transform .8s ease}
+  section.in,footer.in{opacity:1;transform:none}
+  img{display:block;width:100%}
+
+  /* ============ 封面：全幅食图 + 叠字 ============ */
+  .cover{position:relative;height:clamp(440px,74vw,580px);overflow:hidden;background:#c9a08a}
+  .cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .cover-shade{position:absolute;inset:0;background:linear-gradient(to top,rgba(30,20,12,.82) 0%,rgba(30,20,12,.32) 40%,rgba(30,20,12,.04) 100%)}
+  .cover-text{position:absolute;left:0;right:0;bottom:0;padding:0 26px 30px;color:#f7efe0}
+  .cover-kicker{display:flex;align-items:center;gap:10px;font-family:var(--sans);font-size:11px;letter-spacing:.42em;color:var(--mustard);margin-bottom:16px}
+  .cover-kicker .rule{flex:0 0 26px;height:1px;background:var(--mustard);opacity:.7}
+  .cover h1{font-family:var(--sans);font-weight:800;font-size:clamp(30px,6.6vw,48px);line-height:1.12;letter-spacing:.03em}
+  .cover .cover-sub{margin-top:13px;font-size:clamp(13px,2vw,15px);letter-spacing:.12em;color:rgba(247,239,224,.85)}
+  .cover .cover-meta{margin-top:22px;display:flex;align-items:center;gap:12px;font-family:var(--sans);font-size:11px;letter-spacing:.22em;color:rgba(247,239,224,.55)}
+  .cover .cover-meta .dot{width:3px;height:3px;border-radius:50%;background:var(--mustard)}
+
+  /* ============ 引言 ============ */
+  .intro{padding:clamp(30px,5.5vw,44px) clamp(24px,5.5vw,36px)}
+  .intro .intro-tag{display:flex;align-items:center;gap:10px;font-family:var(--sans);font-size:11px;letter-spacing:.34em;color:var(--olive);margin-bottom:16px}
+  .intro .intro-tag .rule{flex:0 0 20px;height:1px;background:var(--olive);opacity:.55}
+  .intro p{font-size:clamp(16.5px,2.6vw,19px);line-height:2.05;color:var(--ink);font-weight:600}
+  .intro p em{color:var(--tomato);font-style:normal;font-weight:700}
+
+  /* ============ 菜品图谱 ============ */
+  .dish{padding:0 clamp(24px,5.5vw,36px) clamp(44px,7vw,64px)}
+  .dish-fig{position:relative;overflow:hidden;border-radius:3px;box-shadow:0 10px 26px -18px rgba(51,38,29,.5)}
+  .dish-fig img{transition:transform 1s ease}
+  .dish-fig:hover img{transform:scale(1.04)}
+  .dish-no{position:absolute;top:16px;left:16px;background:var(--tomato);color:#fff;font-family:var(--sans);font-weight:800;font-size:12px;letter-spacing:.06em;padding:7px 12px;border-radius:2px}
+  .dish-body{padding:16px 2px 0}
+  .dish-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+  .dish-title{font-family:var(--sans);font-weight:800;font-size:clamp(20px,3.4vw,24px);letter-spacing:.01em}
+  .dish-score{flex:0 0 auto;display:flex;align-items:center;gap:5px;font-family:var(--sans);font-size:11.5px;color:var(--ink-soft);letter-spacing:.06em}
+  .dish-score b{color:var(--tomato);font-weight:800;font-size:14px}
+  .dish-spec{margin-top:4px;font-family:var(--sans);font-size:11.5px;letter-spacing:.18em;color:var(--olive)}
+  .dish-desc{margin-top:12px;font-size:clamp(14.5px,2.2vw,16px);line-height:2.05;color:var(--ink-soft)}
+  .dish-desc strong{color:var(--ink);font-weight:600}
+  .dish-divider{height:1px;background:repeating-linear-gradient(90deg,var(--line) 0 6px,transparent 6px 12px);margin:clamp(30px,5vw,42px) 0 0}
+
+  /* ============ 时令小卡 ============ */
+  .season{margin:0 clamp(24px,5.5vw,36px) clamp(42px,6.5vw,56px);background:var(--parch);border-top:2px solid var(--olive);border-bottom:2px solid var(--olive);padding:clamp(20px,3.5vw,28px) clamp(20px,3.8vw,30px)}
+  .season-tag{font-family:var(--sans);font-size:11px;letter-spacing:.34em;color:var(--tomato);margin-bottom:12px}
+  .season h3{font-family:var(--sans);font-weight:800;font-size:clamp(17px,2.8vw,20px);margin-bottom:10px}
+  .season p{font-size:clamp(14px,2.2vw,15.5px);line-height:2.05;color:var(--ink-soft)}
+  .season p strong{color:var(--ink);font-weight:600}
+
+  /* ============ 落款 ============ */
+  .signoff{padding:clamp(6px,1vw,10px) clamp(24px,5.5vw,36px) clamp(44px,7vw,60px)}
+  .signoff .bar{width:32px;height:2px;background:var(--tomato);margin:0 auto 16px}
+  .signoff .who{text-align:center;font-family:var(--sans);font-weight:700;font-size:13px;letter-spacing:.2em;color:var(--ink)}
+  .signoff .when{margin-top:6px;text-align:center;font-family:var(--sans);font-size:11px;letter-spacing:.2em;color:var(--ink-soft)}
+</style>
+</head>
+<body>
+<main>
+  <!-- 封面 -->
+  <header class="cover">
+    <img src="img/food-cover.jpg" alt="深夜食堂·油润的茄子盖饭">
+    <div class="cover-shade"></div>
+    <div class="cover-text">
+      <div class="cover-kicker"><span class="rule"></span>食事图谱 · FOOD ATLAS<span class="rule"></span></div>
+      <h1>深夜食堂的<br>四张地图</h1>
+      <div class="cover-sub">凭一口温热，辨认一座城市</div>
+      <div class="cover-meta"><span>夜食手记</span><span class="dot"></span><span>2026</span><span class="dot"></span><span>秋冬</span></div>
+    </div>
+  </header>
+
+  <!-- 引言 -->
+  <section class="intro">
+    <div class="intro-tag"><span class="rule"></span>一段开场白</div>
+    <p>食物是我认识一座城市的方式。<em>深夜巷口</em>的那盏灯、铁锅里冒出来的白汽，比地图更准确地告诉我——<em>该往哪里走，该和谁坐一桌。</em></p>
+  </section>
+
+  <!-- 菜品 01 -->
+  <section class="dish">
+    <div class="dish-fig">
+      <img src="img/food-01.jpg" alt="茄子盖饭">
+      <span class="dish-no">01 · 入口</span>
+    </div>
+    <div class="dish-body">
+      <div class="dish-head">
+        <h2 class="dish-title">茄子盖饭</h2>
+        <span class="dish-score">推荐 <b>★★★★</b></span>
+      </div>
+      <div class="dish-spec">南通 · 冬 · 米饭杀手</div>
+      <p class="dish-desc">茄子炸到外皮微皱，裹着甜口的酱汁，一口气碰到米饭的边缘。<strong>一勺下去，是会让整桌安静三秒的那种好吃。</strong></p>
+    </div>
+    <div class="dish-divider"></div>
+  </section>
+
+  <!-- 菜品 02 -->
+  <section class="dish">
+    <div class="dish-fig">
+      <img src="img/food-02.jpg" alt="小葱拌豆腐">
+      <span class="dish-no">02 · 温热</span>
+    </div>
+    <div class="dish-body">
+      <div class="dish-head">
+        <h2 class="dish-title">小葱拌豆腐</h2>
+        <span class="dish-score">推荐 <b>★★★</b></span>
+      </div>
+      <div class="dish-spec">苏州 · 春 · 清白不争</div>
+      <p class="dish-desc">豆腐嫩得不敢碰，小葱只在出锅前撒一把绿的。<strong>越是简单的菜，越看得出掌勺人的心意。</strong></p>
+    </div>
+    <div class="dish-divider"></div>
+  </section>
+
+  <!-- 菜品 03 -->
+  <section class="dish">
+    <div class="dish-fig">
+      <img src="img/food-03.jpg" alt="红烧肉">
+      <span class="dish-no">03 · 抚慰</span>
+    </div>
+    <div class="dish-body">
+      <div class="dish-head">
+        <h2 class="dish-title">红烧肉</h2>
+        <span class="dish-score">推荐 <b>★★★★★</b></span>
+      </div>
+      <div class="dish-spec">上海 · 冬 · 浓油赤酱</div>
+      <p class="dish-desc">肥而不腻，入口先是一层柔和的甜，再是化开的软糯。配白饭能吃下两碗。<strong>越是沮丧的夜，越需要这一口踏实的甜。</strong></p>
+    </div>
+    <div class="dish-divider"></div>
+  </section>
+
+  <!-- 时令小卡 -->
+  <section class="season">
+    <div class="season-tag">时令食材 · THIS SEASON</div>
+    <h3>冬季萝卜</h3>
+    <p>冬天的萝卜水分足、不辣。用来炖汤清甜回甘，拌着吃脆爽解腻。<strong>便宜，却有让人安心的力量。</strong></p>
+  </section>
+
+  <!-- 落款 -->
+  <footer class="signoff">
+    <div class="bar"></div>
+    <div class="who">夜食手记</div>
+    <div class="when">食事图谱 · 视觉稿 · 待确认</div>
+  </footer>
+</main>
+
+<script>
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .12 });
+  document.querySelectorAll('header,section,footer').forEach(el => io.observe(el));
+</script>
+</body>
+</html>

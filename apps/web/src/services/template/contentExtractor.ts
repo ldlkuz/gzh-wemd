@@ -118,3 +118,45 @@ export function findUncoveredRanges(
 export function getParagraphCount(markdown: string): number {
   return splitParagraphs(markdown).length;
 }
+
+/** Markdown 标题正则：匹配 `#` ~ `######` 开头的标题段 */
+const HEADING_RE = /^\s*(#{1,6})\s+(.+)$/;
+
+/** 标题段信息 */
+export interface HeadingSegment {
+  /** 1-based 段落号 */
+  index: number;
+  /** 标题层级（# 的个数） */
+  level: number;
+  /** 去除前缀与空白后的标题文本 */
+  title: string;
+  /** 原段落（含 # 前缀），用于归一化匹配 */
+  raw: string;
+}
+
+/**
+ * 基础层标题识别（确定性，不依赖 AI）：
+ * 扫描所有段落，识别 Markdown 标题段。
+ *
+ * 标题属于"基础层"组件 —— 由程序从 `#` 稳定识别并转成对应组件，
+ * 不交由 AI 判定"要不要转、怎么转"。
+ */
+export function extractHeadings(markdown: string): HeadingSegment[] {
+  if (!markdown || !markdown.trim()) return [];
+  const paragraphs = splitParagraphs(markdown);
+  const headings: HeadingSegment[] = [];
+
+  paragraphs.forEach((p, i) => {
+    const m = p.match(HEADING_RE);
+    if (m) {
+      headings.push({
+        index: i + 1,
+        level: m[1].length,
+        title: m[2].trim(),
+        raw: p,
+      });
+    }
+  });
+
+  return headings;
+}

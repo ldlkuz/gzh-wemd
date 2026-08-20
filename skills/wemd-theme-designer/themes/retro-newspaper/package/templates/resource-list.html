@@ -1,0 +1,17 @@
+<section class="wemd-component wemd-resource-list" data-component="resource-list">
+<section class="wemd-rl-title">{{slot:title}}</section>
+<section class="wemd-rl-subtitle">{{slot:subtitle}}</section>
+<section class="wemd-rl-items" data-numbered="{{slot:numbered}}" data-layout="{{slot:layout}}">
+{{#each items}}
+<section class="wemd-rl-item">
+<section class="wemd-rl-label">{{this.label}}</section>
+<section class="wemd-rl-main">
+<section class="wemd-rl-item-title">{{this.title}}</section>
+<section class="wemd-rl-item-desc">{{this.desc}}</section>
+</section>
+<section class="wemd-rl-meta">{{this.meta}}</section>
+<section class="wemd-rl-tag">{{this.tag}}</section>
+</section>
+{{/each}}
+</section>
+</section>

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>本周美食推荐</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#f4eee7}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",Arial,sans-serif;
+  color:#34251d;
+  line-height:1.75;
+}
+.article{
+  width:100%;
+  max-width:750px;
+  margin:0 auto;
+  background:#fffdf9;
+  overflow:hidden;
+}
+
+/* Hero */
+.hero{
+  position:relative;
+  min-height:520px;
+  padding:56px 34px 42px;
+  color:#fff;
+  background:
+    linear-gradient(90deg,rgba(42,24,15,.94) 0%,rgba(42,24,15,.70) 42%,rgba(42,24,15,.10) 100%),
+    url("https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1200&q=85") center/cover;
+}
+.hero:after{
+  content:"";
+  position:absolute;
+  left:-5%;
+  right:-5%;
+  bottom:-32px;
+  height:70px;
+  background:#fffdf9;
+  border-radius:50% 50% 0 0/45% 45% 0 0;
+}
+.eyebrow{
+  display:inline-block;
+  padding:5px 15px;
+  border:1px solid rgba(255,218,169,.7);
+  border-radius:30px;
+  color:#ffd49b;
+  font-size:14px;
+  letter-spacing:2px;
+}
+.hero h1{
+  margin:28px 0 12px;
+  font-family:Georgia,"Songti SC","STSong",serif;
+  font-size:46px;
+  line-height:1.15;
+  letter-spacing:5px;
+  font-weight:700;
+}
+.hero .slogan{
+  display:inline-block;
+  margin:0 0 24px;
+  padding:5px 15px;
+  background:#e87525;
+  color:#fff;
+  font-size:16px;
+  letter-spacing:1px;
+}
+.hero p{
+  width:82%;
+  margin:0;
+  color:#f8eee5;
+  font-size:15px;
+}
+
+/* Section */
+.section{
+  padding:45px 22px 12px;
+}
+.section-title{
+  margin:0 0 26px;
+  text-align:center;
+  font-family:Georgia,"Songti SC","STSong",serif;
+  font-size:27px;
+  letter-spacing:2px;
+}
+.section-title:after{
+  content:"";
+  display:block;
+  width:54px;
+  height:3px;
+  margin:10px auto 0;
+  background:#e87525;
+  border-radius:5px;
+}
+
+/* Top cards */
+.food-card{
+  margin:0 0 30px;
+  background:#fff;
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 5px 22px rgba(87,52,28,.09);
+}
+.food-image{
+  position:relative;
+  height:285px;
+  overflow:hidden;
+}
+.food-image img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.rank{
+  position:absolute;
+  top:16px;
+  left:16px;
+  padding:5px 15px;
+  border-radius:7px;
+  color:#fff;
+  background:#e87525;
+  font-family:Georgia,serif;
+  font-size:18px;
+  font-weight:bold;
+}
+.food-body{
+  padding:21px 20px 24px;
+}
+.food-name{
+  margin:0 0 7px;
+  font-family:"Songti SC","STSong",serif;
+  font-size:24px;
+  font-weight:700;
+}
+.location{
+  margin:0 0 12px;
+  color:#7b6253;
+  font-size:14px;
+}
+.location b{
+  color:#e87525;
+}
+.tags{
+  margin:0 0 12px;
+}
+.tag{
+  display:inline-block;
+  margin:0 6px 6px 0;
+  padding:3px 10px;
+  border:1px solid #f1c8a6;
+  border-radius:20px;
+  color:#d96a24;
+  background:#fff8f1;
+  font-size:12px;
+}
+.desc{
+  margin:0;
+  color:#66544a;
+  font-size:14px;
+}
+
+/* More list */
+.more-box{
+  margin:0 0 34px;
+  padding:8px 18px;
+  border:1px solid #f1dfd0;
+  border-radius:18px;
+  background:#fffaf5;
+}
+.more-item{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:17px 0;
+  border-bottom:1px dashed #e7cdbb;
+}
+.more-item:last-child{border-bottom:0}
+.more-img{
+  flex:0 0 92px;
+  width:92px;
+  height:82px;
+  border-radius:12px;
+  overflow:hidden;
+}
+.more-img img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.more-content{
+  flex:1;
+  min-width:0;
+}
+.more-name{
+  margin:0 0 2px;
+  font-family:"Songti SC","STSong",serif;
+  font-size:18px;
+  font-weight:bold;
+}
+.more-location{
+  margin:0 0 4px;
+  color:#e87525;
+  font-size:12px;
+}
+.more-desc{
+  margin:0;
+  color:#77665c;
+  font-size:12px;
+  line-height:1.55;
+}
+
+/* Quote */
+.footer{
+  margin-top:12px;
+  padding:34px 24px 38px;
+  background:#fff0df;
+}
+.quote{
+  margin:0 0 24px;
+  padding-left:18px;
+  border-left:3px solid #e8a46d;
+  font-family:"Songti SC","STSong",serif;
+  font-size:19px;
+  line-height:1.9;
+}
+.quote small{
+  display:block;
+  margin-top:8px;
+  color:#987b69;
+  font-family:inherit;
+  font-size:12px;
+}
+.follow{
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+.qr{
+  flex:0 0 105px;
+  width:105px;
+  height:105px;
+  padding:7px;
+  background:#fff;
+  border-radius:8px;
+}
+.qr img{
+  width:100%;
+  height:100%;
+  display:block;
+}
+.follow-text{
+  flex:1;
+}
+.follow-text strong{
+  display:block;
+  margin-bottom:5px;
+  font-size:16px;
+}
+.follow-text span{
+  color:#7d6758;
+  font-size:13px;
+}
+.follow-btn{
+  display:inline-block;
+  margin-top:9px;
+  padding:5px 12px;
+  border-radius:20px;
+  color:#fff;
+  background:#e87525;
+  font-size:12px;
+}
+
+/* Bottom */
+.bottom{
+  padding:14px 20px;
+  text-align:center;
+  color:#c8a991;
+  background:#33251e;
+  font-size:11px;
+  letter-spacing:2px;
+}
+
+/* WeChat/mobile safe */
+@media(max-width:480px){
+  .hero{min-height:470px;padding:45px 25px 35px}
+  .hero h1{font-size:38px;letter-spacing:3px}
+  .hero p{width:92%;font-size:14px}
+  .section{padding-left:16px;padding-right:16px}
+  .food-image{height:235px}
+  .food-name{font-size:22px}
+}
+</style>
+</head>
+
+<body>
+<article class="article">
+
+  <header class="hero">
+    <div class="eyebrow">✦ 发现美味 · 记录生活 ✦</div>
+    <h1>本周美食推荐</h1>
+    <div class="slogan">不负好时光 · 唤醒你的味蕾</div>
+    <p>精选本周值得一试的美味餐厅和特色菜品，带你发现城市中的烟火气与幸福感。</p>
+  </header>
+
+  <section class="section">
+    <h2 class="section-title">本周 TOP3 推荐</h2>
+
+    <article class="food-card">
+      <div class="food-image">
+        <img src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=1000&q=85" alt="浓汤叉烧拉面">
+        <span class="rank">TOP 1</span>
+      </div>
+      <div class="food-body">
+        <h3 class="food-name">浓汤叉烧拉面</h3>
+        <p class="location"><b>●</b> 面屋武藏（国贸店）</p>
+        <div class="tags">
+          <span class="tag">日式拉面</span>
+          <span class="tag">浓郁汤底</span>
+          <span class="tag">口感丰富</span>
+        </div>
+        <p class="desc">汤头醇厚，叉烧软嫩，面条劲道，每一口都很满足，适合下班后犒劳自己。</p>
+      </div>
+    </article>
+
+    <article class="food-card">
+      <div class="food-image">
+        <img src="https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=1000&q=85" alt="炭烤安格斯牛排">
+        <span class="rank">TOP 2</span>
+      </div>
+      <div class="food-body">
+        <h3 class="food-name">炭烤安格斯牛排</h3>
+        <p class="location"><b>●</b> 牛排家（万象城店）</p>
+        <div class="tags">
+          <span class="tag">优质牛肉</span>
+          <span class="tag">炭火烤制</span>
+          <span class="tag">肉质鲜嫩</span>
+        </div>
+        <p class="desc">精选安格斯牛肉，炭火慢烤，锁住肉汁，外焦里嫩，香气四溢。</p>
+      </div>
+    </article>
+
+    <article class="food-card">
+      <div class="food-image">
+        <img src="https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=1000&q=85" alt="麻辣小龙虾">
+        <span class="rank">TOP 3</span>
+      </div>
+      <div class="food-body">
+        <h3 class="food-name">麻辣小龙虾</h3>
+        <p class="location"><b>●</b> 虾闹（簋街店）</p>
+        <div class="tags">
+          <span class="tag">麻辣鲜香</span>
+          <span class="tag">个大饱满</span>
+          <span class="tag">人气必点</span>
+        </div>
+        <p class="desc">秘制麻辣配方，虾肉Q弹入味，越吃越上瘾，是夏日里不可错过的快乐。</p>
+      </div>
+    </article>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">更多美味推荐</h2>
+
+    <div class="more-box">
+
+      <article class="more-item">
+        <div class="more-img">
+          <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=500&q=85" alt="草莓千层蛋糕">
+        </div>
+        <div class="more-content">
+          <h3 class="more-name">草莓千层蛋糕</h3>
+          <p class="more-location">● 甜心工坊（朝阳大悦城）</p>
+          <p class="more-desc">层层薄饼夹着奶油和新鲜草莓，甜而不腻。</p>
+        </div>
+      </article>
+
+      <article class="more-item">
+        <div class="more-img">
+          <img src="https://images.unsplash.com/photo-1496116218417-1a781b1c416c?auto=format&fit=crop&w=500&q=85" alt="虾饺皇">
+        </div>
+        <div class="more-content">
+          <h3 class="more-name">虾饺皇</h3>
+          <p class="more-location">● 点心师傅（太古里店）</p>
+          <p class="more-desc">皮薄馅大，虾肉鲜嫩，一口都是鲜甜满足。</p>
+        </div>
+      </article>
+
+      <article class="more-item">
+        <div class="more-img">
+          <img src="https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=500&q=85" alt="川味火锅">
+        </div>
+        <div class="more-content">
+          <h3 class="more-name">川味火锅</h3>
+          <p class="more-location">● 川味大侠（解放碑店）</p>
+          <p class="more-desc">牛油锅底香辣厚重，食材新鲜，适合朋友聚餐。</p>
+        </div>
+      </article>
+
+      <article class="more-item">
+        <div class="more-img">
+          <img src="https://images.unsplash.com/photo-1558857563-b371033873b8?auto=format&fit=crop&w=500&q=85" alt="芋泥波波奶茶">
+        </div>
+        <div class="more-content">
+          <h3 class="more-name">芋泥波波奶茶</h3>
+          <p class="more-location">● 茶语时光（万象城店）</p>
+          <p class="more-desc">芋泥绵密，波波Q弹，一口幸福感爆棚。</p>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p class="quote">
+      “美食不仅是味蕾的享受，<br>更是生活中温暖的记忆。”
+      <small>—— 发现美味 · 记录生活 ——</small>
+    </p>
+
+    <div class="follow">
+      <div class="qr">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=https%3A%2F%2Fexample.com" alt="二维码">
+      </div>
+      <div class="follow-text">
+        <strong>关注我们</strong>
+        <span>获取更多美食推荐<br>和独家优惠福利</span>
+        <div class="follow-btn">长按二维码关注我们</div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="bottom">用心推荐每一份美味 · 期待与你一起探索更多好味道</div>
+
+</article>
+</body>
+</html>
