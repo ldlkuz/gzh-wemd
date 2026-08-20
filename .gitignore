@@ -47,3 +47,22 @@ skills/wemd-theme-designer/output/
 skills/wemd-theme-designer/creative/
 skills/wemd-theme-designer/projects/
 skills/wemd-theme-designer/workspace/
+
+# ============================================================
+# 本地测试 / 设计草稿（不入库，仅本机使用）
+# ============================================================
+# docs 根部的测试与主题预览稿（docs/engineering、docs/phase-reports 正式文档保留）
+docs/_check_encoding.ps1
+docs/test*.html
+docs/test*.md
+docs/*-preview.html
+docs/公众号美食推荐.html
+docs/本地探店清单-preview.html
+docs/民宿-preview.html
+docs/silent-keynote-hero.jpg
+docs/silent-keynote-product.jpg
+docs/企业品牌公众号组件工作台开发方案.md
+
+# 本地调试产物 / 启动辅助
+packages/core/debug-article-output.html
+start-web.bat
