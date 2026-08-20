@@ -11,9 +11,9 @@
     "dev": "node ../../scripts/sync-version.mjs && rimraf dist && tsc && electron .",
     "start": "electron .",
     "build:web": "pnpm --filter @wemd/web run build",
-    "build:mac": "npm run build:web && npm run build && electron-builder --mac --arm64 -c electron-builder.json",
-    "build:win": "npm run build:web && npm run build && electron-builder --win -c electron-builder.json",
-    "build:linux": "npm run build:web && npm run build && electron-builder --linux -c electron-builder.json"
+    "build:mac": "npm run build:web && npm run build && electron-builder --mac --arm64 -c electron-builder.json --publish never",
+    "build:win": "npm run build:web && npm run build && electron-builder --win -c electron-builder.json --publish never",
+    "build:linux": "npm run build:web && npm run build && electron-builder --linux -c electron-builder.json --publish never"
   },
   "keywords": [
     "markdown",
