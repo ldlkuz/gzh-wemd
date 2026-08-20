@@ -5,7 +5,6 @@ node_modules/
 .pnpm-store/
 dist/
 .env
-.npmrc
 apps/macos/
 # Electron
 apps/electron/node_modules/
