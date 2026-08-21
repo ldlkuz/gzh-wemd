@@ -464,19 +464,18 @@ export const customDefaultTheme = `/* 自定义样式,实时生效,浏览器实�
   padding: 22px 24px;
   border-radius: 22px;
   border: 1px solid rgba(7, 193, 96, 0.15);
-  background: #ffffff;
+  /* 原 ::after 渐变叠加改为容器内嵌 background-image（多段顺序：先渐变后白底 → 叠在上面），
+     不再依赖伪元素 + position:absolute（公众号会删除两者导致渐变丢失）。 */
+  background-image:
+    linear-gradient(120deg, rgba(7,193,96,0.05), rgba(7,89,193,0.03)),
+    linear-gradient(#ffffff, #ffffff);
   box-shadow: 0 25px 45px rgba(15, 23, 42, 0.12);
-  position: relative;
   overflow: hidden;
 }
 
+/* 中和 ::after（防止老用户自定义样式里还有残留；content:none 让伪元素直接失效） */
 #wemd .callout::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 22px;
-  pointer-events: none;
-  background: linear-gradient(120deg, rgba(7,193,96,0.05), rgba(7,89,193,0.03));
+  content: none;
 }
 
 #wemd .callout-title {

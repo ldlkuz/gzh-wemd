@@ -130,7 +130,7 @@ export const componentStylesWhitespaceGallery = `/* === 留白画册：极简画
 
 /* === magazine-cover · 画册封面（骨架定制） === */
 #wemd .wemd-magazine-cover {
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   margin: 0 0 44px;
   padding: 58px 30px 48px;
   background: linear-gradient(180deg, #fbfaf7, #f5f2ec);
@@ -138,18 +138,17 @@ export const componentStylesWhitespaceGallery = `/* === 留白画册：极简画
   border-radius: 2px;
   text-align: center;
   overflow: hidden;
+  /* 内衬画框：outline 内缩形成双层框（不占布局、不依赖 position，微信 100% 保留） */
+  outline: 1px solid #e3dfd6;
+  outline-offset: -14px;
 }
+/* frame span 不再承载视觉（曾用 position:absolute 定位，公众号删 position 会丢），
+   内框改由容器 outline 承载；span 保留仅防骨架空元素 */
 #wemd .wemd-wg-frame {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  bottom: 12px;
-  left: 12px;
-  border: 1px solid #e3dfd6;
-  pointer-events: none;
+  display: none;
 }
 #wemd .wemd-magazine-cover .wemd-wg-kicker {
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   font-family: "SF Mono", "Cascadia Code", Consolas, Menlo, monospace;
   font-size: 11px;
   letter-spacing: 0.32em;
@@ -157,7 +156,7 @@ export const componentStylesWhitespaceGallery = `/* === 留白画册：极简画
   color: #b08d57;
 }
 #wemd .wemd-magazine-cover .wemd-wg-title {
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   margin-top: 22px;
   font-family: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", serif;
   font-size: 30px;
@@ -167,15 +166,18 @@ export const componentStylesWhitespaceGallery = `/* === 留白画册：极简画
   color: #111111;
 }
 #wemd .wemd-magazine-cover .wemd-wg-rule {
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   display: block;
   width: 56px;
   height: 1px;
   margin: 24px auto 0;
   background: #b08d57;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-magazine-cover .wemd-wg-desc {
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   margin-top: 18px;
   font-size: 13.5px;
   line-height: 2;
@@ -210,6 +212,9 @@ export const componentStylesWhitespaceGallery = `/* === 留白画册：极简画
   height: 1px;
   margin: 18px auto 0;
   background: #c9bfae;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 
 /* === divider · 发丝线 + 鎏金 ◆（骨架定制） === */
@@ -230,6 +235,9 @@ export const componentStylesWhitespaceGallery = `/* === 留白画册：极简画
   flex: 1;
   height: 1px;
   background: #e3dfd6;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-wg-glyph {
   color: #b08d57;
@@ -243,6 +251,9 @@ export const componentStylesWhitespaceGallery = `/* === 留白画册：极简画
 #wemd .wemd-divider-fancy .wemd-df-label .wemd-df-line {
   height: 1px;
   background: linear-gradient(to right, transparent, #d8d2c6, transparent);
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-divider-fancy .wemd-df-label .wemd-df-dots {
   color: #b08d57;

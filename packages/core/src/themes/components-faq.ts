@@ -77,18 +77,20 @@ export const componentStylesFaq = `/* === FAQ 常见问题组件 === */
   border: 1px solid var(--wemd-primary, #07c160);
   background: #ffffff;
   box-shadow: 5px 8px 0 rgba(128, 128, 128, 0.08);
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   padding: 17px 18px 18px;
   border-radius: 2px;
 }
 
-/* 挂角标题 — 根容器透传 data-title，body 的 ::before 伪元素取用 */
+/* 挂角标题 — 预览链路用 ::before 伪元素渲染；导出链路由物化器按本规则生成
+   真实 span（wemd-mat）。两条链路一致。
+   用 inline-block（宽度收缩到标题文字，形成「挂角小色块」而非整行长条），
+   负 margin 抵消 body 基础 padding 贴卡片左上角（-17px/-18px 对应 padding-top/left）。 */
 #wemd .wemd-faq[data-title] .wemd-component-body::before {
   content: attr(data-title);
-  position: absolute;
-  top: -1px;
-  left: -1px;
-  padding: 6px 16px 8px 18px;
+  display: inline-block;
+  margin: -17px 0 14px -18px;
+  padding: 7px 16px 8px 18px;
   background: var(--wemd-primary, #07c160);
   color: #ffffff;
   font-size: 15px;
@@ -96,14 +98,7 @@ export const componentStylesFaq = `/* === FAQ 常见问题组件 === */
   line-height: 1.5;
   border-radius: 0 0 4px 0;
   letter-spacing: 0.3px;
-  pointer-events: none;
-  z-index: 2;
   white-space: nowrap;
-}
-
-/* 有标题时增加顶部内边距 */
-#wemd .wemd-faq[data-title] .wemd-component-body {
-  padding-top: 52px;
 }
 
 /* 问题项 — 卡片内的每个问答对 */

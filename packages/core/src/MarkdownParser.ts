@@ -60,7 +60,7 @@ export interface MarkdownParserOptions {
 const MAC_CODE_DOTS = ["rgb(237,108,96)", "rgb(247,193,81)", "rgb(100,200,86)"]
   .map(
     (color, index) =>
-      `<span class="mac-dot" style="display:inline-block;width:10px;height:10px;margin-top:1.5px;${index < 2 ? "margin-right:7.5px;" : ""}border-radius:50%;background:${color};"></span>`,
+      `<span class="mac-dot" style="display:inline-block;width:10px;height:10px;margin-top:1.5px;${index < 2 ? "margin-right:7.5px;" : ""}border-radius:50%;background:${color};font-size:0;line-height:0;overflow:hidden;">&nbsp;</span>`,
   )
   .join("");
 

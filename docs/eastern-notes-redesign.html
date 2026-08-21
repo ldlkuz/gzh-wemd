@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>东方信笺 · 主题视觉原型</title>
+<style>
+  /* ============================================================
+     东方信笺 · 视觉原型（现代文人书信风）
+     差异化策略：12 主题共用一套骨架，靠 颜色 / 字体 / 装饰 拉开差距
+     —— 装饰全部用真实子元素（物化），微信导出可直接保留
+     —— 多色拼接：朱砂 · 黛蓝 · 赭石 · 墨，同一组件也可多色组合
+     ============================================================ */
+  :root {
+    --paper: #f6f1e8;          /* 宣纸底 */
+    --paper-deep: #efe8da;     /* 深宣纸（卡片） */
+    --paper-line: #e7dfcf;     /* 纸纹线 */
+    --ink: #2b2622;            /* 墨（正文） */
+    --ink-soft: #6b6159;       /* 灰墨（次要文字） */
+    --ink-faint: #9c9186;      /* 淡墨（图注） */
+    --cinnabar: #a33a2b;       /* 朱砂（主色·印章） */
+    --cinnabar-deep: #7e2d21;  /* 深朱砂（渐变深端） */
+    --cinnabar-veil: #f2e4de;  /* 朱砂淡罩 */
+    --indigo: #3d5a63;         /* 黛蓝（辅色·冷对撞） */
+    --indigo-veil: #e2e9e9;    /* 黛蓝淡罩 */
+    --ochre: #8a5a33;          /* 赭石（暖棕·次强调） */
+    --line: #d8cfc0;           /* 淡线 */
+    --serif: "Songti SC","STSong","Noto Serif CJK SC","Source Han Serif SC",SimSun,serif;
+    --mono: "SFMono-Regular",Consolas,"Courier New",monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { background: #efe9dd; }
+
+  /* ---- 宣纸底（纯 CSS 纤维感：微噪点渐变，无外链图） ---- */
+  body {
+    font-family: var(--serif);
+    color: var(--ink);
+    line-height: 2.05;
+    letter-spacing: 0.045em;
+    background:
+      radial-gradient(120% 90% at 50% 0%, rgba(255,252,244,.55) 0%, rgba(255,252,244,0) 60%),
+      repeating-linear-gradient(0deg, rgba(120,100,70,.020) 0 2px, rgba(120,100,70,0) 2px 5px),
+      repeating-linear-gradient(90deg, rgba(120,100,70,.016) 0 3px, rgba(120,100,70,0) 3px 7px),
+      var(--paper);
+  }
+
+  .frame {
+    max-width: 740px;
+    margin: 0 auto;
+    padding: 56px 44px 64px;
+    position: relative;
+  }
+
+  /* ---- 侧边竖排落款条（文人签名感） ---- */
+  .vertical-motto {
+    position: absolute;
+    right: -6px;
+    top: 48px;
+    writing-mode: vertical-rl;
+    font-size: 12px;
+    letter-spacing: 0.5em;
+    color: var(--ink-faint);
+  }
+  .vertical-motto b {
+    font-weight: 700;
+    color: var(--cinnabar);
+    letter-spacing: 0.3em;
+  }
+
+  .demo-title {
+    text-align: center;
+    color: var(--ink-faint);
+    font-size: 13px;
+    letter-spacing: 0.4em;
+    margin-bottom: 40px;
+  }
+  .demo-title::before, .demo-title::after {
+    content: "◆";
+    display: inline-block;
+    margin: 0 14px;
+    font-size: 9px;
+    color: var(--cinnabar);
+  }
+
+  /* ============ 1. 页头 · 主标题 + 印章 ============ */
+  .letter-head { margin-bottom: 30px; position: relative; }
+  .letter-head h1 {
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    color: var(--ink);
+    line-height: 1.5;
+    padding-right: 8px;
+  }
+  .letter-head .sub {
+    margin-top: 6px;
+    font-size: 13px;
+    letter-spacing: 0.28em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+  }
+  .head-line {
+    margin-top: 22px;
+    display: flex;
+    align-items: center;
+  }
+  .head-line .short { width: 46px; height: 4px; background: var(--cinnabar); }
+  .head-line .long  { flex: 1; height: 1px; background: var(--ink); }
+
+  /* 印章（朱砂方块 · 白字） */
+  .seal {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    background: var(--cinnabar);
+    color: #f8eee6;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0;
+    border-radius: 3px;
+    margin-left: 10px;
+    vertical-align: 6px;
+    box-shadow: 0 2px 6px rgba(126,45,33,.28);
+  }
+  .seal.big { width: 46px; height: 46px; font-size: 24px; }
+
+  /* ============ 2. 段落 ============ */
+  .prose {
+    margin: 0 0 30px;
+    text-align: justify;
+    color: var(--ink);
+    font-size: 17px;
+  }
+  .prose .lead::first-letter {
+    font-size: 34px;
+    font-weight: 700;
+    color: var(--cinnabar);
+    float: left;
+    line-height: 1;
+    margin: 6px 8px 0 0;
+  }
+  .prose em { font-style: normal; color: var(--ochre); font-weight: 600; }
+  .prose strong { color: var(--ink); font-weight: 700; text-decoration: underline; text-decoration-color: #d9aaa2; text-underline-offset: .18em; text-decoration-thickness: 2px; }
+
+  /* ============ 3. h2 章节标题（右对齐 · 顶菱形） ============ */
+  .sec {
+    margin: 58px 0 26px;
+    text-align: right;
+    padding-right: 8px;
+  }
+  .sec .diamond {
+    display: block;
+    font-size: 9px;
+    color: var(--cinnabar);
+    margin-bottom: 8px;
+    text-align: right;
+  }
+  .sec .txt {
+    color: var(--cinnabar);
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+  }
+  .sec .en {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 0.5em;
+    color: var(--ink-faint);
+    margin-top: 6px;
+    text-transform: uppercase;
+  }
+
+  /* ============ 4. h3 小标题 ============ */
+  .h3 {
+    margin: 40px 0 20px 2em;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--cinnabar);
+  }
+  .h3::before {
+    content: "§";
+    margin-right: 10px;
+    color: var(--indigo);
+    font-size: 15px;
+  }
+
+  /* ============ 5. 分割线 divider · 多色拼接 ============ */
+  .divider { margin: 60px 0; display: flex; align-items: center; }
+  .divider .line-l, .divider .line-r { flex: 1; height: 1px; background: var(--ink); opacity: .55; }
+  .divider .seg { width: 10px; height: 10px; margin: 0 5px; }
+  .divider .seg.cinnabar { background: var(--cinnabar); transform: rotate(45deg); }
+  .divider .seg.indigo   { background: var(--indigo); transform: rotate(45deg); }
+  .divider .seg.ochre    { background: var(--ochre); transform: rotate(45deg); border-radius: 50%; }
+
+  /* ============ 6. divider-fancy · 带字 + 印章 ============ */
+  .divider-fancy { margin: 56px 0; display: flex; align-items: center; }
+  .divider-fancy .line { flex: 1; height: 1px;
+    background: linear-gradient(to right, transparent, var(--ink) 30%, var(--ink) 70%, transparent); }
+  .divider-fancy .seal-inline {
+    margin: 0 14px;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px;
+    background: var(--cinnabar); color: #f8eee6;
+    font-size: 13px; font-weight: 700; letter-spacing: 0;
+    border-radius: 50%;
+  }
+  .divider-fancy .word {
+    margin-right: 14px; font-size: 14px; letter-spacing: .4em; color: var(--ink-soft);
+  }
+  .divider-fancy .dot {
+    margin-left: 14px; font-size: 18px; color: var(--indigo); letter-spacing: .3em;
+  }
+
+  /* ============ 7. 引用 pullquote ============ */
+  .pullquote {
+    margin: 52px 0; padding: 8px 34px; text-align: center;
+    position: relative;
+  }
+  .pullquote .q-mark {
+    position: absolute; left: 0; top: -12px;
+    font-size: 52px; line-height: 1; color: var(--indigo); font-family: Georgia,serif;
+  }
+  .pullquote .q-mark.end { left: auto; right: 0; top: auto; bottom: -26px; color: var(--cinnabar); }
+  .pullquote p {
+    font-size: 18px; line-height: 2.05; color: #564c45; font-weight: 600; letter-spacing: .06em;
+  }
+  .pullquote .sign {
+    margin-top: 16px; font-size: 13px; color: var(--cinnabar); letter-spacing: .3em;
+  }
+
+  /* ============ 8. 金句卡片 quote-card · 上下朱砂 + 侧黛蓝 ============ */
+  .quote-card {
+    margin: 56px 0; padding: 34px 40px; text-align: center;
+    border-top: 3px solid var(--cinnabar);
+    border-bottom: 3px solid var(--cinnabar);
+    background:
+      repeating-linear-gradient(0deg, rgba(120,100,70,.03) 0 2px, rgba(120,100,70,0) 2px 6px),
+      rgba(255,252,246,.5);
+    position: relative;
+  }
+  .quote-card .side-dot {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 8px; height: 8px; border-radius: 50%;
+  }
+  .quote-card .side-dot.l { left: 12px; background: var(--indigo); }
+  .quote-card .side-dot.r { right: 12px; background: var(--ochre); }
+  .quote-card blockquote { font-size: 19px; font-weight: 700; letter-spacing: .08em; color: var(--ink); }
+  .quote-card cite {
+    display: block; margin-top: 18px; font-style: normal;
+    font-size: 13px; letter-spacing: .35em; color: var(--ink-faint);
+  }
+  .quote-card cite::before { content: "——"; color: var(--cinnabar); margin-right: 6px; }
+
+  /* ============ 9. 提示框 callout-pro · 左朱砂 + 底赭石 ============ */
+  .callout-pro {
+    margin: 40px 0; padding: 22px 26px 20px;
+    background: rgba(255,252,246,.6);
+    border: 1px solid var(--line);
+    position: relative;
+    overflow: hidden;
+  }
+  .callout-pro .bar { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--cinnabar); }
+  .callout-pro .bar.indigo { background: var(--indigo); }
+  .callout-pro .foot { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: linear-gradient(90deg, var(--ochre) 0 34px, transparent 34px 100%); }
+  .callout-pro .title {
+    font-size: 16px; font-weight: 700; color: var(--ink); margin-bottom: 8px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .callout-pro .title .ico {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; background: var(--cinnabar-veil); color: var(--cinnabar-deep);
+    font-size: 13px; border-radius: 50%;
+  }
+  .callout-pro p.body { font-size: 15px; color: var(--ink-soft); line-height: 1.95; }
+
+  /* ============ 10. 步骤 steps · 朱砂中文序号 ============ */
+  .steps {
+    margin: 42px 0; padding: 26px 26px 14px;
+    background: rgba(255,252,246,.5);
+    border: 1px solid var(--line);
+  }
+  .steps .st-title { font-size: 17px; font-weight: 700; color: var(--ink); margin-bottom: 20px; }
+  .steps .st-title::before { content: "◆ "; color: var(--cinnabar); font-size: 10px; }
+  .steps ol { list-style: none; }
+  .steps li {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 14px 12px; margin-bottom: 12px;
+    background: rgba(255,253,249,.8);
+    border: 1px solid var(--paper-line);
+  }
+  .steps li .num {
+    flex-shrink: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--cinnabar); color: #f8eee6;
+    font-size: 14px; font-weight: 700; letter-spacing: 0;
+    margin-top: 2px;
+  }
+  .steps li .num.alt { background: var(--indigo); }
+  .steps li section { flex: 1; font-size: 15px; color: var(--ink-soft); line-height: 1.85; }
+  .steps li section b { color: var(--ink); font-weight: 700; }
+
+  /* ============ 11. CTA 卡片 · 朱砂渐变 + 双色底条 ============ */
+  .cta-card {
+    margin: 48px 0; padding: 38px 30px; text-align: center;
+    background: linear-gradient(160deg, var(--cinnabar) 0%, var(--cinnabar-deep) 100%);
+    color: #f8eee6;
+    position: relative;
+  }
+  .cta-card .seal-dot {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(248,238,230,.16); border: 1px solid rgba(248,238,230,.5);
+    font-size: 20px; margin-bottom: 12px;
+  }
+  .cta-card .cta-title { font-size: 19px; font-weight: 700; letter-spacing: .1em; }
+  .cta-card .cta-body { margin: 10px 0 20px; font-size: 14px; opacity: .88; letter-spacing: .05em; }
+  .cta-card .cta-action {
+    display: inline-block; padding: 8px 28px;
+    background: rgba(248,238,230,.18); border: 1px solid rgba(248,238,230,.55);
+    border-radius: 999px; font-size: 14px; letter-spacing: .2em; color: #f8eee6;
+  }
+  .cta-card .foot {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 4px;
+    background: linear-gradient(90deg, var(--indigo) 0 60px, var(--ochre) 60px 100%);
+  }
+
+  /* ============ 12. 表格 styled-table ============ */
+  .styled-table { margin: 42px 0; }
+  .styled-table table { width: 100%; border-collapse: collapse; background: rgba(255,252,246,.55); }
+  .styled-table th, .styled-table td { padding: 12px 14px; font-size: 14px; border-bottom: 1px solid var(--line); text-align: left; }
+  .styled-table thead th {
+    border-top: 2px solid var(--ink);
+    border-bottom: 2px solid var(--ink);
+    color: var(--cinnabar); font-weight: 700; letter-spacing: .12em; background: transparent;
+  }
+  .styled-table tbody tr:nth-child(even) { background: rgba(239,232,218,.6); }
+  .styled-table td { color: var(--ink-soft); line-height: 1.7; }
+
+  /* ============ 13. 代码块 code-block ============ */
+  .code-block { margin: 42px 0; overflow: hidden; border: 1px solid #403a35; border-top: 5px solid var(--cinnabar); background: #2e2a27; }
+  .code-block .cb-bar { display: flex; align-items: center; gap: 8px; padding: 9px 14px; border-bottom: 1px solid #554d46; }
+  .code-block .cb-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .code-block .cb-dot.r { background: #c76a5a; }
+  .code-block .cb-dot.y { background: #b9995a; }
+  .code-block .cb-dot.g { background: #7d9b6a; }
+  .code-block .cb-lang { margin-left: auto; font-size: 12px; color: #b9aea2; letter-spacing: .2em; font-family: var(--mono); }
+  .code-block pre { padding: 18px; overflow-x: auto; }
+  .code-block code { font-family: var(--mono); font-size: 13px; line-height: 1.75; color: #efe9e1; white-space: pre; }
+
+  /* ============ 14. 章节分隔 section-divider ============ */
+  .section-divider { margin: 64px 0 30px; text-align: center; }
+  .section-divider .sd-part { font-size: 12px; letter-spacing: .5em; color: var(--cinnabar); }
+  .section-divider .sd-title { margin-top: 10px; font-size: 24px; font-weight: 700; letter-spacing: .2em; color: var(--ink); }
+  .section-divider .sd-line {
+    margin: 18px auto 0; width: 120px; height: 4px; display: flex;
+  }
+  .section-divider .sd-line .a { width: 60px; background: var(--cinnabar); }
+  .section-divider .sd-line .b { width: 60px; background: var(--indigo); }
+
+  /* ============ 15. 关注引导 follow-bar ============ */
+  .follow-bar {
+    margin: 32px 0; padding: 16px 20px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    background: var(--ink); color: #f2ece4;
+  }
+  .follow-bar p { font-size: 14px; letter-spacing: .06em; flex: 1; }
+  .follow-bar .fb-action {
+    flex-shrink: 0; padding: 5px 18px;
+    background: var(--cinnabar); color: #f8eee6;
+    font-size: 13px; letter-spacing: .2em; border-radius: 2px;
+  }
+
+  /* ============ 16. 图注 ============ */
+  .figure { margin: 48px 0 54px; }
+  .figure .img-box {
+    height: 220px; display: flex; align-items: center; justify-content: center;
+    color: var(--ink-faint); font-size: 13px; letter-spacing: .3em;
+    background:
+      repeating-linear-gradient(45deg, rgba(120,100,70,.05) 0 12px, rgba(120,100,70,0) 12px 24px),
+      var(--paper-deep);
+    border: 1px solid var(--line);
+  }
+  .figure figcaption { margin-top: 12px; font-size: 12px; color: var(--ink-faint); letter-spacing: .12em; text-align: right; }
+  .figure figcaption::after { content: " 印"; color: var(--cinnabar); font-size: 11px; margin-left: 4px; }
+
+  /* ============ 17. 文末签名 + 大印章 ============ */
+  .letter-end { margin-top: 72px; text-align: center; }
+  .letter-end .end-line { width: 220px; height: 4px; margin: 0 auto 26px; display: flex; }
+  .letter-end .end-line .a { flex: 1; background: var(--cinnabar); }
+  .letter-end .end-line .b { flex: 1; background: var(--ink); }
+  .letter-end .colophon { font-size: 14px; letter-spacing: .5em; color: var(--ink-soft); }
+  .letter-end .seal { margin: 18px auto 0; }
+
+  /* ---- 组件名标注（仅原型辅助） ---- */
+  .tag {
+    display: inline-block; margin: 44px 0 0; padding: 2px 10px;
+    font-size: 11px; letter-spacing: .3em; color: var(--ink-faint);
+    border: 1px solid var(--line); border-radius: 999px;
+  }
+  .tag b { color: var(--cinnabar); font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="vertical-motto"><b>东方信笺</b> 癸卯年 · 秋</div>
+  <p class="demo-title">东方信笺 · 主题视觉原型</p>
+
+  <!-- ============ 1. 页头 ============ -->
+  <header class="letter-head">
+    <h1>东方信笺<span class="seal">笺</span></h1>
+    <p class="sub">Modern Chinese Letterhead · 一封信的排版</p>
+    <div class="head-line"><span class="short"></span><span class="long"></span></div>
+  </header>
+
+  <p class="prose">
+    <span class="lead">信</span>笺之美，在留白，在呼吸。十二套主题共用同一副骨架，差异不在结构，而在<em>气色</em>——宣纸的温、墨色的沉、朱砂的一点红。<strong>笔触与印章之间</strong>，便是东方信笺独有的节奏。这段文字刻意放长，用以示范正文在两端对齐、宽行距下的书卷感，也便于观察连续多行时的视觉密度与墨色层次。
+  </p>
+
+  <span class="tag">章节标题 <b>h2</b></span>
+  <h2 class="sec"><span class="diamond">◆</span><span class="txt">一 · 序章</span><span class="en">Chapter One</span></h2>
+
+  <p class="prose">
+    章节标题刻意右置，如古书卷首的题签，把视线推向稿纸的右缘，再折返正文。右上角一枚朱砂菱形，是整章唯一的暖色锚点——不多，却足够把节奏立住。
+  </p>
+
+  <h3 class="h3">小标题 · 三级层级</h3>
+  <p class="prose">
+    三级标题以墨色入题、左侧缩进，前缀一枚黛蓝「§」，与章节的朱砂菱形形成冷暖应答。三级以下的信息，字号随层级递减，但字距始终未散。
+  </p>
+
+  <!-- ============ 5/6. 分割线 · 多色拼接 ============ -->
+  <span class="tag">分割线 <b>divider · 多色拼接</b></span>
+  <div class="divider">
+    <span class="line-l"></span>
+    <span class="seg cinnabar"></span>
+    <span class="seg indigo"></span>
+    <span class="seg ochre"></span>
+    <span class="line-r"></span>
+  </div>
+  <p class="prose" style="text-align:center;color:var(--ink-faint);font-size:13px;letter-spacing:.3em">
+    一段墨线，三枚色块——朱砂、黛蓝、赭石依次排列，是分割，也是落款。
+  </p>
+
+  <span class="tag">装饰分割线 <b>divider-fancy · 印章</b></span>
+  <div class="divider-fancy">
+    <span class="line"></span>
+    <span class="seal-inline">知</span>
+    <span class="word">第一章 · 落款</span>
+    <span class="line"></span>
+  </div>
+
+  <!-- ============ 7. 引用 ============ -->
+  <span class="tag">引用 <b>pullquote</b></span>
+  <figure class="pullquote">
+    <span class="q-mark">「</span>
+    <p>落笔时不必慌张，墨会自己找到纸的方向。</p>
+    <figcaption class="sign">—— 信笺手记</figcaption>
+    <span class="q-mark end">」</span>
+  </figure>
+
+  <!-- ============ 8. 金句卡片 ============ -->
+  <span class="tag">金句卡片 <b>quote-card · 上下朱砂 + 侧黛蓝</b></span>
+  <section class="quote-card">
+    <span class="side-dot l"></span>
+    <blockquote>好文章是写给读者的信。</blockquote>
+    <cite>随园主人</cite>
+    <span class="side-dot r"></span>
+  </section>
+
+  <!-- ============ 9. 提示框 ============ -->
+  <span class="tag">提示框 <b>callout-pro · 左朱砂 + 底赭石</b></span>
+  <section class="callout-pro">
+    <span class="bar"></span>
+    <p class="title"><span class="ico">✎</span>小贴士</p>
+    <p class="body">左侧一条朱砂色条承重，底部一道赭石短线收束——同一组件，暖冷双色各自安放，互不打扰。</p>
+    <span class="foot"></span>
+  </section>
+
+  <section class="callout-pro" style="margin-top:20px">
+    <span class="bar indigo"></span>
+    <p class="title"><span class="ico" style="background:var(--indigo-veil);color:var(--indigo)">ℹ</span>黛蓝变体</p>
+    <p class="body">类型语义色也可以换成黛蓝，与朱砂主条形成「主一辅」的色彩层级。</p>
+    <span class="foot"></span>
+  </section>
+
+  <!-- ============ 10. 步骤 ============ -->
+  <span class="tag">步骤 <b>steps · 朱砂中文序号</b></span>
+  <section class="steps">
+    <p class="st-title">笺纸四步</p>
+    <ol>
+      <li><span class="num">一</span><section>选<b>纸</b>，宣纸为底，留白即呼吸；</section></li>
+      <li><span class="num alt">二</span><section>研<b>墨</b>，墨色为骨，字距当舒朗；</section></li>
+      <li><span class="num">三</span><section>点<b>朱</b>，朱砂为魂，一处点睛即够。</section></li>
+    </ol>
+  </section>
+
+  <!-- ============ 11. CTA ============ -->
+  <span class="tag">行动卡片 <b>cta-card · 渐变 + 双色底条</b></span>
+  <section class="cta-card">
+    <span class="seal-dot">笺</span>
+    <p class="cta-title">订阅《东方信笺》</p>
+    <p class="cta-body">每周一封，把排版、设计与文字之美，寄到你的信箱。</p>
+    <span class="cta-action">立即订阅</span>
+    <span class="foot"></span>
+  </section>
+
+  <!-- ============ 12. 表格 ============ -->
+  <span class="tag">表格 <b>styled-table</b></span>
+  <div class="styled-table">
+    <table>
+      <thead><tr><th>分类</th><th>件数</th><th>要点</th></tr></thead>
+      <tbody>
+        <tr><td>签名</td><td>4</td><td>印章、落款、竖排元素</td></tr>
+        <tr><td>标题</td><td>3</td><td>菱形锚点、右置题签</td></tr>
+        <tr><td>容器</td><td>6</td><td>宣纸卡、朱砂边条</td></tr>
+        <tr><td>数据</td><td>5</td><td>表格斑马纹、双线表头</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ============ 13. 代码块 ============ -->
+  <span class="tag">代码块 <b>code-block</b></span>
+  <div class="code-block">
+    <div class="cb-bar">
+      <span class="cb-dot r"></span><span class="cb-dot y"></span><span class="cb-dot g"></span>
+      <span class="cb-lang">SERIF · CSS</span>
+    </div>
+    <pre><code>.letter {
+  background: 宣纸;
+  color:      墨;
+  accent:     朱砂 · 黛蓝 · 赭石;
+}</code></pre>
+  </div>
+
+  <!-- ============ 14. 章节分隔 ============ -->
+  <span class="tag">章节分隔 <b>section-divider · 双色线</b></span>
+  <section class="section-divider">
+    <p class="sd-part">PART 01</p>
+    <h2 class="sd-title">开场与导航</h2>
+    <div class="sd-line"><span class="a"></span><span class="b"></span></div>
+  </section>
+
+  <!-- ============ 15. 关注引导 ============ -->
+  <span class="tag">关注引导 <b>follow-bar</b></span>
+  <div class="follow-bar">
+    <p>长按识别，把每封信都带在身边。</p>
+    <span class="fb-action">关注</span>
+  </div>
+
+  <!-- ============ 16. 图注 ============ -->
+  <span class="tag">图片图注 <b>figure</b></span>
+  <figure class="figure">
+    <div class="img-box">〔 此处为信笺配图 〕</div>
+    <figcaption>图 · 宣纸与墨，摄于癸卯年秋</figcaption>
+  </figure>
+
+  <!-- ============ 17. 文末签名 ============ -->
+  <footer class="letter-end">
+    <div class="end-line"><span class="a"></span><span class="b"></span></div>
+    <p class="colophon">东方信笺 · 癸卯年秋</p>
+    <span class="seal big">笺</span>
+  </footer>
+</div>
+</body>
+</html>

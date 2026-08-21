@@ -128,52 +128,54 @@ export const componentStylesClearGuide = `/* === 清晰指南：学习手册 · 
 
 /* === magazine-cover · 学习手册封面（骨架定制） === */
 #wemd .wemd-magazine-cover {
-  position: relative;
-  margin: 0 0 36px;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
+  margin: 18px 0 36px;
   padding: 48px 30px 36px;
   background: linear-gradient(180deg, #fdfaf2, #f6efdf);
   border: 1px solid #e6dcc7;
   border-radius: 6px;
-  overflow: hidden;
+  /* 不裁切：让挂顶胶带能露出卡片上边界（公众号兼容，负 margin 方案） */
 }
 #wemd .wemd-cg-tape {
-  position: absolute;
-  top: -12px;
-  left: 50%;
-  transform: translateX(-50%) rotate(-2deg);
-  width: 150px;
-  height: 28px;
-  background: rgba(255, 225, 77, 0.5);
-  border: 1px solid rgba(200, 170, 40, 0.25);
+  display: block;
+  width: 170px;
+  height: 26px;
+  margin: -54px auto 26px;
+  background: rgba(255, 225, 77, 0.55);
+  border: 1px solid rgba(200, 170, 40, 0.28);
+  transform: rotate(-2deg);
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-cg-stamp {
-  position: absolute;
-  top: 26px;
-  right: 26px;
+  float: right;
   width: 62px;
   height: 62px;
+  margin: 0 0 14px 12px;
   border-radius: 50%;
   border: 2px dashed #e8590c;
   color: #e8590c;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   font-family: "SF Mono", Consolas, monospace;
   font-size: 10px;
-  line-height: 1.5;
+  line-height: 16px;
   text-align: center;
+  box-sizing: border-box;
+  padding: 14px 4px;
   letter-spacing: 0.08em;
-  transform: rotate(12deg);
-  opacity: 0.85;
+  transform: rotate(8deg);
+  opacity: 0.88;
 }
+/* 让标题/落款从印章下方开始（float 不占流，需 clear 避免被标题文字重叠遮挡） */
 #wemd .wemd-cg-kicker {
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
+  clear: both;
   font-size: 12px;
   letter-spacing: 0.28em;
   color: #6b5d4f;
 }
 #wemd .wemd-cg-title {
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   margin-top: 16px;
   font-family: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", serif;
   font-size: 30px;
@@ -183,7 +185,7 @@ export const componentStylesClearGuide = `/* === 清晰指南：学习手册 · 
   color: #2b2118;
 }
 #wemd .wemd-cg-desc {
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   margin-top: 14px;
   font-size: 13.5px;
   line-height: 2;
@@ -238,7 +240,7 @@ export const componentStylesClearGuide = `/* === 清晰指南：学习手册 · 
   margin: 0;
 }
 #wemd .wemd-steps .wemd-component-body li {
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   margin: 0 0 12px;
   padding: 16px 18px 16px 56px;
   background: #fffdf8;
@@ -260,7 +262,7 @@ export const componentStylesClearGuide = `/* === 清晰指南：学习手册 · 
   background: #fffdf8;
   border: 1px solid #e6dcc7;
   border-radius: 6px;
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   box-shadow: none;
 }
 #wemd .wemd-toc-nav .wemd-component-body > p:first-child {
@@ -409,6 +411,9 @@ export const componentStylesClearGuide = `/* === 清晰指南：学习手册 · 
 #wemd .wemd-cg-dvline {
   flex: 1;
   border-bottom: 2px dashed #e6dcc7;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-cg-glyph {
   color: #e8590c;

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>鎏金夜 · 黑金奢华移动端重新创作</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{background:#e6e2da}
+  body{
+    font-family:"Songti SC","STSong","Noto Serif SC","Source Han Serif SC","PingFang SC",serif;
+    display:flex;justify-content:center;padding:24px 12px 60px;color:#f5efe2;
+  }
+  .phone{width:100%;max-width:390px;background:#0c0a08;box-shadow:0 16px 48px rgba(0,0,0,.45);border-radius:12px;overflow:hidden}
+
+  /* ============ 封面：暗匣鎏金门 ============ */
+  .cover{position:relative;padding:40px 26px 42px;text-align:center;background:radial-gradient(100% 60% at 50% 0%,#191510 0%,#0c0a08 60%)}
+  /* 顶部暗金细饰线阵 */
+  .crown{display:flex;justify-content:center;align-items:baseline;gap:8px;margin-bottom:30px;color:#a48e5a}
+  .crown .d{font-size:12px}
+  .crown .m{font-size:8px}
+  .crown .line{width:40px;height:1px;background:linear-gradient(90deg,transparent,#a48e5a,transparent);align-self:center}
+  /* 主徽章圆标 */
+  .badge{width:76px;height:76px;margin:0 auto 26px;border:1px solid #caa95d;border-radius:50%;display:flex;align-items:center;justify-content:center;transform:rotate(-6deg)}
+  .badge .inner{width:58px;height:58px;border:1px solid rgba(202,169,93,.5);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;color:#e8c56b;font-size:22px;letter-spacing:.05em}
+  /* kicker */
+  .kicker{font-family:Georgia,serif;font-size:10px;letter-spacing:.5em;color:#caa95d;text-transform:uppercase;margin-bottom:18px}
+  /* 大标题 */
+  .title{font-size:38px;font-weight:700;line-height:1.35;letter-spacing:.14em;color:#f5efe2}
+  .title .hl{color:#e8c56b}
+  .subtitle{margin-top:16px;font-size:13px;letter-spacing:.34em;color:#a89a78}
+  /* 分隔 */
+  .sep{width:190px;margin:30px auto 24px;display:flex;align-items:center;gap:12px}
+  .sep .r{flex:1;height:1px;background:linear-gradient(90deg,transparent,#b99a52,transparent)}
+  .sep i{color:#caa95d;font-style:normal;font-size:9px;letter-spacing:6px}
+  /* 描述 */
+  .desc{font-size:14px;line-height:2.1;color:#cfc3a6;letter-spacing:.05em}
+  /* 底部角标排 */
+  .base{margin-top:34px;display:flex;justify-content:center;gap:28px;color:#8a7a58;font-family:Georgia,serif;font-size:9px;letter-spacing:.3em}
+
+  /* ============ 内容区：深夜纸读 ============ */
+  .body{padding:8px 26px 44px;background:#0c0a08}
+  .body .head{margin-bottom:26px;padding-bottom:14px;border-bottom:1px solid rgba(202,169,93,.28);display:flex;align-items:baseline;gap:12px}
+  .head .no{font-family:Georgia,serif;font-size:11px;color:#caa95d;letter-spacing:.24em}
+  .head .t{font-size:19px;font-weight:700;color:#f0e6c8;letter-spacing:.08em}
+  .head .ln{flex:1;height:1px;background:linear-gradient(90deg,rgba(202,169,93,.4),transparent)}
+  .para{font-size:15px;line-height:2.2;color:#d8cfb8;letter-spacing:.02em;text-align:justify;margin-bottom:22px}
+  .para em{color:#e8c56b;font-style:normal}
+  .para .dropcap{font-family:Georgia,serif;font-size:54px;line-height:1;font-weight:400;color:#e8c56b;float:left;margin:8px 12px 0 0}
+
+  /* 金句卡：金属边 */
+  .quote{margin:36px 0;padding:38px 28px;text-align:center;background:linear-gradient(165deg,#16110b,#0f0c08);border:1px solid #6b5c35;position:relative}
+  .quote::before{content:"";position:absolute;inset:6px;border:1px solid rgba(202,169,93,.35);pointer-events:none}
+  .quote .q{font-family:Georgia,serif;font-size:60px;line-height:.6;color:#caa95d}
+  .quote .text{font-size:19px;line-height:2;letter-spacing:.1em;color:#f0e6c8;margin:20px 0 0}
+  .quote .a{margin-top:20px;font-size:10px;letter-spacing:.36em;color:#a89a78;font-family:Georgia,serif}
+
+  /* 条目 */
+  .item{display:flex;gap:16px;padding:18px 0;border-bottom:1px solid rgba(202,169,93,.16)}
+  .item:last-child{border-bottom:none}
+  .item .num{font-family:Georgia,serif;color:#caa95d;font-size:15px;flex:none;padding-top:2px}
+  .item .tt{font-size:16px;color:#f0e6c8;letter-spacing:.06em}
+  .item .ds{font-size:13px;color:#a89a78;line-height:1.8;margin-top:6px}
+
+  /* 落款 */
+  .foot{margin-top:42px;padding:30px 0 6px;text-align:center;border-top:1px solid rgba(202,169,93,.28)}
+  .foot .gline{width:46px;height:2px;background:linear-gradient(90deg,transparent,#caa95d,transparent);margin:0 auto 16px}
+  .foot .name{font-family:Georgia,serif;font-size:13px;letter-spacing:.3em;color:#caa95d}
+  .foot .meta{margin-top:10px;font-size:9px;letter-spacing:.24em;color:#8a7a58;font-family:Georgia,serif}
+</style>
+</head>
+<body>
+<div class="phone">
+  <!-- 封面 -->
+  <section class="cover">
+    <div class="crown">
+      <span class="line"></span><span class="d">◆</span><span class="m">·</span><span class="d">◆</span><span class="line"></span>
+    </div>
+    <div class="badge"><span class="inner">鎏</span></div>
+    <div class="kicker">N O C T U R N E</div>
+    <h1 class="title">夜色<span class="hl">鎏金</span></h1>
+    <div class="subtitle">光 落 之 处 · 皆 为 阶</div>
+    <div class="sep"><span class="r"></span><i>◇</i><span class="r"></span></div>
+    <p class="desc">在喧哗的尽头<br>有一种安静，叫贵重</p>
+    <div class="base"><span>EST. MMXXVI</span><span>·</span><span>VAULT</span></div>
+  </section>
+
+  <!-- 内容 -->
+  <div class="body">
+    <div class="head"><span class="no">I.</span><span class="t">光的秩序</span><span class="ln"></span></div>
+    <p class="para"><span class="dropcap">夜</span>色是最好的一层滤镜。凡你见过鎏金在暗中浮起的样子，便知真正的<em>高级</em>从不喧哗，它只需被正确地照亮。</p>
+
+    <div class="head"><span class="no">II.</span><span class="t">克制即贵</span><span class="ln"></span></div>
+    <div class="item"><span class="num">壹</span><div><div class="tt">留白先行</div><div class="ds">少摆一物，多存一份气势。</div></div></div>
+    <div class="item"><span class="num">贰</span><div><div class="tt">金不滥用</div><div class="ds">金属光点只落于最关键之处。</div></div></div>
+    <div class="item"><span class="num">叁</span><div><div class="tt">节奏为骨</div><div class="ds">版式稳重，贵气自然沉淀。</div></div></div>
+
+    <div class="quote">
+      <div class="q">“</div>
+      <p class="text">真正的体面，<br>是不必开口的份量。</p>
+      <div class="a">THE WEIGHT OF SILENCE</div>
+    </div>
+
+    <div class="foot">
+      <div class="gline"></div>
+      <div class="name">N O C T U R N E · 鎏金夜</div>
+      <div class="meta">2026 · 深夜私藏</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

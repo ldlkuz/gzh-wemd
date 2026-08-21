@@ -283,6 +283,9 @@ export const componentStylesFoodAtlas = `/* === 美食图谱（Food Atlas）组�
   background: ${ORANGE};
   margin: 0 auto 24px;
   border-radius: 5px;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-end-card .wemd-fa-signoff-name {
   margin: 0;

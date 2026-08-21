@@ -180,13 +180,16 @@ export const componentStylesDataBlueprint = `/* === 数据蓝图：正文/内容
   color: #e0f2fe;
 }
 
-/* callout-pro：竖条跟随主题主色（共享 ::before 物化，primary=科技蓝 #0ea5e9） */
+/* callout-pro：左侧色条用 border-left 跟随主题主色（科技蓝 #0ea5e9） */
 #wemd .wemd-callout-pro {
   background: #ffffff;
-  border: 1px solid #bae6fd;
+  border-top: 1px solid #bae6fd;
+  border-right: 1px solid #bae6fd;
+  border-bottom: 1px solid #bae6fd;
+  /* 左侧色条：用 border-left（原生边框，微信保留） */
+  border-left: 4px solid #0ea5e9;
 }
 #wemd .wemd-callout-pro .wemd-component-body > p {
   color: #082f49;
 }
 `;
-

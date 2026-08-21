@@ -164,7 +164,7 @@ const CURATED: Record<string, string> = {
     '<section class="wemd-sn-header">',
     '{{#if seriesName}}<section class="wemd-sn-name">{{slot:seriesName}}</section>{{/if}}',
     '{{#if description}}<section class="wemd-sn-desc">{{slot:description}}</section>{{/if}}',
-    '<section class="wemd-sn-progress-bar" style="--sn-progress: {{slot:progress}}"><span class="wemd-sn-progress-fill"></span></section>',
+    '<section class="wemd-sn-progress-bar" style="--sn-progress: {{slot:progress}}"><span class="wemd-sn-progress-fill">&nbsp;</span></section>',
     "</section>",
     '{{#if items}}<section class="wemd-sn-articles">',
     "{{#each items}}",
@@ -191,7 +191,7 @@ const CURATED: Record<string, string> = {
     '{{#if title}}<section class="wemd-tl-title">{{slot:title}}</section>{{/if}}',
     '{{#if items}}<section class="wemd-tl-events">',
     "{{#each items}}",
-    '<section class="wemd-tl-item"><span class="wemd-tl-dot"></span><span class="wemd-tl-text">{{this.body}}</span></section>',
+    '<section class="wemd-tl-item"><span class="wemd-tl-dot">&nbsp;</span><span class="wemd-tl-text">{{this.body}}</span></section>',
     "{{/each}}",
     "</section>{{/if}}",
     "</section>",
@@ -208,9 +208,9 @@ const CURATED: Record<string, string> = {
     '<section class="wemd-component wemd-divider-fancy" data-component="divider-fancy">',
     '<section class="wemd-df-label">',
     "{{#if label}}",
-    '<span class="wemd-df-line wemd-df-line-left"></span>',
+    '<span class="wemd-df-line wemd-df-line-left">&nbsp;</span>',
     '<span class="wemd-df-text">{{slot:label}}</span>',
-    '<span class="wemd-df-line wemd-df-line-right"></span>',
+    '<span class="wemd-df-line wemd-df-line-right">&nbsp;</span>',
     "{{else}}",
     '<span class="wemd-df-dots">\u00B7 \u00B7 \u00B7</span>',
     "{{/if}}",
@@ -233,6 +233,7 @@ const CURATED: Record<string, string> = {
 
   faq: [
     '<section class="wemd-component wemd-faq" data-component="faq">',
+    // 挂角标题：预览走 ::before 伪元素，导出由物化器生成块级 span（两链路一致）
     '<div class="wemd-component-body">{{slot:body}}</div>',
     "</section>",
   ].join("\n"),

@@ -148,6 +148,9 @@ export const componentStylesSilentKeynote = `/* === 无声发布（Silent Keynot
   height: 3px;
   margin: 0 auto 22px;
   background: ${ORANGE};
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-sk-eyebrow {
   font-family: "SF Mono", "Cascadia Code", Consolas, monospace;
@@ -212,7 +215,7 @@ export const componentStylesSilentKeynote = `/* === 无声发布（Silent Keynot
   text-align: center;
   padding: 52px 26px 40px;
   border-radius: 18px;
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
 }
 #wemd .wemd-sk-end-line {
   display: block;
@@ -220,6 +223,9 @@ export const componentStylesSilentKeynote = `/* === 无声发布（Silent Keynot
   height: 3px;
   margin: 0 auto 24px;
   background: ${ORANGE};
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-sk-end-eyebrow {
   font-family: "SF Mono", "Cascadia Code", Consolas, monospace;
@@ -305,29 +311,62 @@ export const componentStylesSilentKeynote = `/* === 无声发布（Silent Keynot
   color: ${TEXT};
 }
 
-/* === 时间线 === */
-#wemd .wemd-timeline .wemd-component-body > ul {
-  list-style: none;
-  padding: 0;
-  margin: 10px 0 0;
+/* === 时间线（新骨架 wemd-tl-events / wemd-tl-item / wemd-tl-dot，兼容微信） ===
+   旧选择器：.wemd-component-body > ul/li + ::before（旧骨架 + 伪元素 + position:absolute）
+   → 新选择器：tl-events border-left 竖线 + tl-item flex 行 + tl-dot 负 margin 圆点（无 position 依赖，
+   两条链路一致，公众号保留）。 */
+#wemd .wemd-timeline {
+  margin: 20px 0;
+  padding: 10px 0 0;
 }
-#wemd .wemd-timeline .wemd-component-body li {
-  position: relative;
-  padding: 0 0 22px 26px;
+#wemd .wemd-timeline .wemd-tl-title {
+  margin: 0 0 10px 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: ${TEXT};
+}
+/* 竖线：容器 border-left（原生边框，微信保留），padding-left 决定 item 内容起点。
+   border-left 2px（中心 x=1）+ padding-left: 20px → item 内容起点 x=22 */
+#wemd .wemd-timeline .wemd-tl-events {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 20px;
+  border-left: 2px solid ${ORANGE};
+  border-left-width: 2px;
+}
+/* item 行：display: flex（微信保留），dot flex:none + 负 margin 跨竖线居中 */
+#wemd .wemd-timeline .wemd-tl-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 0 0 22px 0;
+  margin: 0;
   font-size: 15px;
   color: ${TEXT};
 }
-#wemd .wemd-timeline .wemd-component-body li::before {
-  content: "";
-  position: absolute;
-  left: 3px;
-  top: 8px;
+/* 小圆点（真实元素 span，带 &nbsp; 占位防止被公众号当空元素删除）。
+   几何：item 内容起点 x=22；dot 宽 9px → 半宽 4.5；竖线中心 x=1。
+   margin-left = -(22 + 4.5 - 1) = -25.5px → 取 -25px 近似（公众号支持小数，写精确） */
+#wemd .wemd-timeline .wemd-tl-dot {
+  flex: none;
   width: 9px;
   height: 9px;
+  margin-top: 8px;       /* 与旧 top: 8px 同视觉；line-height ~24px, 8px 让圆点略偏上对齐首行文字 */
+  margin-left: -25.5px;
+  margin-right: 16.5px;  /* 25.5 - 9 = 16.5：让竖线右边到 text 起点有空格 */
   border-radius: 50%;
   border: 2px solid ${ORANGE};
+  background: #ffffff;
+  box-sizing: border-box;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
-#wemd .wemd-timeline .wemd-component-body li b {
+#wemd .wemd-timeline .wemd-tl-text {
+  flex: 1;
+  line-height: 1.7;
+}
+#wemd .wemd-timeline .wemd-tl-text b,
+#wemd .wemd-timeline .wemd-tl-text strong {
   color: ${ORANGE};
   font-family: "SF Mono", "Cascadia Code", Consolas, monospace;
   font-weight: 700;

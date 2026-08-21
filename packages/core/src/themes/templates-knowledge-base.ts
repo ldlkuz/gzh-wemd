@@ -26,7 +26,7 @@ export const kbSectionDivider = (): string =>
     '{{#if part}}<span class="wemd-kb-part">{{slot:part}}</span>{{/if}}',
     '{{#if title}}<span class="wemd-kb-sec-title">{{slot:title}}</span>{{/if}}',
     "</div>",
-    '<span class="wemd-kb-sec-line"></span>',
+    '<span class="wemd-kb-sec-line">&nbsp;</span>',
     "</section>",
   ].join("\n");
 
@@ -43,9 +43,9 @@ export const kbCodeFrame = (): string =>
   [
     '<section class="wemd-component wemd-code-frame" data-component="code-frame">',
     '<div class="wemd-cf-header">',
-    '<span class="wemd-kb-dot wemd-kb-dot-r"></span>',
-    '<span class="wemd-kb-dot wemd-kb-dot-y"></span>',
-    '<span class="wemd-kb-dot wemd-kb-dot-g"></span>',
+    '<span class="wemd-kb-dot wemd-kb-dot-r">&nbsp;</span>',
+    '<span class="wemd-kb-dot wemd-kb-dot-y">&nbsp;</span>',
+    '<span class="wemd-kb-dot wemd-kb-dot-g">&nbsp;</span>',
     '{{#if title}}<span class="wemd-cf-title">{{slot:title}}</span>{{/if}}',
     "</div>",
     '{{#if code}}<div class="wemd-cf-code">{{slot:code}}</div>{{/if}}',

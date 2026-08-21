@@ -151,6 +151,9 @@ export const componentStylesReceipt = `/* === 购物小票（热敏小票）组�
   margin: 12px auto 10px;
   width: 70%;
   border-top: 1px dashed #cf2323;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-magazine-cover .wemd-rc-desc {
   margin: 0 auto;
@@ -192,6 +195,9 @@ export const componentStylesReceipt = `/* === 购物小票（热敏小票）组�
   display: block;
   margin: 10px 0 0;
   border-top: 1px dashed #c9c4b5;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 
 /* === divider 虚线分隔（★ 星星） === */
@@ -211,7 +217,7 @@ export const componentStylesReceipt = `/* === 购物小票（热敏小票）组�
 }
 #wemd .wemd-divider .wemd-rc-stars {
   display: inline-block;
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   top: -9px;
   padding: 0 12px;
   font-family: "SF Mono", "Cascadia Code", Consolas, monospace;
@@ -737,6 +743,9 @@ export const componentStylesReceipt = `/* === 购物小票（热敏小票）组�
   display: block;
   margin: 10px 24px 0;
   border-top: 1px dashed #c9c4b5;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-end-card .wemd-rc-meta {
   padding: 8px 20px 14px;

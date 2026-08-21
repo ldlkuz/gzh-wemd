@@ -253,6 +253,9 @@ export const componentStylesStorybook = `/* === 故事集（Storybook）组件�
   width: 100%;
   height: 1px;
   background: ${LINE};
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-end-card .wemd-sk-end-mark {
   /* 与章节分隔的章标（壹/贰）同层级：15px、暮霞红、0.4em 字距；

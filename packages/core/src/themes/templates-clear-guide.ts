@@ -10,11 +10,11 @@
  * 微信约束：装饰全部真实 DOM 元素（无伪元素、无结构伪类）。
  */
 
-/** 学习手册封面：胶带 + 虚线圆印章 + 荧光标题（真实元素） */
+/** 学习手册封面：胶带挂顶 + 虚线圆印章靠右 + 荧光标题（真实元素，float 方案，微信公众号兼容） */
 export const clearGuideMagazineCover = (): string =>
   [
     '<section class="wemd-component wemd-magazine-cover" data-component="magazine-cover">',
-    '<span class="wemd-cg-tape"></span>',
+    '<span class="wemd-cg-tape">&nbsp;</span>',
     '<span class="wemd-cg-stamp">学习<br>手册</span>',
     '{{#if subtitle}}<section class="wemd-cg-kicker">{{slot:subtitle}}</section>{{/if}}',
     '{{#if title}}<section class="wemd-cg-title">{{slot:title}}</section>{{/if}}',
@@ -36,9 +36,9 @@ export const clearGuideDivider = (): string =>
   [
     '<section class="wemd-component wemd-divider" data-component="divider">',
     '<div class="wemd-component-body">',
-    '<span class="wemd-cg-dvline wemd-cg-dvline-l"></span>',
+    '<span class="wemd-cg-dvline wemd-cg-dvline-l">&nbsp;</span>',
     '<span class="wemd-cg-glyph">\u2726 \u2726 \u2726</span>',
-    '<span class="wemd-cg-dvline wemd-cg-dvline-r"></span>',
+    '<span class="wemd-cg-dvline wemd-cg-dvline-r">&nbsp;</span>',
     "</div>",
     "</section>",
   ].join("\n");

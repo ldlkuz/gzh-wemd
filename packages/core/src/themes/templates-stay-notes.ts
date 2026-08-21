@@ -30,7 +30,7 @@ export const stayTextCard = (): string =>
   [
     '<section class="wemd-component wemd-text-card" data-component="text-card">',
     '<section class="wemd-st-intro">',
-    '<span class="wemd-st-intro-rule"></span>',
+    '<span class="wemd-st-intro-rule">&nbsp;</span>',
     '{{#if title}}<p class="wemd-st-intro-tag">{{slot:title}}</p>{{/if}}',
     '{{#if body}}<p class="wemd-st-intro-text">{{slot:body}}</p>{{/if}}',
     "</section>",
@@ -65,7 +65,7 @@ export const stayEndCard = (): string =>
   [
     '<section class="wemd-component wemd-end-card" data-component="end-card">',
     '<section class="wemd-st-signoff">',
-    '<span class="wemd-st-signoff-rule"></span>',
+    '<span class="wemd-st-signoff-rule">&nbsp;</span>',
     '{{#if title}}<p class="wemd-st-signoff-name">{{slot:title}}</p>{{/if}}',
     '{{#if subtitle}}<p class="wemd-st-signoff-date">{{slot:subtitle}}</p>{{/if}}',
     "</section>",

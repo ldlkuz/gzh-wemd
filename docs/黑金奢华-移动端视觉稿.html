@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>黑金奢华 · 移动端视觉稿</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{background:#e7e7e7}
+  body{
+    font-family:"Songti SC","STSong","Noto Serif SC","Source Han Serif SC","PingFang SC",serif;
+    display:flex;justify-content:center;padding:20px 12px 60px;
+  }
+  .phone{width:100%;max-width:390px;background:#faf6ed;box-shadow:0 12px 40px rgba(0,0,0,.15);border-radius:10px;overflow:hidden}
+  .pad{padding:0 22px}
+
+  /* ============ 封面：黑曜石深卡 + 鎏金 ++ ============ */
+  .cover{
+    position:relative;
+    padding:34px 24px 36px;
+    background:radial-gradient(90% 55% at 50% 0%,#3a2d1d 0%,#221910 46%,#120d07 100%);
+    color:#f5ead0;text-align:center;overflow:hidden;
+  }
+  /* 顶部鎏金饰带 */
+  .crest{margin-bottom:26px;display:flex;align-items:center;justify-content:center;gap:14px}
+  .crest .ln{width:52px;height:1px;background:linear-gradient(90deg,transparent,#c9a24a,transparent)}
+  .crest .glyph{color:#d4af37;font-size:13px;letter-spacing:.18em}
+  .crest .glyph span{font-size:8px}
+  /* 小金标 */
+  .kicker{font-size:10px;letter-spacing:.42em;text-transform:uppercase;color:#d9b964;margin-bottom:20px}
+  /* 大标题 */
+  .title{
+    font-size:33px;font-weight:700;line-height:1.5;letter-spacing:.12em;color:#f6e7c0;
+    margin-bottom:4px;
+  }
+  .title .gold{color:#e6c97a}
+  .subtitle{font-size:15px;color:#caa95a;letter-spacing:.3em;margin-top:14px}
+  /* 双金线 */
+  .divider{width:200px;margin:26px auto 22px;display:flex;align-items:center;gap:10px}
+  .divider .r{flex:1;height:1px;background:linear-gradient(90deg,transparent,#c9a24a,transparent)}
+  .divider i{font-style:normal;color:#d4af37;font-size:10px}
+  /* 描述 */
+  .desc{font-size:13.5px;line-height:2;color:#dccc9d;letter-spacing:.04em}
+  /* 底部菱形徽记 */
+  .seal{width:188px;margin:28px auto 0;display:flex;align-items:center;gap:12px}
+  .seal .sq{width:7px;height:7px;background:#d4af37;transform:rotate(45deg);flex:none}
+  .seal .r{flex:1;height:1px;background:rgba(212,175,55,.35)}
+  .seal .star{color:#c9a24a;font-size:12px;letter-spacing:8px}
+
+  /* ============ 小节标题 ============ */
+  .sec{margin:44px 0 18px;padding-bottom:12px;border-bottom:1px solid #d4af37;display:flex;align-items:baseline;gap:12px}
+  .sec .no{font-family:Georgia,serif;font-size:13px;color:#a9860f;letter-spacing:.2em}
+  .sec .t{font-size:21px;font-weight:700;color:#a9860f;letter-spacing:.06em}
+  .sec .ln{flex:1;height:1px;background:linear-gradient(90deg,#d4af37,transparent)}
+
+  /* ============ 正文 ============ */
+  .para{font-size:15.5px;line-height:2.05;color:#3d2818;letter-spacing:.02em;text-align:justify;margin-bottom:20px}
+  .para .dropcap{font-family:Georgia,serif;font-size:52px;line-height:1;font-weight:700;color:#b8960c;float:left;margin:6px 10px 0 0}
+
+  /* ============ 金句卡：深棕黑 ============ */
+  .quote{
+    margin:34px 0;padding:34px 26px;text-align:center;color:#f5ead0;
+    background:linear-gradient(160deg,#241a10,#171009);
+    border:1px solid #b9922f;position:relative;
+  }
+  .quote .qmark{font-family:Georgia,serif;font-size:44px;line-height:1;color:#d4af37;display:block;height:.75em}
+  .quote .text{font-size:19px;line-height:1.9;letter-spacing:.06em;color:#f0dfb2;margin:14px 0 0}
+  .quote .author{margin-top:18px;font-size:11px;letter-spacing:.3em;color:#caa95a}
+  .quote .bar{width:40px;height:2px;background:#d4af37;margin:16px auto 0}
+
+  /* ============ 列表 ============ */
+  .list{list-style:none;margin:10px 0 22px}
+  .list li{display:flex;gap:14px;padding:14px 0;border-bottom:1px dashed #d9cba4;align-items:flex-start}
+  .list li:last-child{border-bottom:none}
+  .list .num{font-family:Georgia,serif;color:#b8960c;font-size:14px;font-weight:700;flex:none;padding-top:2px}
+  .list .tt{font-size:16px;color:#4a3018;font-weight:700;letter-spacing:.04em}
+  .list .ds{font-size:13.5px;color:#7a6450;line-height:1.7;margin-top:4px}
+
+  /* ============ 引语条 ============ */
+  .note{margin:28px 0;padding:16px 20px;border-left:3px solid #b9922f;background:#f3ead2;font-size:14.5px;line-height:1.9;color:#5a452c}
+
+  /* ============ 落款 ============ */
+  .foot{margin-top:40px;padding:28px 0 10px;text-align:center;border-top:1px solid #d4af37}
+  .foot .goldline{width:44px;height:2px;background:#d4af37;margin:0 auto 16px}
+  .foot .sig{font-size:12px;letter-spacing:.34em;color:#a9860f}
+  .foot .date{margin-top:8px;font-size:10px;color:#b2996a;letter-spacing:.2em;font-family:Georgia,serif}
+
+  /* ============ 按钮（视觉示意） ============ */
+  .btn{margin:30px 0 8px;padding:14px;text-align:center;color:#f5ead0;background:linear-gradient(180deg,#c9a24a,#a9860f);font-size:15px;letter-spacing:.2em;border-radius:2px}
+</style>
+</head>
+<body>
+<div class="phone">
+  <!-- 封面 -->
+  <section class="cover">
+    <div class="crest">
+      <span class="ln"></span>
+      <span class="glyph">◆</span>
+      <span class="ln"></span>
+    </div>
+    <div class="kicker">LUXURY COLLECTION · VAULTS NO.01</div>
+    <h1 class="title"><span class="gold">黑金</span>时刻</h1>
+    <div class="subtitle">臻 藏 · 与 秩 序</div>
+    <div class="divider"><span class="r"></span><i>◆</i><span class="r"></span></div>
+    <p class="desc">一份关于奢华与秩序的品牌手册<br>鎏金所至，皆是承诺</p>
+    <div class="seal"><span class="r"></span><span class="sq"></span><span class="star">✦</span><span class="sq"></span><span class="r"></span></div>
+  </section>
+
+  <!-- 正文 -->
+  <div class="pad">
+    <div class="sec"><span class="no">01</span><span class="t">鎏金重在分寸</span><span class="ln"></span></div>
+    <p class="para"><span class="dropcap">黑</span>金不是张扬，而是分寸。真正的奢华往往安静，它靠克制的鎏金点缀和考究的留白取胜，而非堆砌。</p>
+
+    <div class="sec"><span class="no">02</span><span class="t">臻选之道</span><span class="ln"></span></div>
+    <ul class="list">
+      <li><span class="num">壹</span><div><div class="tt">至简料础</div><div class="ds">拒绝多余的装饰，只保留不可再省的部分。</div></div></li>
+      <li><span class="num">贰</span><div><div class="tt">金线点睛</div><div class="ds">金色只出现在最重要的那几处，少即是贵。</div></div></li>
+      <li><span class="num">叁</span><div><div class="tt">秩序为先</div><div class="ds">版式即品位，稳定的节奏比炫技更耐看。</div></div></li>
+    </ul>
+
+    <div class="quote">
+      <span class="qmark">"</span>
+      <p class="text">奢侈品从不出声，<br>它只是礼貌地存在。</p>
+      <div class="bar"></div>
+      <div class="author">THE AESTHETICS OF SILENCE</div>
+    </div>
+
+    <div class="note">金色是唯一需要小心使用的颜色——用得越少，越显珍贵。</div>
+
+    <div class="foot">
+      <div class="goldline"></div>
+      <div class="sig">黑金奢华 · LUXURY</div>
+      <div class="date">2026 · 臻藏卷</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

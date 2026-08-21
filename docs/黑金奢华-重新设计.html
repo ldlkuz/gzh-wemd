@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>黑金奢华 · 荣誉证书 · 重新设计</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{background:#dedbd3}
+  body{
+    font-family:"Songti SC","STSong","Noto Serif SC","Source Han Serif SC","PingFang SC",serif;
+    display:flex;justify-content:center;padding:24px 12px 64px;
+  }
+  .phone{width:100%;max-width:390px;background:#faf6ec;box-shadow:0 16px 48px rgba(0,0,0,.18);border-radius:12px;overflow:hidden}
+  .pad{padding:0 22px}
+
+  /* ============ 封面 · 黑曜石 + 荣誉证书 ============ */
+  .cover{
+    position:relative;text-align:center;color:#f5ead0;
+    padding:38px 26px 40px;
+    background:
+      radial-gradient(120% 55% at 50% 0%, rgba(196,164,92,.18) 0%, transparent 46%),
+      linear-gradient(175deg,#32241433 0%, transparent 40%, rgba(0,0,0,.25) 100%),
+      linear-gradient(160deg,#31271a 0%, #1d150c 52%, #120d07 100%);
+  }
+  /* 顶部双线 + 徽章 */
+  .crest{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:28px}
+  .crest .ln{width:56px;height:1px;background:linear-gradient(90deg,transparent,#c9a24a,transparent)}
+  .crest .core{display:flex;align-items:center;gap:8px;color:#d4af37;font-size:12px}
+  .crest .core .s{font-size:8px;color:#b9922f}
+  /* 徽章圆印 */
+  .badge{width:84px;height:84px;margin:0 auto 26px;border-radius:50%;border:1px solid #b9922f;display:flex;align-items:center;justify-content:center;position:relative}
+  .badge::before{content:"";position:absolute;inset:6px;border:1px solid rgba(185,146,47,.45);border-radius:50%}
+  .badge .ch{font-size:26px;color:#e6c97a;letter-spacing:.02em;font-weight:600}
+  .badge .ring{position:absolute;top:2px;right:6px;color:#b9922f;font-size:7px}
+  /* kicker */
+  .kicker{font-family:Georgia,serif;font-size:10px;letter-spacing:.44em;color:#caa95a;text-transform:uppercase;margin-bottom:16px}
+  /* 大标题 */
+  .title{
+    font-size:40px;font-weight:700;line-height:1.32;letter-spacing:.13em;color:#f6e7c0;
+    background:linear-gradient(180deg,#f8ecc4 0%,#e6c97a 55%,#c09a4a 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .title .thin{color:#c9a24a;-webkit-text-fill-color:#c9a24a;font-weight:400;font-size:26px;letter-spacing:.2em}
+  /* 副题 */
+  .subtitle{margin-top:16px;font-size:13px;letter-spacing:.34em;color:#c9a95e}
+  /* 分隔 */
+  .sep{width:200px;margin:30px auto 24px;display:flex;align-items:center;gap:12px}
+  .sep .r{flex:1;height:1px;background:linear-gradient(90deg,transparent,#c9a24a,transparent)}
+  .sep i{color:#d4af37;font-style:normal;font-size:10px;letter-spacing:8px}
+  /* 描述 */
+  .desc{font-size:14px;line-height:2.1;color:#dccc9d;letter-spacing:.05em}
+  .desc b{color:#f0dfae;font-weight:600}
+  /* 底部叶饰 */
+  .flourish{margin-top:32px;display:flex;align-items:center;justify-content:center;gap:14px;color:#b9922f}
+  .flourish .sw{width:8px;height:8px;background:#c9a24a;transform:rotate(45deg)}
+  .flourish .d{font-size:11px;letter-spacing:4px}
+  .flourish .ln{width:44px;height:1px;background:rgba(185,146,47,.45)}
+
+  /* ============ 小节 ============ */
+  .sec{margin:46px 0 6px;display:flex;align-items:baseline;gap:14px}
+  .sec .no{font-family:Georgia,serif;font-size:12px;color:#a9860f;letter-spacing:.22em}
+  .sec .t{font-size:20px;font-weight:700;color:#8a6d0e;letter-spacing:.08em}
+  .sec .ln{flex:1;height:1px;background:linear-gradient(90deg,#d0b061,transparent)}
+
+  /* ============ 正文 ============ */
+  .para{font-size:15.5px;line-height:2.1;color:#3d2818;letter-spacing:.02em;text-align:justify;margin:18px 0 22px}
+  .para .dropcap{font-family:Georgia,serif;font-size:56px;line-height:1;font-weight:700;color:#a9860f;float:left;margin:6px 12px 0 0}
+  .para b{color:#6b4a12}
+
+  /* ============ 列表 ============ */
+  .list{list-style:none;margin:8px 0 24px}
+  .list li{display:flex;gap:16px;padding:16px 0;border-bottom:1px dashed #e0d3ac;align-items:flex-start}
+  .list li:last-child{border-bottom:none}
+  .list .num{font-family:Georgia,serif;color:#b8960c;font-size:15px;flex:none;padding-top:2px}
+  .list .tt{font-size:16px;color:#4a3018;font-weight:700;letter-spacing:.05em}
+  .list .ds{font-size:13.5px;color:#7a6450;line-height:1.8;margin-top:5px}
+
+  /* ============ 金句 ============ */
+  .quote{
+    margin:36px 0;padding:40px 28px;text-align:center;color:#f5ead0;position:relative;overflow:hidden;
+    background:linear-gradient(160deg,#2a2014,#1a130b);
+    border:1px solid #b9922f;
+  }
+  .quote::before{content:"";position:absolute;left:-20px;right:-20px;top:6px;height:14px;border-top:1px solid rgba(185,146,47,.5);border-bottom:1px solid rgba(185,146,47,.3)}
+  .quote .mark{font-family:Georgia,serif;font-size:64px;line-height:.6;color:#d4af37;margin-bottom:14px}
+  .quote .text{font-size:20px;line-height:1.95;letter-spacing:.1em;color:#f0dfb2}
+  .quote .bar{width:42px;height:2px;background:#d4af37;margin:20px auto 0}
+  .quote .author{margin-top:16px;font-size:10px;letter-spacing:.34em;color:#caa95a;font-family:Georgia,serif}
+
+  /* ============ 引语条 ============ */
+  .note{margin:30px 0;padding:16px 22px;border-left:3px solid #b9922f;background:#f3ead2;font-size:14.5px;line-height:1.95;color:#5a452c}
+
+  /* ============ 落款 ============ */
+  .foot{margin-top:44px;padding:30px 0 8px;text-align:center;border-top:1px solid #d4af37}
+  .foot .gline{width:46px;height:2px;background:linear-gradient(90deg,transparent,#d4af37,transparent);margin:0 auto 16px}
+  .foot .name{font-size:12px;letter-spacing:.34em;color:#a9860f}
+  .foot .en{margin-top:9px;font-size:9px;letter-spacing:.26em;color:#b2996a;font-family:Georgia,serif}
+</style>
+</head>
+<body>
+<div class="phone">
+  <!-- 封面 -->
+  <section class="cover">
+    <div class="crest">
+      <span class="ln"></span>
+      <span class="core">◆<span class="s">·</span>◆</span>
+      <span class="ln"></span>
+    </div>
+    <div class="badge">
+      <span class="ch">臻</span>
+    </div>
+    <div class="kicker">LUXURY · HONOUR & DISCREET</div>
+    <h1 class="title">黑金时刻</h1>
+    <div class="subtitle">臻藏 · 与 · 秩序</div>
+    <div class="sep"><span class="r"></span><i>◆</i><span class="r"></span></div>
+    <p class="desc">一份关于<b>奢华与秩序</b>的品牌手册<br>鎏金所至，皆是承诺</p>
+    <div class="flourish">
+      <span class="sw"></span><span class="d">✦</span><span class="ln"></span><span class="d">✦</span><span class="sw"></span>
+    </div>
+  </section>
+
+  <!-- 正文 -->
+  <div class="pad">
+    <div class="sec"><span class="no">· 壹 ·</span><span class="t">鎏金重在分寸</span><span class="ln"></span></div>
+    <p class="para"><span class="dropcap">黑</span>金不是张扬，而是<b>分寸</b>。真正的奢华往往安静，它靠克制的鎏金点缀与考究的留白取胜，而非堆砌。</p>
+
+    <div class="sec"><span class="no">· 贰 ·</span><span class="t">臻选之道</span><span class="ln"></span></div>
+    <ul class="list">
+      <li><span class="num">壹</span><div><div class="tt">至简料础</div><div class="ds">拒绝多余装饰，只保留不可再省的部分。</div></div></li>
+      <li><span class="num">贰</span><div><div class="tt">金线点睛</div><div class="ds">金色只落在最重要的那几处，少即是贵。</div></div></li>
+      <li><span class="num">叁</span><div><div class="tt">秩序为先</div><div class="ds">版式即品位，稳定的节奏比炫技更耐看。</div></div></li>
+    </ul>
+
+    <div class="quote">
+      <div class="mark">“</div>
+      <p class="text">奢侈品从不出声，<br>它只是礼貌地存在。</p>
+      <div class="bar"></div>
+      <div class="author">THE AESTHETICS OF SILENCE</div>
+    </div>
+
+    <div class="note">金色是唯一需要小心使用的颜色——用得越少，越显珍贵。</div>
+
+    <div class="foot">
+      <div class="gline"></div>
+      <div class="name">黑金奢华 · LUXURY</div>
+      <div class="en">MMXXVI · THE HONOUR COLLECTION</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -134,40 +134,39 @@ export const componentStylesLuxuryGold = `/* === 黑金奢华：荣誉证书 · 
    组件级差异化（覆盖共享组件样式，全部真实元素 / 边框表达）
    ============================================================ */
 
-/* === magazine-cover · 黑金封面（骨架定制：内框 + 四角金饰角 + 顶部光晕） === */
+/* === magazine-cover · 黑金封面（骨架定制：内框容器 + 金色小标 + 标题 + 分隔 + 描述） === */
 #wemd .wemd-magazine-cover {
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   margin: 0 0 42px;
-  padding: 62px 30px 50px;
-  background-image:
-    radial-gradient(420px 240px at 50% -10%, rgba(200, 162, 74, 0.18), transparent 70%),
-    linear-gradient(165deg, #241b12, #16120d 55%, #100d09);
+  padding: 20px;
+  background: #16120d;
+  background-image: linear-gradient(165deg, #241b12, #16120d 55%, #100d09);
   border: 1px solid #d4af37;
   border-radius: 2px;
   text-align: center;
   overflow: hidden;
 }
-#wemd .wemd-lg-frame {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  bottom: 12px;
-  left: 12px;
-  border: 1px solid rgba(212, 175, 55, 0.5);
-  pointer-events: none;
+/* 徽章：圆形「臻」金印（正常流居中，公众号兼容） */
+#wemd .wemd-magazine-cover .wemd-lg-badge {
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
+  width: 76px;
+  height: 76px;
+  margin: 0 auto 22px;
+  border: 1px solid #b9922f;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
-#wemd .wemd-lg-corner {
-  position: absolute;
-  width: 22px;
-  height: 22px;
-  pointer-events: none;
+#wemd .wemd-magazine-cover .wemd-lg-badge-ch {
+  font-family: "Songti SC", "STSong", "Noto Serif SC", serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: #e6c97a;
 }
-#wemd .wemd-lg-corner-tl { top: 18px; left: 18px; border-top: 2px solid #d4af37; border-left: 2px solid #d4af37; }
-#wemd .wemd-lg-corner-tr { top: 18px; right: 18px; border-top: 2px solid #d4af37; border-right: 2px solid #d4af37; }
-#wemd .wemd-lg-corner-bl { bottom: 18px; left: 18px; border-bottom: 2px solid #d4af37; border-left: 2px solid #d4af37; }
-#wemd .wemd-lg-corner-br { bottom: 18px; right: 18px; border-bottom: 2px solid #d4af37; border-right: 2px solid #d4af37; }
 #wemd .wemd-magazine-cover .wemd-lg-kicker {
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   font-family: "Georgia", "Times New Roman", serif;
   font-size: 11px;
   letter-spacing: 0.36em;
@@ -175,29 +174,69 @@ export const componentStylesLuxuryGold = `/* === 黑金奢华：荣誉证书 · 
   color: #e6c97a;
 }
 #wemd .wemd-magazine-cover .wemd-lg-title {
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   margin-top: 24px;
   font-family: "Georgia", "Times New Roman", "Songti SC", "STSong", "Source Han Serif SC", serif;
-  font-size: 30px;
+  font-size: 34px;
   font-weight: 700;
-  line-height: 1.5;
-  letter-spacing: 0.08em;
-  color: #faf3e0;
+  line-height: 1.45;
+  letter-spacing: 0.1em;
+  color: #f8ecc4;
+  background-image: linear-gradient(180deg, #f8ecc4 0%, #e6c97a 55%, #c09a4a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 #wemd .wemd-magazine-cover .wemd-lg-rule {
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   display: block;
   width: 60px;
   height: 2px;
   margin: 26px auto 0;
   background: linear-gradient(90deg, transparent, #d4af37, transparent);
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-magazine-cover .wemd-lg-desc {
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   margin-top: 18px;
   font-size: 13.5px;
   line-height: 1.9;
   color: #e2d4ae;
+}
+/* 底部纹样：旋转菱块 + ✦ + 细线（真实元素） */
+#wemd .wemd-magazine-cover .wemd-lg-flourish {
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
+  margin-top: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+#wemd .wemd-magazine-cover .wemd-lg-flourish .wemd-lg-sw {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: #c9a24a;
+  transform: rotate(45deg);
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
+}
+#wemd .wemd-magazine-cover .wemd-lg-flourish .wemd-lg-d {
+  font-size: 12px;
+  line-height: 1;
+  color: #b9922f;
+  letter-spacing: 2px;
+}
+#wemd .wemd-magazine-cover .wemd-lg-flourish .wemd-lg-line {
+  width: 44px;
+  height: 1px;
+  background: rgba(185, 146, 47, 0.45);
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 
 /* === section-divider · 章节（骨架定制） === */
@@ -228,6 +267,9 @@ export const componentStylesLuxuryGold = `/* === 黑金奢华：荣誉证书 · 
   height: 2px;
   margin: 18px auto 0;
   background: linear-gradient(90deg, transparent, #d4af37, transparent);
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 
 /* === divider · 金线 + ◆ + 金线（骨架定制） === */
@@ -248,6 +290,9 @@ export const componentStylesLuxuryGold = `/* === 黑金奢华：荣誉证书 · 
   flex: 1;
   height: 1px;
   background: linear-gradient(90deg, transparent, #d4af37, transparent);
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-lg-glyph {
   color: #d4af37;
@@ -261,6 +306,9 @@ export const componentStylesLuxuryGold = `/* === 黑金奢华：荣誉证书 · 
 #wemd .wemd-divider-fancy .wemd-df-label .wemd-df-line {
   height: 1px;
   background: linear-gradient(to right, transparent, #d4af37, transparent);
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-divider-fancy .wemd-df-label .wemd-df-text {
   font-family: "Georgia", "Times New Roman", serif;
@@ -289,11 +337,11 @@ export const componentStylesLuxuryGold = `/* === 黑金奢华：荣誉证书 · 
   font-weight: 600;
 }
 
-/* === quote-card · 黑金荣誉卡（深棕黑底 + 金字 + 顶部引号圆章） === */
+/* === quote-card · 黑金荣誉卡（深棕黑底 + 金字 + 顶部镀金饰带 + 双层金框） === */
 #wemd .wemd-quote-card {
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   margin: 40px 0;
-  padding: 46px 30px 36px;
+  padding: 40px 30px 36px;
   background: linear-gradient(165deg, #241b12, #16120d);
   border: 1px solid #d4af37;
   border-left: 4px solid #d4af37;
@@ -301,20 +349,17 @@ export const componentStylesLuxuryGold = `/* === 黑金奢华：荣誉证书 · 
   box-shadow: none;
   text-align: center;
 }
-#wemd .wemd-quote-card .wemd-lg-badge {
-  position: absolute;
-  top: -16px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 32px;
-  height: 32px;
-  background: #d4af37;
-  color: #16120d;
-  border-radius: 50%;
-  font-family: Georgia, serif;
-  font-size: 22px;
-  line-height: 32px;
-  text-align: center;
+/* 顶部镀金饰带：双层金线（真实元素，正常流） */
+#wemd .wemd-quote-card .wemd-lg-qband {
+  display: block;
+  margin: 0 auto 26px;
+  width: 100%;
+  height: 4px;
+  border-top: 1px solid rgba(212, 175, 55, 0.7);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.4);
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-quote-card .wemd-qc-quote {
   font-family: "Georgia", "Times New Roman", "Songti SC", "STSong", "Source Han Serif SC", serif;

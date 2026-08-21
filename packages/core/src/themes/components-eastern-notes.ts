@@ -17,18 +17,14 @@
 export const componentStylesEasternNotes = `/* === 东方笺谱：一封信 · 全局皮肤 === */
 
 /* 全局：宋体 + 墨色 + 宣纸底纹。
-   约束：项目禁在 #wemd 写 background-color（微信编辑器设底色），
-   故纸感用「多层极淡线性/放射渐变」合成纤维纹理，纯 background-image，不写 background-color。 */
+   约束：项目禁在 #wemd 写 background-color（微信编辑器设底色），也不设整篇 background-image
+   （横竖网格线会在微信整篇铺网格）。纸纹只保留在卡片局部（见各卡片 background-image）。 */
 #wemd {
   color: #36322f;
   font-family: "Songti SC", "STSong", "Noto Serif CJK SC", "Source Han Serif SC", SimSun, serif;
   font-size: 17px;
   line-height: 2.06;
   letter-spacing: 0.045em;
-  background-image:
-    radial-gradient(120% 90% at 50% 0%, rgba(255, 252, 244, 0.5) 0%, rgba(255, 252, 244, 0) 60%),
-    repeating-linear-gradient(0deg, rgba(120, 100, 70, 0.018) 0 2px, rgba(120, 100, 70, 0) 2px 5px),
-    repeating-linear-gradient(90deg, rgba(120, 100, 70, 0.014) 0 3px, rgba(120, 100, 70, 0) 3px 7px);
 }
 
 /* 正文 */
@@ -355,11 +351,17 @@ export const componentStylesEasternNotes = `/* === 东方笺谱：一封信 · �
   height: 1px;
   background: #2b2622;
   opacity: 0.55;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-divider .wemd-dv-dot {
   width: 10px;
   height: 10px;
   margin: 0 5px;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-divider .wemd-dv-dot-a { background: #a33a2b; transform: rotate(45deg); }
 #wemd .wemd-divider .wemd-dv-dot-b { background: #3d5a63; transform: rotate(45deg); }
@@ -368,30 +370,43 @@ export const componentStylesEasternNotes = `/* === 东方笺谱：一封信 · �
 /* 卡片通用纸纹增强（quote-card / callout-pro / steps / text-card）
    background-image 直接做在容器上，不依赖伪元素，符合微信规范 */
 
-/* === quote-card · 上下朱砂线夹金句 + 两侧黛蓝/赭石侧点（定制骨架 wemd-qc-dot） === */
+/* === quote-card · 上下朱砂线夹金句 + 两侧黛蓝/赭石侧点（定制骨架 wemd-qc-dot） ===
+   侧点改正常流 flex 布局（移除 absolute，公众号删 position 不丢）：
+   dot-l / quote / dot-r 横排，author 换行到底部 */
 #wemd .wemd-quote-card {
   padding: 34px 40px;
   border-top: 3px solid #a33a2b;
   border-bottom: 3px solid #a33a2b;
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   background-color: rgba(255, 252, 246, 0.5);
   background-image: repeating-linear-gradient(0deg, rgba(120, 100, 70, 0.03) 0 2px, rgba(120, 100, 70, 0) 2px 6px);
 }
 #wemd .wemd-quote-card .wemd-qc-dot {
-  position: absolute;
-  top: 50%;
+  flex: none;
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  transform: translateY(-50%);
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
-#wemd .wemd-quote-card .wemd-qc-dot-l { left: 14px; background: #3d5a63; }
-#wemd .wemd-quote-card .wemd-qc-dot-r { right: 14px; background: #8a5a33; }
+#wemd .wemd-quote-card .wemd-qc-dot-l { background: #3d5a63; margin-right: 16px; }
+#wemd .wemd-quote-card .wemd-qc-dot-r { background: #8a5a33; margin-left: 16px; }
 #wemd .wemd-quote-card .wemd-qc-quote {
+  flex: 1;
+  min-width: 0;
   font-size: 19px;
   font-weight: 700;
   letter-spacing: 0.08em;
   color: #2b2622;
+}
+#wemd .wemd-quote-card .wemd-qc-author {
+  flex-basis: 100%;
+  margin-top: 14px;
+  text-align: center;
 }
 #wemd .wemd-quote-card .wemd-qc-dash {
   color: #a33a2b;
@@ -407,17 +422,23 @@ export const componentStylesEasternNotes = `/* === 东方笺谱：一封信 · �
 
 /* === callout-pro · 左朱砂条 + 顶部徽记 === */
 #wemd .wemd-callout-pro {
-  border: 1px solid #d8cfc0;
+  border-top: 1px solid #d8cfc0;
+  border-right: 1px solid #d8cfc0;
+  border-bottom: 1px solid #d8cfc0;
+  /* 左朱砂条：用 border-left（原生边框，微信保留；不再用 ::before + absolute 色条） */
+  border-left: 4px solid #a33a2b;
   background-color: rgba(255, 252, 246, 0.62);
   background-image: repeating-linear-gradient(0deg, rgba(120, 100, 70, 0.028) 0 2px, rgba(120, 100, 70, 0) 2px 6px);
   box-shadow: none;
 }
+/* 中和共享 ::before 色条（物化器按 content:none 跳过生成 wemd-mat），避免 border-left
+   与物化竖条叠加成双竖线。微信原生保留 border-left，不依赖伪元素物化。 */
 #wemd .wemd-callout-pro::before {
-  background: #a33a2b;
+  content: none;
 }
-/* 类型变体保持共享语义色，仅修正色条与纸色背景的协调 */
-#wemd .wemd-callout-pro[data-type="info"]::before { background: #3d5a63; }
-#wemd .wemd-callout-pro[data-type="tip"]::before { background: #8a5a33; }
+/* 类型变体保持共享语义色：用 [data-type] 覆盖 border-left-color（而非 ::before background） */
+#wemd .wemd-callout-pro[data-type="info"] { border-left-color: #3d5a63; }
+#wemd .wemd-callout-pro[data-type="tip"] { border-left-color: #8a5a33; }
 #wemd .wemd-callout-pro .wemd-component-body > p:first-child {
   color: #2b2622;
 }
@@ -427,27 +448,28 @@ export const componentStylesEasternNotes = `/* === 东方笺谱：一封信 · �
 #wemd .wemd-callout-pro .wemd-component-body > p:first-child::before {
   color: #a33a2b;
 }
-/* callout 列表项：去掉共享的"•"圆点，改用黛蓝细短竖线分隔（更贴信笺、克制） */
+/* callout 列表项：去掉共享的"•"圆点，改用黛蓝细短竖线分隔（更贴信笺、克制）。
+   li 已为 flex（见共享），竖线作为 flex 子项居中，不用 absolute 定位（公众号不丢） */
 #wemd .wemd-callout-pro .wemd-component-body ul li::before {
   content: "";
-  position: absolute;
-  left: 4px;
-  top: 50%;
+  flex: none;
+  align-self: center;
   width: 6px;
   height: 1px;
+  margin-right: 10px;
   background: #3d5a63;
-  transform: translateY(-50%);
-  color: transparent;
 }
 /* 底部赭石短线（主题定制骨架 wemd-cp-foot，多色拼接点睛）
-   从卡片内容内边距开始、只留右下角一小段，避免压到左色条、也不延伸超出 */
+   正常流：作为 body 之后一行、靠右对齐显示在右下角（移除 absolute 贴底，公众号不丢） */
 #wemd .wemd-callout-pro .wemd-cp-foot {
-  position: absolute;
-  right: 24px;
-  bottom: 0;
+  display: block;
   width: 34px;
   height: 3px;
+  margin: 14px 0 0 auto;
   background: #8a5a33;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 
 /* === steps · 朱砂圆序号 + 宣纸卡片 === */
@@ -464,10 +486,21 @@ export const componentStylesEasternNotes = `/* === 东方笺谱：一封信 · �
   border: 1px solid #e7dfcf;
   border-radius: 0;
 }
+/* 步骤序号：完整盒尺寸必须随主题规则写全（物化器按本文件 li::before 生成内联 span，
+   缺 width/height/font-size/line-height/color 会让序号退化成无盒裸数字，小且偏下） */
 #wemd .wemd-steps .wemd-component-body li::before {
-  background: #a33a2b;
+  content: counter(wemd-step);
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  margin-right: 12px;
   border-radius: 50%;
+  background: #a33a2b;
+  color: #ffffff;
+  font-size: 13px;
   font-weight: 700;
+  line-height: 26px;
+  text-align: center;
 }
 #wemd .wemd-steps .wemd-component-body li:nth-child(2n)::before {
   background: #3d5a63;
@@ -505,47 +538,34 @@ export const componentStylesEasternNotes = `/* === 东方笺谱：一封信 · �
   color: #f8eee6;
   letter-spacing: 0.2em;
 }
+/* CTA 底部双色条：正常流 flex（移除 absolute 贴底，公众号删 position 不丢）。
+   作为卡片最后一行子元素，在 padding 内底部显示 */
 #wemd .wemd-cta-card .wemd-cta-foot {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 4px;
   display: flex;
+  height: 4px;
+  margin-top: 22px;
+  border-radius: 0 0 0 2px;
 }
-#wemd .wemd-cta-card .wemd-cta-foot-a { flex: 1; background: #3d5a63; }
-#wemd .wemd-cta-card .wemd-cta-foot-b { flex: 1; background: #8a5a33; }
+#wemd .wemd-cta-card .wemd-cta-foot-a { flex: 1; background: #3d5a63; font-size: 0; line-height: 0; overflow: hidden; }
+#wemd .wemd-cta-card .wemd-cta-foot-b { flex: 1; background: #8a5a33; font-size: 0; line-height: 0; overflow: hidden; }
 
-/* === pullquote · 大段引用，左上/右下双色直角装饰线 === */
+/* === pullquote · 大段引用，左上/右下双色直角装饰 ===
+   用纯边框表达（微信 100% 保留，零解析风险）：
+   左上黛蓝边框 + 右下朱砂边框，形成双色直角框。
+   不用多段背景渐变（内联导出跨行/注释会解析失败，退化成两个点）。
+   容器带 wemd-pq-cornered 标记 → 物化器不注入共享引号。 */
 #wemd .wemd-pullquote {
-  position: relative;
-  background: rgba(255, 252, 246, 0.32);
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   margin-top: 52px;
   margin-bottom: 52px;
   padding: 40px 30px;
   border-radius: 0;
-  /* 必须用长属性逐个覆盖共享的 border-left: 5px（简写会被内联归一前置、被长属性覆盖） */
-  border-top: none;
-  border-right: none;
-  border-bottom: none;
-  border-left: none;
-}
-#wemd .wemd-pullquote .wemd-pq-corner {
-  position: absolute;
-  width: 26px;
-  height: 26px;
-}
-#wemd .wemd-pullquote .wemd-pq-corner-tl {
-  left: 0;
-  top: 0;
+  background: rgba(255, 252, 246, 0.32);
+  /* 双色边框：左上黛蓝 + 右下朱砂（长属性写全，避免共享简写干扰） */
   border-top: 3px solid #3d5a63;
   border-left: 3px solid #3d5a63;
-}
-#wemd .wemd-pullquote .wemd-pq-corner-br {
-  right: 0;
-  bottom: 0;
-  border-bottom: 3px solid #a33a2b;
   border-right: 3px solid #a33a2b;
+  border-bottom: 3px solid #a33a2b;
 }
 #wemd .wemd-pullquote .wemd-component-body blockquote p:first-child,
 #wemd .wemd-pullquote .wemd-component-body > p:first-child {
@@ -591,8 +611,8 @@ export const componentStylesEasternNotes = `/* === 东方笺谱：一封信 · �
   height: 4px;
   display: flex;
 }
-#wemd .wemd-section-divider .wemd-sd-line-a { width: 60px; background: #a33a2b; }
-#wemd .wemd-section-divider .wemd-sd-line-b { width: 60px; background: #3d5a63; }
+#wemd .wemd-section-divider .wemd-sd-line-a { width: 60px; background: #a33a2b; font-size: 0; line-height: 0; overflow: hidden; }
+#wemd .wemd-section-divider .wemd-sd-line-b { width: 60px; background: #3d5a63; font-size: 0; line-height: 0; overflow: hidden; }
 
 /* === follow-bar · 墨底关注引导（去按钮化：不伪装可点，纯文字提醒） === */
 #wemd .wemd-follow-bar {
@@ -679,8 +699,8 @@ export const componentStylesEasternNotes = `/* === 东方笺谱：一封信 · �
   height: 4px;
   display: flex;
 }
-#wemd .wemd-magazine-cover .wemd-mc-line-a { width: 46px; background: #a33a2b; }
-#wemd .wemd-magazine-cover .wemd-mc-line-b { flex: 1; background: #2b2622; }
+#wemd .wemd-magazine-cover .wemd-mc-line-a { width: 46px; background: #a33a2b; font-size: 0; line-height: 0; overflow: hidden; }
+#wemd .wemd-magazine-cover .wemd-mc-line-b { flex: 1; background: #2b2622; font-size: 0; line-height: 0; overflow: hidden; }
 #wemd .wemd-magazine-cover .wemd-mc-desc {
   margin: 22px 0 0 0;
   color: #6b6159;

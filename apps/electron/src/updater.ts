@@ -33,7 +33,9 @@ export function initAutoUpdate(mainWindow: BrowserWindow | null): void {
   });
 
   autoUpdater.on('update-not-available', () => {
-    if (mainWindow && !mainWindow.isDestroyed()) {
+    // 仅手动强制检查（菜单"检查更新"）时提示"已是最新版本"，
+    // 启动时的自动检查保持静默，避免每次打开都弹窗打扰用户。
+    if (lastForce && mainWindow && !mainWindow.isDestroyed()) {
       mainWindow.webContents.send('update:upToDate', {
         currentVersion: app.getVersion(),
       });

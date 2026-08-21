@@ -373,7 +373,7 @@ export const componentStylesExtended = `/* === WeMD 扩展组件样式（跟随�
 }
 
 #wemd .wemd-divider .wemd-component-body {
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   display: flex;
   align-items: center;
   justify-content: center;

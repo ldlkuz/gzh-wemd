@@ -228,30 +228,32 @@ export const componentStylesExtra = `/* === WeMD 扩展组件样式（跟随主�
 /* === hero-banner 顶部头图 Banner === */
 /* 设计约束：基础规则不做背景/字色，全部分派给 variant
    - 语义变量：--hb-title 主标题色 / --hb-sub 副标题色，由各 variant 显式赋值
-   - 圆角基础值：calc(var(--wemd-border-radius, 8px) + 4px)，variant 可覆盖单边 */
+   - 圆角基础值：calc(var(--wemd-border-radius, 8px) + 4px)，variant 可覆盖单边
+   微信兼容：背景图不用 position:absolute（公众号会删除 position 导致图片退回正文流压住标题），
+   改用正常流图片 + 文字区域负 margin-top 叠加到图片上，两条链路一致。 */
 #wemd .wemd-hero-banner {
   margin: 0 0 32px 0;
   padding: 0;
   border-radius: calc(var(--wemd-border-radius, 8px) + 4px);
   overflow: hidden;
-  position: relative;
   min-height: 160px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  /* 不再用 display:flex/align-items/justify-content，文字区域负 margin 自行定位 */
+  display: block;
 }
 
 #wemd .wemd-hero-banner .wemd-component-body {
-  padding: 40px 32px;
+  /* component-body 包三层：[图片 p][标题 p][副标题 p]。无图片时保持 40px 上下内边距居中；
+     有图片时图片 100% 宽铺满，标题负 margin-top:-120px 叠上去，距图顶约 40px（160-120）。 */
+  padding: 0;
   text-align: center;
-  position: relative;
-  z-index: 1;
   width: 100%;
 }
 
 /* 主标题（类选择器，与模板 wemd-hb-title 对齐；有背景图时标题不再是首个子元素） */
 #wemd .wemd-hero-banner .wemd-component-body > .wemd-hb-title {
-  margin: 0 0 10px 0;
+  /* 有背景图时：叠在图片上方 120px 处，左右 32px 内边距让文字不贴边。
+     无背景图时（图片不存在，标题是首个子元素）：40px 32px 10px 32px 正常居中。 */
+  margin: 40px 32px 10px 32px;
   font-size: 26px;
   font-weight: 700;
   color: var(--hb-title, var(--wemd-text-strong, #1a1a1a));
@@ -261,28 +263,40 @@ export const componentStylesExtra = `/* === WeMD 扩展组件样式（跟随主�
 
 /* 副标题（类选择器 wemd-hb-subtitle） */
 #wemd .wemd-hero-banner .wemd-component-body > .wemd-hb-subtitle {
-  margin: 0;
+  /* 有背景图时 subtitle 是第三个子元素，底部留 40px 内边距；
+     无背景图时 subtitle 在标题后，仍然底部有 40px 空间。 */
+  margin: 0 32px 40px 32px;
   font-size: 14px;
   color: var(--hb-sub, var(--wemd-text-soft, #888888));
   letter-spacing: 0.5px;
 }
 
 /* 背景图：模板用 <p class="wemd-hb-image"> 包裹（见 defaultTemplates），
-   仅当存在背景图时该元素才出现，故作为 banner 首个子元素铺满 */
+   仅当存在背景图时该元素才出现，作为 body 首个子元素，正常流铺满 100% 宽。
+   不再用 position:absolute/inset:0（公众号会删除 position，导致图片堆叠错位）。
+   标题/副标题通过「相邻兄弟选择器 + 负 margin-top」叠到图片上方显示，
+   —— 无图时相邻兄弟选择器不命中，标题保持默认 40px padding 的居中位置。 */
 #wemd .wemd-hero-banner .wemd-component-body > .wemd-hb-image {
-  position: absolute;
-  inset: 0;
+  display: block;
   margin: 0;
-  z-index: -1;
+  width: 100%;
 }
 
 #wemd .wemd-hero-banner .wemd-component-body > .wemd-hb-image img {
   width: 100%;
-  height: 100%;
+  height: 160px;
   object-fit: cover;
   display: block;
   margin: 0;
 }
+
+/* 有图时：标题是 hb-image 的下一个相邻兄弟（或间接兄弟），负 margin 叠到图上。
+   hb-image（160px 高） → 下一个 p（标题）：margin-top:-120px，让标题落在距图顶 40px */
+#wemd .wemd-hero-banner .wemd-component-body > .wemd-hb-image + .wemd-hb-title {
+  margin-top: -120px;
+}
+/* subtitle 紧跟在 title 后面时（有图或无图都可能），若前面有过 hb-image（通过父 body 结构隐含），
+   最简便方式：subtitle 改 margin-bottom，不做改动；上面通用规则已覆盖。 */
 
 /* === share-card 引导分享（情感收尾，非按钮） === */
 /* 设计原则：公众号内不可点击，不做按钮伪装。顶部细线标记文章收尾，一行走心文字。 */
@@ -918,13 +932,16 @@ export const componentStylesExtra = `/* === WeMD 扩展组件样式（跟随主�
   background: linear-gradient(135deg, #ffffff 0%, var(--wemd-bg-soft, #f7f8fa) 100%);
   border-radius: 18px;
   border: 1px solid var(--wemd-border-soft, #e8ebe8);
-  position: relative;
+  /* 容器不用 position:relative；引号装饰通过正常流 + 负 margin 飘出左上角（微信兼容） */
 }
 
+/* 大引号装饰（真实元素，模板首个子元素 span）。
+   原 position:absolute; top:8px; left:20px; → 改为正常流 block：
+   向上 20px + 向左 4px 飘出，让大字号淡引号自然叠在 quote 文字左上角区域。
+   后续 tc-quote（padding: 0 10px 0 36px）已有左内边距，文字不会压住引号。 */
 #wemd .wemd-testimonial-card .wemd-tc-mark {
-  position: absolute;
-  top: 8px;
-  left: 20px;
+  display: block;
+  margin: -20px 0 -44px -4px;
   font-size: 56px;
   line-height: 1;
   color: var(--wemd-primary-light, #d4f4e1);
@@ -939,8 +956,7 @@ export const componentStylesExtra = `/* === WeMD 扩展组件样式（跟随主�
   line-height: 1.7;
   padding: 0 10px 0 36px;
   margin-bottom: 12px;
-  position: relative;
-  z-index: 1;
+  /* 原文案有 position:relative; z-index:1 作为层级提升；在没有 position:absolute 后无必要。 */
 }
 
 #wemd .wemd-testimonial-card .wemd-tc-source {
@@ -1034,20 +1050,27 @@ export const componentStylesExtra = `/* === WeMD 扩展组件样式（跟随主�
 }
 
 #wemd .wemd-series-nav .wemd-sn-progress-bar {
-  position: relative;
   height: 5px;
   border-radius: 999px;
   background: var(--wemd-bg-soft, #eef0f3);
   overflow: hidden;
+  /* 容器不再需要 position:relative，fill 正常流填满即可 */
 }
 
+/* 进度填充：真实元素 span（模板带 &nbsp; 空内容占位防止被公众号删空元素）。
+   原 position:absolute; inset:0 → 改为正常流 block + 继承父容器高度，
+   width 用 CSS 变量 --sn-progress（30% 默认）按进度伸缩。
+   两条链路完全一致：浏览器预览/导出内联 → 都是 width 百分比，无 position 依赖。 */
 #wemd .wemd-series-nav .wemd-sn-progress-fill {
-  position: absolute;
-  inset: 0;
+  display: block;
+  height: 5px;
   width: var(--sn-progress, 30%);
   background: linear-gradient(90deg, var(--wemd-primary, #07c160), var(--wemd-primary-dark, #0a8f4a));
   border-radius: inherit;
   transition: width 0.3s ease;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 
 /* 目录：扁平行列表（不做内层灰盒） */

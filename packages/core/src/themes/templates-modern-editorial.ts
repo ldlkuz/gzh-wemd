@@ -25,8 +25,8 @@ export const modernEditorialMagazineCover = (): string =>
     "</div>",
     '{{#if title}}<section class="wemd-me-title">{{slot:title}}</section>{{/if}}',
     '<div class="wemd-me-rules">',
-    '<span class="wemd-me-thick"></span>',
-    '<span class="wemd-me-thin"></span>',
+    '<span class="wemd-me-thick">&nbsp;</span>',
+    '<span class="wemd-me-thin">&nbsp;</span>',
     "</div>",
     '{{#if desc}}<section class="wemd-me-desc">{{slot:desc}}</section>{{/if}}',
     "</section>",
@@ -38,7 +38,7 @@ export const modernEditorialSectionDivider = (): string =>
     '<section class="wemd-component wemd-section-divider" data-component="section-divider">',
     '<span class="wemd-me-no">{{slot:part}}</span>',
     '<section class="wemd-me-title">{{slot:title}}</section>',
-    '<span class="wemd-me-rule"></span>',
+    '<span class="wemd-me-rule">&nbsp;</span>',
     "</section>",
   ].join("\n");
 
@@ -47,9 +47,9 @@ export const modernEditorialDivider = (): string =>
   [
     '<section class="wemd-component wemd-divider" data-component="divider">',
     '<div class="wemd-component-body">',
-    '<span class="wemd-me-thick"></span>',
+    '<span class="wemd-me-thick">&nbsp;</span>',
     '<span class="wemd-me-glyph">\u25C6</span>',
-    '<span class="wemd-me-thin"></span>',
+    '<span class="wemd-me-thin">&nbsp;</span>',
     "</div>",
     "</section>",
   ].join("\n");
@@ -79,7 +79,7 @@ export const modernEditorialEndCard = (): string =>
     '<section class="wemd-component wemd-end-card" data-component="end-card">',
     '{{#if title}}<section class="wemd-ec-title">{{slot:title}}</section>{{/if}}',
     '{{#if subtitle}}<section class="wemd-ec-subtitle">{{slot:subtitle}}</section>{{/if}}',
-    '<span class="wemd-me-line"></span>',
+    '<span class="wemd-me-line">&nbsp;</span>',
     '{{#if deco}}<section class="wemd-me-editors">{{slot:deco}}</section>{{/if}}',
     "</section>",
   ].join("\n");

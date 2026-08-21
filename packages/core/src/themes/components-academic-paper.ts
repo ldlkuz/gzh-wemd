@@ -134,7 +134,7 @@ export const componentStylesAcademicPaper = `/* === 学术论文：学术期刊 
 
 /* === magazine-cover · 期刊封面（骨架定制） === */
 #wemd .wemd-magazine-cover {
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   margin: 0 0 40px;
   padding: 52px 30px 46px;
   background: linear-gradient(180deg, #fbfaf7, #f2efe8);
@@ -142,18 +142,17 @@ export const componentStylesAcademicPaper = `/* === 学术论文：学术期刊 
   border-radius: 0;
   text-align: center;
   overflow: hidden;
+  /* 内衬画框：outline 内缩形成双层框（不占布局、不依赖 position，微信 100% 保留） */
+  outline: 1px solid #e0dccf;
+  outline-offset: -12px;
 }
+/* frame span 不再承载视觉（曾用 position:absolute 定位，公众号删 position 会丢），
+   内框改由容器 outline 承载；span 保留仅防骨架空元素 */
 #wemd .wemd-ap-frame {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  bottom: 10px;
-  left: 10px;
-  border: 1px solid #e0dccf;
-  pointer-events: none;
+  display: none;
 }
 #wemd .wemd-magazine-cover .wemd-ap-kicker {
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   font-family: "Source Code Pro", Consolas, monospace;
   font-size: 11px;
   letter-spacing: 0.3em;
@@ -161,7 +160,7 @@ export const componentStylesAcademicPaper = `/* === 学术论文：学术期刊 
   color: #8b0000;
 }
 #wemd .wemd-magazine-cover .wemd-ap-title {
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   margin-top: 22px;
   font-family: "Georgia", "Times New Roman", "Songti SC", "STSong", "Source Han Serif SC", serif;
   font-size: 26px;
@@ -171,15 +170,18 @@ export const componentStylesAcademicPaper = `/* === 学术论文：学术期刊 
   color: #0f1b2d;
 }
 #wemd .wemd-magazine-cover .wemd-ap-rule {
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   display: block;
   width: 120px;
   height: 0;
   margin: 24px auto 0;
   border-bottom: 3px double #1e3a5f;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-magazine-cover .wemd-ap-desc {
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   margin-top: 18px;
   font-size: 13.5px;
   line-height: 1.9;
@@ -214,6 +216,9 @@ export const componentStylesAcademicPaper = `/* === 学术论文：学术期刊 
   height: 0;
   margin-top: 16px;
   border-bottom: 3px double #1e3a5f;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 
 /* === divider · 细线 + § + 细线（骨架定制） === */
@@ -234,6 +239,9 @@ export const componentStylesAcademicPaper = `/* === 学术论文：学术期刊 
   flex: 1;
   height: 1px;
   background: #c8c0a8;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-ap-glyph {
   color: #8b0000;
@@ -248,6 +256,9 @@ export const componentStylesAcademicPaper = `/* === 学术论文：学术期刊 
 #wemd .wemd-divider-fancy .wemd-df-label .wemd-df-line {
   height: 1px;
   background: linear-gradient(to right, transparent, #c8c0a8, transparent);
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-divider-fancy .wemd-df-label .wemd-df-text {
   font-family: "Source Code Pro", Consolas, monospace;

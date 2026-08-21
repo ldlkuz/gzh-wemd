@@ -16,10 +16,10 @@
 export const whitespaceGalleryMagazineCover = (): string =>
   [
     '<section class="wemd-component wemd-magazine-cover" data-component="magazine-cover">',
-    '<span class="wemd-wg-frame"></span>',
+    '<span class="wemd-wg-frame">&nbsp;</span>',
     '{{#if subtitle}}<section class="wemd-wg-kicker">{{slot:subtitle}}</section>{{/if}}',
     '{{#if title}}<section class="wemd-wg-title">{{slot:title}}</section>{{/if}}',
-    '<span class="wemd-wg-rule"></span>',
+    '<span class="wemd-wg-rule">&nbsp;</span>',
     '{{#if desc}}<section class="wemd-wg-desc">{{slot:desc}}</section>{{/if}}',
     "</section>",
   ].join("\n");
@@ -30,7 +30,7 @@ export const whitespaceGallerySectionDivider = (): string =>
     '<section class="wemd-component wemd-section-divider" data-component="section-divider">',
     '<span class="wemd-wg-part">{{slot:part}}</span>',
     '<section class="wemd-wg-title">{{slot:title}}</section>',
-    '<span class="wemd-wg-rule"></span>',
+    '<span class="wemd-wg-rule">&nbsp;</span>',
     "</section>",
   ].join("\n");
 
@@ -39,9 +39,9 @@ export const whitespaceGalleryDivider = (): string =>
   [
     '<section class="wemd-component wemd-divider" data-component="divider">',
     '<div class="wemd-component-body">',
-    '<span class="wemd-wg-line wemd-wg-line-l"></span>',
+    '<span class="wemd-wg-line wemd-wg-line-l">&nbsp;</span>',
     '<span class="wemd-wg-glyph">\u25C6</span>',
-    '<span class="wemd-wg-line wemd-wg-line-r"></span>',
+    '<span class="wemd-wg-line wemd-wg-line-r">&nbsp;</span>',
     "</div>",
     "</section>",
   ].join("\n");
@@ -51,13 +51,13 @@ export const whitespaceGalleryDividerFancy = (): string =>
   [
     '<section class="wemd-component wemd-divider-fancy" data-component="divider-fancy">',
     '<section class="wemd-df-label">',
-    '<span class="wemd-df-line wemd-df-line-left"></span>',
+    '<span class="wemd-df-line wemd-df-line-left">&nbsp;</span>',
     "{{#if label}}",
     '<span class="wemd-df-text">{{slot:label}}</span>',
     "{{else}}",
     '<span class="wemd-wg-glyph">\u25C6</span>',
     "{{/if}}",
-    '<span class="wemd-df-line wemd-df-line-right"></span>',
+    '<span class="wemd-df-line wemd-df-line-right">&nbsp;</span>',
     "</section>",
     "</section>",
   ].join("\n");

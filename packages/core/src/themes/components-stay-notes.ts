@@ -6,16 +6,16 @@
  * - 民宿卡：全幅图 + 木牌编号 + 奶油价格签 + 店名 + 一句推荐 + 位置 + 理由 + 标签
  * - 无整篇背景、无伪元素（仅用 content:none 中和共享伪元素装饰）、无按钮式互动
  */
-const BASE = "#f4efe5";      /* 燕麦米白基底 */
-const CARD = "#fdfaf3";      /* 奶油白卡 */
-const CREAM = "#f7efe1";     /* 暖奶油 */
-const WOOD = "#b06a44";      /* 原木/陶土 主色 */
+const BASE = "#f4efe5"; /* 燕麦米白基底 */
+const CARD = "#fdfaf3"; /* 奶油白卡 */
+const CREAM = "#f7efe1"; /* 暖奶油 */
+const WOOD = "#b06a44"; /* 原木/陶土 主色 */
 const WOOD_DEEP = "#955431"; /* 深陶土 */
-const SAGE = "#8d9a77";      /* 鼠尾草绿 辅助 */
-const INK = "#4d3d2f";       /* 可可深字 */
-const TEXT = "#71624f";      /* 次级文字 */
+const SAGE = "#8d9a77"; /* 鼠尾草绿 辅助 */
+const INK = "#4d3d2f"; /* 可可深字 */
+const TEXT = "#71624f"; /* 次级文字 */
 const TEXT_SOFT = "#b7a588"; /* 浅棕 */
-const LINE = "#e7dfcd";      /* 分割线 */
+const LINE = "#e7dfcd"; /* 分割线 */
 
 export const componentStylesStayNotes = `/* === 民宿纪（Stay Notes）组件样式 === */
 
@@ -173,6 +173,9 @@ export const componentStylesStayNotes = `/* === 民宿纪（Stay Notes）组件�
   background: ${WOOD};
   border-radius: 3px;
   margin: 0 0 16px;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-text-card .wemd-st-intro-tag {
   font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
@@ -329,6 +332,9 @@ export const componentStylesStayNotes = `/* === 民宿纪（Stay Notes）组件�
   background: ${WOOD};
   margin: 0 auto 22px;
   border-radius: 3px;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-end-card .wemd-st-signoff-name {
   margin: 0;

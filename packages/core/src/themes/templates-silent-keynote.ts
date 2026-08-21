@@ -16,7 +16,7 @@ export const skMagazineCover = (): string =>
   [
     '<section class="wemd-component wemd-magazine-cover" data-component="magazine-cover">',
     '<section class="wemd-sk-cover">',
-    '<span class="wemd-sk-topline"></span>',
+    '<span class="wemd-sk-topline">&nbsp;</span>',
     '{{#if title}}<section class="wemd-sk-eyebrow">{{slot:title}}</section>{{/if}}',
     '{{#if subtitle}}<section class="wemd-sk-title">{{slot:subtitle}}</section>{{/if}}',
     '{{#if desc}}<section class="wemd-sk-sub">{{slot:desc}}</section>{{/if}}',
@@ -50,7 +50,7 @@ export const skEndCard = (): string =>
   [
     '<section class="wemd-component wemd-end-card" data-component="end-card">',
     '<section class="wemd-sk-end">',
-    '<span class="wemd-sk-end-line"></span>',
+    '<span class="wemd-sk-end-line">&nbsp;</span>',
     '{{#if title}}<section class="wemd-sk-end-eyebrow">{{slot:title}}</section>{{/if}}',
     '{{#if subtitle}}<section class="wemd-sk-end-title">{{slot:subtitle}}</section>{{/if}}',
     '{{#if deco}}<section class="wemd-sk-end-meta">{{slot:deco}}</section>{{/if}}',

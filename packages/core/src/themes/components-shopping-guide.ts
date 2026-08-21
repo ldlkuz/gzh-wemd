@@ -268,6 +268,9 @@ export const componentStylesShoppingGuide = `/* === 好物种草（Shopping Guid
   height: 2px;
   background: ${ACCENT};
   margin: 0 auto 24px;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-end-card .wemd-sg-signoff-name {
   margin: 0;

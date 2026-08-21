@@ -16,11 +16,11 @@ export const dividerMultiColor = (): string =>
   [
     '<section class="wemd-component wemd-divider" data-component="divider">',
     '<div class="wemd-component-body">',
-    '<span class="wemd-dv-line wemd-dv-line-left"></span>',
-    '<span class="wemd-dv-dot wemd-dv-dot-a"></span>',
-    '<span class="wemd-dv-dot wemd-dv-dot-b"></span>',
-    '<span class="wemd-dv-dot wemd-dv-dot-c"></span>',
-    '<span class="wemd-dv-line wemd-dv-line-right"></span>',
+    '<span class="wemd-dv-line wemd-dv-line-left">&nbsp;</span>',
+    '<span class="wemd-dv-dot wemd-dv-dot-a">&nbsp;</span>',
+    '<span class="wemd-dv-dot wemd-dv-dot-b">&nbsp;</span>',
+    '<span class="wemd-dv-dot wemd-dv-dot-c">&nbsp;</span>',
+    '<span class="wemd-dv-line wemd-dv-line-right">&nbsp;</span>',
     "</div>",
     "</section>",
   ].join("\n");
@@ -33,14 +33,14 @@ export const dividerFancySeal = (sealText: string): string =>
   [
     '<section class="wemd-component wemd-divider-fancy" data-component="divider-fancy">',
     '<section class="wemd-df-label">',
-    '<span class="wemd-df-line wemd-df-line-left"></span>',
+    '<span class="wemd-df-line wemd-df-line-left">&nbsp;</span>',
     "{{#if label}}",
     `<span class="wemd-df-seal">${sealText}</span>`,
     '<span class="wemd-df-text">{{slot:label}}</span>',
     "{{else}}",
     '<span class="wemd-df-dots">\u00B7 \u00B7 \u00B7</span>',
     "{{/if}}",
-    '<span class="wemd-df-line wemd-df-line-right"></span>',
+    '<span class="wemd-df-line wemd-df-line-right">&nbsp;</span>',
     "</section>",
     "</section>",
   ].join("\n");
@@ -51,7 +51,7 @@ export const sectionDividerDualLine = (): string =>
     '<section class="wemd-component wemd-section-divider" data-component="section-divider">',
     '<section class="wemd-sd-part">{{slot:part}}</section>',
     '<section class="wemd-sd-title">{{slot:title}}</section>',
-    '<section class="wemd-sd-line"><span class="wemd-sd-line-a"></span><span class="wemd-sd-line-b"></span></section>',
+    '<section class="wemd-sd-line"><span class="wemd-sd-line-a">&nbsp;</span><span class="wemd-sd-line-b">&nbsp;</span></section>',
     "</section>",
   ].join("\n");
 
@@ -62,7 +62,7 @@ export const ctaCardDualFoot = (): string =>
     '{{#if title}}<section class="wemd-cta-title">{{slot:title}}</section>{{/if}}',
     '{{#if body}}<section class="wemd-cta-body">{{slot:body}}</section>{{/if}}',
     '{{#if action}}<section class="wemd-cta-action">{{slot:action}}</section>{{/if}}',
-    '<section class="wemd-cta-foot"><span class="wemd-cta-foot-a"></span><span class="wemd-cta-foot-b"></span></section>',
+    '<section class="wemd-cta-foot"><span class="wemd-cta-foot-a">&nbsp;</span><span class="wemd-cta-foot-b">&nbsp;</span></section>',
     "</section>",
   ].join("\n");
 
@@ -71,7 +71,7 @@ export const calloutProFoot = (): string =>
   [
     '<section class="wemd-component wemd-callout-pro" data-component="callout-pro">',
     '<div class="wemd-component-body">{{slot:body}}</div>',
-    '<span class="wemd-cp-foot"></span>',
+    '<span class="wemd-cp-foot">&nbsp;</span>',
     "</section>",
   ].join("\n");
 
@@ -89,10 +89,10 @@ export const endCardSeal = (sealText: string): string =>
 export const quoteCardDualDot = (): string =>
   [
     '<section class="wemd-component wemd-quote-card" data-component="quote-card">',
-    '<span class="wemd-qc-dot wemd-qc-dot-l"></span>',
+    '<span class="wemd-qc-dot wemd-qc-dot-l">&nbsp;</span>',
     '<section class="wemd-qc-quote">{{slot:quote}}</section>',
     '{{#if author}}<section class="wemd-qc-author"><span class="wemd-qc-dash">——</span>{{slot:author}}</section>{{/if}}',
-    '<span class="wemd-qc-dot wemd-qc-dot-r"></span>',
+    '<span class="wemd-qc-dot wemd-qc-dot-r">&nbsp;</span>',
     "</section>",
   ].join("\n");
 
@@ -104,18 +104,19 @@ export const ctaCardSealFoot = (): string =>
     '{{#if title}}<section class="wemd-cta-title">{{slot:title}}</section>{{/if}}',
     '{{#if body}}<section class="wemd-cta-body">{{slot:body}}</section>{{/if}}',
     '{{#if action}}<section class="wemd-cta-action">{{slot:action}}</section>{{/if}}',
-    '<section class="wemd-cta-foot"><span class="wemd-cta-foot-a"></span><span class="wemd-cta-foot-b"></span></section>',
+    '<section class="wemd-cta-foot"><span class="wemd-cta-foot-a">&nbsp;</span><span class="wemd-cta-foot-b">&nbsp;</span></section>',
     "</section>",
   ].join("\n");
 
-/** 大段引用：内容 + 左上/右下双色直角装饰线（真实元素，微信可保留）。
-   内容槽由原生 > 引用或 ::: pullquote 注入，角标为绝对定位的兄弟元素。 */
+/** 大段引用：左上/右下双色直角装饰（真实元素承载，公众号兼容）。
+   直角视觉由容器 background-image 渐变承载（见各主题皮肤），容器加
+   `wemd-pq-cornered` 标记供物化器识别「已定制双角线 → 不注入共享引号」，
+   不再放子 span（避免空元素/display:none 在微信被降级成可见点）。
+   内容槽由原生 > 引用或 ::: pullquote 注入。 */
 export const pullquoteCorners = (): string =>
   [
-    '<section class="wemd-component wemd-pullquote" data-component="pullquote">',
-    '<span class="wemd-pq-corner wemd-pq-corner-tl"></span>',
+    '<section class="wemd-component wemd-pullquote wemd-pq-cornered" data-component="pullquote">',
     '<div class="wemd-component-body">{{slot:body}}</div>',
-    '<span class="wemd-pq-corner wemd-pq-corner-br"></span>',
     "</section>",
   ].join("\n");
 
@@ -126,7 +127,7 @@ export const magazineCoverSeal = (): string =>
     '<span class="wemd-mc-seal">笺</span>',
     '{{#if title}}<section class="wemd-mc-title">{{slot:title}}</section>{{/if}}',
     '{{#if subtitle}}<section class="wemd-mc-subtitle">{{slot:subtitle}}</section>{{/if}}',
-    '<section class="wemd-mc-line"><span class="wemd-mc-line-a"></span><span class="wemd-mc-line-b"></span></section>',
+    '<section class="wemd-mc-line"><span class="wemd-mc-line-a">&nbsp;</span><span class="wemd-mc-line-b">&nbsp;</span></section>',
     '{{#if desc}}<section class="wemd-mc-desc">{{slot:desc}}</section>{{/if}}',
     "</section>",
   ].join("\n");

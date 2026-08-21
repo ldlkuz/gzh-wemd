@@ -65,11 +65,11 @@ export const storyEndCard = (): string =>
   [
     '<section class="wemd-component wemd-end-card" data-component="end-card">',
     '<section class="wemd-sk-end">',
-    '<span class="wemd-sk-end-rule"></span>',
+    '<span class="wemd-sk-end-rule">&nbsp;</span>',
     '{{#if title}}<p class="wemd-sk-end-mark">{{slot:title}}</p>{{/if}}',
     '{{#if heading}}<p class="wemd-sk-end-heading">{{slot:heading}}</p>{{/if}}',
     '{{#if subtitle}}<p class="wemd-sk-end-text">{{slot:subtitle}}</p>{{/if}}',
-    '<span class="wemd-sk-end-rule"></span>',
+    '<span class="wemd-sk-end-rule">&nbsp;</span>',
     "</section>",
     "</section>",
   ].join("\n");

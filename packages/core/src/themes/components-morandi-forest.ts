@@ -134,6 +134,9 @@ export const componentStylesMorandiForest = `/* === 莫兰迪森林：层林 · 
   height: 17px;
   border-radius: 0 50% 50% 50%;
   background: #7f9070;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-mf-leaf-pine { background: #46573e; }
 #wemd .wemd-mf-leaf-mist { background: #a9b89a; }
@@ -145,7 +148,7 @@ export const componentStylesMorandiForest = `/* === 莫兰迪森林：层林 · 
 
 /* === magazine-cover · 层林封面（骨架定制） === */
 #wemd .wemd-magazine-cover {
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   margin: 0 0 44px;
   padding: 36px 30px 0;
   background: linear-gradient(180deg, #f5f3ea 0%, #dde5d0 52%, #8fa383 100%);
@@ -155,7 +158,7 @@ export const componentStylesMorandiForest = `/* === 莫兰迪森林：层林 · 
   overflow: hidden;
 }
 #wemd .wemd-magazine-cover .wemd-mf-canopy {
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -166,6 +169,9 @@ export const componentStylesMorandiForest = `/* === 莫兰迪森林：层林 · 
   width: 1px;
   height: 42px;
   background: linear-gradient(180deg, transparent, #7f9070);
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-magazine-cover .wemd-mf-canopy .wemd-mf-leaf-pine {
   width: 11px;
@@ -173,7 +179,7 @@ export const componentStylesMorandiForest = `/* === 莫兰迪森林：层林 · 
   align-self: center;
 }
 #wemd .wemd-magazine-cover .wemd-mf-kicker {
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   font-family: "SF Mono", "Cascadia Code", Consolas, Menlo, monospace;
   font-size: 11px;
   letter-spacing: 0.42em;
@@ -181,7 +187,7 @@ export const componentStylesMorandiForest = `/* === 莫兰迪森林：层林 · 
   color: #46573e;
 }
 #wemd .wemd-magazine-cover .wemd-mf-title {
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   margin-top: 22px;
   font-family: "Georgia", "Noto Serif SC", "Songti SC", "STSong", "Source Han Serif SC", serif;
   font-size: 34px;
@@ -197,16 +203,19 @@ export const componentStylesMorandiForest = `/* === 莫兰迪森林：层林 · 
   margin: 24px auto 0;
   border-radius: 99px;
   background: linear-gradient(90deg, transparent, #c08f77, transparent);
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-magazine-cover .wemd-mf-desc {
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   margin-top: 22px;
   font-size: 14px;
   line-height: 2.1;
   color: #33382e;
 }
 #wemd .wemd-mf-ridge {
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   display: block;
   height: 24px;
   margin: 26px -30px 0;
@@ -214,6 +223,9 @@ export const componentStylesMorandiForest = `/* === 莫兰迪森林：层林 · 
     linear-gradient(135deg, transparent 49%, #b9c4a8 50%) left/50% 100% no-repeat,
     linear-gradient(45deg, transparent 49%, #a9b89a 50%) right/50% 100% no-repeat;
   opacity: 0.7;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 
 /* === section-divider · 大编辑式章节号（骨架定制） === */
@@ -246,6 +258,9 @@ export const componentStylesMorandiForest = `/* === 莫兰迪森林：层林 · 
   flex: 1;
   height: 1px;
   background: #d9d5c6;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-section-divider .wemd-mf-leaf {
   width: 11px;
@@ -270,6 +285,9 @@ export const componentStylesMorandiForest = `/* === 莫兰迪森林：层林 · 
   flex: 1;
   height: 1px;
   background: #a9b89a;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-mf-drip {
   display: flex;
@@ -283,7 +301,6 @@ export const componentStylesMorandiForest = `/* === 莫兰迪森林：层林 · 
 
 /* === quote-card · 悬挂果实（骨架定制） === */
 #wemd .wemd-quote-card {
-  position: relative;
   margin: 44px 0;
   padding: 46px 30px 32px;
   background: #fbf9f2;
@@ -292,20 +309,32 @@ export const componentStylesMorandiForest = `/* === 莫兰迪森林：层林 · 
   border-radius: 18px;
   box-shadow: 0 10px 30px rgba(80, 95, 55, 0.07);
   text-align: center;
+  /* 容器不用 position:relative；悬挂装饰通过正常流 + 负 margin 挂出顶边 */
 }
+/* 悬挂果实（真实元素：span.wemd-mf-hang 内含 stem + leaf-clay）。
+   原 position:absolute; top:0; left:50%; transform:translateX(-50%);
+   → 改为正常流 flex 容器 + 块级水平居中（margin auto）：
+   - padding-top:46 → 要从容器顶部（y=0）开始：margin-top: -46px
+   - stem(18) + leaf(18) = 总高 36，结束 y=36。需盒子结束于 y=46（padding-top 内顶），
+     使 qc-quote 从 y=46 开始不被装饰挤压 → margin-bottom = 46 - 36 - (-46+46)？
+     公式：盒子净高度 = mt + height + mb；目标净占用 0（相对容器内容起点 y=46）：
+     - 盒子放在正常流中「本应从 y=46 开始」+ mt=-46 → 实际起点 y=0
+     - content 高 36，结束 y=36
+     - 需要后续元素（qc-quote）仍从 y=46 开始 → mb = 46 - 36 = 10px
+   - 水平居中：display:flex（块级）+ margin: -46px auto 10px auto → 完美居中。 */
 #wemd .wemd-quote-card .wemd-mf-hang {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin: -46px auto 10px auto;
 }
 #wemd .wemd-mf-stem {
   width: 1px;
   height: 18px;
   background: #c08f77;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-quote-card .wemd-mf-hang .wemd-mf-leaf-clay {
   width: 13px;
@@ -492,22 +521,28 @@ export const componentStylesMorandiForest = `/* === 莫兰迪森林：层林 · 
   padding: 0; /* 去掉共享 padding-left:20px，让叶节点能落在竖线上 */
 }
 #wemd .wemd-timeline .wemd-tl-item {
-  position: relative;
-  padding: 8px 0 8px 24px;
+  display: flex;
+  align-items: flex-start;
+  padding: 8px 0 8px 0;
+  margin: 0;
 }
+/* 叶节点定位：flex 子项 + 负 margin-left 跨到竖线中心（公众号保留 flex，不依赖 position）。
+   几何：events border-left 1px + margin-left:10px → 竖线中心 x=10.5；padding:0 → item 内容起点
+   x≈11；叶水平半宽 6.5px，margin-left:-7px 让左边缘到 x=11-7=4 → 中心落在 x=4+6.5=10.5（=竖线中心）。 */
 #wemd .wemd-timeline .wemd-tl-dot {
-  position: absolute;
-  left: -8px;
-  top: 13px;
-  transform: none; /* 自设定位：关闭共享圆点尺寸无关居中 */
+  flex: none;
   width: 13px;
   height: 18px;
+  margin-top: 4px;
+  margin-left: -7px;
+  margin-right: 12px;
   border-radius: 0 50% 50% 50%;
   background: #7f9070;
   border: none;
   box-shadow: none;
 }
 #wemd .wemd-timeline .wemd-tl-text {
+  flex: 1;
   color: #33382e;
 }
 

@@ -34,7 +34,9 @@ function renderWithDefaultTheme(md: string): string {
   const theme = getBuiltInThemeDefinition("default")!;
   const css = renderTheme(theme);
   const templates = getThemeTemplates(theme);
-  const parser = createMarkdownParser({ getTemplate: (id) => templates.get(id) });
+  const parser = createMarkdownParser({
+    getTemplate: (id) => templates.get(id),
+  });
   const raw = parser.render(md);
   return processHtml(raw, css, true, true);
 }
@@ -68,7 +70,9 @@ describe("默认主题：组件 CSS 选择器与新 DOM 对齐", () => {
       "![a](https://a.com/1.png)\n![b](https://a.com/2.png)",
     );
     expect(out).toContain('class="wemd-component wemd-image-grid"');
-    const imgP = out.match(/<p[^>]*class="wemd-component-body"[^>]*>[\s\S]{0,80}<p[^>]*>/);
+    const imgP = out.match(
+      /<p[^>]*class="wemd-component-body"[^>]*>[\s\S]{0,80}<p[^>]*>/,
+    );
     // 网格容器的 p 应带 grid-template-columns
     expect(out).toMatch(/grid-template-columns:\s*repeat\(2, 1fr\)/);
     // 图片进入网格（不再是竖直堆叠的单列块）
@@ -90,7 +94,7 @@ describe("默认主题：组件 CSS 选择器与新 DOM 对齐", () => {
     expect(out).toMatch(/width:\s*140px/);
   });
 
-  it("callout-pro：色条跟随主题主色（默认 → 微信绿，非 type 固定紫）", () => {
+  it("callout-pro：左侧色条用 border-left 跟随主题主色（默认 → 微信绿，非 type 固定紫）", () => {
     const out = renderWithDefaultTheme(
       `::: callout-pro{type="tip"}
 **使用建议**
@@ -99,9 +103,34 @@ describe("默认主题：组件 CSS 选择器与新 DOM 对齐", () => {
 :::`,
     );
     expect(out).toContain('class="wemd-component wemd-callout-pro"');
-    // 竖条跟随主题主色 #07c160（不再强制 type 语义色 #8b5cf6 紫）
-    expect(out).toMatch(/background:\s*#07c160/);
+    // 竖条用容器 border-left（原生边框，微信保留），跟随主题主色 #07c160（非 type 紫）
+    const sec =
+      out.match(
+        /<section class="wemd-component wemd-callout-pro"[^>]*>/,
+      )?.[0] ?? "";
+    expect(sec).toContain("border-left: 4px solid #07c160");
     expect(out).not.toMatch(/background:\s*#8b5cf6/);
+    // 不再有物化的绝对定位色条 span
+    expect(out).not.toMatch(/wemd-mat[^>]*width: 4px/);
+  });
+
+  it("timeline：圆点空心居中跨竖线（flex+负 margin，无 position 依赖）", () => {
+    const out = renderWithDefaultTheme(
+      "::: timeline\n发展历程\n- **2020** 立项\n- **2022** 发布\n:::",
+    );
+    expect(out).toContain("wemd-tl-events");
+    expect(out).toContain("wemd-tl-dot");
+    const item = out.slice(out.indexOf("wemd-tl-item"));
+    const dot = out.slice(out.indexOf("wemd-tl-dot"));
+    // 公众号兼容：item 用 flex，圆点用负 margin-left 跨竖线（不依赖 position:absolute）
+    expect(item).toContain("display: flex");
+    expect(dot).toContain("margin-left: -27px");
+    // 空心点：白底 + 绿边框（而非纯绿实心），颜色跟随主题主色
+    expect(dot).toContain("background: #ffffff");
+    expect(dot).toContain("border: 2px solid #07c160");
+    expect(dot).toContain("border-radius: 50%");
+    // 不再用 absolute 定位（公众号会删，导致圆点退回流内变实心绿点错位）
+    expect(out).not.toMatch(/wemd-tl-dot[^>]*position: absolute/);
   });
 });
 
@@ -109,16 +138,16 @@ function renderWithEasternNotes(md: string): string {
   const theme = getBuiltInThemeDefinition("eastern-notes")!;
   const css = renderTheme(theme);
   const templates = getThemeTemplates(theme);
-  const parser = createMarkdownParser({ getTemplate: (id) => templates.get(id) });
+  const parser = createMarkdownParser({
+    getTemplate: (id) => templates.get(id),
+  });
   const raw = parser.render(md);
   return processHtml(raw, css, true, true);
 }
 
 describe("东方笺谱：同骨架 · 主题皮肤差异化", () => {
   it("全局皮肤：宋体 + 墨色 + 朱砂 h2 居中", () => {
-    const out = renderWithEasternNotes(
-      "## 一 · 序章\n\n正文内容",
-    );
+    const out = renderWithEasternNotes("## 一 · 序章\n\n正文内容");
     // 宋体栈 + 墨色正文（页面底色按项目约束交给微信编辑器）
     expect(out).toMatch(/font-family: &quot;Songti SC&quot;/);
     expect(out).toContain("color: #36322f");
@@ -198,7 +227,7 @@ PART 01
     expect(out).toContain("笺");
   });
 
-  it("callout-pro：定制骨架底部色条", () => {
+  it("callout-pro：定制骨架底部色条（正常流，无 position 依赖）", () => {
     const out = renderWithEasternNotes(
       `::: callout-pro
 **小贴士**
@@ -208,8 +237,10 @@ PART 01
     );
     expect(out).toContain("wemd-cp-foot");
     expect(out).toContain("background: #8a5a33");
-    // 底部短线内缩到内容区（right: 24px），不延伸到卡片边界
-    expect(out).toMatch(/right:\s*24px/);
+    // 底部短线改为正常流 block + margin auto 靠右（不再用 absolute right/bottom 贴底）
+    const foot = out.slice(out.indexOf("wemd-cp-foot"));
+    expect(foot).toContain("margin: 14px 0 0 auto");
+    expect(out).not.toMatch(/wemd-cp-foot[^>]*position: absolute/);
   });
 
   it("quote-card：上下朱砂线夹金句", () => {
@@ -239,11 +270,15 @@ PART 01
     expect(out).toContain("——");
   });
 
-  it("页面与卡片带宣纸纹理（background-image 渐变，不写 #wemd background-color）", () => {
-    const out = renderWithEasternNotes("## 一 · 序章\n\n正文");
-    // #wemd 容器带渐变纹理背景
-    expect(out).toMatch(/background-image:\s*radial-gradient/);
-    // quote-card / steps 等卡片带纸纹
+  it("页面无整篇背景（微信不铺网格），纸纹只落在卡片局部", () => {
+    const out = renderWithEasternNotes(
+      "## 一 · 序章\n\n::: quote-card\n金句\n\n署名：**主**\n:::\n\n正文",
+    );
+    // #wemd 不再设整篇背景（微信整篇铺网格），纸纹只落在卡片局部
+    const wemd = out.match(/<section id="wemd"[^>]*>/)?.[0] ?? "";
+    expect(wemd).not.toMatch(/background-image/);
+    expect(wemd).not.toMatch(/background-color/);
+    // 卡片（quote-card 等）带纸纹
     expect(out).toContain("repeating-linear-gradient");
   });
 
@@ -255,36 +290,84 @@ PART 01
 - 内容
 :::`,
     );
-    // 色条物化为 wemd-mat，背景为朱砂（主题覆盖共享的 var 主色）
-    expect(out).toContain('class="wemd-mat"');
-    expect(out).toMatch(/background:\s*#a33a2b/);
+    // 色条用容器 border-left（原生边框，微信保留），不再物化 wemd-mat 背景竖条
+    const sec =
+      out.match(
+        /<section class="wemd-component wemd-callout-pro"[^>]*>/,
+      )?.[0] ?? "";
+    expect(sec).toContain("border-left: 4px solid #a33a2b");
+    // 不应再有 4px 宽的物化 wemd-mat 竖条（中和了 ::before）
+    expect(out).not.toMatch(/wemd-mat[^>]*width:\s*4px/);
   });
 
-  it("pullquote：左上/右下双色直角装饰线（真实元素）+ 居中文案", () => {
+  it("pullquote：左上/右下双色直角由纯边框承载（微信兼容、无渐变解析风险）", () => {
     const out = renderWithEasternNotes(
       `::: pullquote
 落笔时不必慌张。
 :::`,
     );
     expect(out).toContain("wemd-pullquote");
-    expect(out).toContain("wemd-pq-corner-tl");
-    expect(out).toContain("wemd-pq-corner-br");
-    expect(out).toMatch(/border-top:\s*3px solid #3d5a63/);
-    expect(out).toMatch(/border-bottom:\s*3px solid #a33a2b/);
+    // 容器带 wemd-pq-cornered 标记（供物化器抑制共享引号），不再有角标 span 子元素
+    expect(out).toMatch(/wemd-pullquote wemd-pq-cornered/);
+    expect(out).not.toMatch(/wemd-pq-corner-tl/);
+    expect(out).not.toMatch(/wemd-pq-corner-br/);
+    // 直角由容器四边双色边框承载（左上黛蓝 + 右下朱砂），微信 100% 保留
+    const cover =
+      out.match(
+        /<section class="wemd-component wemd-pullquote[^>]*"[^>]*>/,
+      )?.[0] ?? "";
+    expect(cover).toContain("border-top: 3px solid #3d5a63");
+    expect(cover).toContain("border-left: 3px solid #3d5a63");
+    expect(cover).toContain("border-right: 3px solid #a33a2b");
+    expect(cover).toContain("border-bottom: 3px solid #a33a2b");
+    // 不再用 position 定位角标（公众号会删，导致退回流内变两个点）
+    expect(out).not.toMatch(/position: absolute/);
   });
 
-  it("pullquote：共享的左边框已被清零（不残留竖线 + 双角线叠加）", () => {
+  it("pullquote：共享左边框被主题双色边框覆盖（无 5px 残留）+ 角标标记下不注入共享引号", () => {
     const out = renderWithEasternNotes(
       `::: pullquote
 落笔时不必慌张。
 :::`,
     );
-    const sec = out.match(/<section class="wemd-component wemd-pullquote"[^>]*>/)?.[0] ?? "";
-    // 不再有共享的 border-left: 5px（用长属性清零）
+    const sec =
+      out.match(
+        /<section class="wemd-component wemd-pullquote[^>]*"[^>]*>/,
+      )?.[0] ?? "";
+    // 主题双色边框覆盖共享 border-left:5px（无残留）
     expect(sec).not.toMatch(/border-left:\s*5px/);
-    expect(sec).toContain("border-left: none");
-    // 双角线装饰下不再插入多余的引号 span（装饰不重复）
+    expect(sec).toContain("border-left: 3px solid #3d5a63");
+    // 双角线装饰（wemd-pq-cornered 标记）下不再插入多余的引号 span（装饰不重复）
     expect(out).not.toContain("\u201C");
+  });
+
+  it("faq：挂角标题角标物化为 inline-block 小色块（宽度收缩，负 margin 贴左上，无 position）", () => {
+    const out = renderWithDefaultTheme(
+      '::: faq{title="新手指南"}\n**问题一**\n\n回答内容\n:::',
+    );
+    expect(out).toContain("wemd-faq");
+    // 角标物化为 wemd-mat span：inline-block（宽度收缩成挂角小色块）+ 负 margin 贴左上角
+    const mat = out.slice(out.indexOf('class="wemd-mat"'));
+    expect(mat).toContain("新手指南");
+    expect(mat).toContain("background: #07c160");
+    expect(mat).toContain("display: inline-block");
+    expect(mat).toContain("margin: -17px 0 14px -18px");
+    expect(mat).not.toContain("position: absolute");
+  });
+
+  it("steps：序号圆标朱砂色、带完整盒尺寸（物化内联不丢 width/height）", () => {
+    const out = renderWithEasternNotes(
+      "::: steps\n新手三连击\n1. **新建文章** — 粘贴草稿\n2. **选择主题** — 挑选样式\n:::",
+    );
+    expect(out).toContain("wemd-steps");
+    // 序号由物化器内联为 li 首个子元素 wemd-mat，朱砂圆底 + 白字 + 完整盒尺寸居中
+    const mat = out.slice(out.indexOf('class="wemd-mat"'));
+    expect(mat).toContain("background: #a33a2b");
+    expect(mat).toContain("border-radius: 50%");
+    expect(mat).toContain("width: 26px");
+    expect(mat).toContain("height: 26px");
+    expect(mat).toContain("line-height: 26px");
+    expect(mat).toContain("color: #ffffff");
   });
 
   it("cta-card：朱砂渐变 + 印章圆标（真实元素）", () => {
@@ -327,9 +410,7 @@ MODERN LETTERHEAD
 :::`,
     );
     // 末段"关注"导出为纯文字：透明底、无边框、无圆角（不再伪装可点）
-    const btn = out.match(
-      /<p[^>]*style="[^"]*"[^>]*>关注<\/p>/,
-    )?.[0] ?? "";
+    const btn = out.match(/<p[^>]*style="[^"]*"[^>]*>关注<\/p>/)?.[0] ?? "";
     expect(btn).toContain("background: transparent");
     expect(btn).not.toContain("background: #a33a2b");
     expect(btn).toContain("border: none");
@@ -345,9 +426,9 @@ describe("数据蓝图：text-card 去整块深蓝底色", () => {
     const out = renderWithDataBlueprint(
       "::: text-card\n组件系统把内容拆解成独立的语义单元。\n:::",
     );
-    const sec = out.match(
-      /<section class="wemd-component wemd-text-card"[^>]*>/,
-    )?.[0] ?? "";
+    const sec =
+      out.match(/<section class="wemd-component wemd-text-card"[^>]*>/)?.[0] ??
+      "";
     // 不再命中主题 bgCard 深蓝 #0c4a6e
     expect(sec).not.toContain("#0c4a6e");
     expect(sec).not.toContain("background: #0c4a6e");
@@ -361,9 +442,9 @@ describe("数据蓝图：text-card 去整块深蓝底色", () => {
     const out = renderWithDataBlueprint(
       "::: full-quote\n技术的意义，是让每一个普通人的真实表达，都有机会被世界看见。\n:::",
     );
-    const sec = out.match(
-      /<section class="wemd-component wemd-full-quote"[^>]*>/,
-    )?.[0] ?? "";
+    const sec =
+      out.match(/<section class="wemd-component wemd-full-quote"[^>]*>/)?.[0] ??
+      "";
     expect(sec).not.toContain("#0c4a6e");
     expect(sec).toContain("background: transparent");
     expect(sec).toContain("border-top: 2px solid #0ea5e9");
@@ -405,9 +486,10 @@ describe("数据蓝图：text-card 去整块深蓝底色", () => {
       ["qr-card", "#ffffff"],
       ["stats-block", "#ffffff"],
     ] as const) {
-      const sec = out.match(
-        new RegExp(`<section class="wemd-component wemd-${name}"[^>]*>`),
-      )?.[0] ?? "";
+      const sec =
+        out.match(
+          new RegExp(`<section class="wemd-component wemd-${name}"[^>]*>`),
+        )?.[0] ?? "";
       expect(sec).toContain(`background: ${expectBg}`);
     }
     // steps li 白底
@@ -416,7 +498,7 @@ describe("数据蓝图：text-card 去整块深蓝底色", () => {
     expect(out).toMatch(/class="wemd-sb-items-item"[^>]*background: #f0f9ff/);
   });
 
-  it("callout-pro：竖条跟随主题科技蓝（不再被物化器强制 type 语义色）", () => {
+  it("callout-pro：左侧色条用 border-left 跟随主题科技蓝（不再被物化器强制 type 语义色）", () => {
     const out = renderWithDataBlueprint(
       `::: callout-pro{type="tip"}
 **使用建议**
@@ -424,8 +506,12 @@ describe("数据蓝图：text-card 去整块深蓝底色", () => {
 - signature 组适合放在文章开头和结尾
 :::`,
     );
-    // 物化竖条为主题科技蓝，而非 type 固定紫 #8b5cf6
-    expect(out).toContain('background: #0ea5e9');
+    // 色条用容器 border-left（原生边框，微信保留），跟随主题科技蓝 #0ea5e9（非 type 紫）
+    const sec =
+      out.match(
+        /<section class="wemd-component wemd-callout-pro"[^>]*>/,
+      )?.[0] ?? "";
+    expect(sec).toContain("border-left: 4px solid #0ea5e9");
     expect(out).not.toContain("#8b5cf6");
   });
 });
@@ -446,7 +532,7 @@ function renderWithClearGuide(md: string): string {
 }
 
 describe("清晰指南：学习手册 · 独立骨架 + 皮肤", () => {
-  it("magazine-cover：定制骨架胶带 + 虚线印章（真实元素）", () => {
+  it("magazine-cover：定制骨架胶带 + 虚线印章（真实元素，float 布局，无对位残留）", () => {
     const out = renderWithClearGuide(
       `::: magazine-cover
 从零搭好第一条流程
@@ -460,6 +546,20 @@ CLEAR GUIDE · 上手手册
     expect(out).toContain("wemd-cg-stamp");
     expect(out).toContain("wemd-cg-kicker");
     expect(out).toContain("wemd-cg-title");
+    // 胶带挂顶：容器去掉 overflow:hidden（露出上边界），胶带用负 margin 上移（公众号兼容）
+    const cover =
+      out.match(
+        /<section class="wemd-component wemd-magazine-cover"[^>]*>/,
+      )?.[0] ?? "";
+    expect(cover).not.toContain("overflow: hidden");
+    // 印章 float 靠右 + clear 防标题重叠（无 position:absolute 残留）
+    const stamp = out.match(/<span class="wemd-cg-stamp"[^>]*>/)?.[0] ?? "";
+    expect(stamp).toContain("float: right");
+    // 隐形装饰元素带 &nbsp; + 隐形样式（防公众号删空 span）
+    const tape = out.slice(out.indexOf("wemd-cg-tape"));
+    expect(tape).toContain("overflow: hidden");
+    expect(tape).toContain("&nbsp;");
+    expect(out).not.toContain("position: absolute");
   });
 
   it("section-divider：定制骨架手写编号 + 荧光下划线", () => {
@@ -506,9 +606,10 @@ CLEAR GUIDE · 上手手册
 - 内容
 :::`,
     );
-    const sec = out.match(
-      /<section class="wemd-component wemd-callout-pro"[^>]*>/,
-    )?.[0] ?? "";
+    const sec =
+      out.match(
+        /<section class="wemd-component wemd-callout-pro"[^>]*>/,
+      )?.[0] ?? "";
     expect(sec).toContain("background: #fff3ad");
     expect(sec).toContain("border-left: 5px solid #e8590c");
     // 只保留 border-left 一条竖线：不应再有物化的 4px 色条 span（双竖线回归防护）
@@ -525,9 +626,9 @@ CLEAR GUIDE · 上手手册
 署名：**手册**
 :::`,
     );
-    const sec = out.match(
-      /<section class="wemd-component wemd-quote-card"[^>]*>/,
-    )?.[0] ?? "";
+    const sec =
+      out.match(/<section class="wemd-component wemd-quote-card"[^>]*>/)?.[0] ??
+      "";
     expect(sec).toContain("border-left: 5px solid #e8590c");
     expect(sec).toContain("#ffe14d");
   });
@@ -565,7 +666,7 @@ function renderWithWhitespaceGallery(md: string): string {
 }
 
 describe("留白画册：极简画廊 · 独立骨架 + 皮肤", () => {
-  it("magazine-cover：定制骨架内衬画框 + 英文小标 + 发丝线（真实元素）", () => {
+  it("magazine-cover：定制骨架内衬画框 + 英文小标 + 发丝线（真实元素，outline 承载无 position）", () => {
     const out = renderWithWhitespaceGallery(
       `::: magazine-cover
 WHITESPACE GALLERY
@@ -579,6 +680,15 @@ WHITESPACE GALLERY
     expect(out).toContain("wemd-wg-title");
     expect(out).toContain("wemd-wg-rule");
     expect(out).toContain("wemd-wg-desc");
+    // 内衬画框由容器 outline 承载（不依赖 position，公众号删 position 不丢）
+    const cover =
+      out.match(
+        /<section class="wemd-component wemd-magazine-cover"[^>]*>/,
+      )?.[0] ?? "";
+    expect(cover).toContain("outline: 1px solid #e3dfd6");
+    expect(cover).toContain("outline-offset: -14px");
+    // frame span 不再用 position:absolute（公众号会删导致画框丢失）
+    expect(out).not.toMatch(/wemd-wg-frame[^>]*position: absolute/);
   });
 
   it("section-divider：定制骨架 PART 编号 + 标题 + 发丝线", () => {
@@ -618,9 +728,9 @@ WHITESPACE GALLERY
 署名：**画廊**
 :::`,
     );
-    const sec = out.match(
-      /<section class="wemd-component wemd-quote-card"[^>]*>/,
-    )?.[0] ?? "";
+    const sec =
+      out.match(/<section class="wemd-component wemd-quote-card"[^>]*>/)?.[0] ??
+      "";
     expect(sec).toContain("border: 1px solid #e3dfd6");
     // 不应有粗的左条（共享 border-left 5px 被覆盖）
     expect(sec).not.toContain("border-left: 5px");
@@ -632,9 +742,9 @@ WHITESPACE GALLERY
 愿每一次创作，都既有结构的力量，也有想象的自由。
 :::`,
     );
-    const sec = out.match(
-      /<section class="wemd-component wemd-full-quote"[^>]*>/,
-    )?.[0] ?? "";
+    const sec =
+      out.match(/<section class="wemd-component wemd-full-quote"[^>]*>/)?.[0] ??
+      "";
     expect(sec).toContain("background: #f7f5f1");
     // 正文文字为墨色（深底不配深字，落在 .wemd-fq-text 上）
     const text = out.match(/<section class="wemd-fq-text"[^>]*>/)?.[0] ?? "";
@@ -657,9 +767,9 @@ WHITESPACE GALLERY
 关注
 :::`,
     );
-    const firstP = out.match(
-      /<p[^>]*style="[^"]*"[^>]*>点击上方蓝字关注我们<\/p>/,
-    )?.[0] ?? "";
+    const firstP =
+      out.match(/<p[^>]*style="[^"]*"[^>]*>点击上方蓝字关注我们<\/p>/)?.[0] ??
+      "";
     expect(firstP).toContain("color: #3a3a3a");
     expect(firstP).not.toContain("color: #ffffff");
   });
@@ -739,9 +849,9 @@ ACADEMIC JOURNAL
 署名：**期刊**
 :::`,
     );
-    const sec = out.match(
-      /<section class="wemd-component wemd-quote-card"[^>]*>/,
-    )?.[0] ?? "";
+    const sec =
+      out.match(/<section class="wemd-component wemd-quote-card"[^>]*>/)?.[0] ??
+      "";
     expect(sec).toContain("background: #0f2540");
     expect(sec).toContain("border-left: 4px solid #8b0000");
     const quote = out.match(/<section class="wemd-qc-quote"[^>]*>/)?.[0] ?? "";
@@ -754,9 +864,9 @@ ACADEMIC JOURNAL
 正文内容用浅底承载，避免深底深字不可读。
 :::`,
     );
-    const sec = out.match(
-      /<section class="wemd-component wemd-text-card"[^>]*>/,
-    )?.[0] ?? "";
+    const sec =
+      out.match(/<section class="wemd-component wemd-text-card"[^>]*>/)?.[0] ??
+      "";
     expect(sec).toContain("background: #f4f2ec");
     expect(sec).toContain("color: #2c3e50");
   });
@@ -768,9 +878,9 @@ ACADEMIC JOURNAL
 感谢阅读 · 期待交流
 :::`,
     );
-    const sec = out.match(
-      /<section class="wemd-component wemd-end-card"[^>]*>/,
-    )?.[0] ?? "";
+    const sec =
+      out.match(/<section class="wemd-component wemd-end-card"[^>]*>/)?.[0] ??
+      "";
     expect(sec).toContain("background: #0f2540");
     expect(sec).toContain("color: #ffffff");
   });
@@ -791,9 +901,9 @@ ACADEMIC JOURNAL
 关注
 :::`,
     );
-    const firstP = out.match(
-      /<p[^>]*style="[^"]*"[^>]*>点击上方蓝字关注我们<\/p>/,
-    )?.[0] ?? "";
+    const firstP =
+      out.match(/<p[^>]*style="[^"]*"[^>]*>点击上方蓝字关注我们<\/p>/)?.[0] ??
+      "";
     expect(firstP).toContain("color: #2c3e50");
     expect(firstP).not.toContain("color: #ffffff");
   });
@@ -808,9 +918,9 @@ ACADEMIC JOURNAL
 扫码关注获取更多论文资料
 :::`,
     );
-    const sec = out.match(
-      /<section class="wemd-component wemd-qr-card"[^>]*>/,
-    )?.[0] ?? "";
+    const sec =
+      out.match(/<section class="wemd-component wemd-qr-card"[^>]*>/)?.[0] ??
+      "";
     // 浅底（米白），非深蓝 → 深字可读
     expect(sec).toContain("background: #fbfaf7");
     expect(sec).not.toContain("background: #0f2540");
@@ -839,7 +949,7 @@ function renderWithLuxuryGold(md: string): string {
 }
 
 describe("黑金奢华：黑金荣誉证书 · 独立骨架 + 皮肤", () => {
-  it("magazine-cover：定制骨架内框 + 四角金饰角 + 金色小标 + 黑金底（金字可读）", () => {
+  it("magazine-cover：定制骨架徽章 + kicker + 标题 + 副题 + 双线 + 底部纹样（黑金底金字可读）", () => {
     const out = renderWithLuxuryGold(
       `::: magazine-cover
 LUXURY COLLECTION
@@ -847,22 +957,31 @@ LUXURY COLLECTION
 一份关于奢华与秩序的品牌手册
 :::`,
     );
-    expect(out).toContain("wemd-lg-frame");
-    expect(out).toContain("wemd-lg-corner-tl");
-    expect(out).toContain("wemd-lg-corner-tr");
-    expect(out).toContain("wemd-lg-corner-bl");
-    expect(out).toContain("wemd-lg-corner-br");
+    // 徽章（圆形「臻」金印）+ kicker + 标题 + 副题 + 金线 + 底部纹样（真实元素）
+    expect(out).toMatch(/<div class="wemd-lg-badge"[^>]*>/);
+    expect(out).toContain("wemd-lg-badge-ch");
+    expect(out).toContain("臻");
     expect(out).toContain("wemd-lg-kicker");
     expect(out).toContain("wemd-lg-title");
-    expect(out).toContain("wemd-lg-rule");
     expect(out).toContain("wemd-lg-desc");
-    const sec = out.match(
-      /<section class="wemd-component wemd-magazine-cover"[^>]*>/,
-    )?.[0] ?? "";
+    expect(out).toContain("wemd-lg-rule");
+    // 底部纹样：菱块 + ✦ + 细线（真实元素）
+    expect(out).toContain("wemd-lg-flourish");
+    expect(out).toContain("wemd-lg-sw");
+    expect(out).toContain("wemd-lg-d");
+    expect(out).toContain("wemd-lg-line");
+    // 不再使用 old frame / absolute corner 装饰（公众号会删 position）
+    expect(out).not.toContain("wemd-lg-frame");
+    expect(out).not.toContain("wemd-lg-corner");
+    const sec =
+      out.match(
+        /<section class="wemd-component wemd-magazine-cover"[^>]*>/,
+      )?.[0] ?? "";
     expect(sec).toContain("linear-gradient(165deg, #241b12");
-    // 标题金字（深底必配浅字）
+    // 标题金属渐变 + 兜底金（deep 底必配浅字）
     const title = out.match(/<section class="wemd-lg-title"[^>]*>/)?.[0] ?? "";
-    expect(title).toContain("color: #faf3e0");
+    expect(title).toContain("-webkit-background-clip: text");
+    expect(title).toContain("color: #f8ecc4");
   });
 
   it("section-divider：定制骨架编号 + 标题 + 金色渐变线", () => {
@@ -893,7 +1012,7 @@ LUXURY COLLECTION
     expect(out).toContain("wemd-df-text");
   });
 
-  it("quote-card：黑金荣誉卡（深棕黑底 + 金字 + 金框 + 顶部引号圆章）", () => {
+  it("quote-card：黑金荣誉卡（深棕黑底 + 金字 + 金框 + 顶部镀金饰带）", () => {
     const out = renderWithLuxuryGold(
       `::: quote-card
 黑金不是张扬，而是分寸。
@@ -901,10 +1020,10 @@ LUXURY COLLECTION
 署名：**臻选**
 :::`,
     );
-    expect(out).toContain("wemd-lg-badge");
-    const sec = out.match(
-      /<section class="wemd-component wemd-quote-card"[^>]*>/,
-    )?.[0] ?? "";
+    expect(out).toContain("wemd-lg-qband");
+    const sec =
+      out.match(/<section class="wemd-component wemd-quote-card"[^>]*>/)?.[0] ??
+      "";
     expect(sec).toContain("linear-gradient(165deg, #241b12");
     expect(sec).toContain("border-left: 4px solid #d4af37");
     const quote = out.match(/<section class="wemd-qc-quote"[^>]*>/)?.[0] ?? "";
@@ -917,9 +1036,9 @@ LUXURY COLLECTION
 正文内容用暖米浅底承载，避免深底深字不可读。
 :::`,
     );
-    const sec = out.match(
-      /<section class="wemd-component wemd-text-card"[^>]*>/,
-    )?.[0] ?? "";
+    const sec =
+      out.match(/<section class="wemd-component wemd-text-card"[^>]*>/)?.[0] ??
+      "";
     expect(sec).toContain("background: #fbf6ea");
     expect(sec).toContain("color: #3d2818");
   });
@@ -932,9 +1051,9 @@ LUXURY COLLECTION
 关注
 :::`,
     );
-    const firstP = out.match(
-      /<p[^>]*style="[^"]*"[^>]*>点击上方蓝字关注我们<\/p>/,
-    )?.[0] ?? "";
+    const firstP =
+      out.match(/<p[^>]*style="[^"]*"[^>]*>点击上方蓝字关注我们<\/p>/)?.[0] ??
+      "";
     expect(firstP).toContain("color: #faf3e0");
     expect(firstP).not.toContain("color: #ffffff");
   });
@@ -1020,9 +1139,9 @@ MIST FOREST · JOURNAL
     expect(out).toContain("wemd-mf-hang");
     expect(out).toContain("wemd-mf-stem");
     expect(out).toContain("wemd-mf-leaf-clay");
-    const sec = out.match(
-      /<section class="wemd-component wemd-quote-card"[^>]*>/,
-    )?.[0] ?? "";
+    const sec =
+      out.match(/<section class="wemd-component wemd-quote-card"[^>]*>/)?.[0] ??
+      "";
     expect(sec).toContain("background: #fbf9f2");
     const quote = out.match(/<section class="wemd-qc-quote"[^>]*>/)?.[0] ?? "";
     expect(quote).toContain("color: #33382e");
@@ -1037,9 +1156,9 @@ MIST FOREST · JOURNAL
     );
     expect(out).toContain("wemd-mf-canopy");
     expect(out).toContain("wemd-mf-mistline");
-    const sec = out.match(
-      /<section class="wemd-component wemd-end-card"[^>]*>/,
-    )?.[0] ?? "";
+    const sec =
+      out.match(/<section class="wemd-component wemd-end-card"[^>]*>/)?.[0] ??
+      "";
     expect(sec).toContain("background: linear-gradient(180deg, #52644a");
     const title = out.match(/<section class="wemd-ec-title"[^>]*>/)?.[0] ?? "";
     expect(title).toContain("color: #f6f4ec");
@@ -1139,9 +1258,9 @@ NO. 01
 :::`,
     );
     expect(out).toContain("wemd-me-qmark");
-    const sec = out.match(
-      /<section class="wemd-component wemd-quote-card"[^>]*>/,
-    )?.[0] ?? "";
+    const sec =
+      out.match(/<section class="wemd-component wemd-quote-card"[^>]*>/)?.[0] ??
+      "";
     expect(sec).toContain("border-left: 3px solid #d0342c");
   });
 
@@ -1167,9 +1286,9 @@ NEWSROOM · VOL.04
     );
     expect(out).toContain("wemd-me-line");
     expect(out).toContain("wemd-me-editors");
-    const sec = out.match(
-      /<section class="wemd-component wemd-end-card"[^>]*>/,
-    )?.[0] ?? "";
+    const sec =
+      out.match(/<section class="wemd-component wemd-end-card"[^>]*>/)?.[0] ??
+      "";
     expect(sec).toContain("background: #1c1a17");
     const title = out.match(/<section class="wemd-ec-title"[^>]*>/)?.[0] ?? "";
     expect(title).toContain("color: #faf8f2");
@@ -1576,7 +1695,9 @@ describe("故事集：纯图封面 + 沉浸阅读 · 主题私有骨架 + 皮肤
       out.indexOf("wemd-sk-cover"),
       out.indexOf("wemd-sk-cover") + 600,
     );
-    expect(cover).toMatch(/background-image:.*url\(https:\/\/picsum\.photos\/seed\/sb\/1200\/630\)/);
+    expect(cover).toMatch(
+      /background-image:.*url\(https:\/\/picsum\.photos\/seed\/sb\/1200\/630\)/,
+    );
     expect(cover).not.toMatch(/position:\s*absolute/);
     // 图区用 padding-top 百分比压出（非固定 height clamp）
     expect(cover).toMatch(/padding:\s*46%/);
@@ -1727,7 +1848,9 @@ describe("好物种草：实物摄影 + 编号价格签 · 主题私有骨架 + 
       out.indexOf("wemd-sg-cover"),
       out.indexOf("wemd-sg-cover") + 600,
     );
-    expect(cover).toMatch(/background-image:.*url\(https:\/\/example\.com\/hero\.jpg\)/);
+    expect(cover).toMatch(
+      /background-image:.*url\(https:\/\/example\.com\/hero\.jpg\)/,
+    );
     expect(cover).not.toMatch(/position:\s*absolute/);
     // 图区用 padding-top 百分比压出（非固定 height clamp）
     expect(cover).toMatch(/padding:\s*52%/);
@@ -1782,10 +1905,15 @@ describe("好物种草：实物摄影 + 编号价格签 · 主题私有骨架 + 
       out.indexOf("wemd-sg-item-fig"),
       out.indexOf("wemd-sg-item-fig") + 400,
     );
-    expect(fig).toMatch(/background-image:.*url\(https:\/\/example\.com\/lamp\.jpg\)/);
+    expect(fig).toMatch(
+      /background-image:.*url\(https:\/\/example\.com\/lamp\.jpg\)/,
+    );
     expect(fig).not.toMatch(/position:\s*absolute/);
     // 组件根清掉共享 text-align:center，编号标签挂左上角
-    const root = out.slice(out.indexOf("wemd-image-caption"), out.indexOf("wemd-image-caption") + 200);
+    const root = out.slice(
+      out.indexOf("wemd-image-caption"),
+      out.indexOf("wemd-image-caption") + 200,
+    );
     expect(root).toMatch(/text-align:\s*left/);
     expect(root).not.toMatch(/text-align:\s*center/);
   });
@@ -1846,7 +1974,9 @@ describe("美食图谱：暖橙美食卡 + TOP 徽章 + 标签 · 主题私有�
       out.indexOf("wemd-fa-cover"),
       out.indexOf("wemd-fa-cover") + 400,
     );
-    expect(cover).toMatch(/background-image:.*url\(https:\/\/example\.com\/hero\.jpg\)/);
+    expect(cover).toMatch(
+      /background-image:.*url\(https:\/\/example\.com\/hero\.jpg\)/,
+    );
     // 无绝对定位叠字、无 fixed height clamp（padding-top 压图区）
     expect(cover).not.toMatch(/position:\s*absolute/);
     expect(cover).not.toMatch(/height:\s*clamp/);
@@ -1897,7 +2027,9 @@ TOP 1
       out.indexOf("wemd-fa-dish-fig"),
       out.indexOf("wemd-fa-dish-fig") + 300,
     );
-    expect(fig).toMatch(/background-image:.*url\(https:\/\/example\.com\/ramen\.jpg\)/);
+    expect(fig).toMatch(
+      /background-image:.*url\(https:\/\/example\.com\/ramen\.jpg\)/,
+    );
     expect(fig).not.toMatch(/position:\s*absolute/);
     // 组件根清掉共享 text-align:center，TOP 徽章挂左上角
     const root = out.slice(
@@ -1963,7 +2095,9 @@ describe("民宿纪：原木奶油大地暖调 · 主题私有骨架 + 皮肤", 
       out.indexOf("wemd-st-cover"),
       out.indexOf("wemd-st-cover") + 420,
     );
-    expect(cover).toMatch(/background-image:.*url\(https:\/\/example\.com\/cabin\.jpg\)/);
+    expect(cover).toMatch(
+      /background-image:.*url\(https:\/\/example\.com\/cabin\.jpg\)/,
+    );
     // 无绝对定位叠字、无 fixed height clamp（padding-top 压图区）
     expect(cover).not.toMatch(/position:\s*absolute/);
     expect(cover).not.toMatch(/height:\s*clamp/);
@@ -2019,7 +2153,9 @@ describe("民宿纪：原木奶油大地暖调 · 主题私有骨架 + 皮肤", 
       out.indexOf("wemd-st-fig"),
       out.indexOf("wemd-st-fig") + 300,
     );
-    expect(fig).toMatch(/background-image:.*url\(https:\/\/example\.com\/cabin\.jpg\)/);
+    expect(fig).toMatch(
+      /background-image:.*url\(https:\/\/example\.com\/cabin\.jpg\)/,
+    );
     expect(fig).not.toMatch(/position:\s*absolute/);
     // 组件根清掉共享 text-align:center，编号挂左上角
     const root = out.slice(
@@ -2054,7 +2190,7 @@ SLOW STAY · 2026.08.20
 describe("brand-sign：body 首段 logo 图片", () => {
   it("!`url` 语法：logo 进 .wemd-bs-logo，品牌名/slogan/style/版权正确", () => {
     const out = renderWithDefaultTheme(
-      "::: brand-sign{variant=\"inline\"}\n!`https://via.placeholder.com/64x64`\n\n**WeMD**\n\n优雅排版，不止所见\n\nstyle=inline divider=true\n\n*© 2026 WeMD Team*\n:::",
+      '::: brand-sign{variant="inline"}\n!`https://via.placeholder.com/64x64`\n\n**WeMD**\n\n优雅排版，不止所见\n\nstyle=inline divider=true\n\n*© 2026 WeMD Team*\n:::',
     );
     expect(out).toContain('class="wemd-bs-logo"');
     expect(out).toContain('src="https://via.placeholder.com/64x64"');
@@ -2066,7 +2202,7 @@ describe("brand-sign：body 首段 logo 图片", () => {
 
   it("骨架含 .wemd-bs-text 文字列，logo 在文字列之前（inline 左图右文）", () => {
     const out = renderWithDefaultTheme(
-      "::: brand-sign{variant=\"inline\"}\n!`https://via.placeholder.com/64x64`\n\n**WeMD**\n\n优雅排版，不止所见\n\n*© 2026 WeMD Team*\n:::",
+      '::: brand-sign{variant="inline"}\n!`https://via.placeholder.com/64x64`\n\n**WeMD**\n\n优雅排版，不止所见\n\n*© 2026 WeMD Team*\n:::',
     );
     expect(out).toContain('class="wemd-bs-text"');
     // logo 在 .wemd-bs-text 之前

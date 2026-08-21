@@ -14,11 +14,11 @@ export const sfMagazineCover = (): string =>
   [
     '<section class="wemd-component wemd-magazine-cover" data-component="magazine-cover">',
     '<div class="wemd-sf-frame">',
-    '<span class="wemd-sf-grain"></span>',
+    '<span class="wemd-sf-grain">&nbsp;</span>',
     '{{#if subtitle}}<div class="wemd-sf-kicker">{{slot:subtitle}}</div>{{/if}}',
     '{{#if title}}<div class="wemd-sf-title">{{slot:title}}</div>{{/if}}',
     '{{#if desc}}<div class="wemd-sf-sub">{{slot:desc}}</div>{{/if}}',
-    '<span class="wemd-sf-edge"></span>',
+    '<span class="wemd-sf-edge">&nbsp;</span>',
     "</div>",
     "</section>",
   ].join("\n");
@@ -26,7 +26,7 @@ export const sfMagazineCover = (): string =>
 export const sfEndCard = (): string =>
   [
     '<section class="wemd-component wemd-end-card" data-component="end-card">',
-    '<span class="wemd-sf-grain"></span>',
+    '<span class="wemd-sf-grain">&nbsp;</span>',
     '{{#if subtitle}}<div class="wemd-sf-lbl">{{slot:subtitle}}</div>{{/if}}',
     '{{#if title}}<div class="wemd-sf-reel-title">{{slot:title}}</div>{{/if}}',
     '{{#if deco}}<div class="wemd-sf-meta">{{slot:deco}}</div>{{/if}}',
@@ -37,9 +37,9 @@ export const sfCodeFrame = (): string =>
   [
     '<section class="wemd-component wemd-code-frame" data-component="code-frame">',
     '<div class="wemd-cf-header">',
-    '<span class="wemd-sf-dot wemd-sf-dot-r"></span>',
-    '<span class="wemd-sf-dot wemd-sf-dot-y"></span>',
-    '<span class="wemd-sf-dot wemd-sf-dot-g"></span>',
+    '<span class="wemd-sf-dot wemd-sf-dot-r">&nbsp;</span>',
+    '<span class="wemd-sf-dot wemd-sf-dot-y">&nbsp;</span>',
+    '<span class="wemd-sf-dot wemd-sf-dot-g">&nbsp;</span>',
     '{{#if title}}<span class="wemd-cf-title">{{slot:title}}</span>{{/if}}',
     "</div>",
     '{{#if code}}<div class="wemd-cf-code">{{slot:code}}</div>{{/if}}',
@@ -50,7 +50,7 @@ export const sfDivider = (): string =>
   [
     '<section class="wemd-component wemd-divider" data-component="divider">',
     '<div class="wemd-component-body">',
-    '<span class="wemd-sf-sprocket"></span>',
+    '<span class="wemd-sf-sprocket">&nbsp;</span>',
     "</div>",
     "</section>",
   ].join("\n");

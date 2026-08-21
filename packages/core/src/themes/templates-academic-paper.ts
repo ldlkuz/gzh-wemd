@@ -16,10 +16,10 @@
 export const academicPaperMagazineCover = (): string =>
   [
     '<section class="wemd-component wemd-magazine-cover" data-component="magazine-cover">',
-    '<span class="wemd-ap-frame"></span>',
+    '<span class="wemd-ap-frame">&nbsp;</span>',
     '{{#if subtitle}}<section class="wemd-ap-kicker">{{slot:subtitle}}</section>{{/if}}',
     '{{#if title}}<section class="wemd-ap-title">{{slot:title}}</section>{{/if}}',
-    '<span class="wemd-ap-rule"></span>',
+    '<span class="wemd-ap-rule">&nbsp;</span>',
     '{{#if desc}}<section class="wemd-ap-desc">{{slot:desc}}</section>{{/if}}',
     "</section>",
   ].join("\n");
@@ -30,7 +30,7 @@ export const academicPaperSectionDivider = (): string =>
     '<section class="wemd-component wemd-section-divider" data-component="section-divider">',
     '<span class="wemd-ap-part">{{slot:part}}</span>',
     '<section class="wemd-ap-title">{{slot:title}}</section>',
-    '<span class="wemd-ap-rule"></span>',
+    '<span class="wemd-ap-rule">&nbsp;</span>',
     "</section>",
   ].join("\n");
 
@@ -39,9 +39,9 @@ export const academicPaperDivider = (): string =>
   [
     '<section class="wemd-component wemd-divider" data-component="divider">',
     '<div class="wemd-component-body">',
-    '<span class="wemd-ap-line wemd-ap-line-l"></span>',
+    '<span class="wemd-ap-line wemd-ap-line-l">&nbsp;</span>',
     '<span class="wemd-ap-glyph">\u00A7</span>',
-    '<span class="wemd-ap-line wemd-ap-line-r"></span>',
+    '<span class="wemd-ap-line wemd-ap-line-r">&nbsp;</span>',
     "</div>",
     "</section>",
   ].join("\n");
@@ -51,13 +51,13 @@ export const academicPaperDividerFancy = (): string =>
   [
     '<section class="wemd-component wemd-divider-fancy" data-component="divider-fancy">',
     '<section class="wemd-df-label">',
-    '<span class="wemd-df-line wemd-df-line-left"></span>',
+    '<span class="wemd-df-line wemd-df-line-left">&nbsp;</span>',
     "{{#if label}}",
     '<span class="wemd-df-text">{{slot:label}}</span>',
     "{{else}}",
     '<span class="wemd-ap-glyph">\u00A7</span>',
     "{{/if}}",
-    '<span class="wemd-df-line wemd-df-line-right"></span>',
+    '<span class="wemd-df-line wemd-df-line-right">&nbsp;</span>',
     "</section>",
     "</section>",
   ].join("\n");

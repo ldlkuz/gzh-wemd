@@ -176,6 +176,9 @@ export const componentStylesKnowledgeBase = `/* === 知识库文章（知识档�
   display: block;
   margin-top: 8px;
   border-top: 1px solid #ddd6c6;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 
 /* === divider 细线（中和共享双线） === */
@@ -834,6 +837,9 @@ export const componentStylesKnowledgeBase = `/* === 知识库文章（知识档�
   height: 9px;
   border-radius: 50%;
   display: inline-block;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-code-frame .wemd-kb-dot-r { background: #c25450; }
 #wemd .wemd-code-frame .wemd-kb-dot-y { background: #d8a24a; }

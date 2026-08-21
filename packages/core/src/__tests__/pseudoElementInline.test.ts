@@ -27,8 +27,9 @@ describe("微信伪元素物化", () => {
 :::`,
     );
     expect(out).toContain('class="wemd-mat"');
-    // 色条：跟随主题主色（默认主题 → #07c160），不再强制 type 语义色
-    expect(out).toContain("background: #07c160");
+    // 色条：默认主题 callout-pro 色条改用容器 border-left（避免伪元素 + position:absolute 被公众号删除）
+    // 主色跟随主题（默认主题 → #07c160），不再强制 type 语义色
+    expect(out).toContain("border-left: 4px solid #07c160");
     // 图标显示
     expect(out).toContain("\u2139\uFE0F");
   });
@@ -110,7 +111,9 @@ describe("微信伪元素物化", () => {
 
   it("pullquote：原生 > 引用（blockquote 结构）物化引号并冲掉内层装饰", () => {
     // 应用环境开启了基础层自动套容器（getTemplate），原生 > 引用才被套成 pullquote
-    const parserWithNative = createMarkdownParser({ getTemplate: () => undefined });
+    const parserWithNative = createMarkdownParser({
+      getTemplate: () => undefined,
+    });
     const raw = parserWithNative.render(
       "> 这是原生引用内容，应套 pullquote 卡片。\n> 第二行引用。",
     );

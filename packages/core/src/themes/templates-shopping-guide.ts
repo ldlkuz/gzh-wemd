@@ -58,7 +58,7 @@ export const shoppingEndCard = (): string =>
   [
     '<section class="wemd-component wemd-end-card" data-component="end-card">',
     '<section class="wemd-sg-signoff">',
-    '<span class="wemd-sg-signoff-rule"></span>',
+    '<span class="wemd-sg-signoff-rule">&nbsp;</span>',
     '{{#if title}}<p class="wemd-sg-signoff-name">{{slot:title}}</p>{{/if}}',
     '{{#if subtitle}}<p class="wemd-sg-signoff-date">{{slot:subtitle}}</p>{{/if}}',
     "</section>",

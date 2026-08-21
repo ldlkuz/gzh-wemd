@@ -136,10 +136,16 @@ export const componentStylesModernEditorial = `/* === 编辑部手记：纸媒�
 #wemd .wemd-me-thick {
   height: 4px;
   background: #1c1a17;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-me-thin {
   height: 1px;
   background: #d9d3c4;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 
 /* === magazine-cover · 刊头（骨架定制） === */
@@ -225,6 +231,9 @@ export const componentStylesModernEditorial = `/* === 编辑部手记：纸媒�
   height: 1px;
   margin-top: 14px;
   background: #d9d3c4;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 
 /* === divider · 栏线（骨架定制） === */
@@ -255,7 +264,6 @@ export const componentStylesModernEditorial = `/* === 编辑部手记：纸媒�
 
 /* === quote-card · 大引语（骨架定制：超大引号，左对齐） === */
 #wemd .wemd-quote-card {
-  position: relative;
   margin: 40px 0 40px 10px;
   padding: 10px 0 12px 28px;
   background: transparent;
@@ -264,11 +272,17 @@ export const componentStylesModernEditorial = `/* === 编辑部手记：纸媒�
   border-radius: 0;
   box-shadow: none;
   text-align: left;
+  /* 容器不用 position:relative —— 引号通过正常流 + 负 margin 飘出左上角 */
 }
+/* 超大引号装饰（真实元素 span，模板首个子元素）。
+   原 position:absolute; top:-14px; left:-6px; → 正常流 + 负 margin：
+   - 原位置（padding-top 10, padding-left 28, border-left 3 → y=10, x=31）
+   - 目标 y=-14 → margin-top = -14 - 10 = -24px
+   - 目标 x=-6 → margin-left = -6 - 31 = -37px
+   - 字号 64 → margin-bottom=-64px 让后续正文与装饰字形重叠，不再额外占高。 */
 #wemd .wemd-quote-card .wemd-me-qmark {
-  position: absolute;
-  top: -14px;
-  left: -6px;
+  display: block;
+  margin: -24px 0 -64px -37px;
   font-family: Georgia, serif;
   font-size: 64px;
   line-height: 1;
@@ -295,7 +309,6 @@ export const componentStylesModernEditorial = `/* === 编辑部手记：纸媒�
 
 /* === full-quote · 编辑式引语（骨架定制） === */
 #wemd .wemd-full-quote {
-  position: relative;
   margin: 40px 0 40px 10px;
   padding: 24px 0 24px 26px;
   background: transparent;
@@ -303,11 +316,17 @@ export const componentStylesModernEditorial = `/* === 编辑部手记：纸媒�
   border-left: 4px solid #1c1a17;
   border-radius: 0;
   text-align: left;
+  /* 容器不用 position:relative —— 引号正常流 + 负 margin 定位 */
 }
+/* 编辑式引语超大引号装饰。
+   原 position:absolute; top:6px; left:-6px; → 正常流 + 负 margin：
+   - 原位置（padding-top 24, padding-left 26, border-left 4 → y=24, x=30）
+   - 目标 y=6 → margin-top = 6 - 24 = -18px
+   - 目标 x=-6 → margin-left = -6 - 30 = -36px
+   - 字号 60 → margin-bottom=-60px 让后续正文重叠。 */
 #wemd .wemd-full-quote .wemd-me-qmark {
-  position: absolute;
-  top: 6px;
-  left: -6px;
+  display: block;
+  margin: -18px 0 -60px -36px;
   font-family: Georgia, serif;
   font-size: 60px;
   line-height: 1;
@@ -469,22 +488,28 @@ export const componentStylesModernEditorial = `/* === 编辑部手记：纸媒�
   padding: 0; /* 去掉共享 padding-left:20px，让圆点能落在竖线上 */
 }
 #wemd .wemd-timeline .wemd-tl-item {
-  position: relative;
-  padding: 8px 0 8px 24px;
+  display: flex;
+  align-items: flex-start;
+  padding: 8px 0 8px 0;
+  margin: 0;
 }
+/* 墨点定位：flex 子项 + 负 margin-left 跨到竖线中心（公众号保留 flex，不依赖 position）。
+   几何：events border-left 1px + margin-left:8px → 竖线中心 x=8.5；padding:0 → item 内容起点
+   x=9；墨点宽 10px 半径 5px，margin-left:-5px 让左边缘到 x=9-5=4 → 圆心落在 x=4+5=9（≈竖线中心 8.5）。 */
 #wemd .wemd-timeline .wemd-tl-dot {
-  position: absolute;
-  left: -6px;
-  top: 8px;
-  transform: none; /* 自设定位：关闭共享圆点尺寸无关居中 */
+  flex: none;
   width: 10px;
   height: 10px;
+  margin-top: 6px;
+  margin-left: -5px;
+  margin-right: 12px;
   border-radius: 50%;
   background: #1c1a17;
   border: none;
   box-shadow: none;
 }
 #wemd .wemd-timeline .wemd-tl-text {
+  flex: 1;
   color: #1c1a17;
 }
 
@@ -701,6 +726,9 @@ export const componentStylesModernEditorial = `/* === 编辑部手记：纸媒�
   height: 1px;
   margin: 22px 0;
   background: #4a453e;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-end-card .wemd-me-editors {
   font-family: "Georgia", "Noto Serif SC", "Songti SC", "STSong", serif;

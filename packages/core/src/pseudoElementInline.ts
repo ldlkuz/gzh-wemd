@@ -135,11 +135,7 @@ function materializeCalloutPro(container: HTMLElement, css: string): boolean {
       // `.wemd-callout-pro::before { background: ... }`，parseRule 取最后匹配，
       // style 会带上主题背景 → 尊重主题色，避免「主题想用琥珀/科技蓝，却被
       // 物化器硬塞紫色」的竖条与卡片风格冲突。
-      if (
-        type &&
-        CALLOUT_TYPE_COLORS[type] &&
-        !/background\s*:/.test(style)
-      ) {
+      if (type && CALLOUT_TYPE_COLORS[type] && !/background\s*:/.test(style)) {
         style = `${style}; background: ${CALLOUT_TYPE_COLORS[type]}`.replace(
           /^;/,
           "",
@@ -230,10 +226,10 @@ function materializePullquote(container: HTMLElement, css: string): boolean {
   );
   if (!ps.length) return false;
 
-  // 若该 pullquote 已定制为「双色角线」装饰（存在 .wemd-pq-corner），
-  // 视觉已由角线承载，不再插入旧的 ::before 引号 span，避免装饰重复。
+  // 若该 pullquote 已定制为「双色角线」装饰（容器带 wemd-pq-cornered 标记，
+  // 直角由容器背景渐变承载），不再插入旧的 ::before 引号 span，避免装饰重复。
   const cornerRoot = ps[0].closest(".wemd-pullquote");
-  if (cornerRoot && cornerRoot.querySelector(".wemd-pq-corner")) {
+  if (cornerRoot && cornerRoot.classList.contains("wemd-pq-cornered")) {
     return false;
   }
 
@@ -267,7 +263,8 @@ function materializeFaq(container: HTMLElement, css: string): boolean {
   let changed = false;
 
   bodies.forEach((body) => {
-    // 挂角标题徽章：data-title 注入在外层 .wemd-faq 容器上，而非 body
+    // 挂角标题徽章：按 ::before 规则生成真实块级 span（display:block + 负 margin 贴左上，
+    // 与预览伪元素一致）。块级负 margin 定位可靠，公众号导出不偏移。
     const title = body.parentElement?.getAttribute("data-title");
     if (title && titleRule.style) {
       body.insertBefore(makeSpan(titleRule.style, title), body.firstChild);
@@ -295,7 +292,10 @@ function materializeDivider(container: HTMLElement, css: string): boolean {
 
   bodies.forEach((body) => {
     // 主题定制骨架已物化装饰元素（如 .wemd-dv-line），跳过，避免重复插入侧线
-    if (body.querySelector(".wemd-dv-line") || body.querySelector(".wemd-mat")) {
+    if (
+      body.querySelector(".wemd-dv-line") ||
+      body.querySelector(".wemd-mat")
+    ) {
       return;
     }
     const hasContent = body.children.length > 0;

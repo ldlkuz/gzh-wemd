@@ -6,10 +6,9 @@
  * - 胶片颗粒（SVG feTurbulence 噪点，组件级覆盖层）+ 漏光（径向光晕）
  * - 齿孔带（repeating-linear-gradient）、双线片框、暗房深紫黑终端
  * - 无整篇背景（#wemd 交给编辑器）；全部真实 DOM，无伪元素、无按钮式互动
+ * - 注意：SVG data URI 颗粒不能放进 background-image（公众号内联解析会因逗号/括号/引号
+ *   嵌套丢弃整条 background），故封面/落款改用单段线性渐变近似黄昏质感。
  */
-
-const GRAIN_URI =
-  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='table' tableValues='0 0.14'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
 
 export const componentStylesSunsetFilm = `/* === 落日胶片（胶片黄昏）组件样式 === */
 
@@ -49,16 +48,11 @@ export const componentStylesSunsetFilm = `/* === 落日胶片（胶片黄昏）�
   border-bottom: 1px dotted #f2762e;
 }
 
-/* 胶片颗粒覆盖层（真实 span，SVG 噪点背景） */
+/* 胶片颗粒：SVG data URI 无法安全进入 background-image（公众号内联解析会丢弃整条背景）。
+   颗粒质感放弃，改为单段线性渐变（封面/落款）近似黄昏层次；
+   原骨架中的 .wemd-sf-grain span 设为 display:none 避免占空间（带 &nbsp; 不会被当空元素删除）。 */
 #wemd .wemd-sf-grain {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: ${GRAIN_URI};
-  opacity: 0.5;
-  pointer-events: none;
+  display: none;
 }
 
 /* === 标题（衬线 + 黄昏调） === */
@@ -134,7 +128,6 @@ export const componentStylesSunsetFilm = `/* === 落日胶片（胶片黄昏）�
 
 /* === 封面静帧 magazine-cover === */
 #wemd .wemd-magazine-cover {
-  position: relative;
   margin: 4px 0 26px;
   padding: 0;
   background: transparent;
@@ -142,30 +135,26 @@ export const componentStylesSunsetFilm = `/* === 落日胶片（胶片黄昏）�
   border-radius: 0;
 }
 #wemd .wemd-magazine-cover .wemd-sf-frame {
-  position: relative;
+  /* 封面黄昏背景：单段 linear-gradient（公众号 100% 可解析，不依赖多段背景/data URI）。
+     用密集 color-stop 近似原「漏光 + 暗角」层次：左上金 → 中段落日橙 → 右下暮紫。
+     颗粒质感已放弃（SVG data URI 进 background 会导致整条背景在公众号丢失）。 */
   padding: 20px 22px 22px;
   border: 2px solid #352b2a;
   outline: 1px solid #352b2a;
   outline-offset: 4px;
-  background:
-    radial-gradient(140% 90% at 82% -12%, rgba(255, 207, 135, 0.5) 0%, transparent 55%),
-    radial-gradient(120% 100% at 8% 108%, rgba(74, 47, 78, 0.35) 0%, transparent 55%),
-    linear-gradient(160deg, #f9c27a 0%, #f2762e 45%, #b74f5e 78%, #4a2f4e 100%);
+  background-image: linear-gradient(160deg, #f9c27a 0%, #f9a860 22%, #f2762e 45%, #d6635f 65%, #b74f5e 78%, #6a3a52 92%, #4a2f4e 100%);
   overflow: hidden;
   text-align: center;
   color: #fff6ea;
+  /* 容器不用 position:relative（公众号会删除 relative/absolute；背景为单段渐变，无定位依赖） */
 }
 #wemd .wemd-magazine-cover .wemd-sf-kicker {
-  position: relative;
-  z-index: 1;
   font-family: "SF Mono", "Cascadia Code", Consolas, monospace;
   font-size: 11px;
   letter-spacing: 0.34em;
   color: rgba(255, 246, 234, 0.85);
 }
 #wemd .wemd-magazine-cover .wemd-sf-title {
-  position: relative;
-  z-index: 1;
   margin-top: 14px;
   font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
   font-size: 34px;
@@ -176,21 +165,25 @@ export const componentStylesSunsetFilm = `/* === 落日胶片（胶片黄昏）�
   text-shadow: 0 2px 14px rgba(74, 47, 78, 0.4);
 }
 #wemd .wemd-magazine-cover .wemd-sf-sub {
-  position: relative;
-  z-index: 1;
   margin-top: 12px;
   font-family: "SF Mono", "Cascadia Code", Consolas, monospace;
   font-size: 11px;
   letter-spacing: 0.26em;
   color: rgba(255, 246, 234, 0.85);
 }
+/* 封面底边缘渐变光（真实元素 span，骨架最后一个子元素）。
+   原 position:absolute; left/right/bottom:0; height:8px;
+   → 正常流 block + 负 margin 抵消容器左右/底部 padding，让它贴底铺满。
+   容器 padding: 20px 22px 22px → margin-left/right -22px, margin-bottom -22px。 */
 #wemd .wemd-magazine-cover .wemd-sf-edge {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  display: block;
+  width: auto;
   height: 8px;
+  margin: 20px -22px -22px -22px;
   background: linear-gradient(180deg, transparent, rgba(255, 246, 234, 0.18));
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 
 /* === 镜头号 section-divider === */
@@ -233,6 +226,9 @@ export const componentStylesSunsetFilm = `/* === 落日胶片（胶片黄昏）�
   height: 16px;
   background:
     linear-gradient(to right, transparent 0 10px, #e2d5c2 10px 14px) 0 0/22px 100% repeat-x;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 
 /* === divider-fancy 胶片细线 === */
@@ -254,7 +250,7 @@ export const componentStylesSunsetFilm = `/* === 落日胶片（胶片黄昏）�
 
 /* === 漏光引语 quote-card === */
 #wemd .wemd-quote-card {
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   margin: 26px 0;
   padding: 20px 22px;
   background:
@@ -267,7 +263,7 @@ export const componentStylesSunsetFilm = `/* === 落日胶片（胶片黄昏）�
   overflow: hidden;
 }
 #wemd .wemd-quote-card .wemd-qc-quote {
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   z-index: 1;
   font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
   font-size: 17px;
@@ -276,7 +272,7 @@ export const componentStylesSunsetFilm = `/* === 落日胶片（胶片黄昏）�
   color: #352b2a;
 }
 #wemd .wemd-quote-card .wemd-qc-author {
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   z-index: 1;
   display: block;
   margin-top: 10px;
@@ -288,7 +284,7 @@ export const componentStylesSunsetFilm = `/* === 落日胶片（胶片黄昏）�
 
 /* === full-quote 漏光引语 === */
 #wemd .wemd-full-quote {
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   margin: 26px 0;
   padding: 20px 22px;
   background:
@@ -301,7 +297,7 @@ export const componentStylesSunsetFilm = `/* === 落日胶片（胶片黄昏）�
   overflow: hidden;
 }
 #wemd .wemd-full-quote .wemd-fq-text {
-  position: relative;
+  /* 已移除 position: relative —— 公众号会删除 position: relative/absolute，所有装饰已改用正常流/flex+负 margin/border 实现，详见 theme-development-guide.md */
   z-index: 1;
   font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
   font-size: 17px;
@@ -728,10 +724,10 @@ export const componentStylesSunsetFilm = `/* === 落日胶片（胶片黄昏）�
 
 /* === 胶卷盘 end-card（深紫黑，浅字） === */
 #wemd .wemd-end-card {
-  position: relative;
   margin: 30px 0;
   padding: 30px 20px 24px;
-  background: linear-gradient(150deg, #3a2436 0%, #241a24 100%);
+  /* 深紫黑背景：单段 linear-gradient（公众号 100% 可解析；不用多段背景/data URI 颗粒） */
+  background-image: linear-gradient(150deg, #3a2436 0%, #241a24 100%);
   border: 1px solid #4a3044;
   border-radius: 0;
   box-shadow: none;
@@ -739,16 +735,12 @@ export const componentStylesSunsetFilm = `/* === 落日胶片（胶片黄昏）�
   overflow: hidden;
 }
 #wemd .wemd-end-card .wemd-sf-lbl {
-  position: relative;
-  z-index: 1;
   font-family: "SF Mono", "Cascadia Code", Consolas, monospace;
   font-size: 11px;
   letter-spacing: 0.3em;
   color: #d9a06a;
 }
 #wemd .wemd-end-card .wemd-sf-reel-title {
-  position: relative;
-  z-index: 1;
   margin-top: 12px;
   font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
   font-size: 22px;
@@ -760,8 +752,6 @@ export const componentStylesSunsetFilm = `/* === 落日胶片（胶片黄昏）�
   color: #ffb36b;
 }
 #wemd .wemd-end-card .wemd-sf-meta {
-  position: relative;
-  z-index: 1;
   margin-top: 12px;
   font-family: "SF Mono", "Cascadia Code", Consolas, monospace;
   font-size: 11px;
@@ -899,6 +889,9 @@ export const componentStylesSunsetFilm = `/* === 落日胶片（胶片黄昏）�
   height: 9px;
   border-radius: 50%;
   display: inline-block;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 #wemd .wemd-code-frame .wemd-sf-dot-r { background: #c25450; }
 #wemd .wemd-code-frame .wemd-sf-dot-y { background: #d8a24a; }

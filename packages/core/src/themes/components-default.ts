@@ -83,6 +83,9 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
   flex: 1;
   height: 1px;
   background: linear-gradient(to right, transparent, var(--wemd-primary, #07c160), transparent);
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 
 #wemd .wemd-divider-fancy .wemd-df-label .wemd-df-line-left {
@@ -184,24 +187,20 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
   padding: 20px 24px;
   border-radius: 12px;
   background: #ffffff;
-  border: 1px solid var(--wemd-border, #e2e8f0);
-  position: relative;
+  border-top: 1px solid var(--wemd-border, #e2e8f0);
+  border-right: 1px solid var(--wemd-border, #e2e8f0);
+  border-bottom: 1px solid var(--wemd-border, #e2e8f0);
+  /* 左侧色条：用 border-left（原生边框，微信 100% 保留，不依赖 ::before/position） */
+  border-left: 4px solid var(--wemd-primary, #07c160);
   overflow: hidden;
   box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+  /* 注：不设 position:relative —— 公众号会删除 relative/absolute，影响稳定。
+     原 ::before 色条已移到 border-left，z-index 语义不再需要。 */
 }
 
-/* 左侧色条：统一跟随主题主色 var(--wemd-primary)。
-   （原 type 变体用固定语义色，脱离主题导致竖条与主题风格冲突，故移除；
-   type 语义仅通过标题图标区分，见下方图标规则。） */
-#wemd .wemd-callout-pro::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  background: var(--wemd-primary, #07c160);
-}
+/* 左侧色条统一跟随主题主色（border-left-color 已设，见容器规则）。
+   不再用 ::before + absolute 色条 span（公众号删 position 会丢）。
+   type 语义仅通过标题图标区分，见下方图标规则。 */
 
 /* 标题（第一段，含 strong 或纯文本） */
 #wemd .wemd-callout-pro .wemd-component-body > p:first-child {
@@ -241,21 +240,25 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
 }
 
 #wemd .wemd-callout-pro .wemd-component-body ul li {
-  position: relative;
-  padding-left: 20px;
+  display: flex;
+  align-items: flex-start;
+  padding-left: 0;
   font-size: 15px;
   line-height: 1.75;
   color: var(--wemd-text-soft, #475569);
   margin: 4px 0;
 }
 
+/* 列表项圆点：flex 子项 + margin（不用 absolute 定位，公众号删 position 不丢）。
+   物化器按此规则生成 span，导出与预览一致 */
 #wemd .wemd-callout-pro .wemd-component-body ul li::before {
   content: "•";
-  position: absolute;
-  left: 4px;
+  flex: none;
+  width: 14px;
   color: var(--wemd-primary, #07c160);
   font-weight: bold;
   font-size: 18px;
+  line-height: 1.75;
 }
 
 /* === stats-block 数据统计块（accent 数字跳出来） === */
@@ -433,14 +436,14 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
   list-style: none;
   padding: 0 0 0 20px;
   margin: 0;
-  position: relative;
   border-left: 2px solid var(--wemd-primary, #07c160);
+  /* 注：不设 position:relative —— 公众号会删除 relative/absolute。此处仅用 border-left 画竖线即可。 */
 }
 
-/* 每一项 */
+/* 每一项：flex 行布局，圆点跨竖线居中（公众号保留 flex/负 margin，不依赖 position） */
 #wemd .wemd-timeline .wemd-tl-item {
-  position: relative;
-  padding: 8px 0;
+  display: flex;
+  align-items: flex-start;
   margin: 0;
   color: var(--wemd-text-soft, #334155);
   font-size: 14px;
@@ -449,26 +452,30 @@ export const componentStylesDefault = `/* === WeMD 组件样式（默认，跟�
 }
 
 #wemd .wemd-timeline .wemd-tl-text {
-  display: inline-block;
+  flex: 1;
   vertical-align: top;
 }
 
 /* 圆点（primary 边框，真实元素以兼容微信）。
-   尺寸无关居中：left:-21px 让圆点左边缘对准竖线中心（item 起点=border2+padding20，
-   竖线中心在 -21），transform:translateX(-50%) 再左移自身半宽 → 圆心始终落在竖线中心，
-   与圆点尺寸无关。主题只需改 size/color，无需重算 left（旧方案 left:-27px 只对 12px 成立，
-   主题改小圆点即偏出竖线）。自设布局的主题须加 transform:none 关掉此居中。 */
+   空心圆点定位：flex 子项 + 负 margin-left 向左跨到竖线中心。
+   几何：events border-left 2px（中心 x=1）+ padding-left 20px = item 内容起点 x=22；
+   圆点宽 12px 半径 6px，margin-left:-27px 让左边缘到 x=22-27=-5 → 圆心落在 x=-5+6=1=竖线中心。
+   与圆点尺寸无关（-27 = item起点22 + 圆点半宽6 - 竖线中心1）。文字 flex:1 排右侧，多行正常换行。
+   不再用 position:absolute（公众号会删除，导致圆点退回流内变实心绿点错位）。
+   注：早期误用 left:-21px / m-26px 会让圆心落到 x=7/2，偏右 6/1px；须精确等于 -27px。 */
 #wemd .wemd-timeline .wemd-tl-dot {
-  position: absolute;
-  left: -21px;
-  transform: translateX(-50%);
-  top: 14px;
+  flex: none;
   width: 12px;
   height: 12px;
+  margin-top: 5px;
+  margin-left: -27px;
+  margin-right: 10px;
   border-radius: 50%;
   background: #ffffff;
   border: 2px solid var(--wemd-primary, #07c160);
   box-sizing: border-box;
-  z-index: 1;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 `;

@@ -18,19 +18,20 @@
 export const morandiForestMagazineCover = (): string =>
   [
     '<section class="wemd-component wemd-magazine-cover" data-component="magazine-cover">',
+    // 装饰元素均带 &nbsp; 真实内容（空元素会被公众号删除），皮肤以 font-size:0 隐形
     '<div class="wemd-mf-canopy">',
-    '<span class="wemd-mf-vine"></span>',
-    '<span class="wemd-mf-leaf"></span>',
-    '<span class="wemd-mf-leaf wemd-mf-leaf-pine"></span>',
-    '<span class="wemd-mf-leaf wemd-mf-leaf-mist"></span>',
-    '<span class="wemd-mf-leaf"></span>',
-    '<span class="wemd-mf-vine"></span>',
+    '<span class="wemd-mf-vine">&nbsp;</span>',
+    '<span class="wemd-mf-leaf">&nbsp;</span>',
+    '<span class="wemd-mf-leaf wemd-mf-leaf-pine">&nbsp;</span>',
+    '<span class="wemd-mf-leaf wemd-mf-leaf-mist">&nbsp;</span>',
+    '<span class="wemd-mf-leaf">&nbsp;</span>',
+    '<span class="wemd-mf-vine">&nbsp;</span>',
     "</div>",
     '{{#if subtitle}}<section class="wemd-mf-kicker">{{slot:subtitle}}</section>{{/if}}',
     '{{#if title}}<section class="wemd-mf-title">{{slot:title}}</section>{{/if}}',
-    '<span class="wemd-mf-mistline"></span>',
+    '<span class="wemd-mf-mistline">&nbsp;</span>',
     '{{#if desc}}<section class="wemd-mf-desc">{{slot:desc}}</section>{{/if}}',
-    '<span class="wemd-mf-ridge"></span>',
+    '<span class="wemd-mf-ridge">&nbsp;</span>',
     "</section>",
   ].join("\n");
 
@@ -41,8 +42,8 @@ export const morandiForestSectionDivider = (): string =>
     '<span class="wemd-mf-big">{{slot:part}}</span>',
     '<div class="wemd-mf-row">',
     '<section class="wemd-mf-title">{{slot:title}}</section>',
-    '<span class="wemd-mf-line"></span>',
-    '<span class="wemd-mf-leaf"></span>',
+    '<span class="wemd-mf-line">&nbsp;</span>',
+    '<span class="wemd-mf-leaf">&nbsp;</span>',
     "</div>",
     "</section>",
   ].join("\n");
@@ -52,10 +53,10 @@ export const morandiForestDivider = (): string =>
   [
     '<section class="wemd-component wemd-divider" data-component="divider">',
     '<div class="wemd-component-body">',
-    '<span class="wemd-mf-dline"></span>',
-    '<span class="wemd-mf-drip"><span class="wemd-mf-leaf"></span></span>',
-    '<span class="wemd-mf-drip"><span class="wemd-mf-leaf wemd-mf-leaf-mist"></span></span>',
-    '<span class="wemd-mf-dline"></span>',
+    '<span class="wemd-mf-dline">&nbsp;</span>',
+    '<span class="wemd-mf-drip"><span class="wemd-mf-leaf">&nbsp;</span></span>',
+    '<span class="wemd-mf-drip"><span class="wemd-mf-leaf wemd-mf-leaf-mist">&nbsp;</span></span>',
+    '<span class="wemd-mf-dline">&nbsp;</span>',
     "</div>",
     "</section>",
   ].join("\n");
@@ -64,7 +65,7 @@ export const morandiForestDivider = (): string =>
 export const morandiForestQuoteCard = (): string =>
   [
     '<section class="wemd-component wemd-quote-card" data-component="quote-card">',
-    '<span class="wemd-mf-hang"><span class="wemd-mf-stem"></span><span class="wemd-mf-leaf wemd-mf-leaf-clay"></span></span>',
+    '<span class="wemd-mf-hang"><span class="wemd-mf-stem">&nbsp;</span><span class="wemd-mf-leaf wemd-mf-leaf-clay">&nbsp;</span></span>',
     '<section class="wemd-qc-quote">{{slot:quote}}</section>',
     '{{#if author}}<section class="wemd-qc-author">{{slot:author}}</section>{{/if}}',
     "</section>",
@@ -75,13 +76,13 @@ export const morandiForestEndCard = (): string =>
   [
     '<section class="wemd-component wemd-end-card" data-component="end-card">',
     '<div class="wemd-mf-canopy">',
-    '<span class="wemd-mf-leaf"></span>',
-    '<span class="wemd-mf-leaf"></span>',
-    '<span class="wemd-mf-leaf"></span>',
+    '<span class="wemd-mf-leaf">&nbsp;</span>',
+    '<span class="wemd-mf-leaf">&nbsp;</span>',
+    '<span class="wemd-mf-leaf">&nbsp;</span>',
     "</div>",
     '{{#if title}}<section class="wemd-ec-title">{{slot:title}}</section>{{/if}}',
     '{{#if subtitle}}<section class="wemd-ec-subtitle">{{slot:subtitle}}</section>{{/if}}',
-    '<span class="wemd-mf-mistline"></span>',
+    '<span class="wemd-mf-mistline">&nbsp;</span>',
     "</section>",
   ].join("\n");
 

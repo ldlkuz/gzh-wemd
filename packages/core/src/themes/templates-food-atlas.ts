@@ -55,7 +55,7 @@ export const foodEndCard = (): string =>
   [
     '<section class="wemd-component wemd-end-card" data-component="end-card">',
     '<section class="wemd-fa-signoff">',
-    '<span class="wemd-fa-signoff-rule"></span>',
+    '<span class="wemd-fa-signoff-rule">&nbsp;</span>',
     '{{#if title}}<p class="wemd-fa-signoff-name">{{slot:title}}</p>{{/if}}',
     '{{#if subtitle}}<p class="wemd-fa-signoff-date">{{slot:subtitle}}</p>{{/if}}',
     "</section>",
