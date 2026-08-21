@@ -31,7 +31,8 @@
   },
   "win": {
     "target": ["nsis", "zip"],
-    "icon": "assets/icon.ico"
+    "icon": "assets/icon.ico",
+    "artifactName": "WeMD-Setup-${version}.${ext}"
   },
   "nsis": {
     "oneClick": false,
