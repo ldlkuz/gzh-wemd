@@ -7,6 +7,8 @@ WORKDIR /build
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json turbo.json ./
 COPY packages/ ./packages/
 COPY apps/web/ ./apps/web/
+# web 构建脚本依赖 scripts/sync-version.mjs（node ../../scripts/...），必须一并复制
+COPY scripts/ ./scripts/
 
 # 使用与仓库一致的 pnpm 版本，避免 latest 带来不兼容
 RUN corepack enable && \
