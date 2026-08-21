@@ -5,7 +5,7 @@ node_modules/
 .pnpm-store/
 dist/
 .env
-.npmrc
+# .npmrc 需提交：node-linker=hoisted 保证 electron-builder 完整收集传递依赖
 apps/macos/
 # Electron
 apps/electron/node_modules/
