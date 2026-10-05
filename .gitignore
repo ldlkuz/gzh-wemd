@@ -12,6 +12,7 @@ apps/electron/node_modules/
 apps/electron/dist/
 apps/electron/web-dist/
 apps/electron/server-bundle/
+apps/electron/.server-runtime/
 apps/electron/release/
 .tmp/
 
