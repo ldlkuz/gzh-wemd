@@ -7,12 +7,31 @@
  * esbuild 不像 Vite 会探测扩展名，故在此重定向到真实文件。
  */
 import { build } from "esbuild";
+import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
 const root = fileURLToPath(new URL("../..", import.meta.url)); // repo 根
-const coreNodeModules = path.join(root, "packages/core/node_modules");
-const mditToken = path.join(coreNodeModules, "markdown-it/lib/token.mjs");
+
+/**
+ * 定位 markdown-it 的 ESM token 文件。
+ * 本仓库 .npmrc 为 node-linker=hoisted，CI 全新安装后依赖平铺在根 node_modules；
+ * 本地若存在未被提升的旧结构，则回退到 packages/core/node_modules。按序探测取第一个存在的。
+ */
+function resolveMditToken() {
+  const candidates = [
+    path.join(root, "node_modules/markdown-it/lib/token.mjs"),
+    path.join(root, "packages/core/node_modules/markdown-it/lib/token.mjs"),
+  ];
+  const hit = candidates.find((p) => existsSync(p));
+  if (!hit) {
+    throw new Error(
+      `未找到 markdown-it/lib/token.mjs，已尝试：\n${candidates.join("\n")}`,
+    );
+  }
+  return hit;
+}
+const mditToken = resolveMditToken();
 
 await build({
   entryPoints: ["src/index.ts"],
