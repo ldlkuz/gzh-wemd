@@ -134,4 +134,23 @@ contextBridge.exposeInMainWorld('electron', {
             ipcRenderer.invoke('clipboard:writeHTML', payload),
         writeText: (text: string) => ipcRenderer.invoke('clipboard:writeText', text),
     },
+
+    // 渲染服务管理（本地 HTTP 渲染服务）
+    server: {
+        start: (payload?: { port?: number }) => ipcRenderer.invoke('server:start', payload),
+        stop: () => ipcRenderer.invoke('server:stop'),
+        status: () => ipcRenderer.invoke('server:status'),
+        onStatusChange: (callback: (status: {
+            running: boolean;
+            port: number | null;
+            error?: string;
+        }) => void) => {
+            const handler = (_event: IpcRendererEvent, data: any) => callback(data);
+            ipcRenderer.on('server:status', handler);
+            return handler;
+        },
+        removeStatusListener: (handler: any) => {
+            ipcRenderer.removeListener('server:status', handler);
+        },
+    },
 });

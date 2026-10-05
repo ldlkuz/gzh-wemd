@@ -18,6 +18,18 @@
       "filter": ["**/*", "!**/.DS_Store"]
     },
     {
+      "from": ".server-runtime/server-dist",
+      "to": "server-dist",
+      "filter": ["**/*", "!**/.DS_Store"]
+    },
+    {
+      "from": ".server-runtime/theme-guides",
+      "to": "theme-guides",
+      "filter": ["**/*", "!**/.DS_Store"]
+    }
+  ],
+  "extraFiles": [
+    {
       "from": "../../wechat-plugin",
       "to": "wechat-plugin",
       "filter": ["**/*", "!**/.DS_Store"]

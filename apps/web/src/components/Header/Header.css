@@ -134,6 +134,48 @@
   color: white !important;
 }
 
+/* 按钮右上角状态圆点（如渲染服务运行状态） */
+.floating-btn .floating-btn-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid var(--glass-bg, #fff);
+  background: var(--wemd-status-stopped, #ef4444);
+  pointer-events: none;
+}
+.floating-btn .floating-btn-badge.is-running {
+  background: var(--wemd-status-running, #22c55e);
+}
+
+/* 带文字的按钮形态：图标 + 文字 + 行内状态点 */
+.floating-btn.floating-btn-has-text {
+  padding: 0 12px;
+  width: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.floating-btn .floating-btn-text {
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.floating-btn .floating-btn-statdot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+  background: var(--wemd-status-stopped, #ef4444);
+  box-shadow: 0 0 0 2px var(--glass-bg, #fff);
+}
+.floating-btn .floating-btn-statdot.is-running {
+  background: var(--wemd-status-running, #22c55e);
+}
+
 /* 浮动工具栏 tooltip - 显示在左侧 */
 .floating-btn[data-tooltip] {
   position: relative;

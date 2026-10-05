@@ -97,6 +97,29 @@ interface ElectronAPI {
     }) => Promise<{ success: boolean; error?: string }>;
     writeText: (text: string) => Promise<{ success: boolean; error?: string }>;
   };
+  server?: {
+    start: (payload?: { port?: number }) => Promise<{
+      running: boolean;
+      port: number | null;
+      pid?: number;
+      error?: string;
+    }>;
+    stop: () => Promise<{ running: boolean; port: number | null }>;
+    status: () => Promise<{
+      running: boolean;
+      port: number | null;
+      pid?: number;
+      error?: string;
+    }>;
+    onStatusChange: (
+      callback: (status: {
+        running: boolean;
+        port: number | null;
+        error?: string;
+      }) => void,
+    ) => unknown;
+    removeStatusListener: (handler: unknown) => void;
+  };
 }
 
 declare global {

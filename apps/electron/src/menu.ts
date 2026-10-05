@@ -4,8 +4,9 @@ import { app } from "electron";
 import { checkForUpdates } from "./updater";
 
 function getPluginRootPath(): string {
+  // 与 shellHandlers 保持一致：extraFiles 释放到安装根目录（用户可见）
   if (app.isPackaged) {
-    return path.join(process.resourcesPath, "wechat-plugin");
+    return path.join(path.dirname(process.execPath), "wechat-plugin");
   }
   return path.resolve(__dirname, "../../../wechat-plugin");
 }

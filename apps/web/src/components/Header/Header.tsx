@@ -20,6 +20,15 @@ const AiSettings = lazy(() =>
     default: m.AiSettings,
   })),
 );
+const RenderServerSettings = lazy(() =>
+  import("../RenderServer/RenderServerSettings").then((m) => ({
+    default: m.RenderServerSettings,
+  })),
+);
+const HelpModal = lazy(() =>
+  import("../Help/HelpModal").then((m) => ({ default: m.HelpModal })),
+);
+
 import {
   Layers,
   Palette,
@@ -32,10 +41,13 @@ import {
   ChevronsDown,
   Sparkles,
   Bug,
+  Server,
+  HelpCircle,
 } from "lucide-react";
 import { useUITheme } from "../../hooks/useUITheme";
 import { useWindowControls } from "../../hooks/useWindowControls";
 import { Modal, FloatingToolbarButton } from "../common";
+import { useRenderServer } from "../RenderServer/useRenderServer";
 import { AI_SETTINGS_EVENT } from "../../services/ai/aiConfig";
 import { OPEN_THEME_PANEL_EVENT } from "../../services/theme/openThemePanelEvent";
 
@@ -132,11 +144,16 @@ export function Header({ debugMode = false, onToggleDebug }: HeaderProps) {
   const [showStorageModal, setShowStorageModal] = useState(false);
   const [showImageHostModal, setShowImageHostModal] = useState(false);
   const [showAiSettingsModal, setShowAiSettingsModal] = useState(false);
+  const [showRenderServerModal, setShowRenderServerModal] = useState(false);
+  const [showHelpModal, setShowHelpModal] = useState(false);
   const uiTheme = useUITheme((state) => state.theme);
   const setTheme = useUITheme((state) => state.setTheme);
   const isStructuralismUI = uiTheme === "dark";
 
   const { isElectron, isWindows, platform } = useWindowControls();
+
+  // 渲染服务就地开关：运行=绿点，未运行=红点；点击即启动/停止
+  const renderServer = useRenderServer();
 
   // 自动隐藏标题栏状态
   const [autoHide, setAutoHide] = useState(() => {
@@ -226,6 +243,31 @@ export function Header({ debugMode = false, onToggleDebug }: HeaderProps) {
             onClick={() => setShowAiSettingsModal(true)}
           />
           <FloatingToolbarButton
+            icon={<HelpCircle size={18} strokeWidth={2} />}
+            label="使用帮助"
+            onClick={() => setShowHelpModal(true)}
+          />
+          {isElectron && renderServer.api && (
+            <FloatingToolbarButton
+              icon={<Server size={16} strokeWidth={2} />}
+              label={
+                renderServer.status.running
+                  ? `渲染API · 运行中（端口 ${renderServer.status.port}）· 点击停止`
+                  : "渲染API · 已停止 · 点击启动"
+              }
+              onClick={() => {
+                if (renderServer.busy) return;
+                if (renderServer.status.running) {
+                  void renderServer.stop();
+                } else {
+                  void renderServer.start();
+                }
+              }}
+              text="渲染API"
+              statusDot={renderServer.status.running ? "running" : "stopped"}
+            />
+          )}
+          <FloatingToolbarButton
             icon={<Palette size={18} strokeWidth={2} />}
             label="主题管理"
             onClick={() => setShowThemePanel(true)}
@@ -282,6 +324,14 @@ export function Header({ debugMode = false, onToggleDebug }: HeaderProps) {
             >
               <span>文章主题</span>
             </button>
+            {isElectron && (
+              <button
+                className="nav-item"
+                onClick={() => setShowRenderServerModal(true)}
+              >
+                <span>渲染API</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -295,9 +345,15 @@ export function Header({ debugMode = false, onToggleDebug }: HeaderProps) {
               <Sparkles size={18} strokeWidth={2} />
             </button>
             <button
-              className={`btn-icon-only ${
-                debugMode ? "is-active" : ""
-              }`}
+              className="btn-icon-only"
+              onClick={() => setShowHelpModal(true)}
+              title="使用帮助"
+              aria-label="使用帮助"
+            >
+              <HelpCircle size={18} strokeWidth={2} />
+            </button>
+            <button
+              className={`btn-icon-only ${debugMode ? "is-active" : ""}`}
               onClick={onToggleDebug}
               title={
                 debugMode
@@ -404,6 +460,40 @@ export function Header({ debugMode = false, onToggleDebug }: HeaderProps) {
           }
         >
           <AiSettings />
+        </Suspense>
+      </Modal>
+
+      <Modal
+        open={showRenderServerModal}
+        onClose={() => setShowRenderServerModal(false)}
+        title="渲染API"
+        className="modal-narrow"
+      >
+        <Suspense
+          fallback={
+            <div style={{ padding: "20px", textAlign: "center" }}>
+              loading...
+            </div>
+          }
+        >
+          <RenderServerSettings />
+        </Suspense>
+      </Modal>
+
+      <Modal
+        open={showHelpModal}
+        onClose={() => setShowHelpModal(false)}
+        title="使用帮助"
+        className="modal-narrow"
+      >
+        <Suspense
+          fallback={
+            <div style={{ padding: "20px", textAlign: "center" }}>
+              loading...
+            </div>
+          }
+        >
+          <HelpModal onClose={() => setShowHelpModal(false)} />
         </Suspense>
       </Modal>
     </>

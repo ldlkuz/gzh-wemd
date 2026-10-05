@@ -1,0 +1,126 @@
+.render-server-desc {
+  margin: 0 0 16px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: #666;
+}
+
+.render-server-desc code {
+  padding: 1px 5px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  font-size: 12px;
+  color: #333;
+}
+
+.render-server-status-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.render-server-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.render-server-indicator.is-running {
+  background: #07c160;
+  box-shadow: 0 0 0 3px rgba(7, 193, 96, 0.18);
+}
+
+.render-server-indicator.is-stopped {
+  background: #bbb;
+}
+
+.render-server-state {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.render-server-port {
+  font-size: 12px;
+  color: #888;
+}
+
+.render-server-url {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+  font-size: 12px;
+  color: #666;
+}
+
+.render-server-url code {
+  padding: 2px 6px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  font-size: 12px;
+  color: #07c160;
+}
+
+.render-server-actions {
+  margin-top: 4px;
+}
+
+.render-server-start-btn,
+.render-server-stop-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.render-server-start-btn {
+  background: #07c160;
+  color: #fff;
+}
+
+.render-server-start-btn:hover {
+  opacity: 0.9;
+}
+
+.render-server-stop-btn {
+  background: #f3f4f6;
+  color: #444;
+}
+
+.render-server-stop-btn:hover {
+  background: #e9eaec;
+}
+
+.render-server-start-btn:disabled,
+.render-server-stop-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.render-server-empty {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 24px 0;
+  color: #888;
+  font-size: 13px;
+}
+
+.spinning {
+  animation: render-server-spin 1s linear infinite;
+}
+
+@keyframes render-server-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

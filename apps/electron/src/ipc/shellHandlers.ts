@@ -3,8 +3,10 @@ import type { IpcMainInvokeEvent } from "electron";
 import { app, ipcMain, shell } from "electron";
 
 function getPluginRootPath(): string {
+  // 插件通过 electron-builder 的 extraFiles 释放到安装根目录（用户可见），
+  // 而非隐藏的 resources 目录，方便用户按说明手动安装。
   if (app.isPackaged) {
-    return path.join(process.resourcesPath, "wechat-plugin");
+    return path.join(path.dirname(process.execPath), "wechat-plugin");
   }
   return path.resolve(__dirname, "../../../../wechat-plugin");
 }

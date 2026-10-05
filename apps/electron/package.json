@@ -1,6 +1,6 @@
 {
   "name": "wemd-electron",
-  "version": "1.4.8",
+  "version": "1.5.0",
   "description": "WeMD - 更优雅的 Markdown 公众号排版工具",
   "main": "dist/main.js",
   "homepage": "https://wemd.app",
@@ -10,10 +10,11 @@
     "test": "node ../../scripts/sync-version.mjs && rimraf dist && tsc && node --test dist/**/*.test.js",
     "dev": "node ../../scripts/sync-version.mjs && rimraf dist && tsc && electron .",
     "start": "electron .",
+    "assemble:server": "node scripts/assemble-server-runtime.mjs",
     "build:web": "pnpm --filter @wemd/web run build",
-    "build:mac": "npm run build:web && npm run build && electron-builder --mac --arm64 -c electron-builder.json --publish never",
-    "build:win": "npm run build:web && npm run build && electron-builder --win -c electron-builder.json --publish never",
-    "build:linux": "npm run build:web && npm run build && electron-builder --linux -c electron-builder.json --publish never"
+    "build:mac": "npm run build:web && npm run build && npm run assemble:server && electron-builder --mac --arm64 -c electron-builder.json --publish never",
+    "build:win": "npm run build:web && npm run build && npm run assemble:server && electron-builder --win -c electron-builder.json --publish never",
+    "build:linux": "npm run build:web && npm run build && npm run assemble:server && electron-builder --linux -c electron-builder.json --publish never"
   },
   "keywords": [
     "markdown",
