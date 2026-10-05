@@ -474,7 +474,7 @@ export function MarkdownEditor({
       const customTheme = customThemes.find((t) => t.id === themeId);
       const customDef = customTheme?.definition;
       const themeLayout = customDef?.layout || builtInDef?.layout;
-      const { text: guide, knownIds } = buildRewriteGuide(
+      const { text: guide, knownIds } = await buildRewriteGuide(
         themeId,
         undefined,
         customDef,

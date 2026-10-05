@@ -131,6 +131,11 @@ function buildThemeHint(themeLayout: LayoutPreference): string {
     "## 主题约束（当前使用的品牌规范）",
     `- 风格基调：${themeLayout.tone.join("、")}`,
     `- 排版密度：${themeLayout.density}`,
+    `- 段落风格：${
+      themeLayout.paragraphStyle === "prose"
+        ? "大段穿甲：把语义连续的短句合并为 3~5 句一段，段与段之间用空行分隔，不做一句一段"
+        : "移动端短句分段（默认）"
+    }`,
     `- 主题偏好的组件：`,
     componentsDesc,
     reasonHint,

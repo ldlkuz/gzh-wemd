@@ -10,8 +10,14 @@
  * 配套 validateRewrite 做组件合法 + 围栏闭合检测，结果先预览、可撤销。
  */
 import type { ThemeDefinition, LayoutPreference } from "@wemd/core";
-import { buildAIGuide, getBuiltInThemeDefinition } from "@wemd/core";
+import { getBuiltInThemeDefinition } from "@wemd/core";
 import { callLLM } from "./llm";
+import { resolveAppAssetPath } from "../../utils/assetPath";
+
+/** 手写组件手册静态资源所在目录（随 web 打包，见 apps/web/public/theme-guides/） */
+const GUIDE_BASE = "theme-guides";
+/** 手写手册文件名前缀：<base>/theme-ai-guide-<themeId>.md */
+const GUIDE_FILE_PREFIX = "theme-ai-guide-";
 
 /** 单次重写能承受的原文长度上限（字符）。超限需分段或提示，防截断 */
 export const REWRITE_MAX_CHARS = 8000;
@@ -26,23 +32,51 @@ export interface RewriteValidation {
   truncated: boolean;
 }
 
-/** 解析原文重写前的 LLM 引导手册。
- * allowedComponents 缺省 = 全部组件（由 AI 自行决定用哪些）。
- * 已知组件集合直接扫描手册标题得到，与喂给 AI 的清单严格一致，避免硬编码漂移。 */
-export function buildRewriteGuide(
+/** 手写手册完整 URL：<theme-guidesBase>/theme-ai-guide-<themeId>.md */
+function guideUrl(themeId: string): string {
+  return resolveAppAssetPath(`${GUIDE_BASE}/${GUIDE_FILE_PREFIX}${themeId}.md`);
+}
+
+/** 从手册正文提取组件 id：兼容手写格式（::: 组件id）与程序化格式（### 组件id）。 */
+function extractKnownIds(text: string): Set<string> {
+  const ids = new Set<string>();
+  // 手写手册：每个专属/默认组件示例块以 "::: 组件id" 开头
+  const colonRe = /^::: ([a-z][\w-]*)/gm;
+  let m: RegExpExecArray | null;
+  while ((m = colonRe.exec(text))) ids.add(m[1]);
+  // 程序化手册：章节标题为 "### 组件id"
+  const headingRe = /^### ([\w-]+)/gm;
+  while ((m = headingRe.exec(text))) ids.add(m[1]);
+  return ids;
+}
+
+/**
+ * 解析原文重写前的 LLM 引导手册。
+ * - 内置主题：读取 web public/theme-guides/theme-ai-guide-<themeId>.md 手写手册。
+ * - 自定义/导入主题：读取其自定义定义里的 guide 字段（手写手册）。
+ * 两者皆无时抛错，提示主题缺少组件手册，不静默降级。
+ * knownIds 与实际喂给 AI 的手册内容严格一致（扫描 ::: 与 ### 标题），避免硬编码漂移。
+ */
+export async function buildRewriteGuide(
   themeId: string,
-  allowedComponents?: string[],
+  _allowedComponents?: string[],
   customDef?: ThemeDefinition,
-): { text: string; knownIds: Set<string> } {
-  const themeDef =
-    customDef ??
-    (getBuiltInThemeDefinition(themeId) as ThemeDefinition | undefined);
-  const text = buildAIGuide(themeDef ?? themeId, {
-    only: allowedComponents?.length ? allowedComponents : undefined,
-  });
-  // 从手册的 "### 组件id" 章节标题提取允许集合
-  const ids = [...text.matchAll(/^### ([\w-]+)/gm)].map((m) => m[1]);
-  return { text, knownIds: new Set(ids) };
+): Promise<{ text: string; knownIds: Set<string> }> {
+  let text = "";
+  if (!customDef && getBuiltInThemeDefinition(themeId)) {
+    // 内置主题：手写手册走公共静态资源
+    const res = await fetch(guideUrl(themeId));
+    if (res.ok) text = await res.text();
+  } else if (customDef?.guide) {
+    // 自定义/导入主题：用主题自带 guide 字段
+    text = customDef.guide;
+  }
+  if (!text) {
+    throw new Error(
+      `主题「${customDef?.meta?.name ?? themeId}」缺少组件手册（guide），无法进行 AI 排版。请为该主题补上手写组件手册后重试。`,
+    );
+  }
+  return { text, knownIds: extractKnownIds(text) };
 }
 
 /**
@@ -67,18 +101,21 @@ export async function rewriteArticle(
     "你是一个资深的微信公众号版式设计师。任务：根据下方『组件手册』，把用户文章重新排版为整篇 Markdown。",
     "",
     "规则：",
-    "1. 严格按照『组件手册』每个组件标注的语法书写，不得写成手册外的形式：",
-    "   - 手册标注「原生组件」或「可用原生语法——推荐」的，一律用原生 Markdown：",
+    "1. 组件分两类，书写方式不变：",
+    "   - 原生组件（普通标题、引用、表格、代码块、分隔线、单图、多图）：直接用原生 Markdown，",
     "     标题用 `## 1. …`（编号开头成编号章节）/ `## …`、表格用 `| a | b |`、",
     "     金句用 `> 引用`、分隔线用 `---`、图片用 `![]()`、代码用 ```围栏；这些【不要】用 ::: 包裹。",
-    "   - 只有标注「可用 ::: 指令」「纯组件」的（如 ::: steps / timeline / stats-block / quote-card / end-card / magazine-cover）才用 ::: 包裹。",
+    "   - 手册里给出的 `::: xxxx` 结构组件（每个示例块以 `::: 组件id` 开头）：只有这类才用 ::: 包裹，",
+    "     照抄手册示例、把 {占位} 换成你的内容，不得写成其他形式。",
     "2. 重组结构与包装：章节标题一律用 `##` 原生标题（不要写成 ::: numbered-heading / section-title）；",
     "   步骤用 ::: steps、时间线用 ::: timeline、数据段用 ::: stats-block 或原生表格、金句用 ::: quote-card、结尾用 ::: end-card。",
     "3. 允许对措辞做轻微润色，但必须：不改动事实/数字/人名/日期、不新增原文没有的信息、不缺删原文要点。",
-    "4. 组件内容严格按手册的『骨架渲染顺序』组织，保证落到正确槽位。",
+    "4. 组件内容严格按手册示例的『槽位顺序』组织，落到正确位置。",
     "5. 保留原文的图片（![]()）、代码、表格、链接，原样放进合适位置。",
     "6. 输出整篇最终 Markdown，不得用 ``` 包裹全文，不要任何解释或前后缀文字。",
     "7. 组件使用克制，避免过度堆砌；装饰组件（divider-fancy 等）按需使用。",
+    "8. 正文段落风格严格按『主题约束』里的「段落风格」执行，不要自己想当然地一句一段或堆空行。",
+    "9. ::: 组件内部禁止用空行把一行内容拆成两段：属标题/加粗/署名/图片/序号/按段落定位的内容必须连行紧排；只有多段正文类槽（如 body）才允许用空行分多段。",
   ].join("\n");
 
   const user = [
@@ -104,9 +141,14 @@ function formatThemeLayout(layout: LayoutPreference | undefined): string {
       : layout.density === "low"
         ? "简洁、少用组件"
         : "适中、适度点缀";
+  const paragraphLabel =
+    layout.paragraphStyle === "prose"
+      ? "大段穿甲：把语义连续的短句合并为 3~5 句一段，段与段之间用空行分隔，不做一句一段。"
+      : "(未指定，默认移动端短句分段)";
   return [
     `- 风格基调：${layout.tone.join("、")}`,
     `- 排版密度：${densityLabel}`,
+    `- 段落风格：${paragraphLabel}`,
     layout.preferredComponents.length
       ? `- 主题偏好组件：${layout.preferredComponents.join("、")}`
       : "",
