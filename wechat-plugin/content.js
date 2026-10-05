@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         微信公众号HTML插入器-真实剪贴板版
 // @namespace    https://mp.weixin.qq.com/
-// @version      3.3.0
-// @description  支持 ProseMirror 编辑器的 HTML 插入 (直接 DOM 追加，绕过 paste 过滤，保留 grid/flex 排版)
+// @version      3.4.0
+// @description  打开面板自动读取剪贴板填入（真实剪贴板版）；支持 ProseMirror 编辑器的 HTML 插入
 // @author       AI Assistant
 // @match        https://mp.weixin.qq.com/cgi-bin/appmsg*
 // @match        https://mp.weixin.qq.com/appmsg/*
@@ -1327,6 +1327,48 @@
         code.addEventListener('input', () => syncMetaInputsFromCode({ overwriteExplicit: true }));
         code.addEventListener('paste', () => setTimeout(() => syncMetaInputsFromCode({ overwriteExplicit: true }), 0));
         syncMetaInputsFromCode({ overwriteExplicit: false });
+
+        // === 打开弹窗时自动读取剪贴板（真实剪贴板版） ===
+        // 用户点 FAB 打开弹窗 = 用户手势，配合 manifest 的 clipboardRead 权限，
+        // 可直接读系统剪贴板。这样用户在 WeMD 里点了「复制 HTML」后，
+        // 到公众号页面点开插件，源码会自动填入，无需手动 Ctrl+V。
+        const autoFillFromClipboard = async () => {
+            try {
+                if (!navigator.clipboard) return;
+
+                let html = '';
+                if (typeof navigator.clipboard.read === 'function') {
+                    const items = await navigator.clipboard.read();
+                    for (const item of items) {
+                        const types = item.types;
+                        if (types.includes('text/html')) {
+                            html = await (await item.getType('text/html')).text();
+                            break;
+                        }
+                        if (types.includes('text/plain') && !html) {
+                            html = await (await item.getType('text/plain')).text();
+                        }
+                    }
+                } else if (typeof navigator.clipboard.readText === 'function') {
+                    html = await navigator.clipboard.readText();
+                }
+
+                html = (html || '').trim();
+                if (!html) return; // 剪贴板为空，保持空白让用户手动粘贴
+
+                if (code.value !== html) {
+                    code.value = html;
+                    log.ok('已自动读取剪贴板内容');
+                    syncMetaInputsFromCode({ overwriteExplicit: true });
+                    toast('已自动读取剪贴板 HTML ✓');
+                }
+            } catch (e) {
+                // 读取被拒（如首次权限弹窗未授权 / 手势超时）时静默，用户仍可手动粘贴
+                log.warn('自动读取剪贴板失败:', e?.message || e);
+                toast('未读取到剪贴板，可手动粘贴', 'warning');
+            }
+        };
+        autoFillFromClipboard();
 
         // 插入
         document.getElementById('wh-insert').onclick = async () => {
