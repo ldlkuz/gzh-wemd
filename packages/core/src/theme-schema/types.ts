@@ -201,6 +201,10 @@ export interface LayoutPreference {
   tone: Tone[];
   /** 组件默认 variant 推荐（供 AI 排版参考，不影响渲染——渲染由 markdown 中的 variant 属性决定） */
   defaultVariants?: Record<string, string>;
+  /** 正文段落风格（供 AI 排版决定如何成句成段；缺省 short-line 保持既有行为）
+   * - prose：纸媒大段穿甲，语义连续的短句合并为 3~5 句一段，段间空行
+   * - short-line：移动端短句分段，一句或两三句一段 */
+  paragraphStyle?: "prose" | "short-line";
   /** @deprecated v2.0 起由 design 字段替代，保留以兼容旧主题 */
   magazineLevel?: "low" | "medium" | "high";
 }
@@ -230,6 +234,13 @@ export interface ThemeDefinition {
    * 其他主题未声明时，扩展槽对应内容走 leftover body 兜底降级为正文渲染，不丢内容。
    */
   slotDefs?: Record<string, SlotDef[]>;
+  /**
+   * 该主题手写 AI 组件手册（Markdown 文本，供 rewriteAgent 或其前后端服务喂给 LLM）。
+   * 内置主题不填此字段——它们的手写手册存放在 web public/theme-guides/ 下按
+   * theme-ai-guide-<id>.md 读取；自定义/导入主题可在此携带手册。
+   * 缺失时由使用方判断是否可用（如整篇 AI 排版要求必有手册，否则报错）。
+   */
+  guide?: string;
   /** 代码高亮主题：github（亮色）/ github-dark（暗色） */
   codeTheme?: "github" | "github-dark";
 }

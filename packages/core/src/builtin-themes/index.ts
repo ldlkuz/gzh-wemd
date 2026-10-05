@@ -231,20 +231,20 @@ const themeEasternNotes: ThemeDefinition = {
   },
   tokens: {
     color: {
-      primary: "#a33a2b",       // 朱砂
-      primaryDark: "#7e2d21",   // 深朱砂
-      primaryLight: "#f2e4de",  // 朱砂淡罩
-      secondary: "#3d5a63",     // 黛蓝
-      accent: "#8a5a33",        // 赭石
-      background: "#f6f1e8",    // 宣纸底
-      bgSoft: "#efe8da",        // 深宣纸
-      bgCard: "#faf6f0",        // 暖宣纸
-      bgMuted: "#f2ede4",       // 温纸
-      textStrong: "#2b2622",    // 墨
-      textNormal: "#36322f",    // 浓墨
-      textSoft: "#6b6159",      // 淡墨
-      border: "#d8cfc0",        // 纸线
-      borderSoft: "#e7dfcf",    // 淡纸线
+      primary: "#a33a2b", // 朱砂
+      primaryDark: "#7e2d21", // 深朱砂
+      primaryLight: "#f2e4de", // 朱砂淡罩
+      secondary: "#3d5a63", // 黛蓝
+      accent: "#8a5a33", // 赭石
+      background: "#f6f1e8", // 宣纸底
+      bgSoft: "#efe8da", // 深宣纸
+      bgCard: "#faf6f0", // 暖宣纸
+      bgMuted: "#f2ede4", // 温纸
+      textStrong: "#2b2622", // 墨
+      textNormal: "#36322f", // 浓墨
+      textSoft: "#6b6159", // 淡墨
+      border: "#d8cfc0", // 纸线
+      borderSoft: "#e7dfcf", // 淡纸线
     },
     typography: {
       fontFamily:
@@ -288,14 +288,21 @@ const themeEasternNotes: ThemeDefinition = {
           fontWeight: "700",
         },
       },
-      codeFontFamily: '"SF Mono", "SFMono-Regular", Consolas, "Courier New", monospace',
+      codeFontFamily:
+        '"SF Mono", "SFMono-Regular", Consolas, "Courier New", monospace',
     },
     spacing: { pagePadding: 8, paragraphMargin: 10 },
     border: { radius: 0 },
     shadow: { enabled: false, value: "" },
   },
   layout: {
-    preferredComponents: ["quote-card", "divider-fancy", "end-card", "pullquote", "callout-pro"],
+    preferredComponents: [
+      "quote-card",
+      "divider-fancy",
+      "end-card",
+      "pullquote",
+      "callout-pro",
+    ],
     density: "low",
     tone: ["warm", "elegant"],
     defaultVariants: { "share-card": "warm" },
@@ -314,7 +321,8 @@ const themeClearGuide: ThemeDefinition = {
   meta: {
     id: "clear-guide",
     name: "清晰指南",
-    description: "学习手册风：暖纸为底 + 荧光划重点 + 橙红签名，适合教程文档与上手手册",
+    description:
+      "学习手册风：暖纸为底 + 荧光划重点 + 橙红签名，适合教程文档与上手手册",
     keywords: ["清晰", "教程", "文档", "手册", "学习", "荧光"],
     version: "2.0.0",
   },
@@ -373,7 +381,8 @@ const themeClearGuide: ThemeDefinition = {
           fontWeight: "700",
         },
       },
-      codeFontFamily: '"SF Mono", "Cascadia Code", Consolas, "JetBrains Mono", monospace',
+      codeFontFamily:
+        '"SF Mono", "Cascadia Code", Consolas, "JetBrains Mono", monospace',
     },
     spacing: { pagePadding: 8, paragraphMargin: 12 },
     border: { radius: 4 },
@@ -597,7 +606,8 @@ const themeKnowledgeBase: ThemeDefinition = {
   meta: {
     id: "knowledge-base",
     name: "知识库",
-    description: "知识档案库：墨蓝主色 + 衬线标题 + 索书号，适合知识管理、文档系统",
+    description:
+      "知识档案库：墨蓝主色 + 衬线标题 + 索书号，适合知识管理、文档系统",
     keywords: ["知识", "文档", "档案", "专业", "参考"],
     version: "1.0.0",
   },
@@ -662,7 +672,13 @@ const themeKnowledgeBase: ThemeDefinition = {
     shadow: { enabled: true, value: "0 2px 6px rgba(60,52,42,0.05)" },
   },
   layout: {
-    preferredComponents: ["toc-nav", "callout-pro", "code-frame", "quote-card", "timeline"],
+    preferredComponents: [
+      "toc-nav",
+      "callout-pro",
+      "code-frame",
+      "quote-card",
+      "timeline",
+    ],
     density: "low",
     tone: ["rational", "minimal", "editorial"],
   },
@@ -944,6 +960,7 @@ const themeModernEditorial: ThemeDefinition = {
     ],
     density: "medium",
     tone: ["elegant", "serious", "editorial"],
+    paragraphStyle: "prose",
     defaultVariants: { "share-card": "minimal" },
   },
   // 编辑部手记主题私有骨架：magazine-cover / section-divider / divider /
@@ -960,7 +977,8 @@ const themeReceipt: ThemeDefinition = {
   meta: {
     id: "receipt",
     name: "购物小票",
-    description: "热敏小票风格，墨黑正文 + 小票红 + 虚线/点线分隔，趣味清单合集",
+    description:
+      "热敏小票风格，墨黑正文 + 小票红 + 虚线/点线分隔，趣味清单合集",
     keywords: ["复古", "趣味", "清单", "小票", "收银"],
     version: "1.0.0",
   },
@@ -1027,7 +1045,13 @@ const themeReceipt: ThemeDefinition = {
     shadow: { enabled: false, value: "none" },
   },
   layout: {
-    preferredComponents: ["quote-card", "stats-block", "styled-table", "timeline", "divider"],
+    preferredComponents: [
+      "quote-card",
+      "stats-block",
+      "styled-table",
+      "timeline",
+      "divider",
+    ],
     density: "low",
     tone: ["playful", "minimal", "retro"],
   },
@@ -1046,7 +1070,8 @@ const themeSunsetFilm: ThemeDefinition = {
   meta: {
     id: "sunset-film",
     name: "落日胶片",
-    description: "胶片黄昏：落日橙 + 暮紫 + 颗粒漏光，适合旅行、摄影、故事、回忆类内容",
+    description:
+      "胶片黄昏：落日橙 + 暮紫 + 颗粒漏光，适合旅行、摄影、故事、回忆类内容",
     keywords: ["胶片", "黄昏", "摄影", "旅行", "怀旧"],
     version: "1.0.0",
   },
@@ -1112,7 +1137,13 @@ const themeSunsetFilm: ThemeDefinition = {
     shadow: { enabled: false, value: "none" },
   },
   layout: {
-    preferredComponents: ["quote-card", "image-card", "hero-banner", "timeline", "divider"],
+    preferredComponents: [
+      "quote-card",
+      "image-card",
+      "hero-banner",
+      "timeline",
+      "divider",
+    ],
     density: "low",
     tone: ["warm", "nostalgic", "editorial"],
   },
@@ -1134,7 +1165,8 @@ const themeSilentKeynote: ThemeDefinition = {
   meta: {
     id: "silent-keynote",
     name: "无声发布",
-    description: "黑屏开场 + 白场正文 + 荧光橙舞台光，发布会式极简，适合科技、产品发布、年度回顾",
+    description:
+      "黑屏开场 + 白场正文 + 荧光橙舞台光，发布会式极简，适合科技、产品发布、年度回顾",
     keywords: ["发布", "极简", "科技", "产品", "留白"],
     version: "1.0.0",
   },
@@ -1742,7 +1774,8 @@ const themeWanqing: ThemeDefinition = {
     preferredComponents: [
       {
         name: "magazine-cover",
-        reason: "开卷封面：background-image 背景图 + 底部渐变叠字，首屏即「晚晴」",
+        reason:
+          "开卷封面：background-image 背景图 + 底部渐变叠字，首屏即「晚晴」",
       },
       {
         name: "text-card",
@@ -1801,4 +1834,17 @@ export function getBuiltInThemeDefinition(
   id: string,
 ): ThemeDefinition | undefined {
   return builtInThemeDefinitions.find((t) => t.meta.id === id);
+}
+
+/** 返回全部内置主题的轻量清单（id / name / description），供服务端列主题用 */
+export function getBuiltInThemeList(): {
+  id: string;
+  name: string;
+  description: string;
+}[] {
+  return builtInThemeDefinitions.map((t) => ({
+    id: t.meta.id,
+    name: t.meta.name,
+    description: t.meta.description,
+  }));
 }

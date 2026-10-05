@@ -1026,6 +1026,8 @@ function validateUnknownFields(
     "assets",
     "codeTheme",
     "templates",
+    "slotDefs",
+    "guide",
   ]);
 
   for (const key of Object.keys(input)) {

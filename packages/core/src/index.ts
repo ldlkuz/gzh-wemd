@@ -1,5 +1,6 @@
 export * from "./MarkdownParser";
 export * from "./ThemeProcessor";
+export * from "./render-server";
 export * from "./themes";
 export {
   renderTheme,
@@ -11,6 +12,7 @@ export { getVariantCss } from "./components/index";
 export {
   builtInThemeDefinitions,
   getBuiltInThemeDefinition,
+  getBuiltInThemeList,
 } from "./builtin-themes/index";
 export type {
   ThemeDefinition,
@@ -79,11 +81,7 @@ export {
 } from "./plugins/component/slotDefs";
 export { getComponentSampleMarkdown } from "./plugins/component/slotSamples";
 export { exportThemeComponentGuide } from "./plugins/component/component-export";
-export { buildAIGuide } from "./plugins/component/component-export";
-export type {
-  ComponentExportOptions,
-  AIGuideOptions,
-} from "./plugins/component/component-export";
+export type { ComponentExportOptions } from "./plugins/component/component-export";
 export { parseSkeletonSlots } from "./plugins/component/skeletonSlotMap";
 export type { SkeletonSlotInfo } from "./plugins/component/skeletonSlotMap";
 export type {
