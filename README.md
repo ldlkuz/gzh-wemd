@@ -301,6 +301,9 @@ WeMD 提供了公众号 Markdown 排版的基础框架 —— 所见即所得的
 
 本仓库**不收取任何费用**。放在这里只是想感谢两件事：一是原作者的代码，二是他提供的免费官方图床 —— 本程序默认使用的图床（粘贴或插入的图片会自动上传到这里）就是他维护的。如果你觉得这套工具好用，可以去支持一下原作者。
 
+- 原作者仓库：**[tenngoxars/WeMD](https://github.com/tenngoxars/WeMD)**
+- 原作者主页：**[@tenngoxars](https://github.com/tenngoxars)**
+
 <p align="center">
   <img src=".github/assets/wechat-pay.jpg" width="200" alt="微信收款码（原作者 WeMD）" />
   <img src=".github/assets/alipay.jpg" width="200" alt="支付宝收款码（原作者 WeMD）" />
