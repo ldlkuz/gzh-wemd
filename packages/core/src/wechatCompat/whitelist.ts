@@ -71,7 +71,7 @@ export interface ForbiddenCssRule {
 
 /**
  * 全部微信兼容规则（12 条）= 5 个独立正则 + 7 条属性/at-rule 规则。
- * 单一真源：快照生成（generate-shared-snapshot.cjs）与 layer3 均基于此。
+ * 单一真源：微信 CSS 校验规则均从此表派生。
  */
 export const FORBIDDEN_CSS_RULES: readonly ForbiddenCssRule[] = [
   {

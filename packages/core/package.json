@@ -1,13 +1,13 @@
 {
   "name": "@wemd/core",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "dev": "tsc -w",
-    "test": "vitest",
-    "gen:snapshot": "node scripts/generate-shared-snapshot.cjs"
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "fflate": "^0.8.3",

@@ -20,7 +20,7 @@
  * - 组件形态由"当前主题模板"决定；主题未定制某组件时继承内置默认骨架
  * - props 解析支持：key="value"、key='value'、key=value
  * - 支持嵌套组件（内容经 slot-parser 的 renderBody 走完整 markdown-it 管线）
- * - 容错：未闭合的 ::: 不解析，原样输出
+ * - 容错：未闭合的 ::: 不解析，原样输出（可由 findUnclosedComponents 检出，供编辑器提示）
  */
 
 import type MarkdownIt from "markdown-it";
@@ -94,6 +94,38 @@ function matchComponentOpen(line: string): ComponentBlockInfo | null {
  */
 function isComponentClose(line: string): boolean {
   return line.trim() === COMPONENT_MARKER;
+}
+
+export interface UnclosedComponent {
+  /** 组件名 */
+  name: string;
+  /** 起始行号（0 基，按 \n / \r\n 切分） */
+  line: number;
+}
+
+/**
+ * 找出所有「有 ::: 开头、却没有配对 ::: 收尾」的组件起始行。
+ *
+ * 供编辑器做未闭合提示。复用与解析器完全相同的判定（matchComponentOpen /
+ * isComponentClose）和深度计数规则，保证提示与真实渲染结果一致；纯文本扫描，
+ * 不触发完整 markdown 解析。
+ *
+ * 返回顺序即出现顺序（行号升序）。注意：闭合标记不带组件名，所以只能判断
+ * 「这些起始行没有配对收尾」，无法反过来断言是某一行的错。
+ */
+export function findUnclosedComponents(text: string): UnclosedComponent[] {
+  const lines = text.split(/\r?\n/);
+  const stack: UnclosedComponent[] = [];
+  for (let i = 0; i < lines.length; i++) {
+    const open = matchComponentOpen(lines[i]);
+    if (open) {
+      stack.push({ name: open.name, line: i });
+    } else if (isComponentClose(lines[i])) {
+      // 多余的收尾（栈已空）直接忽略：它不属于「未闭合」问题
+      stack.pop();
+    }
+  }
+  return stack;
 }
 
 /**

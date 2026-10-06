@@ -84,7 +84,10 @@ export const createMarkdownParser = (options: MarkdownParserOptions = {}) => {
       // 加上custom则表示自定义样式，而非微信专属，避免被remove pre
       if (lang && highlightjs.getLanguage(lang)) {
         try {
-          const formatted = highlightjs.highlight(lang, str, true).value;
+          const formatted = highlightjs.highlight(str, {
+            language: lang,
+            ignoreIllegals: true,
+          }).value;
           const macSign = showMacBar ? renderMacSign() : "";
           return (
             '<pre class="custom">' +

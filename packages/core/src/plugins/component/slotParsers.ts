@@ -588,7 +588,10 @@ function renderCodeBlock(
   const code = inner.replace(/^\n+/, "").replace(/\s+$/, "");
   const codeHtml =
     lang && highlightjs.getLanguage(lang)
-      ? highlightjs.highlight(lang, code, true).value
+      ? highlightjs.highlight(code, {
+          language: lang,
+          ignoreIllegals: true,
+        }).value
       : escapeHtml(code);
   const langLabel = lang || "Code";
   const codeEl = `<pre><code class="hljs language-${escapeHtmlAttr(lang)}">${codeHtml}</code></pre>`;

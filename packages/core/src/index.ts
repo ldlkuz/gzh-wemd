@@ -80,6 +80,10 @@ export {
   getFallbackSlotDef,
 } from "./plugins/component/slotDefs";
 export { getComponentSampleMarkdown } from "./plugins/component/slotSamples";
+export {
+  findUnclosedComponents,
+  type UnclosedComponent,
+} from "./plugins/markdown-it-component";
 export { exportThemeComponentGuide } from "./plugins/component/component-export";
 export type { ComponentExportOptions } from "./plugins/component/component-export";
 export { parseSkeletonSlots } from "./plugins/component/skeletonSlotMap";

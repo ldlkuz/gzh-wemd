@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createMarkdownParser } from "../MarkdownParser";
+import { findUnclosedComponents } from "../plugins/markdown-it-component";
 import {
   parseComponentProps,
   stringifyComponentProps,
@@ -343,5 +344,59 @@ describe("markdown-it-component 新增组件渲染", () => {
     expect(html).toContain("2024 年 行业标杆");
     expect(html).toContain("项目立项");
     expect(html).toContain("行业标杆");
+  });
+});
+
+describe("findUnclosedComponents 未闭合组件扫描", () => {
+  it("全部闭合时返回空", () => {
+    expect(findUnclosedComponents("::: text-card\n正文\n:::")).toEqual([]);
+  });
+
+  it("单个未闭合：报出组件名与起始行号（0 基）", () => {
+    expect(findUnclosedComponents("前言\n\n::: text-card\n正文")).toEqual([
+      { name: "text-card", line: 2 },
+    ]);
+  });
+
+  it("嵌套且都闭合时返回空", () => {
+    const md = "::: text-card\n正文\n\n::: full-quote\n引用\n:::\n:::";
+    expect(findUnclosedComponents(md)).toEqual([]);
+  });
+
+  it("嵌套但外层缺收尾时，报外层那一行", () => {
+    const md = "::: text-card\n正文\n\n::: full-quote\n引用\n:::";
+    expect(findUnclosedComponents(md)).toEqual([
+      { name: "text-card", line: 0 },
+    ]);
+  });
+
+  it("多余的收尾标记不算未闭合", () => {
+    expect(findUnclosedComponents("正文\n:::")).toEqual([]);
+  });
+
+  it("宽松的 :::: 不视为闭合（与解析器判定一致）", () => {
+    // 解析器要求闭合行正好是 :::，:::: 既不闭合也不是起始行
+    expect(findUnclosedComponents("::: text-card\n正文\n::::")).toEqual([
+      { name: "text-card", line: 0 },
+    ]);
+  });
+
+  it("带缩进的起始行同样能识别", () => {
+    expect(findUnclosedComponents("  ::: quote-card\n正文")).toEqual([
+      { name: "quote-card", line: 0 },
+    ]);
+  });
+
+  it("与真实渲染结果一致：报出的组件确实没渲染出来", () => {
+    const md = "::: text-card\n正文\n\n::: full-quote\n引用\n:::";
+    const html = createMarkdownParser({ getTemplate: () => undefined }).render(
+      md,
+    );
+    // text-card 未渲染，full-quote 正常渲染 —— 与扫描结果指向一致
+    expect(html).not.toContain('data-component="text-card"');
+    expect(html).toContain('data-component="full-quote"');
+    expect(findUnclosedComponents(md).map((c) => c.name)).toEqual([
+      "text-card",
+    ]);
   });
 });

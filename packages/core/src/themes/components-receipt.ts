@@ -491,6 +491,9 @@ export const componentStylesReceipt = `/* === 购物小票（热敏小票）组�
   transform: none; /* 关闭共享圆点尺寸无关居中（本主题用行内布局） */
   width: 7px;
   height: 7px;
+  /* 覆盖默认主题「跨竖线」的负边距：本主题无竖线，方块与文字同起点，间距交给 item 的 gap */
+  margin-left: 0;
+  margin-right: 0;
   background: #cf2323;
   border: none;
   border-radius: 0;
