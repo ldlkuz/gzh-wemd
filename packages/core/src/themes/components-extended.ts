@@ -85,7 +85,7 @@ export const componentStylesExtended = `/* === WeMD 扩展组件样式（跟随�
 }
 
 /* 代码主体（高特异性覆盖各主题全局 pre/code 的边框、内边距与溢出） */
-#wemd .wemd-code-block .wemd-component-body > div.wemd-cb-window > pre {
+#wemd .wemd-code-block .wemd-component-body > .wemd-cb-window > pre {
   margin: 0;
   padding: 0;
   overflow-x: auto;
@@ -96,29 +96,29 @@ export const componentStylesExtended = `/* === WeMD 扩展组件样式（跟随�
 }
 
 /* 深色底上的横向滑块：让滚动条在 #1e1e2e 背景下可见 */
-#wemd .wemd-code-block .wemd-component-body > div.wemd-cb-window > pre::-webkit-scrollbar {
+#wemd .wemd-code-block .wemd-component-body > .wemd-cb-window > pre::-webkit-scrollbar {
   height: 12px;
 }
-#wemd .wemd-code-block .wemd-component-body > div.wemd-cb-window > pre::-webkit-scrollbar-track {
+#wemd .wemd-code-block .wemd-component-body > .wemd-cb-window > pre::-webkit-scrollbar-track {
   background: #16161f;
   border-radius: 0 0 10px 10px;
 }
-#wemd .wemd-code-block .wemd-component-body > div.wemd-cb-window > pre::-webkit-scrollbar-thumb {
+#wemd .wemd-code-block .wemd-component-body > .wemd-cb-window > pre::-webkit-scrollbar-thumb {
   background: #3a3a4d;
   border-radius: 6px;
   border: 2px solid #16161f;
 }
-#wemd .wemd-code-block .wemd-component-body > div.wemd-cb-window > pre::-webkit-scrollbar-thumb:hover {
+#wemd .wemd-code-block .wemd-component-body > .wemd-cb-window > pre::-webkit-scrollbar-thumb:hover {
   background: #4a4a5f;
 }
 /* Firefox 滚动条 */
-#wemd .wemd-code-block .wemd-component-body > div.wemd-cb-window > pre {
+#wemd .wemd-code-block .wemd-component-body > .wemd-cb-window > pre {
   scrollbar-color: #3a3a4d #16161f;
   scrollbar-width: thin;
 }
 
-#wemd .wemd-code-block .wemd-component-body > div.wemd-cb-window > pre code,
-#wemd .wemd-code-block .wemd-component-body > div.wemd-cb-window > pre code.hljs {
+#wemd .wemd-code-block .wemd-component-body > .wemd-cb-window > pre code,
+#wemd .wemd-code-block .wemd-component-body > .wemd-cb-window > pre code.hljs {
   display: block;
   min-width: max-content;
   font-family: var(--wemd-code-font-family, "SF Mono", Consolas, monospace);

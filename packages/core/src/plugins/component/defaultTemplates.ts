@@ -74,11 +74,11 @@ const CURATED: Record<string, string> = {
 
   "hero-banner": [
     '<section class="wemd-component wemd-hero-banner" data-component="hero-banner">',
-    '<div class="wemd-component-body">',
+    '<section class="wemd-component-body">',
     '{{#if image}}<p class="wemd-hb-image">{{slot:image}}</p>{{/if}}',
     '{{#if title}}<p class="wemd-hb-title">{{slot:title}}</p>{{/if}}',
     '{{#if subtitle}}<p class="wemd-hb-subtitle">{{slot:subtitle}}</p>{{/if}}',
-    "</div>",
+    "</section>",
     "</section>",
   ].join("\n"),
 
@@ -202,8 +202,8 @@ const CURATED: Record<string, string> = {
 
   "code-frame": [
     '<section class="wemd-component wemd-code-frame" data-component="code-frame">',
-    '{{#if title}}<div class="wemd-cf-title">{{slot:title}}</div>{{/if}}',
-    '{{#if code}}<div class="wemd-cf-code">{{slot:code}}</div>{{/if}}',
+    '{{#if title}}<section class="wemd-cf-title">{{slot:title}}</section>{{/if}}',
+    '{{#if code}}<section class="wemd-cf-code">{{slot:code}}</section>{{/if}}',
     "</section>",
   ].join("\n"),
 
@@ -230,26 +230,26 @@ const CURATED: Record<string, string> = {
 
   "author-card": [
     '<section class="wemd-component wemd-author-card" data-component="author-card">',
-    '<div class="wemd-component-body">{{slot:body}}</div>',
+    '<section class="wemd-component-body">{{slot:body}}</section>',
     "</section>",
   ].join("\n"),
 
   faq: [
     '<section class="wemd-component wemd-faq" data-component="faq">',
     // 挂角标题：预览走 ::before 伪元素，导出由物化器生成块级 span（两链路一致）
-    '<div class="wemd-component-body">{{slot:body}}</div>',
+    '<section class="wemd-component-body">{{slot:body}}</section>',
     "</section>",
   ].join("\n"),
 
   steps: [
     '<section class="wemd-component wemd-steps" data-component="steps">',
-    '<div class="wemd-component-body">{{slot:body}}</div>',
+    '<section class="wemd-component-body">{{slot:body}}</section>',
     "</section>",
   ].join("\n"),
 
   accordion: [
     '<section class="wemd-component wemd-accordion" data-component="accordion">',
-    '<div class="wemd-component-body">{{slot:body}}</div>',
+    '<section class="wemd-component-body">{{slot:body}}</section>',
     "</section>",
   ].join("\n"),
 
@@ -258,7 +258,7 @@ const CURATED: Record<string, string> = {
   // 这里补精编骨架套 `.wemd-component-body` 包裹层，内容经 slot:table 渲染出 `.table-container`。
   table: [
     '<section class="wemd-component wemd-table" data-component="table">',
-    '<div class="wemd-component-body">{{slot:table}}</div>',
+    '<section class="wemd-component-body">{{slot:table}}</section>',
     "</section>",
   ].join("\n"),
 };
@@ -274,6 +274,8 @@ const CURATED: Record<string, string> = {
  *   无 item_slots 时条目用单一 body 字段
  */
 function buildSkeletonTemplate(def: ComponentSlotDef): string {
+  // 容器一律用 <section>：微信编辑器会把 <div> 打平成 <p>，导致 flex 等布局
+  // 失效。这个问题在 WeMD 预览里看不出来，只有导出到公众号才暴露。
   const { id, abbr } = def;
   const inner = def.slots
     .map((slot) => {
@@ -281,26 +283,26 @@ function buildSkeletonTemplate(def: ComponentSlotDef): string {
       // 统一 CSS 契约：body 槽一律输出 .wemd-component-body，
       // 与组件 CSS（.wemd-component-body > p / ul / pre / table）对齐。
       if (slot.key === "body") {
-        return `<div class="wemd-component-body">{{slot:${slot.key}}}</div>`;
+        return `<section class="wemd-component-body">{{slot:${slot.key}}}</section>`;
       }
       if (slot.type === "list") {
         const fields = slot.item_slots?.length
           ? slot.item_slots.map((f) => f.key)
           : ["body"];
         const itemInner = fields
-          .map((f) => `<div class="${cls}-${f}">{{this.${f}}}</div>`)
+          .map((f) => `<section class="${cls}-${f}">{{this.${f}}}</section>`)
           .join("\n");
         return [
-          `<div class="${cls}">`,
+          `<section class="${cls}">`,
           `{{#each ${slot.key}}}`,
-          `<div class="${cls}-item">`,
+          `<section class="${cls}-item">`,
           itemInner,
-          "</div>",
+          "</section>",
           "{{/each}}",
-          "</div>",
+          "</section>",
         ].join("\n");
       }
-      return `<div class="${cls}">{{slot:${slot.key}}}</div>`;
+      return `<section class="${cls}">{{slot:${slot.key}}}</section>`;
     })
     .join("\n");
   return [
@@ -310,11 +312,11 @@ function buildSkeletonTemplate(def: ComponentSlotDef): string {
   ].join("\n");
 }
 
-/** 无 slot 定义时的兜底骨架（单一 body 槽） */
+/** 无 slot 定义时的兜底骨架（单一 body 槽）。容器用 <section>，避免微信打平 <div> */
 function buildFallbackTemplate(id: string): string {
   return [
     `<section class="wemd-component wemd-${id}" data-component="${id}">`,
-    `<div class="wemd-component-body">{{slot:body}}</div>`,
+    `<section class="wemd-component-body">{{slot:body}}</section>`,
     "</section>",
   ].join("\n");
 }

@@ -13,19 +13,19 @@
 export const kbMagazineCover = (): string =>
   [
     '<section class="wemd-component wemd-magazine-cover" data-component="magazine-cover">',
-    '{{#if subtitle}}<div class="wemd-kb-label">{{slot:subtitle}}</div>{{/if}}',
-    '{{#if title}}<div class="wemd-kb-title">{{slot:title}}</div>{{/if}}',
-    '{{#if desc}}<div class="wemd-kb-meta">{{slot:desc}}</div>{{/if}}',
+    '{{#if subtitle}}<section class="wemd-kb-label">{{slot:subtitle}}</section>{{/if}}',
+    '{{#if title}}<section class="wemd-kb-title">{{slot:title}}</section>{{/if}}',
+    '{{#if desc}}<section class="wemd-kb-meta">{{slot:desc}}</section>{{/if}}',
     "</section>",
   ].join("\n");
 
 export const kbSectionDivider = (): string =>
   [
     '<section class="wemd-component wemd-section-divider" data-component="section-divider">',
-    '<div class="wemd-kb-sec-head">',
+    '<section class="wemd-kb-sec-head">',
     '{{#if part}}<span class="wemd-kb-part">{{slot:part}}</span>{{/if}}',
     '{{#if title}}<span class="wemd-kb-sec-title">{{slot:title}}</span>{{/if}}',
-    "</div>",
+    "</section>",
     '<span class="wemd-kb-sec-line">&nbsp;</span>',
     "</section>",
   ].join("\n");
@@ -33,23 +33,23 @@ export const kbSectionDivider = (): string =>
 export const kbEndCard = (): string =>
   [
     '<section class="wemd-component wemd-end-card" data-component="end-card">',
-    '{{#if subtitle}}<div class="wemd-kb-bag-lbl">{{slot:subtitle}}</div>{{/if}}',
-    '{{#if title}}<div class="wemd-kb-bag-title">{{slot:title}}</div>{{/if}}',
-    '{{#if body}}<div class="wemd-ec-body">{{slot:body}}</div>{{/if}}',
-    '{{#if deco}}<div class="wemd-kb-bag-meta">{{slot:deco}}</div>{{/if}}',
+    '{{#if subtitle}}<section class="wemd-kb-bag-lbl">{{slot:subtitle}}</section>{{/if}}',
+    '{{#if title}}<section class="wemd-kb-bag-title">{{slot:title}}</section>{{/if}}',
+    '{{#if body}}<section class="wemd-ec-body">{{slot:body}}</section>{{/if}}',
+    '{{#if deco}}<section class="wemd-kb-bag-meta">{{slot:deco}}</section>{{/if}}',
     "</section>",
   ].join("\n");
 
 export const kbCodeFrame = (): string =>
   [
     '<section class="wemd-component wemd-code-frame" data-component="code-frame">',
-    '<div class="wemd-cf-header">',
+    '<section class="wemd-cf-header">',
     '<span class="wemd-kb-dot wemd-kb-dot-r">&nbsp;</span>',
     '<span class="wemd-kb-dot wemd-kb-dot-y">&nbsp;</span>',
     '<span class="wemd-kb-dot wemd-kb-dot-g">&nbsp;</span>',
     '{{#if title}}<span class="wemd-cf-title">{{slot:title}}</span>{{/if}}',
-    "</div>",
-    '{{#if code}}<div class="wemd-cf-code">{{slot:code}}</div>{{/if}}',
+    "</section>",
+    '{{#if code}}<section class="wemd-cf-code">{{slot:code}}</section>{{/if}}',
     "</section>",
   ].join("\n");
 

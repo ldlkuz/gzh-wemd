@@ -35,11 +35,11 @@ export const clearGuideSectionDivider = (): string =>
 export const clearGuideDivider = (): string =>
   [
     '<section class="wemd-component wemd-divider" data-component="divider">',
-    '<div class="wemd-component-body">',
+    '<section class="wemd-component-body">',
     '<span class="wemd-cg-dvline wemd-cg-dvline-l">&nbsp;</span>',
     '<span class="wemd-cg-glyph">\u2726 \u2726 \u2726</span>',
     '<span class="wemd-cg-dvline wemd-cg-dvline-r">&nbsp;</span>',
-    "</div>",
+    "</section>",
     "</section>",
   ].join("\n");
 

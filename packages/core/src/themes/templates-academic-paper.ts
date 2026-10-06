@@ -38,11 +38,11 @@ export const academicPaperSectionDivider = (): string =>
 export const academicPaperDivider = (): string =>
   [
     '<section class="wemd-component wemd-divider" data-component="divider">',
-    '<div class="wemd-component-body">',
+    '<section class="wemd-component-body">',
     '<span class="wemd-ap-line wemd-ap-line-l">&nbsp;</span>',
     '<span class="wemd-ap-glyph">\u00A7</span>',
     '<span class="wemd-ap-line wemd-ap-line-r">&nbsp;</span>',
-    "</div>",
+    "</section>",
     "</section>",
   ].join("\n");
 

@@ -19,14 +19,14 @@ export const morandiForestMagazineCover = (): string =>
   [
     '<section class="wemd-component wemd-magazine-cover" data-component="magazine-cover">',
     // 装饰元素均带 &nbsp; 真实内容（空元素会被公众号删除），皮肤以 font-size:0 隐形
-    '<div class="wemd-mf-canopy">',
+    '<section class="wemd-mf-canopy">',
     '<span class="wemd-mf-vine">&nbsp;</span>',
     '<span class="wemd-mf-leaf">&nbsp;</span>',
     '<span class="wemd-mf-leaf wemd-mf-leaf-pine">&nbsp;</span>',
     '<span class="wemd-mf-leaf wemd-mf-leaf-mist">&nbsp;</span>',
     '<span class="wemd-mf-leaf">&nbsp;</span>',
     '<span class="wemd-mf-vine">&nbsp;</span>',
-    "</div>",
+    "</section>",
     '{{#if subtitle}}<section class="wemd-mf-kicker">{{slot:subtitle}}</section>{{/if}}',
     '{{#if title}}<section class="wemd-mf-title">{{slot:title}}</section>{{/if}}',
     '<span class="wemd-mf-mistline">&nbsp;</span>',
@@ -40,11 +40,11 @@ export const morandiForestSectionDivider = (): string =>
   [
     '<section class="wemd-component wemd-section-divider" data-component="section-divider">',
     '<span class="wemd-mf-big">{{slot:part}}</span>',
-    '<div class="wemd-mf-row">',
+    '<section class="wemd-mf-row">',
     '<section class="wemd-mf-title">{{slot:title}}</section>',
     '<span class="wemd-mf-line">&nbsp;</span>',
     '<span class="wemd-mf-leaf">&nbsp;</span>',
-    "</div>",
+    "</section>",
     "</section>",
   ].join("\n");
 
@@ -52,12 +52,12 @@ export const morandiForestSectionDivider = (): string =>
 export const morandiForestDivider = (): string =>
   [
     '<section class="wemd-component wemd-divider" data-component="divider">',
-    '<div class="wemd-component-body">',
+    '<section class="wemd-component-body">',
     '<span class="wemd-mf-dline">&nbsp;</span>',
     '<span class="wemd-mf-drip"><span class="wemd-mf-leaf">&nbsp;</span></span>',
     '<span class="wemd-mf-drip"><span class="wemd-mf-leaf wemd-mf-leaf-mist">&nbsp;</span></span>',
     '<span class="wemd-mf-dline">&nbsp;</span>',
-    "</div>",
+    "</section>",
     "</section>",
   ].join("\n");
 
@@ -75,11 +75,11 @@ export const morandiForestQuoteCard = (): string =>
 export const morandiForestEndCard = (): string =>
   [
     '<section class="wemd-component wemd-end-card" data-component="end-card">',
-    '<div class="wemd-mf-canopy">',
+    '<section class="wemd-mf-canopy">',
     '<span class="wemd-mf-leaf">&nbsp;</span>',
     '<span class="wemd-mf-leaf">&nbsp;</span>',
     '<span class="wemd-mf-leaf">&nbsp;</span>',
-    "</div>",
+    "</section>",
     '{{#if title}}<section class="wemd-ec-title">{{slot:title}}</section>{{/if}}',
     '{{#if subtitle}}<section class="wemd-ec-subtitle">{{slot:subtitle}}</section>{{/if}}',
     '{{#if body}}<section class="wemd-ec-body">{{slot:body}}</section>{{/if}}',

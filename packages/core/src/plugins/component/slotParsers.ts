@@ -594,13 +594,13 @@ function renderCodeBlock(
   const codeEl = `<pre><code class="hljs language-${escapeHtmlAttr(lang)}">${codeHtml}</code></pre>`;
   if (!withWindow) return codeEl;
   return (
-    `<div class="wemd-cb-window">` +
-    `<div class="wemd-cb-bar">` +
-    `<span class="wemd-cb-dots"><i class="wemd-cb-dot wemd-cb-dot-r"></i><i class="wemd-cb-dot wemd-cb-dot-y"></i><i class="wemd-cb-dot wemd-cb-dot-g"></i></span>` +
+    `<section class="wemd-cb-window">` +
+    `<section class="wemd-cb-bar">` +
+    `<span class="wemd-cb-dots"><span class="wemd-cb-dot wemd-cb-dot-r"></span><span class="wemd-cb-dot wemd-cb-dot-y"></span><span class="wemd-cb-dot wemd-cb-dot-g"></span></span>` +
     `<span class="wemd-cb-lang">${escapeHtml(langLabel)}</span>` +
-    `</div>` +
+    `</section>` +
     codeEl +
-    `</div>`
+    `</section>`
   );
 }
 

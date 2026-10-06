@@ -13,8 +13,8 @@
 export const receiptMagazineCover = (): string =>
   [
     '<section class="wemd-component wemd-magazine-cover" data-component="magazine-cover">',
-    '{{#if title}}<div class="wemd-rc-store">{{slot:title}}</div>{{/if}}',
-    '{{#if subtitle}}<div class="wemd-rc-sub">{{slot:subtitle}}</div>{{/if}}',
+    '{{#if title}}<section class="wemd-rc-store">{{slot:title}}</section>{{/if}}',
+    '{{#if subtitle}}<section class="wemd-rc-sub">{{slot:subtitle}}</section>{{/if}}',
     '<span class="wemd-rc-dash">&nbsp;</span>',
     '{{#if desc}}<p class="wemd-rc-desc">{{slot:desc}}</p>{{/if}}',
     "</section>",
@@ -24,7 +24,7 @@ export const receiptSectionDivider = (): string =>
   [
     '<section class="wemd-component wemd-section-divider" data-component="section-divider">',
     '{{#if part}}<span class="wemd-rc-no">{{slot:part}}</span>{{/if}}',
-    '{{#if title}}<div class="wemd-rc-title">{{slot:title}}</div>{{/if}}',
+    '{{#if title}}<section class="wemd-rc-title">{{slot:title}}</section>{{/if}}',
     '<span class="wemd-rc-line">&nbsp;</span>',
     "</section>",
   ].join("\n");
@@ -32,20 +32,20 @@ export const receiptSectionDivider = (): string =>
 export const receiptDivider = (): string =>
   [
     '<section class="wemd-component wemd-divider" data-component="divider">',
-    '<div class="wemd-component-body">',
+    '<section class="wemd-component-body">',
     '<span class="wemd-rc-stars">★ ★ ★ ★ ★</span>',
-    "</div>",
+    "</section>",
     "</section>",
   ].join("\n");
 
 export const receiptEndCard = (): string =>
   [
     '<section class="wemd-component wemd-end-card" data-component="end-card">',
-    '{{#if subtitle}}<div class="wemd-rc-label">{{slot:subtitle}}</div>{{/if}}',
-    '{{#if title}}<div class="wemd-rc-brand">{{slot:title}}</div>{{/if}}',
-    '{{#if body}}<div class="wemd-ec-body">{{slot:body}}</div>{{/if}}',
+    '{{#if subtitle}}<section class="wemd-rc-label">{{slot:subtitle}}</section>{{/if}}',
+    '{{#if title}}<section class="wemd-rc-brand">{{slot:title}}</section>{{/if}}',
+    '{{#if body}}<section class="wemd-ec-body">{{slot:body}}</section>{{/if}}',
     '<span class="wemd-rc-line">&nbsp;</span>',
-    '{{#if deco}}<div class="wemd-rc-meta">{{slot:deco}}</div>{{/if}}',
+    '{{#if deco}}<section class="wemd-rc-meta">{{slot:deco}}</section>{{/if}}',
     "</section>",
   ].join("\n");
 

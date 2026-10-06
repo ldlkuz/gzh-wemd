@@ -958,7 +958,8 @@ LUXURY COLLECTION
 :::`,
     );
     // 徽章（圆形「臻」金印）+ kicker + 标题 + 副题 + 金线 + 底部纹样（真实元素）
-    expect(out).toMatch(/<div class="wemd-lg-badge"[^>]*>/);
+    // 骨架容器用 <section>：微信会把 <div> 打平成 <p>，导致布局失效
+    expect(out).toMatch(/<section class="wemd-lg-badge"[^>]*>/);
     expect(out).toContain("wemd-lg-badge-ch");
     expect(out).toContain("臻");
     expect(out).toContain("wemd-lg-kicker");

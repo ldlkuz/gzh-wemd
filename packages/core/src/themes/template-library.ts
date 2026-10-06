@@ -15,13 +15,13 @@
 export const dividerMultiColor = (): string =>
   [
     '<section class="wemd-component wemd-divider" data-component="divider">',
-    '<div class="wemd-component-body">',
+    '<section class="wemd-component-body">',
     '<span class="wemd-dv-line wemd-dv-line-left">&nbsp;</span>',
     '<span class="wemd-dv-dot wemd-dv-dot-a">&nbsp;</span>',
     '<span class="wemd-dv-dot wemd-dv-dot-b">&nbsp;</span>',
     '<span class="wemd-dv-dot wemd-dv-dot-c">&nbsp;</span>',
     '<span class="wemd-dv-line wemd-dv-line-right">&nbsp;</span>',
-    "</div>",
+    "</section>",
     "</section>",
   ].join("\n");
 
@@ -70,7 +70,7 @@ export const ctaCardDualFoot = (): string =>
 export const calloutProFoot = (): string =>
   [
     '<section class="wemd-component wemd-callout-pro" data-component="callout-pro">',
-    '<div class="wemd-component-body">{{slot:body}}</div>',
+    '<section class="wemd-component-body">{{slot:body}}</section>',
     '<span class="wemd-cp-foot">&nbsp;</span>',
     "</section>",
   ].join("\n");
@@ -117,7 +117,7 @@ export const ctaCardSealFoot = (): string =>
 export const pullquoteCorners = (): string =>
   [
     '<section class="wemd-component wemd-pullquote wemd-pq-cornered" data-component="pullquote">',
-    '<div class="wemd-component-body">{{slot:body}}</div>',
+    '<section class="wemd-component-body">{{slot:body}}</section>',
     "</section>",
   ].join("\n");
 

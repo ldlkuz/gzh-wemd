@@ -20,18 +20,18 @@
 export const luxuryGoldMagazineCover = (): string =>
   [
     '<section class="wemd-component wemd-magazine-cover" data-component="magazine-cover">',
-    '<div class="wemd-lg-badge"><span class="wemd-lg-badge-ch">臻</span></div>',
+    '<section class="wemd-lg-badge"><span class="wemd-lg-badge-ch">臻</span></section>',
     '{{#if subtitle}}<section class="wemd-lg-kicker">{{slot:subtitle}}</section>{{/if}}',
     '{{#if title}}<section class="wemd-lg-title">{{slot:title}}</section>{{/if}}',
     '{{#if desc}}<section class="wemd-lg-desc">{{slot:desc}}</section>{{/if}}',
     '<span class="wemd-lg-rule">&nbsp;</span>',
-    '<div class="wemd-lg-flourish">',
+    '<section class="wemd-lg-flourish">',
     '<span class="wemd-lg-sw">&nbsp;</span>',
     '<span class="wemd-lg-d">✦</span>',
     '<span class="wemd-lg-line">&nbsp;</span>',
     '<span class="wemd-lg-d">✦</span>',
     '<span class="wemd-lg-sw">&nbsp;</span>',
-    "</div>",
+    "</section>",
     "</section>",
   ].join("\n");
 
@@ -59,11 +59,11 @@ export const luxuryGoldSectionDivider = (): string =>
 export const luxuryGoldDivider = (): string =>
   [
     '<section class="wemd-component wemd-divider" data-component="divider">',
-    '<div class="wemd-component-body">',
+    '<section class="wemd-component-body">',
     '<span class="wemd-lg-line wemd-lg-line-l">&nbsp;</span>',
     '<span class="wemd-lg-glyph">\u25C6</span>',
     '<span class="wemd-lg-line wemd-lg-line-r">&nbsp;</span>',
-    "</div>",
+    "</section>",
     "</section>",
   ].join("\n");
 

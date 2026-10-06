@@ -283,12 +283,13 @@ describe("markdown-it-component 新增组件渲染", () => {
     ].join("\n");
     const html = parser.render(md);
     // 首段纯文字作为标题，不再丢失
-    expect(html).toContain('class="wemd-sb-title">核心数据</div>');
+    // 骨架容器统一用 <section>：微信会把 <div> 打平成 <p>，导致 flex 布局失效
+    expect(html).toContain('class="wemd-sb-title">核心数据</section>');
     // 加粗数字 → value（大字），非加粗文字 → label（小字）
-    expect(html).toMatch(/wemd-sb-items-value[^>]*>44<\/div>/);
-    expect(html).toMatch(/wemd-sb-items-label[^>]*>组件总数<\/div>/);
-    expect(html).toMatch(/wemd-sb-items-value[^>]*>7<\/div>/);
-    expect(html).toMatch(/wemd-sb-items-label[^>]*>原型分组<\/div>/);
+    expect(html).toMatch(/wemd-sb-items-value[^>]*>44<\/section>/);
+    expect(html).toMatch(/wemd-sb-items-label[^>]*>组件总数<\/section>/);
+    expect(html).toMatch(/wemd-sb-items-value[^>]*>7<\/section>/);
+    expect(html).toMatch(/wemd-sb-items-label[^>]*>原型分组<\/section>/);
   });
 
   it("image-grid 渲染图片列表", () => {

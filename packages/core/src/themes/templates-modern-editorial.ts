@@ -19,15 +19,15 @@
 export const modernEditorialMagazineCover = (): string =>
   [
     '<section class="wemd-component wemd-magazine-cover" data-component="magazine-cover">',
-    '<div class="wemd-me-topline">',
+    '<section class="wemd-me-topline">',
     '{{#if subtitle}}<span class="wemd-me-brand">{{slot:subtitle}}</span>{{/if}}',
     '<span class="wemd-me-tag">EDITORIAL</span>',
-    "</div>",
+    "</section>",
     '{{#if title}}<section class="wemd-me-title">{{slot:title}}</section>{{/if}}',
-    '<div class="wemd-me-rules">',
+    '<section class="wemd-me-rules">',
     '<span class="wemd-me-thick">&nbsp;</span>',
     '<span class="wemd-me-thin">&nbsp;</span>',
-    "</div>",
+    "</section>",
     '{{#if desc}}<section class="wemd-me-desc">{{slot:desc}}</section>{{/if}}',
     "</section>",
   ].join("\n");
@@ -46,11 +46,11 @@ export const modernEditorialSectionDivider = (): string =>
 export const modernEditorialDivider = (): string =>
   [
     '<section class="wemd-component wemd-divider" data-component="divider">',
-    '<div class="wemd-component-body">',
+    '<section class="wemd-component-body">',
     '<span class="wemd-me-thick">&nbsp;</span>',
     '<span class="wemd-me-glyph">\u25C6</span>',
     '<span class="wemd-me-thin">&nbsp;</span>',
-    "</div>",
+    "</section>",
     "</section>",
   ].join("\n");
 

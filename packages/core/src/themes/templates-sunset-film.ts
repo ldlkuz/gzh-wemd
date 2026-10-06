@@ -13,13 +13,13 @@
 export const sfMagazineCover = (): string =>
   [
     '<section class="wemd-component wemd-magazine-cover" data-component="magazine-cover">',
-    '<div class="wemd-sf-frame">',
+    '<section class="wemd-sf-frame">',
     '<span class="wemd-sf-grain">&nbsp;</span>',
-    '{{#if subtitle}}<div class="wemd-sf-kicker">{{slot:subtitle}}</div>{{/if}}',
-    '{{#if title}}<div class="wemd-sf-title">{{slot:title}}</div>{{/if}}',
-    '{{#if desc}}<div class="wemd-sf-sub">{{slot:desc}}</div>{{/if}}',
+    '{{#if subtitle}}<section class="wemd-sf-kicker">{{slot:subtitle}}</section>{{/if}}',
+    '{{#if title}}<section class="wemd-sf-title">{{slot:title}}</section>{{/if}}',
+    '{{#if desc}}<section class="wemd-sf-sub">{{slot:desc}}</section>{{/if}}',
     '<span class="wemd-sf-edge">&nbsp;</span>',
-    "</div>",
+    "</section>",
     "</section>",
   ].join("\n");
 
@@ -27,32 +27,32 @@ export const sfEndCard = (): string =>
   [
     '<section class="wemd-component wemd-end-card" data-component="end-card">',
     '<span class="wemd-sf-grain">&nbsp;</span>',
-    '{{#if subtitle}}<div class="wemd-sf-lbl">{{slot:subtitle}}</div>{{/if}}',
-    '{{#if title}}<div class="wemd-sf-reel-title">{{slot:title}}</div>{{/if}}',
-    '{{#if body}}<div class="wemd-ec-body">{{slot:body}}</div>{{/if}}',
-    '{{#if deco}}<div class="wemd-sf-meta">{{slot:deco}}</div>{{/if}}',
+    '{{#if subtitle}}<section class="wemd-sf-lbl">{{slot:subtitle}}</section>{{/if}}',
+    '{{#if title}}<section class="wemd-sf-reel-title">{{slot:title}}</section>{{/if}}',
+    '{{#if body}}<section class="wemd-ec-body">{{slot:body}}</section>{{/if}}',
+    '{{#if deco}}<section class="wemd-sf-meta">{{slot:deco}}</section>{{/if}}',
     "</section>",
   ].join("\n");
 
 export const sfCodeFrame = (): string =>
   [
     '<section class="wemd-component wemd-code-frame" data-component="code-frame">',
-    '<div class="wemd-cf-header">',
+    '<section class="wemd-cf-header">',
     '<span class="wemd-sf-dot wemd-sf-dot-r">&nbsp;</span>',
     '<span class="wemd-sf-dot wemd-sf-dot-y">&nbsp;</span>',
     '<span class="wemd-sf-dot wemd-sf-dot-g">&nbsp;</span>',
     '{{#if title}}<span class="wemd-cf-title">{{slot:title}}</span>{{/if}}',
-    "</div>",
-    '{{#if code}}<div class="wemd-cf-code">{{slot:code}}</div>{{/if}}',
+    "</section>",
+    '{{#if code}}<section class="wemd-cf-code">{{slot:code}}</section>{{/if}}',
     "</section>",
   ].join("\n");
 
 export const sfDivider = (): string =>
   [
     '<section class="wemd-component wemd-divider" data-component="divider">',
-    '<div class="wemd-component-body">',
+    '<section class="wemd-component-body">',
     '<span class="wemd-sf-sprocket">&nbsp;</span>',
-    "</div>",
+    "</section>",
     "</section>",
   ].join("\n");
 
