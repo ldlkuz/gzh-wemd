@@ -7,22 +7,29 @@ import fs from "fs";
 import path from "path";
 import { renderTheme, loadThemePackageFromZip } from "../index";
 
+// 依赖本机 sandbox/ 下的主题包 fixture（sandbox/ 不入库），CI 上缺失时跳过
+const bytedanceZip = path.resolve(
+  __dirname,
+  "../../../../sandbox/bytedance-tech/bytedance-tech-innovation.wemd-theme",
+);
+const tencentZip = path.resolve(
+  __dirname,
+  "../../../../sandbox/tencent-test/tencent-tech-intl.wemd-theme",
+);
+const hasFixtures = fs.existsSync(bytedanceZip) && fs.existsSync(tencentZip);
+
 let manifest: any = null;
 
 async function getManifest() {
   if (manifest) return manifest;
-  const zipPath = path.resolve(
-    __dirname,
-    "../../../../sandbox/bytedance-tech/bytedance-tech-innovation.wemd-theme",
-  );
-  const zipData = fs.readFileSync(zipPath);
+  const zipData = fs.readFileSync(bytedanceZip);
   const result = await loadThemePackageFromZip(new Uint8Array(zipData));
   if (!result.ok) throw new Error("加载主题包失败");
   manifest = result.value.manifest;
   return manifest;
 }
 
-describe("实际主题包导入验证 - bytedance-tech", () => {
+describe.skipIf(!hasFixtures)("实际主题包导入验证 - bytedance-tech", () => {
   it("主题包加载成功", async () => {
     const m = await getManifest();
     expect(m.meta.name).toBe("字节跳动·科技创新");
@@ -125,11 +132,7 @@ describe("实际主题包导入验证 - bytedance-tech", () => {
   });
 
   it("tencent-tech 主题包也正确加载", async () => {
-    const zipPath = path.resolve(
-      __dirname,
-      "../../../../sandbox/tencent-test/tencent-tech-intl.wemd-theme",
-    );
-    const zipData = fs.readFileSync(zipPath);
+    const zipData = fs.readFileSync(tencentZip);
     const result = await loadThemePackageFromZip(new Uint8Array(zipData));
     expect(result.ok).toBe(true);
 
