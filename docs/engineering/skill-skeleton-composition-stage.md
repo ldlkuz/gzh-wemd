@@ -1,5 +1,7 @@
 # Skill 骨架接入 — 独立 Skeleton Composition 阶段设计
 
+> ⚠️ 已废弃：`skills/wemd-theme-designer` 已从仓库移除，本文档仅作历史设计记录，其中的文件路径均已失效。
+>
 > 状态：设计定稿（待实现）
 > 目标：按方案 ii，在 skill 翻译阶段新增**独立 Skeleton Composition 阶段**，让 AI 专注于组件"形"（骨架构图）的设计，与"皮"（CSS 皮肤）分离。
 > 配套规范：骨架 DSL 本身见 `skills/wemd-theme-designer/reference/skeleton-design-spec.md`（**v3 · DSL 定稿**）。本文档只描述如何在 skill 全流程中接入该能力。
