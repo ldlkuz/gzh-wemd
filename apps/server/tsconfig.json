@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "baseUrl": ".",
+    "paths": {
+      "@wemd/core": ["../../packages/core/src/index.ts"]
+    },
+    "types": ["node"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
+    /* 通过 paths 引入 @wemd/core 源码（同 web 的约定），因此会连带检查 core 的源码；
+       core 自己的 tsconfig 未开启未使用变量检查，这里保持一致，避免把 core 的既有写法报成错误 */
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+    "noEmit": true
+  },
+  "include": ["src/**/*"]
+}

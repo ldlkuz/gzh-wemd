@@ -1,8 +1,11 @@
 {
-  "name": "@wemd/server",
+  "name": "@wemd/mcp",
   "private": true,
   "version": "1.5.1",
   "type": "module",
+  "bin": {
+    "wemd-mcp": "./dist/index.mjs"
+  },
   "scripts": {
     "build": "node build.mjs",
     "start": "node dist/index.mjs",
@@ -11,8 +14,8 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@wemd/core": "workspace:*",
-    "happy-dom": "^20.11.2"
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
