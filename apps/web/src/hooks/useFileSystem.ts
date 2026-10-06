@@ -250,6 +250,8 @@ export function useFileSystem(options: UseFileSystemOptions = {}) {
         useThemeStore.getState().selectTheme(parsed.theme);
         setLastSavedContent(content);
         setIsDirty(false);
+        // 记录内容归属：此后只有针对该文件的保存才被信任
+        useEditorStore.getState().setMarkdownOwnerPath(file.path);
       } else {
         toast.error("无法读取文件");
       }
@@ -346,9 +348,71 @@ export function useFileSystem(options: UseFileSystemOptions = {}) {
     ],
   );
 
+  /**
+   * 丢弃编辑器中「归属不可信」的内容，从当前文件重新载入。
+   *
+   * 用于内容归属校验失败时：错配状态下编辑器内容（如回落后的初始示例）
+   * 与文件毫无关系，此时写盘一定污染文件。与其拦住保存让用户对着错误内容
+   * 发懵，不如以磁盘文件为准把编辑器纠正回来。
+   *
+   * @returns 是否成功读到文件内容
+   */
+  const reloadCurrentFileContent = useCallback(async (): Promise<boolean> => {
+    if (!currentFile) return false;
+
+    let content: string | null = null;
+    if (electron) {
+      const res = await electron.fs.readFile(currentFile.path);
+      if (res.success && typeof res.content === "string") {
+        content = res.content;
+      }
+    } else if (adapter && storageReady) {
+      try {
+        content = await adapter.readFile(currentFile.path);
+      } catch (error) {
+        console.error("重新载入文件失败:", error);
+      }
+    }
+    if (content === null) return false;
+
+    const parsed = parseMarkdownFileContent(content);
+    setMarkdown(parsed.body);
+    setPublishMeta({ title: parsed.title, author: parsed.author });
+    setLastSavedContent(content);
+    setIsDirty(false);
+    // 重新建立内容归属，后续保存恢复正常
+    useEditorStore.getState().setMarkdownOwnerPath(currentFile.path);
+    return true;
+  }, [
+    currentFile,
+    electron,
+    adapter,
+    storageReady,
+    setMarkdown,
+    setPublishMeta,
+    setLastSavedContent,
+    setIsDirty,
+  ]);
+
   const saveFile = useCallback(
     async (showToast = false) => {
       if (!currentFile) return;
+
+      // 内容归属校验：编辑器内容必须属于当前文件，否则一律不写盘。
+      // 错配典型来源：热更新重建 editorStore 使 markdown 回落到初始示例，
+      // 而 fileStore 的 currentFile 仍指向用户文章 —— 保存会把范文写进
+      // 用户文件。这里放弃保存并改为「从文件重新载入」，把编辑器纠正回来；
+      // 手动保存同样处理：用户按 Ctrl+S 时并不知道编辑器内容已经错配。
+      if (!useEditorStore.getState().markdownOwnerPath) {
+        const restored = await reloadCurrentFileContent();
+        toast.error(
+          restored
+            ? "内容与文件不匹配，已放弃保存并重新载入文件内容"
+            : "内容与文件不匹配，已阻止保存；请重新打开该文件",
+        );
+        return;
+      }
+
       setSaving(true);
 
       const { markdown: latestMarkdown } = useEditorStore.getState();
@@ -404,7 +468,7 @@ export function useFileSystem(options: UseFileSystemOptions = {}) {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentFile, electron, adapter, storageReady],
+    [currentFile, electron, adapter, storageReady, reloadCurrentFileContent],
   );
 
   const updateFileTitle = useCallback(

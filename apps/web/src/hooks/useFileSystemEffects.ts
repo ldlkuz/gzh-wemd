@@ -8,9 +8,11 @@ import {
   applyMarkdownFileMeta,
   stripMarkdownExtension,
 } from "../utils/markdownFileMeta";
+import { isAutoOpenArticleEnabled } from "../utils/preferences";
 import {
   flattenFiles,
   LAST_FILE_KEY,
+  normalizePath,
   WORKSPACE_KEY,
   type ElectronAPI,
 } from "./useFileSystemHelpers";
@@ -94,6 +96,7 @@ export function useFileSystemEffects({
   const saveFileRef = useRef(saveFile);
   const selectWorkspaceRef = useRef(selectWorkspace);
   const refreshFilesRef = useRef(refreshFiles);
+  const openFileRef = useRef(openFile);
   const focusRefreshTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -113,13 +116,26 @@ export function useFileSystemEffects({
   }, [refreshFiles]);
 
   useEffect(() => {
+    openFileRef.current = openFile;
+  }, [openFile]);
+
+  useEffect(() => {
     if (!enabled) return;
     const storage = getBrowserStorage();
     if (electron) {
-      const saved = storage?.getItem?.(WORKSPACE_KEY);
-      if (saved) {
-        void loadWorkspace(saved);
-      }
+      void (async () => {
+        // 优先恢复用户上次选择的工作区（localStorage 记录）
+        const saved = storage?.getItem?.(WORKSPACE_KEY);
+        if (saved) {
+          await loadWorkspace(saved);
+          if (useFileStore.getState().workspacePath) return;
+        }
+        // 回退：主进程记住的 / 首次启动自动创建的默认工作区（文档/WeMD）
+        const current = await electron.fs.getCurrentWorkspace?.();
+        if (current?.path) {
+          await loadWorkspace(current.path);
+        }
+      })();
       return;
     }
 
@@ -176,6 +192,29 @@ export function useFileSystemEffects({
     };
   }, [enabled, refreshFiles, electron]);
 
+  // 外部（skill / agent）通过渲染服务推送文章后，程序智能自动打开它
+  useEffect(() => {
+    if (!enabled) return;
+    if (!electron?.article) return;
+    const articleApi = electron.article;
+    const handler = articleApi.onWritten((payload) => {
+      void (async () => {
+        await refreshFilesRef.current();
+        // 开关关闭 → 只刷新列表
+        if (!isAutoOpenArticleEnabled()) return;
+        // 智能：当前有未保存改动时不打断，仅刷新列表
+        if (useFileStore.getState().isDirty) return;
+        const target = flattenFiles(useFileStore.getState().files).find(
+          (file) => normalizePath(file.path) === normalizePath(payload.path),
+        );
+        if (target) void openFileRef.current(target);
+      })();
+    });
+    return () => {
+      articleApi.removeWrittenListener(handler);
+    };
+  }, [enabled, electron]);
+
   useEffect(() => {
     if (!enabled) return;
     if (!electron) return;
@@ -183,7 +222,8 @@ export function useFileSystemEffects({
       void createFileRef.current();
     });
     electron.fs.onMenuSave(() => {
-      void saveFileRef.current();
+      // 菜单保存属手动保存：归属异常时给出警告，而不是静默跳过
+      void saveFileRef.current(true);
     });
     electron.fs.onMenuSwitchWorkspace(() => {
       void selectWorkspaceRef.current();
