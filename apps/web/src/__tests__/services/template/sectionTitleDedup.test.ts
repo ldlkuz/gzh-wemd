@@ -1,7 +1,7 @@
 /**
- * 临时复现：AI 排版标题重复 bug
+ * 回归：AI 排版标题重复
  * AI 把 `##` 标题转成 section-title 组件后，未再引用该标题段，
- * renderer 兜底逻辑把原 `##` 标题段补回正文 → 标题重复。
+ * renderer 兜底逻辑曾把原 `##` 标题段补回正文 → 标题重复。
  */
 import { describe, it, expect } from "vitest";
 import { renderTemplate } from "../../../services/template/renderer";
@@ -46,15 +46,7 @@ const template: TemplateJSON = {
   ],
 };
 
-describe("tmp-title-dup-repro", () => {
-  it("print rendered markdown", () => {
-    const r = renderTemplate(template, article);
-    console.log("\n===== rendered markdown =====");
-    console.log(r.markdown);
-    console.log("\n===== warnings =====");
-    console.log(r.warnings.join("\n"));
-  });
-
+describe("sectionTitleDedup", () => {
   it("section-title 替代原标题段，不再重复输出 `## ` 标题", () => {
     const r = renderTemplate(template, article);
 

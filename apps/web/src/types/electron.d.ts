@@ -7,6 +7,10 @@ interface ElectronAPI {
       path?: string;
       canceled?: boolean;
     }>;
+    getCurrentWorkspace: () => Promise<{
+      success: boolean;
+      path: string | null;
+    }>;
     setWorkspace: (
       dir: string,
     ) => Promise<{ success: boolean; path?: string; error?: string }>;
@@ -119,6 +123,12 @@ interface ElectronAPI {
       }) => void,
     ) => unknown;
     removeStatusListener: (handler: unknown) => void;
+    getLogs: () => Promise<{ logs: string[] }>;
+    getMcpConfig: () => Promise<{ mcpServers: Record<string, unknown> }>;
+  };
+  article?: {
+    onWritten: (callback: (payload: { path: string }) => void) => unknown;
+    removeWrittenListener: (handler: unknown) => void;
   };
 }
 

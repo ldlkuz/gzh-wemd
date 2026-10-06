@@ -20,6 +20,10 @@ export interface ElectronAPI {
       path?: string;
       canceled?: boolean;
     }>;
+    getCurrentWorkspace: () => Promise<{
+      success: boolean;
+      path: string | null;
+    }>;
     setWorkspace: (dir: string) => Promise<{ success: boolean; path?: string }>;
     listFiles: (
       dir?: string,
@@ -81,6 +85,10 @@ export interface ElectronAPI {
     onMenuSave: (cb: () => void) => unknown;
     onMenuSwitchWorkspace: (cb: () => void) => unknown;
     removeAllListeners: () => void;
+  };
+  article?: {
+    onWritten: (cb: (payload: { path: string }) => void) => unknown;
+    removeWrittenListener: (handler: unknown) => void;
   };
 }
 

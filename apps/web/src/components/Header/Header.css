@@ -299,6 +299,22 @@
   transform: scale(0.97);
 }
 
+/* 导航项内的状态点（如「WeMD 接口」服务状态） */
+.nav-item .nav-item-statdot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-left: 6px;
+  border-radius: 50%;
+  flex: none;
+  background: var(--wemd-status-stopped, #ef4444);
+  box-shadow: 0 0 0 2px var(--bg-primary, #fff);
+}
+
+.nav-item .nav-item-statdot.is-running {
+  background: var(--wemd-status-running, #22c55e);
+}
+
 /* 分隔线 */
 .header-divider {
   width: 1px;

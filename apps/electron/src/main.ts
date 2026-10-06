@@ -3,7 +3,13 @@ import { createMenu } from "./menu";
 import { registerIpcHandlers } from "./ipc";
 import { checkForUpdates, initAutoUpdate } from "./updater";
 import { configureAppIdentity, createWindow } from "./window";
-import { stopWatching } from "./watch/workspaceWatcher";
+import { startWatching, stopWatching } from "./watch/workspaceWatcher";
+import { setWorkspaceDir } from "./workspace/state";
+import {
+  resolveInitialWorkspace,
+  writeStoredWorkspace,
+} from "./workspace/persistence";
+import { autoStartServerIfEnabled } from "./ipc/serverHandlers";
 
 const isDev =
   !app.isPackaged ||
@@ -57,6 +63,17 @@ app.whenReady().then(() => {
 
   // 无需等待后端,直接打开窗口(Electron + 前端直连 AI 厂商)
   openMainWindow();
+
+  // 初始化工作区：优先上次记住的，否则用默认目录（文档/WeMD）并自动创建
+  // 这样程序自带一个可用工作区，外部 skill 推送文章时无需关心路径
+  const initialWorkspace = resolveInitialWorkspace();
+  if (initialWorkspace) {
+    setWorkspaceDir(initialWorkspace);
+    writeStoredWorkspace(initialWorkspace);
+    startWatching(initialWorkspace, getMainWindow);
+    // 按偏好自动拉起渲染服务，避免用户忘记开启导致外部推送失败
+    void autoStartServerIfEnabled(getMainWindow);
+  }
 
   createMenu(getMainWindow);
 

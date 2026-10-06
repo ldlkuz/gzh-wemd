@@ -16,6 +16,12 @@ export default defineConfig({
     },
   },
   plugins: [react()],
+  server: {
+    // 桌面开发链路里 electron 固定加载 5173，这里必须锁死端口：
+    // 否则被占用时 vite 会静默换到 5174，electron 仍去开 5173 → 白屏且无报错。
+    port: 5173,
+    strictPort: true,
+  },
   define: {
     __APP_VERSION__: JSON.stringify(packageJson.version),
   },

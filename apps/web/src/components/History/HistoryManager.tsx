@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from "react";
-import { useEditorStore, defaultMarkdown } from "../../store/editorStore";
+import { useEditorStore } from "../../store/editorStore";
 import { useThemeStore } from "../../store/themeStore";
 import { useHistoryStore } from "../../store/historyStore";
 
@@ -180,17 +180,11 @@ export function HistoryManager() {
   }, [persistLatestSnapshot]);
 
   useEffect(() => {
-    // 历史记录为空时，显示示例文章
+    // 历史记录为空时不再自动填充示例文章。
+    // 示例文章以工作区里的「示例文章.md」物理文件存在，由用户主动打开；
+    // 编辑器在没有历史记录时保持空白，避免范文意外跳出来覆盖用户内容。
     if (!history.length) {
       hasAppliedInitialHistoryRef.current = false;
-      // 只有在加载完成后才填充示例，避免加载过程中的闪烁
-      if (hasLoadedHistoryRef.current) {
-        const latest = latestRef.current;
-        // 仅当当前内容不是示例文章时才填充，避免重复设置
-        if (latest.markdown !== defaultMarkdown) {
-          setMarkdown(defaultMarkdown);
-        }
-      }
       return;
     }
     const candidateEntry =

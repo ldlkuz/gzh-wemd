@@ -26,6 +26,11 @@
       "from": ".server-runtime/theme-guides",
       "to": "theme-guides",
       "filter": ["**/*", "!**/.DS_Store"]
+    },
+    {
+      "from": ".server-runtime/mcp",
+      "to": "mcp",
+      "filter": ["**/*", "!**/.DS_Store"]
     }
   ],
   "extraFiles": [

@@ -2,7 +2,9 @@ import type { BrowserWindow, IpcMainInvokeEvent } from "electron";
 import { dialog, ipcMain } from "electron";
 import * as fs from "fs";
 import { getWorkspaceDir, setWorkspaceDir } from "../workspace/state";
+import { writeStoredWorkspace } from "../workspace/persistence";
 import { startWatching } from "../watch/workspaceWatcher";
+import { restartServerIfRunning } from "./serverHandlers";
 
 export function registerWorkspaceHandlers(
   getWindow: () => BrowserWindow | null,
@@ -19,7 +21,10 @@ export function registerWorkspaceHandlers(
     }
     const dir = result.filePaths[0];
     setWorkspaceDir(dir);
+    writeStoredWorkspace(dir);
     startWatching(dir, getWindow);
+    // 工作区切换后若渲染服务在跑，重启它以刷新 WEMD_WORKSPACE
+    void restartServerIfRunning(getWindow);
     return { success: true, path: dir };
   });
 
@@ -34,7 +39,10 @@ export function registerWorkspaceHandlers(
         return { success: false, error: "Directory not found" };
       }
       setWorkspaceDir(dir);
+      writeStoredWorkspace(dir);
       startWatching(dir, getWindow);
+      // 工作区切换后若渲染服务在跑，重启它以刷新 WEMD_WORKSPACE
+      void restartServerIfRunning(getWindow);
       return { success: true, path: dir };
     },
   );

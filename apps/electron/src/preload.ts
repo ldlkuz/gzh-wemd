@@ -6,6 +6,7 @@ contextBridge.exposeInMainWorld('electron', {
 
     fs: {
         selectWorkspace: () => ipcRenderer.invoke('workspace:select'),
+        getCurrentWorkspace: () => ipcRenderer.invoke('workspace:current'),
         setWorkspace: (dir: string) => ipcRenderer.invoke('workspace:set', dir),
         listFiles: (dir?: string) => ipcRenderer.invoke('file:list', dir),
         readFile: (filePath: string) => ipcRenderer.invoke('file:read', filePath),
@@ -140,6 +141,8 @@ contextBridge.exposeInMainWorld('electron', {
         start: (payload?: { port?: number }) => ipcRenderer.invoke('server:start', payload),
         stop: () => ipcRenderer.invoke('server:stop'),
         status: () => ipcRenderer.invoke('server:status'),
+        getLogs: () => ipcRenderer.invoke('server:logs'),
+        getMcpConfig: () => ipcRenderer.invoke('server:mcpConfig'),
         onStatusChange: (callback: (status: {
             running: boolean;
             port: number | null;
@@ -151,6 +154,18 @@ contextBridge.exposeInMainWorld('electron', {
         },
         removeStatusListener: (handler: any) => {
             ipcRenderer.removeListener('server:status', handler);
+        },
+    },
+
+    // 外部（skill / agent）通过渲染服务推送文章后，主进程转发给渲染进程的通知
+    article: {
+        onWritten: (callback: (payload: { path: string }) => void) => {
+            const handler = (_event: IpcRendererEvent, data: { path: string }) => callback(data);
+            ipcRenderer.on('article:written', handler);
+            return handler;
+        },
+        removeWrittenListener: (handler: (event: IpcRendererEvent, ...args: any[]) => void) => {
+            ipcRenderer.removeListener('article:written', handler);
         },
     },
 });

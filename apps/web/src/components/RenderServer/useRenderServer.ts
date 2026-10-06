@@ -10,6 +10,8 @@ type RenderServerAPI = {
   start: (payload?: { port?: number }) => Promise<RenderServerStatus>;
   stop: () => Promise<RenderServerStatus>;
   status: () => Promise<RenderServerStatus>;
+  getLogs: () => Promise<{ logs: string[] }>;
+  getMcpConfig: () => Promise<{ mcpServers: Record<string, unknown> }>;
   onStatusChange: (cb: (s: RenderServerStatus) => void) => unknown;
   removeStatusListener: (h: unknown) => void;
 };

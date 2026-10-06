@@ -1,23 +1,63 @@
+/* WeMD 接口弹窗
+   区块化布局：每块是一张浅底卡片 + 强调色标题，块与块之间留明显间距，
+   避免控件连成一片、看不出分界。
+   颜色统一走应用设计令牌，跟随亮/暗色模式。 */
+
+/* ===== 顶部说明 ===== */
 .render-server-desc {
-  margin: 0 0 16px;
+  margin: 0 0 18px;
   font-size: 13px;
-  line-height: 1.7;
-  color: #666;
+  line-height: 1.75;
+  color: var(--text-secondary);
 }
 
 .render-server-desc code {
   padding: 1px 5px;
-  background: rgba(0, 0, 0, 0.05);
-  border-radius: 4px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-sm, 4px);
   font-size: 12px;
-  color: #333;
+  color: var(--text-primary);
 }
 
+/* ===== 区块卡片 ===== */
+.render-server-block {
+  padding: 14px 16px;
+  background: var(--bg-secondary);
+  border: var(--border-width, 1px) solid var(--border-light);
+  border-radius: var(--radius-lg, 12px);
+}
+
+.render-server-block + .render-server-block {
+  margin-top: 14px;
+}
+
+.render-server-block-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-tertiary);
+}
+
+/* 标题前的强调色小竖条，进一步拉开层次 */
+.render-server-block-title::before {
+  content: "";
+  width: 3px;
+  height: 12px;
+  border-radius: 2px;
+  flex: none;
+  background: var(--accent-primary);
+}
+
+/* ===== 服务状态 ===== */
 .render-server-status-row {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .render-server-indicator {
@@ -28,44 +68,90 @@
 }
 
 .render-server-indicator.is-running {
-  background: #07c160;
-  box-shadow: 0 0 0 3px rgba(7, 193, 96, 0.18);
+  background: var(--success, #07c160);
+  box-shadow: 0 0 0 3px
+    color-mix(in srgb, var(--success, #07c160) 18%, transparent);
 }
 
 .render-server-indicator.is-stopped {
-  background: #bbb;
+  background: var(--text-tertiary, #bbb);
 }
 
 .render-server-state {
   font-size: 14px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--text-primary);
 }
 
 .render-server-port {
   font-size: 12px;
-  color: #888;
+  color: var(--text-tertiary);
 }
 
 .render-server-url {
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   font-size: 12px;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .render-server-url code {
   padding: 2px 6px;
-  background: rgba(0, 0, 0, 0.05);
-  border-radius: 4px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm, 4px);
+  font-family: var(--font-mono);
   font-size: 12px;
-  color: #07c160;
+  color: var(--accent-primary);
+}
+
+.render-server-pref {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  user-select: none;
+}
+
+.render-server-pref input {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--accent-primary);
+  cursor: pointer;
 }
 
 .render-server-actions {
-  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+/* ===== 按钮 ===== */
+.render-server-ghost-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md, 8px);
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+
+.render-server-ghost-btn:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
 }
 
 .render-server-start-btn,
@@ -75,15 +161,17 @@
   gap: 6px;
   padding: 8px 18px;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-md, 8px);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition:
+    opacity 0.2s,
+    background 0.2s;
 }
 
 .render-server-start-btn {
-  background: #07c160;
+  background: var(--accent-primary);
   color: #fff;
 }
 
@@ -92,12 +180,12 @@
 }
 
 .render-server-stop-btn {
-  background: #f3f4f6;
-  color: #444;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
 }
 
 .render-server-stop-btn:hover {
-  background: #e9eaec;
+  opacity: 0.85;
 }
 
 .render-server-start-btn:disabled,
@@ -106,12 +194,113 @@
   cursor: not-allowed;
 }
 
+/* ===== 接入 AI 工具 ===== */
+.render-server-mcp {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.render-server-mcp-text {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+}
+
+.render-server-guide-steps {
+  margin: 0 0 12px;
+  padding-left: 18px;
+  font-size: 12px;
+  line-height: 1.9;
+  color: var(--text-secondary);
+}
+
+.render-server-guide-steps li::marker {
+  color: var(--accent-primary);
+}
+
+.render-server-prompt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md, 8px);
+}
+
+.render-server-prompt-text {
+  flex: 1;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+/* ===== 服务日志 =====
+   嵌在「服务状态」卡片内、紧贴「查看日志」按钮下方，
+   避免点上面的按钮、内容却从弹窗底部冒出来。 */
+.render-server-logs {
+  margin-top: 12px;
+  border: var(--border-width, 1px) solid var(--border-light);
+  border-radius: var(--radius-md, 8px);
+  overflow: hidden;
+  background: var(--bg-primary);
+  animation: render-server-logs-in 0.16s ease-out;
+}
+
+@keyframes render-server-logs-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.render-server-logs-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--bg-tertiary);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.render-server-logs-head button {
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--accent-primary);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.render-server-logs pre {
+  margin: 0;
+  padding: 10px 14px;
+  max-height: 200px;
+  overflow: auto;
+  background: var(--bg-primary);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* ===== 非桌面版提示 ===== */
 .render-server-empty {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 24px 0;
-  color: #888;
+  color: var(--text-tertiary);
   font-size: 13px;
 }
 

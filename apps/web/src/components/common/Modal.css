@@ -62,5 +62,6 @@
   flex-direction: column;
   flex: 1;
   min-height: 0;
-  overflow: hidden;
+  /* 内容可能较长（如接口弹窗的接入说明），需要能滚动查看 */
+  overflow-y: auto;
 }

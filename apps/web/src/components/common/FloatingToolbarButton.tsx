@@ -13,7 +13,7 @@ interface FloatingToolbarButtonProps {
   highlight?: boolean;
   /** 图标右上角的装饰圆点（如服务运行状态点）；null 不渲染 */
   badge?: ReactNode;
-  /** 按钮内联文字（在图标右侧，如「渲染API」）；提供时按钮为图标+文字形态 */
+  /** 按钮内联文字（在图标右侧，如「WeMD 接口」）；提供时按钮为图标+文字形态 */
   text?: string;
   /** 行内状态点，渲染在文字右侧（绿=运行 / 红=停止） */
   statusDot?: "running" | "stopped";

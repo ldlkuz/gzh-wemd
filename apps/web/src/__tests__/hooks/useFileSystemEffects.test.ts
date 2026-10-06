@@ -20,6 +20,10 @@ const buildElectronMock = () => {
 
   const fs = {
     selectWorkspace: vi.fn(async () => ({ success: true as const })),
+    getCurrentWorkspace: vi.fn(async () => ({
+      success: true as const,
+      path: null,
+    })),
     setWorkspace: vi.fn(async () => ({ success: true as const })),
     listFiles: vi.fn(async () => ({ success: true as const, files: [] })),
     readFile: vi.fn(async () => ({ success: true as const, content: "" })),

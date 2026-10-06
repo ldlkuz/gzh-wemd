@@ -31,6 +31,7 @@ import "./MarkdownEditor.css";
 import { customKeymap } from "./editorShortcuts";
 import { paragraphSelectionStyle } from "./mouseSelectionStyle";
 import { markdownComponentFade } from "./markdownComponentFade";
+import { markdownComponentUnclosed } from "./markdownComponentUnclosed";
 import {
   WECHAT_IMAGE_MAX_SIZE_BYTES,
   formatImageSize,
@@ -140,6 +141,7 @@ export function MarkdownEditor({
         githubLight,
         EditorView.lineWrapping,
         markdownComponentFade(),
+        markdownComponentUnclosed(),
         paragraphSelectionStyle,
         EditorView.domEventHandlers({
           paste: (event, view) => {

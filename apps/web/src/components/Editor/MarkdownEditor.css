@@ -760,3 +760,18 @@
   background-color: rgba(255, 255, 255, 0.06);
   color: #6a6a6a;
 }
+
+/* ========================================
+   未闭合组件提示（::: 开头但没有配对 ::: 收尾）
+   ======================================== */
+.editor-container .cm-comp-unclosed {
+  text-decoration: underline wavy var(--warning, #f59e0b);
+  text-decoration-skip-ink: none;
+  text-underline-offset: 3px;
+  cursor: help;
+}
+
+/* 深色模式：波浪线提亮一档，保证在深底上看得清 */
+[data-ui-theme="dark"] .editor-container .cm-comp-unclosed {
+  text-decoration-color: #fbbf24;
+}

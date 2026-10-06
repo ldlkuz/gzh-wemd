@@ -41,7 +41,6 @@ import {
   ChevronsDown,
   Sparkles,
   Bug,
-  Server,
   HelpCircle,
 } from "lucide-react";
 import { useUITheme } from "../../hooks/useUITheme";
@@ -152,7 +151,7 @@ export function Header({ debugMode = false, onToggleDebug }: HeaderProps) {
 
   const { isElectron, isWindows, platform } = useWindowControls();
 
-  // 渲染服务就地开关：运行=绿点，未运行=红点；点击即启动/停止
+  // WeMD 接口就地开关：运行=绿点，未运行=红点；点击即启动/停止
   const renderServer = useRenderServer();
 
   // 自动隐藏标题栏状态
@@ -247,26 +246,6 @@ export function Header({ debugMode = false, onToggleDebug }: HeaderProps) {
             label="使用帮助"
             onClick={() => setShowHelpModal(true)}
           />
-          {isElectron && renderServer.api && (
-            <FloatingToolbarButton
-              icon={<Server size={16} strokeWidth={2} />}
-              label={
-                renderServer.status.running
-                  ? `渲染API · 运行中（端口 ${renderServer.status.port}）· 点击停止`
-                  : "渲染API · 已停止 · 点击启动"
-              }
-              onClick={() => {
-                if (renderServer.busy) return;
-                if (renderServer.status.running) {
-                  void renderServer.stop();
-                } else {
-                  void renderServer.start();
-                }
-              }}
-              text="渲染API"
-              statusDot={renderServer.status.running ? "running" : "stopped"}
-            />
-          )}
           <FloatingToolbarButton
             icon={<Palette size={18} strokeWidth={2} />}
             label="主题管理"
@@ -328,8 +307,21 @@ export function Header({ debugMode = false, onToggleDebug }: HeaderProps) {
               <button
                 className="nav-item"
                 onClick={() => setShowRenderServerModal(true)}
+                title={
+                  renderServer.status.running
+                    ? `WeMD 接口 · 运行中（端口 ${renderServer.status.port}）`
+                    : "WeMD 接口 · 已停止"
+                }
               >
-                <span>渲染API</span>
+                <span>WeMD 接口</span>
+                {renderServer.api && (
+                  <span
+                    className={`nav-item-statdot ${
+                      renderServer.status.running ? "is-running" : ""
+                    }`}
+                    aria-hidden="true"
+                  />
+                )}
               </button>
             )}
           </div>
@@ -466,7 +458,7 @@ export function Header({ debugMode = false, onToggleDebug }: HeaderProps) {
       <Modal
         open={showRenderServerModal}
         onClose={() => setShowRenderServerModal(false)}
-        title="渲染API"
+        title="WeMD 接口"
         className="modal-narrow"
       >
         <Suspense
