@@ -23,7 +23,7 @@
 ## 目录
 
 - [这是什么](#这是什么)
-- [三种使用方式](#三种使用方式)
+- [两种使用方式](#两种使用方式)
 - [功能](#功能)
 - [预览](#预览)
 - [快速开始](#快速开始)
@@ -48,12 +48,11 @@ GZH-WeMD 把「内容」和「排版」拆开：你用通用 Markdown 写正文�
 
 同时它对外提供一个本机接口（以及配套的 MCP 服务），让 AI 工具、脚本、Skill 能直接调用排版能力，或把成稿推送进程序。
 
-## 三种使用方式
+## 两种使用方式
 
 | 方式               | 适合                 | 入口                                                                                             |
 | ------------------ | -------------------- | ------------------------------------------------------------------------------------------------ |
 | **桌面版**（推荐） | 个人创作             | 从 [Releases](https://github.com/ldlkuz/gzh-wemd/releases) 下载安装包（Windows / macOS / Linux） |
-| **Web 版**         | 自部署、团队内共享   | Docker 部署到自己的服务器（见下方快速开始）                                                      |
 | **接口 / MCP**     | 接入自己的 AI 工作流 | 程序内启动「WeMD 接口」，复制 MCP 配置发给 AI 工具                                               |
 
 ## 功能
@@ -101,19 +100,6 @@ GZH-WeMD 把「内容」和「排版」拆开：你用通用 Markdown 写正文�
 - **Linux**：`WeMD-<版本>.AppImage`
 
 首次启动会自动在「文档 / WeMD」下创建工作区，并放入一篇 `示例文章.md`，直接打开它就能看到全部组件的排版效果。
-
-### Web 版（自部署）
-
-```bash
-# 直接用 compose 起服务（默认 http://localhost:8080）
-docker compose up -d
-
-# 或自行构建镜像
-docker build -t wemd-web .
-docker run -p 8080:80 wemd-web
-```
-
-Web 版没有 Node 进程，因此不提供「WeMD 接口」，其余排版能力一致。首次打开需要选择一个文件夹作为工作区。
 
 ### 开发者（源码运行）
 
@@ -249,9 +235,6 @@ node scripts/wemd-push.mjs article.md --theme sunset-film --title "标题"
 **浏览器版为什么没有「WeMD 接口」？**
 该接口依赖本机 Node 进程，只有桌面版能提供。
 
-**`docker compose up` 拉的是哪个镜像？**
-`ghcr.io/ldlkuz/gzh-wemd-web:latest`，可用环境变量 `WEMD_IMAGE` 覆盖。
-
 **macOS 有 Intel 版本吗？**
 目前只发布 Apple Silicon（arm64）构建。
 
@@ -270,7 +253,6 @@ node scripts/wemd-push.mjs article.md --theme sunset-film --title "标题"
 ├── wechat-plugin/    # 公众号 HTML 插入浏览器插件（随桌面版分发）
 ├── scripts/          # 构建、版本同步与推送脚本
 ├── docs/             # 开发文档
-├── Dockerfile / docker-compose.yml / nginx.conf   # Web 版自部署
 └── .nvmrc            # 开发 Node 版本
 ```
 
