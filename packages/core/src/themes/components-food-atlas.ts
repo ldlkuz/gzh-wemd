@@ -397,4 +397,40 @@ export const componentStylesFoodAtlas = `/* === 美食图谱（Food Atlas）组�
   color: ${TEXT};
   background: transparent;
 }
+
+/* === 数据统计块（stats-block：暖白卡片承载，白色条目靠明度差撑出区块） ===
+   背景：本主题 token 的 bgSoft 与 bgCard 同值（#fffaf5），默认皮肤依赖的
+   两级背景层级被抹平 —— 外层渐变退化成纯色、条目与外层同色、边框取
+   primaryLight(#fff8f1) 几乎不可见，整个块塌成一整片底色、无区块。
+   此处显式覆盖：暖白外层 + 纯白条目 + 可见暖棕边框，重建层次。 */
+#wemd .wemd-stats-block {
+  margin: 2.2em 0;
+  padding: 20px 20px 14px;
+  background: ${CREAM};
+  border: 1px solid ${LINE};
+  border-radius: 16px;
+}
+#wemd .wemd-stats-block .wemd-sb-title {
+  margin: 0 0 12px 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: ${TEXT_SOFT};
+}
+#wemd .wemd-stats-block .wemd-sb-items-item {
+  margin: 8px 0;
+  padding: 10px 14px;
+  background: #ffffff;
+  border: 1px solid ${LINE};
+  border-radius: 10px;
+}
+#wemd .wemd-stats-block .wemd-sb-items-value {
+  color: ${ORANGE};
+  font-size: 18px;
+  font-weight: 700;
+}
+#wemd .wemd-stats-block .wemd-sb-items-label {
+  color: ${TEXT_SOFT};
+  font-size: 13px;
+}
 `;

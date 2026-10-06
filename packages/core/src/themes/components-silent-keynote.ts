@@ -351,6 +351,7 @@ export const componentStylesSilentKeynote = `/* === 无声发布（Silent Keynot
 }
 #wemd .wemd-timeline .wemd-tl-title {
   margin: 0 0 10px 0;
+  padding-left: 22px;
   font-size: 15px;
   font-weight: 600;
   color: ${TEXT};
