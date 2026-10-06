@@ -3,10 +3,10 @@ name: ci
 on:
   pull_request:
     branches:
-      - main
+      - master
   push:
     branches:
-      - main
+      - master
   workflow_dispatch:
 
 permissions:
@@ -38,14 +38,29 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Typecheck server
+        run: pnpm --filter @wemd/server run typecheck
+
+      - name: Typecheck mcp
+        run: pnpm --filter @wemd/mcp run typecheck
+
       - name: Test core
-        run: pnpm --filter @wemd/core test -- --run
+        run: pnpm --filter @wemd/core run test
+
+      - name: Test server
+        run: pnpm --filter @wemd/server run test
+
+      - name: Test mcp
+        run: pnpm --filter @wemd/mcp run test
+
+      - name: Test electron
+        run: pnpm --filter wemd-electron run test
 
       - name: Lint web
         run: pnpm --filter @wemd/web lint
 
       - name: Test web
-        run: pnpm --filter @wemd/web test -- --run
+        run: pnpm --filter @wemd/web run test
 
       - name: Build web
         run: pnpm --filter @wemd/web build

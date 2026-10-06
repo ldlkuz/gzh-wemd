@@ -3,7 +3,7 @@ name: docker-image
 on:
   push:
     branches:
-      - main
+      - master
     tags:
       - "v*"
     paths:
@@ -18,7 +18,7 @@ on:
       - "turbo.json"
   pull_request:
     branches:
-      - main
+      - master
     paths:
       - ".github/workflows/docker-image.yml"
       - "Dockerfile"
@@ -36,7 +36,7 @@ permissions:
   packages: write
 
 env:
-  IMAGE_NAME: ghcr.io/tenngoxars/wemd-web
+  IMAGE_NAME: ghcr.io/ldlkuz/gzh-wemd-web
 
 jobs:
   build-and-push:

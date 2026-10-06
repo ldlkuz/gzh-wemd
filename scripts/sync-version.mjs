@@ -37,6 +37,8 @@ if (explicitVersion && rootPackage.version !== version) {
 const targets = [
   path.join(rootDir, "apps", "web", "package.json"),
   path.join(rootDir, "apps", "electron", "package.json"),
+  path.join(rootDir, "apps", "server", "package.json"),
+  path.join(rootDir, "apps", "mcp", "package.json"),
   path.join(rootDir, "packages", "core", "package.json"),
 ];
 
