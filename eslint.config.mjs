@@ -12,6 +12,7 @@ export default tseslint.config(
             "**/release",
             "**/coverage",
             "apps/web/public/libs/**",
+            "apps/web/public/vendor/**",
         ],
     },
     {

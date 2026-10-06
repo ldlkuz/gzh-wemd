@@ -127,9 +127,7 @@ function stripConsumedHeadings(
     .split(/\n\s*\n/)
     .filter(
       (p) =>
-        !(
-          HEADING_RE.test(p) && consumedTitleSet.has(normalizeForMatch(p))
-        ),
+        !(HEADING_RE.test(p) && consumedTitleSet.has(normalizeForMatch(p))),
     )
     .join("\n\n");
 }
@@ -532,7 +530,7 @@ function renderArticleSection(
   }
 
   // 基础层标题处理：剔除已被 AI 标题组件消费的标题段，其余保持原生 md 语法
-  let markdown = stripConsumedHeadings(result.text, consumedTitleSet);
+  const markdown = stripConsumedHeadings(result.text, consumedTitleSet);
 
   if (!markdown.trim()) {
     warnings.push(`article-section 段落范围 ${from}-${to} 无正文，已跳过`);
