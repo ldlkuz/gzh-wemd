@@ -70,6 +70,8 @@ vi.mock("../../utils/katexRenderer", () => ({
 }));
 
 vi.mock("../../utils/mermaidConfig", () => ({
+  // MarkdownPreview 会用 mermaidTokensFromTheme 取主题色，mock 需一并提供
+  mermaidTokensFromTheme: () => ({}),
   getMermaidConfig: () => ({}),
   getThemedMermaidDiagram: (input: string) => input,
 }));
@@ -204,7 +206,8 @@ describe("长文档预览锚点同步", () => {
     expectAnchoredContent(".block-equation");
     expectAnchoredContent(".mermaid svg");
     expectAnchoredContent("table");
-    expectAnchoredContent("pre.custom");
+    // 代码块：早期断言用的 pre.custom 已不是当前渲染产物
+    expectAnchoredContent("pre");
 
     let editorScrollListener: () => void = () => undefined;
     const editorAdapter: ScrollSyncAdapter = {
@@ -221,7 +224,13 @@ describe("长文档预览锚点同步", () => {
     coordinator.setAdapter("editor", editorAdapter);
     coordinator.setAdapter("preview", previewAdapter!);
 
+    // setAdapter("preview") 会静默 editor 350ms（覆盖程序化平滑滚动的窗口），
+    // 需等静默期结束，再模拟用户在编辑器里的滚动，否则同步会被忽略
+    await new Promise((resolve) => setTimeout(resolve, 400));
+
     editorScrollListener();
+    // 同步由 rAF 调度（scheduleSync），需先跑完待执行帧才会落到 preview 上
+    frames.flush();
     timers.flush();
     const initialScrollTop = previewContainer.scrollTop;
     expect(initialScrollTop).toBeGreaterThan(0);

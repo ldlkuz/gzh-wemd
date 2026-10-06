@@ -121,8 +121,8 @@ describe("hero-banner 三个 variant 区分度 + 对比度 + 渐变顺滑", () =
     expect(sunC).not.toContain("#07c160");
     expect(sunL).not.toContain("#07c160");
     // 但应该换成落日橘
-    expect(sunC).toContain("e67e22");
-    expect(sunL).toContain("e67e22");
+    expect(sunC).toContain("f2762e");
+    expect(sunL).toContain("f2762e");
 
     // default 下应该有主色 #07c160（跟随主题）
     expect(defC).toContain("#07c160");

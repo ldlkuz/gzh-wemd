@@ -32,6 +32,8 @@ vi.mock("../../store/themeStore", () => ({
 }));
 
 vi.mock("../../utils/mermaidConfig", () => ({
+  // getThemeInfo 会调 mermaidTokensFromTheme 从主题 tokens 取色，mock 必须一并提供
+  mermaidTokensFromTheme: () => ({}),
   getMermaidConfig: (_designerVariables: unknown, options?: unknown) => ({
     theme: "base",
     flowchart: {

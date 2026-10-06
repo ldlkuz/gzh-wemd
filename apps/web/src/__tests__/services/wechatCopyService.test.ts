@@ -428,6 +428,7 @@ describe("wechatCopyService clipboard strategy", () => {
       mathRenderer: "katex",
       showMacBar: true,
       getTemplate: expect.any(Function),
+      getSlotDefs: expect.any(Function),
     });
     const [payload] = mocked.electronClipboardWrite.mock.calls[0] as [
       { html: string; text: string },

@@ -549,7 +549,8 @@ describe("ThemeValidator", () => {
     if (!result.ok) {
       expect(result.errors.some((e) => e.message.includes("50KB"))).toBe(true);
     }
-  });
+    // 该校验要扫描 51KB 字符串，单跑约 3.8s，并行时会逼近默认 5s 上限
+  }, 15000);
 
   it("overrides 值不是字符串应报错", () => {
     const manifest = makeValidManifest();
