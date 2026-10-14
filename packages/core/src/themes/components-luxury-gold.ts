@@ -238,6 +238,20 @@ export const componentStylesLuxuryGold = `/* === 黑金奢华：荣誉证书 · 
   line-height: 0;
   overflow: hidden;
 }
+/* 封面图：金色细框（真实元素，无 position / 伪元素） */
+#wemd .wemd-magazine-cover .wemd-lg-cover-img {
+  margin: 26px 0 0;
+  border-radius: 2px;
+  overflow: hidden;
+}
+#wemd .wemd-magazine-cover .wemd-lg-cover-img img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0;
+  border: 1px solid rgba(212, 175, 55, 0.6);
+  border-radius: 2px;
+}
 
 /* === section-divider · 章节（骨架定制） === */
 #wemd .wemd-section-divider {

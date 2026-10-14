@@ -13,6 +13,7 @@ import { clearGuideTemplates } from "../themes/templates-clear-guide";
 import { whitespaceGalleryTemplates } from "../themes/templates-whitespace-gallery";
 import { academicPaperTemplates } from "../themes/templates-academic-paper";
 import { luxuryGoldTemplates } from "../themes/templates-luxury-gold";
+import { luxuryGoldSlotDefs } from "../themes/slotDefs-luxury-gold";
 import { morandiForestTemplates } from "../themes/templates-morandi-forest";
 import { modernEditorialTemplates } from "../themes/templates-modern-editorial";
 import { receiptTemplates } from "../themes/templates-receipt";
@@ -703,7 +704,7 @@ const themeLuxuryGold: ThemeDefinition = {
     description:
       "暖米底配深棕卡片，金色贯穿装饰，奢华高端，适合品牌营销、高端内容",
     keywords: ["奢华", "高端", "黑金", "品牌"],
-    version: "2.0.0",
+    version: "2.1.0",
   },
   tokens: {
     color: {
@@ -781,6 +782,8 @@ const themeLuxuryGold: ThemeDefinition = {
   // 黑金奢华独立骨架：magazine-cover / section-divider / divider / divider-fancy，
   // 其余组件（含 code-frame）复用内置默认骨架，仅靠皮肤差异化。
   templates: luxuryGoldTemplates,
+  // 主题级扩展槽：magazine-cover 封面图
+  slotDefs: luxuryGoldSlotDefs,
   codeTheme: "github",
 };
 

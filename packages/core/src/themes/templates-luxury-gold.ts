@@ -4,7 +4,7 @@
  * 设计：按「黑金奢华-重新设计」视觉稿落地（黑曜石封面 + 鎏金徽章 +
  * 金属渐变标题 + 双线◆分隔 + 双层金框金句卡）。
  * - magazine-cover（封面：crest 饰带单行 / 圆形「臻」徽章 / kicker=subtitle /
- *   金属渐变标题 / 副题=desc / 双线分隔 / 底部纹样）
+ *   金属渐变标题 / 副题=desc / 封面图=image 扩展槽 / 双线分隔 / 底部纹样）
  * - section-divider（章节：· 壹 · 编号 + 标题 + 金线）
  * - quote-card（金句卡：顶部镀金饰带 + 双层金框）
  * - divider（金色渐变线 + ◆ + 金色渐变线）
@@ -24,6 +24,7 @@ export const luxuryGoldMagazineCover = (): string =>
     '{{#if subtitle}}<section class="wemd-lg-kicker">{{slot:subtitle}}</section>{{/if}}',
     '{{#if title}}<section class="wemd-lg-title">{{slot:title}}</section>{{/if}}',
     '{{#if desc}}<section class="wemd-lg-desc">{{slot:desc}}</section>{{/if}}',
+    '{{#if image}}<section class="wemd-lg-cover-img">{{slot:image}}</section>{{/if}}',
     '<span class="wemd-lg-rule">&nbsp;</span>',
     '<section class="wemd-lg-flourish">',
     '<span class="wemd-lg-sw">&nbsp;</span>',

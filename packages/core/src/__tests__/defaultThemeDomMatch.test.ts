@@ -941,8 +941,10 @@ function renderWithLuxuryGold(md: string): string {
   const theme = getBuiltInThemeDefinition("luxury-gold")!;
   const css = renderTheme(theme);
   const templates = getThemeTemplates(theme);
+  const slotDefs = getThemeSlotDefs(theme);
   const parser = createMarkdownParser({
     getTemplate: (id) => templates.get(id),
+    getSlotDefs: (id) => slotDefs.get(id),
   });
   const raw = parser.render(md);
   return processHtml(raw, css, true, true);
@@ -983,6 +985,25 @@ LUXURY COLLECTION
     const title = out.match(/<section class="wemd-lg-title"[^>]*>/)?.[0] ?? "";
     expect(title).toContain("-webkit-background-clip: text");
     expect(title).toContain("color: #f8ecc4");
+  });
+
+  it("magazine-cover：带图封面（首段图片进封面图槽，金框渲染）", () => {
+    const out = renderWithLuxuryGold(
+      `::: magazine-cover
+LUXURY COLLECTION
+黑金时刻
+一份关于奢华与秩序的品牌手册
+![](https://img.example.com/cover.jpg)
+:::`,
+    );
+    // 扩展槽：首图进封面图槽
+    expect(out).toMatch(/wemd-lg-cover-img[\s\S]{0,400}cover\.jpg/);
+    // 图片被扩展槽消费，不再落进 desc 兜底
+    const desc =
+      out.match(
+        /<section class="wemd-lg-desc"[^>]*>([\s\S]*?)<\/section>/,
+      )?.[1] ?? "";
+    expect(desc).not.toContain("cover.jpg");
   });
 
   it("section-divider：定制骨架编号 + 标题 + 金色渐变线", () => {
