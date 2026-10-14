@@ -268,14 +268,15 @@ Trae / Codex / Cursor ──stdio MCP──▶ wemd-mcp ──HTTP──▶ WeMD
 
 ### 暴露的工具
 
-| 工具              | 作用                                         |
-| ----------------- | -------------------------------------------- |
-| `list_themes`     | 列出可用主题                                 |
-| `get_theme_guide` | 取某主题的组件语法手册（**写文章前应先取**） |
-| `render_markdown` | markdown → 微信安全 HTML（不写入程序）       |
-| `push_article`    | 推送到 WeMD 工作区，程序自动打开并套用主题   |
+| 工具              | 作用                                                                                                                                                     |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `list_themes`     | 列出可用主题                                                                                                                                             |
+| `get_theme_guide` | 取某主题的组件语法手册（**写文章前应先取**）                                                                                                             |
+| `check_markdown`  | **自检 / 排障**：返回诊断摘要（实际生效主题、识别到的组件、未被识别的 `:::` 名、HTML 大小、图片提醒）；默认不回正文 HTML，传 `returnHtml: true` 才附全文 |
+| `push_article`    | 推送到 WeMD 工作区，程序自动打开并套用主题                                                                                                               |
 
-> 四个工具都带 MCP `annotations`：`list_themes` / `get_theme_guide` 为只读；`render_markdown` 默认会转存图片到图床、`push_article` 会写入工作区文件，故均不标只读。
+> 四个工具都带 MCP `annotations`：`list_themes` / `get_theme_guide` / `check_markdown` 为只读（`check_markdown` 固定不转存图片、不写文件）；`push_article` 会写入工作区文件并可能转存图片，故均不标只读。
+> **「取成品 HTML」不走 MCP**：需要整篇 HTML 请直接调 HTTP `POST /render`（脚本 / 自建发布链路用）。MCP 侧只保留"让 AI 会用这个程序"的必要动作（挑主题 → 取手册 → 交付），外加一个自检工具——AI 拿到整篇 HTML 也用不上，只会占上下文。
 > 单次请求超时默认 120s，可用环境变量 `WEMD_TIMEOUT_MS`（毫秒）覆盖。
 
 ### 构建

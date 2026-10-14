@@ -10,7 +10,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
-import { text, withHtmlNotes } from "./format";
+import { text, withHtmlNotes, summarizeCheck } from "./format";
 
 const HOST = process.env.WEMD_HOST ?? "127.0.0.1";
 const PORT = Number(process.env.WEMD_PORT ?? 8787);
@@ -73,10 +73,11 @@ const server = new McpServer(
   { name: "wemd", version: __WEMD_MCP_VERSION__ },
   {
     instructions:
-      "WeMD 是本地公众号排版工具。典型流程：先用 get_theme_guide 取目标主题的组件语法手册，" +
-      "按手册书写 markdown（原生语法直接写，专用组件用 ::: 包裹），" +
-      "再用 push_article 把成稿交付给 WeMD（程序会自动打开并套用主题）。" +
-      "若正文含本地图片：把 markdown 与图片放在同一目录，并在调用时用 assetsDir 传该目录绝对路径，" +
+      "WeMD 是本地公众号排版工具。典型流程：先用 list_themes 挑主题，再用 get_theme_guide 取该主题的组件语法手册，" +
+      "按手册书写 markdown（原生语法直接写，专用组件用 ::: 包裹）；" +
+      "交付前可用 check_markdown 自查组件有没有被正确识别，最后用 push_article 把成稿交付给 WeMD（程序会自动打开并套用主题）。" +
+      "AI 看不到渲染效果，版式以用户在 WeMD 预览里看到的为准。" +
+      "若正文含本地图片：把 markdown 与图片放在同一目录，并在调用 push_article 时用 assetsDir 传该目录绝对路径，" +
       "WeMD 会自动把本地图片转存为永久图床地址（已有的 http(s) 图片地址会被原样保留，无需处理）。" +
       "所有工具都依赖 WeMD 桌面版正在运行且「WeMD 接口」已开启。",
   },
@@ -95,7 +96,12 @@ server.registerTool(
       openWorldHint: false,
     },
   },
-  async () => text(await requestJson("/themes")),
+  async () => {
+    const data = await requestJson("/themes");
+    return text(
+      `${JSON.stringify(data, null, 2)}\n\n下一步：调 get_theme_guide(themeId) 取该主题的组件语法手册，按手册书写 markdown。`,
+    );
+  },
 );
 
 server.registerTool(
@@ -103,7 +109,9 @@ server.registerTool(
   {
     title: "获取主题组件语法手册",
     description:
-      "返回指定主题的组件语法手册（Markdown）。**写作前必须先取手册**：里面写明了该主题专属组件与全部可用组件的正确写法，照抄示例才能得到正确排版。",
+      "返回指定主题的组件语法手册（Markdown）。**写正文前必须先取手册**：该主题专属组件与全部可用组件的正确写法都在里面，照抄示例才能得到正确排版。" +
+      "**未先取手册就凭记忆写 `:::` 组件语法，排版必错**——组件名或槽位结构与该主题不符时，那一块会被当普通文本原样输出。" +
+      "写完可用 check_markdown 自查组件有没有被识别。",
     inputSchema: {
       themeId: z.string().describe("主题 id，如 sunset-film"),
     },
@@ -117,37 +125,34 @@ server.registerTool(
 );
 
 server.registerTool(
-  "render_markdown",
+  "check_markdown",
   {
-    title: "渲染为微信 HTML",
+    title: "检查排版结果（自检 / 排障）",
     description:
-      "把 markdown 渲染成可直接粘贴进微信公众号的 HTML（已处理微信兼容约束：无伪元素、无定位）。只返回 HTML，不写入程序。" +
-      "HTML 顶部会附一行注释，标明本次实际生效的主题（传了未知主题时服务端会回退默认主题，注释里以实际生效者为准）。" +
-      "若正文含本地图片，传 assetsDir（markdown 与图片所在目录的绝对路径），本地图片会自动转存为永久图床地址（默认开启）。",
+      "检查一段 markdown 在当前主题下**实际渲染成了什么**，默认只返回诊断摘要：实际生效的主题 id、" +
+      "识别到的组件、**未被识别的 ::: 组件名**、HTML 大小、图片提醒。" +
+      "**交付前建议先自查**：手册说某个组件存在 ≠ 它真的被识别——这里会直接点名你写的 ::: 块有没有被渲染成组件" +
+      "（未被识别的会被当普通文本输出，粘到公众号里就是一行裸文本）。" +
+      "本工具只做检查：不写入程序、不转存图片（不会在图床留下垃圾图）。正式交付请用 push_article。" +
+      "确实需要整篇 HTML 时才传 returnHtml: true（长文几百 KB，慎用）。",
     inputSchema: {
-      markdown: z.string().describe("文章 markdown 正文"),
+      markdown: z.string().describe("要检查的 markdown 正文"),
       themeId: z.string().optional().describe("排版主题 id，默认 default"),
-      assetsDir: z
-        .string()
-        .optional()
-        .describe(
-          "图片资源目录绝对路径：正文里有本地图片时传，用于把本地图片转存为永久地址",
-        ),
-      uploadImages: z
+      returnHtml: z
         .boolean()
         .optional()
         .describe(
-          "是否把本地图片转存为永久图床地址，默认 true（保证返回的 HTML 可直接粘贴）；仅当明确只想预览、不想在图床留下图片时才传 false",
+          "是否在摘要之后附上完整 HTML，默认 false（全文可能几百 KB，只在确实需要时开启）",
         ),
     },
     annotations: {
-      // 默认会转存本地图片到图床，属于对外部世界有副作用的操作，故不标只读
-      readOnlyHint: false,
+      // 只渲染并返回诊断信息：不写文件、不转存图片
+      readOnlyHint: true,
       idempotentHint: true,
-      openWorldHint: true,
+      openWorldHint: false,
     },
   },
-  async ({ markdown, themeId, assetsDir, uploadImages }) => {
+  async ({ markdown, themeId, returnHtml }) => {
     const data = await requestJson<{
       html: string;
       themeId?: string;
@@ -155,18 +160,21 @@ server.registerTool(
     }>("/render", {
       method: "POST",
       headers: { "content-type": "application/json; charset=utf-8" },
-      body: JSON.stringify({
-        markdown,
-        themeId,
-        assetsDir,
-        uploadImages: uploadImages ?? true,
-      }),
+      // 只做检查：固定不转存图片，避免"检查一下"就在图床留下永久垃圾图
+      body: JSON.stringify({ markdown, themeId, uploadImages: false }),
     });
+    const summary = summarizeCheck({
+      markdown,
+      html: data.html,
+      themeId: data.themeId ?? themeId,
+      warnings: data.warnings,
+    });
+    if (!returnHtml) return text(summary);
     return text(
-      withHtmlNotes(data.html, {
+      `${summary}\n\n--- 完整 HTML ---\n${withHtmlNotes(data.html, {
         themeId: data.themeId,
         warnings: data.warnings,
-      }),
+      })}`,
     );
   },
 );
@@ -225,9 +233,10 @@ server.registerTool(
     overwrite,
     conflict,
     assetsDir,
-  }) =>
-    text(
-      await requestJson("/articles", {
+  }) => {
+    const data = await requestJson<{ filename?: string; path?: string }>(
+      "/articles",
+      {
         method: "POST",
         headers: { "content-type": "application/json; charset=utf-8" },
         body: JSON.stringify({
@@ -241,8 +250,13 @@ server.registerTool(
           conflict,
           assetsDir,
         }),
-      }),
-    ),
+      },
+    );
+    const where = data.path ? `：${data.path}` : "";
+    return text(
+      `${JSON.stringify(data, null, 2)}\n\n程序已刷新并在编辑器中打开该文章${where}——版式请以用户在 WeMD 里看到的预览为准（AI 看不到渲染效果）。`,
+    );
+  },
 );
 
 const transport = new StdioServerTransport();

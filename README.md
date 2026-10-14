@@ -130,7 +130,7 @@ pnpm build         # 全量构建
 2. 点「复制 MCP 配置」，粘贴到 AI 工具的 MCP 设置并保存
 3. 新开一个会话，把面板里给的示例提示词发给它
 
-配置指向 WeMD 程序自身（配合 `ELECTRON_RUN_AS_NODE`），**本机无需另外安装 Node**。接入后 AI 可用的工具：`list_themes`、`get_theme_guide`、`render_markdown`、`push_article`。
+配置指向 WeMD 程序自身（配合 `ELECTRON_RUN_AS_NODE`），**本机无需另外安装 Node**。接入后 AI 可用的工具：`list_themes`（挑主题）、`get_theme_guide`（取该主题的手册）、`check_markdown`（交付前自检，会点名没被识别的 `:::` 组件）、`push_article`（把成稿交付给程序）。需要整篇 HTML 请直接调 HTTP `POST /render`。
 
 **HTTP 直接调用**（脚本 / Skill）：
 
