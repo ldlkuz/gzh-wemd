@@ -77,6 +77,7 @@ const server = new McpServer(
       "按手册书写 markdown（原生语法直接写，专用组件用 ::: 包裹）；" +
       "交付前可用 check_markdown 自查组件有没有被正确识别，最后用 push_article 把成稿交付给 WeMD（程序会自动打开并套用主题）。" +
       "AI 看不到渲染效果，版式以用户在 WeMD 预览里看到的为准。" +
+      "**交付失败要如实上报**：若 push_article 报「无法连接 WeMD 接口」，把错误原文告诉用户、请他打开 WeMD 并确认「WeMD 接口」已开启后重试一次；不要改用自己写 .md 文件的方式绕过——那会让用户看不出真实原因。" +
       "若正文含本地图片：把 markdown 与图片放在同一目录，并在调用 push_article 时用 assetsDir 传该目录绝对路径，" +
       "WeMD 会自动把本地图片转存为永久图床地址（已有的 http(s) 图片地址会被原样保留，无需处理）。" +
       "所有工具都依赖 WeMD 桌面版正在运行且「WeMD 接口」已开启。",
@@ -185,7 +186,8 @@ server.registerTool(
     title: "推送文章到 WeMD",
     description:
       "把 markdown 文章写入 WeMD 的当前工作区，程序会自动刷新并在编辑器打开它，主题随文章保存。**这是把成稿交付给用户的推荐方式。**" +
-      "若正文含本地图片，传 assetsDir（markdown 与图片所在目录的绝对路径），本地图片会自动转存为永久图床地址；已有的 http(s) 图片地址原样保留。",
+      "若正文含本地图片，传 assetsDir（markdown 与图片所在目录的绝对路径），本地图片会自动转存为永久图床地址；已有的 http(s) 图片地址原样保留。" +
+      "**调用报「无法连接 WeMD 接口」时**：把错误原文告诉用户，请他确认 WeMD 与「WeMD 接口」都在运行，然后**重试一次**——不要改用写文件的方式绕过（那会把真实原因掩盖掉）。",
     inputSchema: {
       markdown: z.string().describe("文章 markdown 正文"),
       themeId: z.string().optional().describe("排版主题 id"),
