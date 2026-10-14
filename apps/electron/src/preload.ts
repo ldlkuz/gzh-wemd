@@ -51,12 +51,18 @@ contextBridge.exposeInMainWorld('electron', {
             ipcRenderer.on('menu:switch-workspace', handler);
             return handler;
         },
+        onMenuShowTour: (callback: () => void) => {
+            const handler = (_event: IpcRendererEvent) => callback();
+            ipcRenderer.on('menu:show-tour', handler);
+            return handler;
+        },
 
         removeAllListeners: () => {
             ipcRenderer.removeAllListeners('file:refresh');
             ipcRenderer.removeAllListeners('menu:new-file');
             ipcRenderer.removeAllListeners('menu:save');
             ipcRenderer.removeAllListeners('menu:switch-workspace');
+            ipcRenderer.removeAllListeners('menu:show-tour');
         }
     },
 
@@ -112,16 +118,27 @@ contextBridge.exposeInMainWorld('electron', {
             ipcRenderer.on('update:downloaded', handler);
             return handler;
         },
+        onUpdateSelectingRoute: (callback: () => void) => {
+            const handler = () => callback();
+            ipcRenderer.on('update:selectingRoute', handler);
+            return handler;
+        },
         removeUpdateListener: (handler: any) => {
             ipcRenderer.removeListener('update:available', handler);
             ipcRenderer.removeListener('update:upToDate', handler);
             ipcRenderer.removeListener('update:error', handler);
             ipcRenderer.removeListener('update:downloading', handler);
             ipcRenderer.removeListener('update:downloaded', handler);
+            ipcRenderer.removeListener('update:selectingRoute', handler);
         },
         openReleases: () => ipcRenderer.invoke('update:openReleases'),
         download: () => ipcRenderer.invoke('update:download'),
         restartAndInstall: () => ipcRenderer.invoke('update:restartAndInstall'),
+    },
+
+    // 渲染进程日志转发到主进程统一落盘（fire-and-forget）
+    log: {
+        write: (level: string, message: string) => ipcRenderer.send('log:write', level, message),
     },
 
     shell: {

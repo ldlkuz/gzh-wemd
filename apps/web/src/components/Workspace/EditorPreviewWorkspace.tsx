@@ -51,7 +51,7 @@ export function EditorPreviewWorkspace({
       style={style}
       data-mobile-view={mobileView}
     >
-      <div className="editor-pane">
+      <div className="editor-pane" data-tour="editor">
         {loading ? (
           <Loading />
         ) : (
@@ -71,7 +71,7 @@ export function EditorPreviewWorkspace({
         onReset={resetRatio}
         onDraggingChange={setDragging}
       />
-      <div className="preview-pane">
+      <div className="preview-pane" data-tour="preview">
         {loading ? (
           <Loading />
         ) : (

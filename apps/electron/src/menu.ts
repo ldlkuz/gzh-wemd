@@ -2,6 +2,10 @@ import { BrowserWindow, Menu, shell } from "electron";
 import * as path from "path";
 import { app } from "electron";
 import { checkForUpdates } from "./updater";
+import { exportDiagnostics } from "./diagnostics";
+import { getLogDir } from "./logger";
+
+const REPO_URL = "https://github.com/ldlkuz/gzh-wemd";
 
 function getPluginRootPath(): string {
   // 与 shellHandlers 保持一致：extraFiles 释放到安装根目录（用户可见）
@@ -87,6 +91,11 @@ export function createMenu(getWindow: () => BrowserWindow | null): void {
       label: "帮助",
       submenu: [
         {
+          label: "查看上手指引",
+          click: () => getWindow()?.webContents.send("menu:show-tour"),
+        },
+        { type: "separator" },
+        {
           label: "检查更新...",
           click: () => checkForUpdates(getWindow, true),
         },
@@ -103,12 +112,21 @@ export function createMenu(getWindow: () => BrowserWindow | null): void {
         },
         { type: "separator" },
         {
-          label: "访问官网",
-          click: () => shell.openExternal("https://wemd.app"),
+          label: "打开日志目录",
+          click: () => void shell.openPath(getLogDir()),
         },
         {
+          label: "导出诊断信息...",
+          click: () => void exportDiagnostics(getWindow),
+        },
+        { type: "separator" },
+        {
           label: "GitHub 仓库",
-          click: () => shell.openExternal("https://github.com/tenngoxars/WeMD"),
+          click: () => shell.openExternal(REPO_URL),
+        },
+        {
+          label: "问题反馈",
+          click: () => shell.openExternal(`${REPO_URL}/issues`),
         },
       ],
     },

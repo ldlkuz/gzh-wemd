@@ -8,6 +8,18 @@ import {
   getSafeSessionStorage,
   installPreloadErrorHandler,
 } from "./bootstrap/installPreloadErrorHandler";
+import { installLogBridge } from "./bootstrap/installLogBridge";
+
+// Electron 下把渲染层报错转发到主进程日志文件（浏览器版自动跳过）
+installLogBridge({
+  target: window,
+  bridge: (
+    window as {
+      electron?: { log?: { write?: (level: string, message: string) => void } };
+    }
+  ).electron?.log,
+  console,
+});
 
 installPreloadErrorHandler({
   target: window,

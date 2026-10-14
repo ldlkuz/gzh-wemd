@@ -2,6 +2,7 @@ import type { BrowserWindow } from "electron";
 import { registerClipboardHandlers } from "./clipboardHandlers";
 import { registerFileHandlers } from "./fileHandlers";
 import { registerFolderHandlers } from "./folderHandlers";
+import { registerLogHandlers } from "./logHandlers";
 import { registerServerHandlers } from "./serverHandlers";
 import { registerShellHandlers } from "./shellHandlers";
 import { registerUpdateHandlers } from "./updateHandlers";
@@ -19,4 +20,5 @@ export function registerIpcHandlers(
   registerClipboardHandlers();
   registerServerHandlers(getWindow);
   registerUpdateHandlers(getWindow);
+  registerLogHandlers(getWindow);
 }

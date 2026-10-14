@@ -106,7 +106,7 @@ describe("Header", () => {
     render(<Header />);
 
     expect(screen.getByText("WeMD")).toBeInTheDocument();
-    expect(screen.getByText("复制到公众号")).toBeInTheDocument();
+    expect(screen.getByText("复制富文本")).toBeInTheDocument();
     expect(screen.getByText("文章主题")).toBeInTheDocument();
   });
 
@@ -121,7 +121,7 @@ describe("Header", () => {
   it("calls copyToWechat action", () => {
     render(<Header />);
 
-    fireEvent.click(screen.getByText("复制到公众号"));
+    fireEvent.click(screen.getByText("复制富文本"));
     expect(mockCopyToWechat).toHaveBeenCalled();
   });
 
@@ -192,7 +192,7 @@ describe("Header", () => {
     expect(screen.getByLabelText("显示标题栏")).toBeInTheDocument();
     expect(screen.getByLabelText("主题管理")).toBeInTheDocument();
     expect(screen.getByLabelText("图床设置")).toBeInTheDocument();
-    expect(screen.getByLabelText("复制到公众号")).toBeInTheDocument();
+    expect(screen.getByLabelText("复制富文本")).toBeInTheDocument();
   });
 
   it("persists header visibility to localStorage", async () => {

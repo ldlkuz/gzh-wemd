@@ -420,6 +420,7 @@ export function Toolbar({
           className={`md-toolbar-btn ${showComponentMenu ? "active" : ""}`}
           onClick={toggleComponentMenu}
           data-tooltip="插入组件"
+          data-tour="components"
         >
           <LayoutTemplate size={16} />
         </button>
@@ -496,6 +497,7 @@ export function Toolbar({
           onClick={onOpenAiDesign}
           disabled={aiDesignLoading}
           data-tooltip={aiDesignLoading ? "AI 正在设计..." : "AI 杂志排版"}
+          data-tour="ai"
         >
           {aiDesignLoading ? (
             <Loader2 size={14} className="spinning" />

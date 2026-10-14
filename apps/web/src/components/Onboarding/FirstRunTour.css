@@ -1,0 +1,153 @@
+.tour-root {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+}
+
+/* 四块遮罩围出中间的"洞"，避免用 clip-path / SVG 裁掉高亮元素的阴影 */
+.tour-dim {
+  position: fixed;
+  background: rgba(12, 15, 20, 0.62);
+  animation: tour-dim-in 160ms ease-out;
+}
+
+.tour-ring {
+  position: fixed;
+  border: 2px solid var(--accent-primary, #07c160);
+  border-radius: var(--radius-md, 10px);
+  box-shadow:
+    0 0 0 4px
+      color-mix(in srgb, var(--accent-primary, #07c160) 22%, transparent),
+    0 0 32px color-mix(in srgb, var(--accent-primary, #07c160) 40%, transparent);
+  pointer-events: none;
+  transition:
+    top 220ms cubic-bezier(0.4, 0, 0.2, 1),
+    left 220ms cubic-bezier(0.4, 0, 0.2, 1),
+    width 220ms cubic-bezier(0.4, 0, 0.2, 1),
+    height 220ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tour-tooltip {
+  position: fixed;
+  z-index: 10001;
+  box-sizing: border-box;
+  padding: 18px 20px 16px;
+  background: var(--bg-primary, #ffffff);
+  color: var(--text-primary, #1a1a1a);
+  border: 1px solid var(--border-color, rgba(0, 0, 0, 0.08));
+  border-radius: var(--radius-lg, 14px);
+  box-shadow: var(--shadow-lg, 0 18px 48px -12px rgba(0, 0, 0, 0.35));
+  animation: tour-pop 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    top 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    left 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tour-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-tertiary, #999999);
+  cursor: pointer;
+  transition:
+    background 150ms ease,
+    color 150ms ease;
+}
+
+.tour-close:hover {
+  background: var(--bg-hover, rgba(0, 0, 0, 0.05));
+  color: var(--text-primary, #1a1a1a);
+}
+
+.tour-count {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--accent-primary, #07c160);
+}
+
+.tour-title {
+  margin: 6px 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--text-primary, #1a1a1a);
+}
+
+.tour-body {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-secondary, #555555);
+}
+
+.tour-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.tour-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    background 150ms ease,
+    color 150ms ease;
+}
+
+.tour-btn-ghost {
+  background: transparent;
+  color: var(--text-tertiary, #888888);
+}
+
+.tour-btn-ghost:hover {
+  background: var(--bg-hover, rgba(0, 0, 0, 0.05));
+  color: var(--text-primary, #1a1a1a);
+}
+
+.tour-btn-primary {
+  background: var(--accent-primary, #07c160);
+  color: #ffffff;
+}
+
+.tour-btn-primary:hover {
+  background: var(--accent-hover, #06ad56);
+}
+
+@keyframes tour-dim-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes tour-pop {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

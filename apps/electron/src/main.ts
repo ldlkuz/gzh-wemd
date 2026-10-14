@@ -1,6 +1,7 @@
 import { app, BrowserWindow, session } from "electron";
 import { createMenu } from "./menu";
 import { registerIpcHandlers } from "./ipc";
+import { initLogger } from "./logger";
 import { checkForUpdates, initAutoUpdate } from "./updater";
 import { configureAppIdentity, createWindow } from "./window";
 import { startWatching, stopWatching } from "./watch/workspaceWatcher";
@@ -17,6 +18,8 @@ const isDev =
   !!process.env.ELECTRON_START_URL;
 
 configureAppIdentity();
+// 尽早初始化日志：既能捕获启动阶段的异常，也保证 userData 路径已按应用名确定
+initLogger();
 
 /**
  * 绕过 CORS 限制,让渲染进程能直接 fetch 任意 AI 厂商 API

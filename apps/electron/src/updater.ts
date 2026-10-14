@@ -1,8 +1,34 @@
-import { app, shell, BrowserWindow } from 'electron';
+import { app, net, shell, BrowserWindow } from 'electron';
 import { autoUpdater } from 'electron-updater';
 
-const GITHUB_REPO = 'ldlkuz/gzh-wemd';
-const RELEASES_URL = `https://github.com/${GITHUB_REPO}/releases`;
+const GITHUB_OWNER = 'ldlkuz';
+const GITHUB_REPO_NAME = 'gzh-wemd';
+const RELEASES_URL = `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO_NAME}/releases`;
+
+/**
+ * 更新线路（双源）：
+ * - proxy：国内镜像，默认走它 —— 直连 GitHub 往往极慢甚至完全拿不到元数据
+ * - github：app-update.yml 里焊死的官方源，作为兜底
+ * 镜像不可用时自动回落到官方源，保证任何情况下都还能更新。
+ */
+type UpdateRoute = 'proxy' | 'github';
+
+/**
+ * 镜像基址 = 代理前缀 + GitHub 的 releases/latest/download 别名。
+ * 别名始终指向最新 Release，所以这个 URL 固定、不带版本号，且
+ * latest*.yml 与安装包都能从同一基址取到（结尾斜杠不能省）。
+ */
+const PROXY_FEED_URL = `https://gh-proxy.com/https://github.com/${GITHUB_OWNER}/${GITHUB_REPO_NAME}/releases/latest/download/`;
+
+/** 兜底源：GitHub 官方，等价于 app-update.yml 里的默认配置 */
+const GITHUB_FEED = {
+  provider: 'github' as const,
+  owner: GITHUB_OWNER,
+  repo: GITHUB_REPO_NAME,
+};
+
+/** 线路探测超时：超过即认为镜像不可用，改用官方源 */
+const PROBE_TIMEOUT_MS = 4000;
 
 /**
  * 初始化自动更新（electron-updater，基于 GitHub Releases）。
@@ -17,10 +43,66 @@ let lastForce = false; // 最近一次检查是否为手动强制（忽略跳过
 let downloadNotified = false; // 同一版本只提示一次"已下载可重启"
 let updateAvailable = false; // 本次会话是否已检测到新版本（用于区分检查失败 / 下载失败）
 let currentVersionCache = ''; // 缓存版本号，避免重复读 app.getVersion()
+let currentRoute: UpdateRoute | null = null; // 当前生效的线路（null = 尚未设置，用 app-update.yml 默认）
+let checkAttemptInFlight = false; // 检查兜底过程中：抑制 error 事件重复上报
+let suppressAvailableEvent = false; // 换源重检时静默刷新，不重复弹"发现新版本"
 
 function send(mainWindow: BrowserWindow | null, channel: string, payload?: unknown): void {
   if (mainWindow && !mainWindow.isDestroyed()) {
     mainWindow.webContents.send(channel, payload);
+  }
+}
+
+/** 当前平台的更新元数据文件名（electron-builder 的命名约定） */
+function channelFileName(): string {
+  if (process.platform === 'darwin') return 'latest-mac.yml';
+  if (process.platform === 'win32') return 'latest.yml';
+  return 'latest-linux.yml';
+}
+
+/** 切换更新线路；同一线路不重复设置 */
+function applyRoute(route: UpdateRoute): void {
+  if (route === currentRoute) return;
+  autoUpdater.setFeedURL(route === 'proxy' ? PROXY_FEED_URL : GITHUB_FEED);
+  currentRoute = route;
+}
+
+/**
+ * 探测镜像线路是否可用：能取到当前平台的元数据且内容像 yml 才算通。
+ * 用 net.fetch（Chromium 网络栈）而不是 Node fetch，这样能复用系统代理设置。
+ */
+async function probeProxyRoute(): Promise<UpdateRoute> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), PROBE_TIMEOUT_MS);
+  try {
+    const res = await net.fetch(`${PROXY_FEED_URL}${channelFileName()}`, {
+      signal: controller.signal,
+      cache: 'no-store',
+    });
+    if (!res.ok) return 'github';
+    const text = await res.text();
+    return text.includes('version:') ? 'proxy' : 'github';
+  } catch {
+    return 'github';
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/**
+ * 换源后重新拉取更新信息（静默，不重复弹窗）。
+ * 必须重新检查：downloadUpdate 用的是上一次检查缓存的信息。
+ */
+async function refreshUpdateInfo(): Promise<boolean> {
+  try {
+    suppressAvailableEvent = true;
+    await autoUpdater.checkForUpdates();
+    return true;
+  } catch (error) {
+    console.warn('[updater] 换源后重新检查失败:', error);
+    return false;
+  } finally {
+    suppressAvailableEvent = false;
   }
 }
 
@@ -30,12 +112,15 @@ export function initAutoUpdate(getWindow: () => BrowserWindow | null): void {
   const mainWindow = () => getWindow();
   autoUpdater.logger = console;
   autoUpdater.autoDownload = false; // 检测到新版本不自动下载，等待用户点击
+  applyRoute('proxy'); // 默认走国内镜像；探测/检查失败时再回落官方源
 
   autoUpdater.on('update-available', (info) => {
     const currentVersion = app.getVersion();
     const latestVersion = info.version?.replace(/^v/, '') || currentVersion;
     updateAvailable = true; // 后续 error 属于下载阶段，而非检查阶段
     currentVersionCache = currentVersion;
+    // 换源重检只为刷新内部信息：UI 此时已进入下载流程，不重复弹"发现新版本"
+    if (suppressAvailableEvent) return;
     send(mainWindow(), 'update:available', {
       latestVersion,
       currentVersion,
@@ -71,7 +156,9 @@ export function initAutoUpdate(getWindow: () => BrowserWindow | null): void {
       // 只有在下载真正彻底失败时（downloadUpdate 的 Promise reject）才提示。
       return;
     }
-    // 检查阶段失败：仅手动强制检查时提示
+    // 检查阶段失败：统一由 checkForUpdates 上报（它会先回落官方源重试一轮），
+    // 这里跳过可避免回退成功时仍冒出"检查更新失败"。
+    if (checkAttemptInFlight) return;
     if (lastForce) {
       send(mainWindow(), 'update:error', { stage: 'check', message });
     }
@@ -101,15 +188,26 @@ export async function checkForUpdates(
     if (force) console.warn('[updater] skip check in dev (app not packaged)');
     return;
   }
+  lastForce = force;
+  checkAttemptInFlight = true;
   try {
-    lastForce = force;
     await autoUpdater.checkForUpdates();
   } catch (error) {
-    console.error('Update check failed:', error);
-    const message = error instanceof Error ? error.message : String(error);
-    if (force) {
-      send(getWindow(), 'update:error', { stage: 'check', message });
+    // 镜像线路异常：静默回落到 GitHub 官方源重试一次，用户无感
+    console.warn('[updater] 镜像线路检查失败，回落到官方源重试:', error);
+    applyRoute('github');
+    try {
+      await autoUpdater.checkForUpdates();
+    } catch (retryError) {
+      console.error('Update check failed:', retryError);
+      if (force) {
+        const message =
+          retryError instanceof Error ? retryError.message : String(retryError);
+        send(getWindow(), 'update:error', { stage: 'check', message });
+      }
     }
+  } finally {
+    checkAttemptInFlight = false;
   }
 }
 
@@ -117,6 +215,21 @@ export async function checkForUpdates(
 export async function downloadUpdate(
   getWindow: () => BrowserWindow | null,
 ): Promise<void> {
+  // 下载前先定线路：探测期间给前端反馈，避免用户点了按钮却没有任何动静
+  send(getWindow(), 'update:selectingRoute');
+  const route = await probeProxyRoute();
+  if (route !== currentRoute) {
+    applyRoute(route);
+    // 换源后必须重新检查，否则 downloadUpdate 用的还是旧源缓存的信息
+    if (!(await refreshUpdateInfo())) {
+      send(getWindow(), 'update:error', {
+        stage: 'download',
+        message: '更新线路切换失败，请稍后重试',
+      });
+      return;
+    }
+  }
+
   try {
     await autoUpdater.downloadUpdate();
   } catch (error) {
@@ -142,4 +255,17 @@ export function restartToInstall(): void {
 /** 打开 Releases 页面（供渲染进程调用） */
 export function openReleasesPage(): void {
   shell.openExternal(RELEASES_URL);
+}
+
+/** 供诊断包使用：当前更新线路与状态 */
+export function getUpdateDiagnostics(): {
+  route: UpdateRoute | null;
+  proxyUrl: string;
+  updateAvailable: boolean;
+} {
+  return {
+    route: currentRoute,
+    proxyUrl: PROXY_FEED_URL,
+    updateAvailable,
+  };
 }

@@ -255,12 +255,12 @@ export function Header({ debugMode = false, onToggleDebug }: HeaderProps) {
             icon={<Code size={18} strokeWidth={2} />}
             label="复制 HTML"
             onClick={copyAsHtml}
+            primary
           />
           <FloatingToolbarButton
             icon={<Send size={18} strokeWidth={2} />}
-            label="复制到公众号"
+            label="复制富文本"
             onClick={copyToWechat}
-            primary
           />
         </div>
       )}
@@ -294,12 +294,14 @@ export function Header({ debugMode = false, onToggleDebug }: HeaderProps) {
             <button
               className="nav-item"
               onClick={() => setShowImageHostModal(true)}
+              data-tour="imagehost"
             >
               <span>图床设置</span>
             </button>
             <button
               className="nav-item"
               onClick={() => setShowThemePanel(true)}
+              data-tour="theme"
             >
               <span>文章主题</span>
             </button>
@@ -373,14 +375,22 @@ export function Header({ debugMode = false, onToggleDebug }: HeaderProps) {
 
             <div className="header-divider" />
 
-            <button className="btn-text-action" onClick={copyAsHtml}>
-              <Code size={16} strokeWidth={2} />
+            <button
+              className="btn-primary"
+              onClick={copyAsHtml}
+              data-tour="copy"
+            >
+              <Code size={18} strokeWidth={2} />
               <span>复制 HTML</span>
             </button>
 
-            <button className="btn-primary" onClick={copyToWechat}>
-              <Send size={18} strokeWidth={2} />
-              <span>复制到公众号</span>
+            <button
+              className="btn-text-action"
+              onClick={copyToWechat}
+              title="不装插件也能直接粘进公众号编辑器；复杂版式可能被微信简化，完整版式建议用「复制 HTML」配合插件"
+            >
+              <Send size={16} strokeWidth={2} />
+              <span>复制富文本</span>
             </button>
 
             <button

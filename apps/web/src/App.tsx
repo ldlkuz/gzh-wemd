@@ -36,6 +36,11 @@ const UpdateModal = lazy(() =>
     default: m.UpdateModal,
   })),
 );
+const FirstRunTour = lazy(() =>
+  import("./components/Onboarding/FirstRunTour").then((m) => ({
+    default: m.FirstRunTour,
+  })),
+);
 import { MobileThemeSelector } from "./components/Theme/MobileThemeSelector";
 
 interface UpdateEventData {
@@ -69,10 +74,32 @@ interface ElectronUpdateAPI {
   onUpdateDownloaded?: (
     callback: (data: UpdateEventData) => void,
   ) => () => void;
+  /** 下载前正在探测更新线路（镜像 / 官方源） */
+  onUpdateSelectingRoute?: (callback: () => void) => () => void;
   removeUpdateListener?: (handler: (() => void) | undefined) => void;
   openReleases?: () => void;
   download?: () => Promise<unknown>;
   restartAndInstall?: () => void;
+}
+
+/** 首次使用引导看过的标记；换 key 可让所有用户重新看一次 */
+const TOUR_SEEN_KEY = "wemd-first-run-tour-v1";
+
+function hasSeenTour(): boolean {
+  try {
+    return localStorage.getItem(TOUR_SEEN_KEY) === "1";
+  } catch {
+    // localStorage 不可用时（隐私模式等）不打扰用户
+    return true;
+  }
+}
+
+function markTourSeen(): void {
+  try {
+    localStorage.setItem(TOUR_SEEN_KEY, "1");
+  } catch {
+    /* 忽略持久化失败 */
+  }
 }
 
 function App() {
@@ -104,15 +131,37 @@ function App() {
 
   const isElectron = platform.isElectron;
 
-  // 更新提示状态（available=待下载；downloading=下载中带进度；downloaded=可重启；error=下载失败）
+  // 更新提示状态（available=待下载；selecting=正在选择下载线路；downloading=下载中带进度；
+  // downloaded=可重启；error=下载失败）
   const [updateInfo, setUpdateInfo] = useState<{
     latestVersion: string;
     currentVersion: string;
     releaseNotes: string;
-    status: "available" | "downloading" | "downloaded" | "error";
+    status: "available" | "selecting" | "downloading" | "downloaded" | "error";
     progress?: number;
     errorMessage?: string;
   } | null>(null);
+
+  // 首次使用引导：第一次进入编辑器时自动展示一次，之后可从菜单随时重看
+  const [showTour, setShowTour] = useState(false);
+
+  useEffect(() => {
+    if (!workspacePath || hasSeenTour()) return;
+    // 等布局稳定（编辑器与预览面板挂载完）再弹，否则锚点量不到
+    const timer = window.setTimeout(() => setShowTour(true), 700);
+    return () => window.clearTimeout(timer);
+  }, [workspacePath]);
+
+  useEffect(() => {
+    const fs = window.electron?.fs;
+    if (!fs?.onMenuShowTour) return;
+    fs.onMenuShowTour(() => setShowTour(true));
+  }, []);
+
+  const handleTourClose = () => {
+    setShowTour(false);
+    markTourSeen();
+  };
 
   // 监听 Electron 更新事件
   useEffect(() => {
@@ -140,7 +189,17 @@ function App() {
     const downloadingHandler = electron.update.onUpdateDownloading?.(
       (data: UpdateProgressData) => {
         setUpdateInfo((prev) =>
-          prev ? { ...prev, status: "downloading", progress: data.percent } : prev,
+          prev
+            ? { ...prev, status: "downloading", progress: data.percent }
+            : prev,
+        );
+      },
+    );
+
+    const selectingRouteHandler = electron.update.onUpdateSelectingRoute?.(
+      () => {
+        setUpdateInfo((prev) =>
+          prev ? { ...prev, status: "selecting" } : prev,
         );
       },
     );
@@ -197,6 +256,8 @@ function App() {
       if (errorHandler) electron.update?.removeUpdateListener?.(errorHandler);
       if (downloadedHandler)
         electron.update?.removeUpdateListener?.(downloadedHandler);
+      if (selectingRouteHandler)
+        electron.update?.removeUpdateListener?.(selectingRouteHandler);
     };
   }, [isElectron]);
 
@@ -292,16 +353,15 @@ function App() {
             errorMessage={updateInfo.errorMessage}
             onClose={() => setUpdateInfo(null)}
             onDownload={() => {
-              const api = (
-                window.electron as { update?: ElectronUpdateAPI }
-              )?.update;
+              const api = (window.electron as { update?: ElectronUpdateAPI })
+                ?.update;
               if (api?.download) {
                 // available / error 状态下点击 → 触发或重试下载
                 api.download().then(() => {
                   // 下载完成由 update:downloaded 事件接管（置 downloaded 并允许重启）
                 });
                 setUpdateInfo((prev) =>
-                  prev ? { ...prev, status: "downloading", progress: 0 } : prev,
+                  prev ? { ...prev, status: "selecting" } : prev,
                 );
               }
             }}
@@ -319,6 +379,12 @@ function App() {
               setUpdateInfo(null);
             }}
           />
+        </Suspense>
+      )}
+      {/* 首次使用引导：真实界面高亮，不依赖截图 */}
+      {showTour && (
+        <Suspense fallback={null}>
+          <FirstRunTour onClose={handleTourClose} />
         </Suspense>
       )}
       {/* 只在存储上下文完全就绪且确认为 IndexedDB 模式时才渲染 HistoryManager */}
@@ -374,6 +440,7 @@ function App() {
           <div
             className={`history-pane ${showHistory ? "is-visible" : "is-hidden"}`}
             aria-hidden={!showHistory}
+            data-tour="sidebar"
           >
             <div className="history-pane__content">
               {/* ready 后渲染，防止闪烁 */}

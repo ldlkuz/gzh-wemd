@@ -77,6 +77,7 @@ interface ElectronAPI {
     onMenuNewFile: (callback: () => void) => unknown;
     onMenuSave: (callback: () => void) => unknown;
     onMenuSwitchWorkspace: (callback: () => void) => unknown;
+    onMenuShowTour: (callback: () => void) => unknown;
     removeAllListeners: () => void;
   };
   window?: {
