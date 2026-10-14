@@ -45,21 +45,10 @@ apps/web/src/__tests__/tmp-callout-repro.test.ts
 # ============================================================
 # 本地测试 / 设计草稿（不入库，仅本机使用）
 # ============================================================
-# docs 根部的测试与主题预览稿（docs/engineering、docs/phase-reports 正式文档保留）
-docs/_check_encoding.ps1
-docs/test*.html
-docs/test*.md
-docs/*-preview.html
-docs/公众号美食推荐.html
-docs/本地探店清单-preview.html
-docs/民宿-preview.html
-docs/silent-keynote-hero.jpg
-docs/silent-keynote-product.jpg
-docs/企业品牌公众号组件工作台开发方案.md
+# 本机视觉稿 / 预览稿 / 个人素材统一放 userdocs/（docs/ 只保留正式开发文档）
+/userdocs/
 
 # 本机参考文件 / 内容产物（不入库）
-docs/CASE-0006-*
-docs/晚晴-老年情感主题.html
 experimental/tcc-mobile-layout.html
 
 # 调试用 vitest 配置（指向已删除的临时用例，仅本机留存）
@@ -87,4 +76,6 @@ experimental/mock-sale/
 05-液冷技术深度解析.md
 wanqing-component-guide.md
 wechat-plugin.rar
-docs/晚晴-老年人情感主题.html
+
+# 本机公众号文章稿统一放 works/（正文 + 配图，不入库；配图同时已转存图床）
+/works/
