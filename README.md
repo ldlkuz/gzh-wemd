@@ -259,6 +259,7 @@ node scripts/wemd-push.mjs article.md --theme sunset-film --title "标题"
 ## 相关文档
 
 - 应用内：「使用帮助」弹窗（从写稿到发布的分步引导）
+- 隐私说明：[PRIVACY.md](PRIVACY.md)（数据存在哪、什么时候会联网）
 - 接口与文章推送：[docs/engineering/render-api-article-push.md](docs/engineering/render-api-article-push.md)
 - 主题开发：[docs/engineering/theme-development-guide.md](docs/engineering/theme-development-guide.md)
 - 更新日志：[CHANGELOG.md](CHANGELOG.md)
