@@ -88,7 +88,10 @@
 }
 
 /* ========================================
-   深色模式 - 预览容器背景（接近微信深色模式）
+   深色模式 - 预览页模拟微信夜间阅读效果（深底 + 亮字）
+   注意：只影响预览，复制/发布出去的内容始终是亮色主题
+   （暗色内容 CSS 由 getThemeCSS(theme, true) 生成，并在 MarkdownPreview 里
+    用 @scope 限定在 .preview-content 内，避免命中复制管线的离屏 #wemd 容器）
    ======================================== */
 [data-ui-theme="dark"] .markdown-preview,
 [data-ui-theme="dark"] .preview-container,

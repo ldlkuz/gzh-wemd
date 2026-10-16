@@ -10,6 +10,7 @@ import {
 } from "@wemd/core";
 import { useEditorStore } from "../../store/editorStore";
 import { useThemeStore } from "../../store/themeStore";
+import { useUITheme } from "../../hooks/useUITheme";
 import { hasMathFormula, renderMathInElement } from "../../utils/katexRenderer";
 import { convertLinksToFootnotes } from "../../utils/linkFootnote";
 import {
@@ -162,6 +163,8 @@ function injectComponentVariants(
 export function MarkdownPreview({ onScrollSyncReady }: MarkdownPreviewProps) {
   const { markdown } = useEditorStore();
   const { themeId: theme, customCSS, getThemeCSS } = useThemeStore();
+  const uiTheme = useUITheme((state) => state.theme);
+  const isDarkMode = uiTheme === "dark";
   const [html, setHtml] = useState("");
   const [linkToFootnoteEnabled, setLinkToFootnoteEnabledState] = useState(() =>
     getPublishingPreference("linkToFootnote"),
@@ -198,10 +201,18 @@ export function MarkdownPreview({ onScrollSyncReady }: MarkdownPreviewProps) {
     });
   }, [showMacBar, themeDefinition]);
 
-  // 预览 CSS：始终亮色模式（微信/公众号只支持亮色，暗色切换不应影响内容预览）
+  // 预览 CSS：暗色 UI 下走微信夜间模式转换，仅用于视觉模拟公众号夜间阅读效果。
+  // 复制/发布链路另行取亮色主题（wechatPublishHtml 里 getThemeCSS 不带 darkMode）。
   const previewCss = useMemo(() => {
-    return getThemeCSS(theme, false);
-  }, [theme, getThemeCSS]);
+    return getThemeCSS(theme, isDarkMode);
+  }, [theme, getThemeCSS, isDarkMode]);
+
+  // 预览样式一律用 @scope 限定在 .preview-content 内：主题 CSS 的选择器全是 #wemd，
+  // 而复制链路的离屏容器里也有 <section id="wemd">，不加作用域会被暗色规则命中污染剪贴板内容。
+  const previewCssScoped = useMemo(
+    () => `@scope (.preview-content) {\n${previewCss}\n}`,
+    [previewCss],
+  );
 
   useEffect(() => {
     const rawHtml = parser.render(markdown);
@@ -433,7 +444,7 @@ export function MarkdownPreview({ onScrollSyncReady }: MarkdownPreviewProps) {
         <div className="preview-content">
           <style
             dangerouslySetInnerHTML={{
-              __html: previewCss,
+              __html: previewCssScoped,
             }}
           />
           <div ref={previewRef} dangerouslySetInnerHTML={{ __html: html }} />

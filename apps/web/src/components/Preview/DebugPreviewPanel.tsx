@@ -8,6 +8,7 @@ import {
 } from "@wemd/core";
 import { useEditorStore } from "../../store/editorStore";
 import { useThemeStore } from "../../store/themeStore";
+import { useUITheme } from "../../hooks/useUITheme";
 import { convertLinksToFootnotes } from "../../utils/linkFootnote";
 import {
   getPublishingPreference,
@@ -56,6 +57,25 @@ declare global {
 }
 
 /**
+ * 暗色下把导出 HTML 的根容器底色钉成夜间页底色。
+ *
+ * 「导出内联版」由 processHtml(inline) 生成，会把页面底色一并内联到根节点上；
+ * 暗色转换后该底色可能是中灰，而正文被调亮成浅色，两者对比不足 → 灰底亮字看不清。
+ * 这里只改调试面板的显示，不影响真正的复制载荷（那仍走亮色链路）。
+ */
+function pinNightPageBackground(html: string): string {
+  if (typeof document === "undefined" || !html) return html;
+  const template = document.createElement("template");
+  template.innerHTML = html;
+  const root = template.content.firstElementChild as HTMLElement | null;
+  if (root) {
+    root.style.setProperty("background", "#0f1113");
+    root.style.setProperty("background-color", "#0f1113");
+  }
+  return template.innerHTML;
+}
+
+/**
  * 调试预览面板
  *
  * 与 MarkdownPreview 视觉一致（header + 滚动容器 + content），内核用
@@ -71,6 +91,8 @@ export function DebugPreviewPanel({
 }: DebugPreviewPanelProps) {
   const { markdown } = useEditorStore();
   const { themeId: theme, getThemeCSS } = useThemeStore();
+  const uiTheme = useUITheme((state) => state.theme);
+  const isDarkMode = uiTheme === "dark";
   const [linkToFootnoteEnabled, setLinkToFootnoteEnabledState] = useState(() =>
     getPublishingPreference("linkToFootnote"),
   );
@@ -99,10 +121,11 @@ export function DebugPreviewPanel({
     });
   }, [showMacBar, themeDefinition]);
 
-  // 调试面板同样用亮色 CSS（公众号只支持亮色）
+  // 与主预览一致：暗色 UI 下用微信夜间模式转换，模拟公众号夜间阅读效果。
+  // 只影响调试面板的渲染；真正复制/发布的载荷仍是亮色（走 wechatPublishHtml）。
   const previewCss = useMemo(
-    () => getThemeCSS(theme, false),
-    [theme, getThemeCSS],
+    () => getThemeCSS(theme, isDarkMode),
+    [theme, getThemeCSS, isDarkMode],
   );
 
   // 生成「导出内联版」HTML —— 与复制到公众号路径一致。
@@ -116,10 +139,11 @@ export function DebugPreviewPanel({
       const themedHtml = linkToFootnoteEnabled
         ? convertLinksToFootnotes(rawHtml)
         : rawHtml;
-      setExportedHtml(processHtml(themedHtml, previewCss, true, true));
+      const inlined = processHtml(themedHtml, previewCss, true, true);
+      setExportedHtml(isDarkMode ? pinNightPageBackground(inlined) : inlined);
     }, 250);
     return () => window.clearTimeout(timer);
-  }, [markdown, parser, previewCss, linkToFootnoteEnabled]);
+  }, [markdown, parser, previewCss, linkToFootnoteEnabled, isDarkMode]);
 
   useEffect(() => {
     return subscribePublishingPreference(

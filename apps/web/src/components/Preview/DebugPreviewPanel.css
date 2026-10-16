@@ -141,6 +141,25 @@
   color: #c0392b;
 }
 
+/* ========================================
+   深色模式 - 调试面板模拟公众号夜间阅读效果
+   paste-editor 在 Shadow DOM 里用 --pe-* 变量硬编码了亮色，必须从宿主覆盖
+   ======================================== */
+[data-ui-theme="dark"] .debug-preview__content {
+  background: #0f1113;
+  box-shadow: none;
+}
+
+[data-ui-theme="dark"] .debug-preview__content paste-editor {
+  --pe-bg: #0f1113;
+  --pe-ink: #d4d4d4;
+  --pe-soft: #9d9d9d;
+  /* :host 的 1px 边框在亮底上几乎不可见，深底上会显形；同色仍会渲染亚像素像素，故设透明 */
+  --pe-line: transparent;
+  /* 宿主圆角(默认 12px)与外层容器圆角不一致，边缘会露出容器底色形成"白边"错觉 */
+  --pe-radius: 0;
+}
+
 /* 响应式 */
 @media (max-width: 768px) {
   .debug-preview__body {
