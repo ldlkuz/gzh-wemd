@@ -187,18 +187,18 @@ function adjustBackgroundBrightness(
   const perceived = getColorPerceivedBrightness(rgb);
 
   const NEAR_WHITE_PERCEIVED = 235;
+  // 浅色/中浅色底统一转深。原先这一档（亮度 190~235）只把亮度压到
+  // MAX_LIMIT_BGCOLOR_BRIGHTNESS=190，结果仍是浅色底；而正文无论在哪个规则里声明
+  // 都会被调亮，跨规则叠加后就成了"浅底浅字"——在预览里表现为表格斑马纹行内容看不见。
   if (
     (s < 10 && l > CONSTANTS.HIGH_BLACKWHITE_HSL_BRIGHTNESS) ||
     perceived > CONSTANTS.WHITE_LIKE_COLOR_BRIGHTNESS ||
-    perceived > NEAR_WHITE_PERCEIVED
+    perceived > NEAR_WHITE_PERCEIVED ||
+    perceived > CONSTANTS.MAX_LIMIT_BGCOLOR_BRIGHTNESS
   ) {
     const darkL = Math.min(100, 100 + CONSTANTS.DEFAULT_DARK_BG_L_OFFSET - l);
     const darkS = s > 10 ? Math.min(s, 30) : 0;
     return hslToRgb(darkS > 0 ? h : 0, darkS, darkL);
-  }
-
-  if (perceived > CONSTANTS.MAX_LIMIT_BGCOLOR_BRIGHTNESS) {
-    return adjustBrightnessTo(CONSTANTS.MAX_LIMIT_BGCOLOR_BRIGHTNESS, rgb);
   }
 
   if (l < CONSTANTS.LOW_BLACKWHITE_HSL_BRIGHTNESS) {
@@ -628,7 +628,16 @@ function transformDeclarations(selector: string, props: string): string {
     const isBorder = /border|outline|column-rule|box-shadow/i.test(lowerName);
 
     let type: ElementType = baseType;
-    if (isBg) {
+    // 自定义属性（--wemd-* 等）的值同样是颜色，但属性名里不含 color/background 关键字，
+    // 原逻辑会一律当"文字"转换：浅色背景 token 会被压到亮度 163 一带的中灰（约 #a3a3a3），
+    // 于是 var(--wemd-bg-*) 铺出的底与已调亮的正文对比不足，看起来像内容丢失。
+    // 这里按变量名语义取向：背景类变量走背景转换（浅色 → 深色）。
+    if (
+      name.startsWith("--") &&
+      /(bg|background|surface|fill)/i.test(lowerName)
+    ) {
+      type = "background";
+    } else if (isBg) {
       type =
         baseType === "table"
           ? "table"

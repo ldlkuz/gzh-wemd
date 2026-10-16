@@ -126,6 +126,27 @@ describe("convertCssToWeChatDarkMode", () => {
     expect(result).toContain("var(--text-color)");
   });
 
+  it("背景类颜色变量按背景转换（不会像文字一样被压成中灰）", () => {
+    const css =
+      "#wemd { --wemd-bg-soft: #faf3e8; --wemd-text-normal: #334155; }";
+    const result = convertCssToWeChatDarkMode(css);
+    const bgSoft = result.match(/--wemd-bg-soft:\s*(#[0-9a-f]{6})/i)?.[1] ?? "";
+    const textNormal =
+      result.match(/--wemd-text-normal:\s*(#[0-9a-f]{6})/i)?.[1] ?? "";
+    const brightness = (hex: string) => {
+      const r = parseInt(hex.slice(1, 3), 16);
+      const g = parseInt(hex.slice(3, 5), 16);
+      const b = parseInt(hex.slice(5, 7), 16);
+      return (r * 299 + g * 587 + b * 114) / 1000;
+    };
+    // 浅色背景 token 应转成深色，而不是亮度 163 一带的中灰
+    expect(bgSoft).toMatch(/^#[0-9a-f]{6}$/);
+    expect(brightness(bgSoft)).toBeLessThan(100);
+    // 文字 token 仍按文字转换（调亮）
+    expect(textNormal).toMatch(/^#[0-9a-f]{6}$/);
+    expect(brightness(textNormal)).toBeGreaterThan(100);
+  });
+
   it("转换 gradient 内的颜色值", () => {
     const css = "div { background: linear-gradient(#fff, #000); }";
     const result = convertCssToWeChatDarkMode(css);
