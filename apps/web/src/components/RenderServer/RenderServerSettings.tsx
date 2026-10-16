@@ -16,9 +16,10 @@ import {
 import { useRenderServer } from "./useRenderServer";
 import "./RenderServerSettings.css";
 
-/** 复制给 AI 的示例提示词（用户只需把 ___ 换成自己的选题） */
+/** 复制给 AI 的示例提示词
+ *  ＿ 里带的是"该填什么"的说明文字，用户照着替换即可；工具调用顺序由 MCP 自己的 instructions 约束 */
 const PROMPT_EXAMPLE =
-  "用 WeMD 的落日胶片主题，写一篇关于 ___ 的公众号文章，推到 WeMD";
+  "用 wemd MCP 帮我排版这篇＿＿文章＿＿，主题用＿＿东方信笺＿＿";
 
 export function RenderServerSettings() {
   const isElectron = platform.isElectron;
@@ -82,7 +83,7 @@ export function RenderServerSettings() {
   const handleCopyPrompt = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(PROMPT_EXAMPLE);
-      toast.success("提示词已复制，把 ___ 换成你的选题发给 AI 即可");
+      toast.success("提示词已复制：把 ＿＿文章＿＿ 换成你的稿子或选题即可");
     } catch {
       toast.error("复制失败，请手动选择文本");
     }
@@ -213,7 +214,14 @@ export function RenderServerSettings() {
         <ol className="render-server-guide-steps">
           <li>点上方「复制 MCP 配置」</li>
           <li>粘贴到 AI 工具的 MCP 设置（如 Trae：设置 → MCP），保存</li>
-          <li>新开一个会话，把下面的提示词发给它</li>
+          <li>
+            新开一个会话，把下面的提示词发给它：文章自己写好了，就把
+            ＿＿文章＿＿ 换成你的稿子
+          </li>
+          <li>
+            文章还没写，就把 ＿＿文章＿＿
+            换成选题，让它先写一篇，再用这条提示词排版推送
+          </li>
         </ol>
 
         <div className="render-server-prompt">
